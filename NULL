@@ -1,0 +1,4339 @@
+
+
+
+BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING
+
+
+Seed set:  123 
+Generating  100  permuted sample ranks..
+Are all generated permutations unique?..
+TRUEUsing provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  4.210013e-05 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  1.461814e-05 
+
+
+Iteration number  2  ..
+New best ks:  1.461814e-05 
+Best ks:  4.210013e-05 
+Found feature that improves KS score!
+KS score:  1.461814e-05 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  1.461814e-05 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  2.349604e-05 
+Best ks:  1.461814e-05 
+KS score:  2.349604e-05 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  1.461814e-05 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  1.461814e-05 
+Features returned in ESet:  Deletion Peak 37 Deletion Peak 35 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01613144 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.01340061 
+
+
+Iteration number  2  ..
+New best ks:  0.01340061 
+Best ks:  0.01613144 
+Found feature that improves KS score!
+KS score:  0.01340061 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 36 
+Global best score so far:  0.01340061 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.01862435 
+Best ks:  0.01340061 
+KS score:  0.01862435 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.01340061 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01340061 
+Features returned in ESet:  Deletion Peak 24 Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06144273 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.04744094 
+
+
+Iteration number  2  ..
+New best ks:  0.04744094 
+Best ks:  0.06144273 
+Found feature that improves KS score!
+KS score:  0.04744094 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.04744094 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.05672001 
+Best ks:  0.04744094 
+KS score:  0.05672001 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.04744094 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04744094 
+Features returned in ESet:  Amplification Peak 13 Amplification Peak 22 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1588913 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.1057365 
+
+
+Iteration number  2  ..
+New best ks:  0.1057365 
+Best ks:  0.1588913 
+Found feature that improves KS score!
+KS score:  0.1057365 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.09486384 
+
+
+Iteration number  3  ..
+New best ks:  0.09486384 
+Best ks:  0.1057365 
+Found feature that improves KS score!
+KS score:  0.09486384 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  2 
+Global best score so far:  0.09486384 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.1644565 
+Best ks:  0.09486384 
+KS score:  0.1644565 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.09486384 
+
+
+Iteration number  5  ..
+New best ks:  0.1592107 
+Best ks:  0.1644565 
+Found feature that improves KS score!
+KS score:  0.1592107 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.09486384 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.2195337 
+Best ks:  0.1592107 
+KS score:  0.2195337 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 44 
+Global best score so far:  0.09486384 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  6 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.09486384 
+Features returned in ESet:  Deletion Peak 18 Deletion Peak 39 Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.009709262 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.005490857 
+
+
+Iteration number  2  ..
+New best ks:  0.005490857 
+Best ks:  0.009709262 
+Found feature that improves KS score!
+KS score:  0.005490857 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.005490857 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.01884824 
+Best ks:  0.005490857 
+KS score:  0.01884824 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 23 
+Global best score so far:  0.005490857 
+
+
+Iteration number  4  ..
+New best ks:  0.0129359 
+Best ks:  0.01884824 
+Found feature that improves KS score!
+KS score:  0.0129359 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.005490857 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.03006201 
+Best ks:  0.0129359 
+KS score:  0.03006201 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  1 
+Global best score so far:  0.005490857 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.005490857 
+Features returned in ESet:  Deletion Peak 39 Deletion Peak 31 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07285263 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.05095471 
+
+
+Iteration number  2  ..
+New best ks:  0.05095471 
+Best ks:  0.07285263 
+Found feature that improves KS score!
+KS score:  0.05095471 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.05095471 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.090138 
+Best ks:  0.05095471 
+KS score:  0.090138 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.05095471 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05095471 
+Features returned in ESet:  Amplification Peak  2 Deletion Peak 31 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06987675 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.06987675 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.09494762 
+Best ks:  0.06987675 
+KS score:  0.09494762 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.06987675 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06987675 
+Features returned in ESet:  Amplification Peak 16 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03410691 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.02265554 
+
+
+Iteration number  2  ..
+New best ks:  0.02265554 
+Best ks:  0.03410691 
+Found feature that improves KS score!
+KS score:  0.02265554 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.02265554 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.04644995 
+Best ks:  0.02265554 
+KS score:  0.04644995 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.02265554 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02265554 
+Features returned in ESet:  Deletion Peak  4 Deletion Peak 31 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.2007686 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.2007686 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.2219183 
+Best ks:  0.2007686 
+KS score:  0.2219183 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.1816634 
+
+
+Iteration number  3  ..
+New best ks:  0.1816634 
+Best ks:  0.2219183 
+Found feature that improves KS score!
+KS score:  0.1816634 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.1816634 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.2077345 
+Best ks:  0.1816634 
+KS score:  0.2077345 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 18 
+Global best score so far:  0.1816634 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1816634 
+Features returned in ESet:  Deletion Peak 35 Amplification Peak  5 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.04426124 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.04426124 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.05648952 
+Best ks:  0.04426124 
+KS score:  0.05648952 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.04426124 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04426124 
+Features returned in ESet:  Deletion Peak  5 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.04697109 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.04697109 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.07023946 
+Best ks:  0.04697109 
+KS score:  0.07023946 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.04697109 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04697109 
+Features returned in ESet:  Deletion Peak 29 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.113075 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.113075 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1288991 
+Best ks:  0.113075 
+KS score:  0.1288991 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.113075 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.113075 
+Features returned in ESet:  Amplification Peak 21 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03545337 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 24 
+Global best score so far:  0.03545337 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.04577323 
+Best ks:  0.03545337 
+KS score:  0.04577323 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.03545337 
+
+
+Iteration number  3  ..
+New best ks:  0.04248132 
+Best ks:  0.04577323 
+Found feature that improves KS score!
+KS score:  0.04248132 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  2 
+Global best score so far:  0.03545337 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.05645964 
+Best ks:  0.04248132 
+KS score:  0.05645964 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.03545337 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03545337 
+Features returned in ESet:  Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07475747 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.06623853 
+
+
+Iteration number  2  ..
+New best ks:  0.06623853 
+Best ks:  0.07475747 
+Found feature that improves KS score!
+KS score:  0.06623853 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.06623853 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.08851834 
+Best ks:  0.06623853 
+KS score:  0.08851834 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 20 
+Global best score so far:  0.06623853 
+
+
+Iteration number  4  ..
+New best ks:  0.06625682 
+Best ks:  0.08851834 
+Found feature that improves KS score!
+KS score:  0.06625682 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.06623853 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.08503487 
+Best ks:  0.06625682 
+KS score:  0.08503487 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.06623853 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06623853 
+Features returned in ESet:  Deletion Peak 18 Amplification Peak  6 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01717784 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.01717784 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.02395995 
+Best ks:  0.01717784 
+KS score:  0.02395995 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.01717784 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01717784 
+Features returned in ESet:  Amplification Peak 15 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09611133 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.09611133 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1208384 
+Best ks:  0.09611133 
+KS score:  0.1208384 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.08483417 
+
+
+Iteration number  3  ..
+New best ks:  0.08483417 
+Best ks:  0.1208384 
+Found feature that improves KS score!
+KS score:  0.08483417 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.07776321 
+
+
+Iteration number  4  ..
+New best ks:  0.07776321 
+Best ks:  0.08483417 
+Found feature that improves KS score!
+KS score:  0.07776321 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.07776321 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.1122334 
+Best ks:  0.07776321 
+KS score:  0.1122334 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.07776321 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.07776321 
+Features returned in ESet:  Deletion Peak 46 Deletion Peak 38 Deletion Peak 37 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1732891 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.1553769 
+
+
+Iteration number  2  ..
+New best ks:  0.1553769 
+Best ks:  0.1732891 
+Found feature that improves KS score!
+KS score:  0.1553769 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.06288799 
+
+
+Iteration number  3  ..
+New best ks:  0.06288799 
+Best ks:  0.1553769 
+Found feature that improves KS score!
+KS score:  0.06288799 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.06288799 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.06561376 
+Best ks:  0.06288799 
+KS score:  0.06561376 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.06288799 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06288799 
+Features returned in ESet:  Deletion Peak 39 Amplification Peak  6 Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.101831 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.101831 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1496125 
+Best ks:  0.101831 
+KS score:  0.1496125 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.101831 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.101831 
+Features returned in ESet:  Amplification Peak 16 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1128169 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.0731668 
+
+
+Iteration number  2  ..
+New best ks:  0.0731668 
+Best ks:  0.1128169 
+Found feature that improves KS score!
+KS score:  0.0731668 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 44 
+Global best score so far:  0.06850729 
+
+
+Iteration number  3  ..
+New best ks:  0.06850729 
+Best ks:  0.0731668 
+Found feature that improves KS score!
+KS score:  0.06850729 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.06234307 
+
+
+Iteration number  4  ..
+New best ks:  0.06234307 
+Best ks:  0.06850729 
+Found feature that improves KS score!
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Deletion Peak 35"      "Amplification Peak  6" "Deletion Peak 44"      "Deletion Peak 34"     
+KS score:  0.06234307 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.06234307 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.06601247 
+Best ks:  0.06234307 
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Deletion Peak 35"      "Amplification Peak  6" "Deletion Peak 44"      "Deletion Peak 34"     
+KS score:  0.06601247 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.06234307 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06234307 
+Features returned in ESet:  Deletion Peak 35 Amplification Peak  6 Deletion Peak 44 Deletion Peak 34 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05528318 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.05528318 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.05544006 
+Best ks:  0.05528318 
+KS score:  0.05544006 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.05528318 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05528318 
+Features returned in ESet:  Amplification Peak  5 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08183621 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  1 
+Global best score so far:  0.05625033 
+
+
+Iteration number  2  ..
+New best ks:  0.05625033 
+Best ks:  0.08183621 
+Found feature that improves KS score!
+KS score:  0.05625033 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.05625033 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.06036597 
+Best ks:  0.05625033 
+KS score:  0.06036597 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.05625033 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05625033 
+Features returned in ESet:  Amplification Peak 22 Deletion Peak  1 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05757513 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 14 
+Global best score so far:  0.04586492 
+
+
+Iteration number  2  ..
+New best ks:  0.04586492 
+Best ks:  0.05757513 
+Found feature that improves KS score!
+KS score:  0.04586492 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 20 
+Global best score so far:  0.04586492 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1017705 
+Best ks:  0.04586492 
+KS score:  0.1017705 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.04586492 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04586492 
+Features returned in ESet:  Amplification Peak  2 Amplification Peak 14 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06112011 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.06112011 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.08199734 
+Best ks:  0.06112011 
+KS score:  0.08199734 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 14 
+Global best score so far:  0.06112011 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06112011 
+Features returned in ESet:  Amplification Peak 13 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08930335 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 27 
+Global best score so far:  0.08930335 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1164332 
+Best ks:  0.08930335 
+KS score:  0.1164332 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.08930335 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.08930335 
+Features returned in ESet:  Deletion Peak 48 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05012233 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 20 
+Global best score so far:  0.04134157 
+
+
+Iteration number  2  ..
+New best ks:  0.04134157 
+Best ks:  0.05012233 
+Found feature that improves KS score!
+KS score:  0.04134157 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 20 
+Global best score so far:  0.04134157 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.05836816 
+Best ks:  0.04134157 
+KS score:  0.05836816 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.04134157 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04134157 
+Features returned in ESet:  Amplification Peak 21 Deletion Peak 20 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03423885 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.0304984 
+
+
+Iteration number  2  ..
+New best ks:  0.0304984 
+Best ks:  0.03423885 
+Found feature that improves KS score!
+KS score:  0.0304984 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.0304984 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.06268302 
+Best ks:  0.0304984 
+KS score:  0.06268302 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.0304984 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.0304984 
+Features returned in ESet:  Deletion Peak 35 Amplification Peak 22 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02286651 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 47 
+Global best score so far:  0.02286651 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.05169328 
+Best ks:  0.02286651 
+KS score:  0.05169328 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.02286651 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02286651 
+Features returned in ESet:  Deletion Peak 46 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07659443 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.07659443 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1129694 
+Best ks:  0.07659443 
+KS score:  0.1129694 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.07659443 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.07659443 
+Features returned in ESet:  Amplification Peak  2 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06747629 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.05721581 
+
+
+Iteration number  2  ..
+New best ks:  0.05721581 
+Best ks:  0.06747629 
+Found feature that improves KS score!
+KS score:  0.05721581 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.05721581 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.05779274 
+Best ks:  0.05721581 
+KS score:  0.05779274 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.05721581 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05721581 
+Features returned in ESet:  Amplification Peak  9 Deletion Peak 48 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1720416 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.1118738 
+
+
+Iteration number  2  ..
+New best ks:  0.1118738 
+Best ks:  0.1720416 
+Found feature that improves KS score!
+KS score:  0.1118738 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.1118738 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1213614 
+Best ks:  0.1118738 
+KS score:  0.1213614 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.1118738 
+
+
+Iteration number  4  ..
+New best ks:  0.1123192 
+Best ks:  0.1213614 
+Found feature that improves KS score!
+KS score:  0.1123192 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.1118738 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.129919 
+Best ks:  0.1123192 
+KS score:  0.129919 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  2 
+Global best score so far:  0.1118738 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1118738 
+Features returned in ESet:  Deletion Peak 36 Amplification Peak 25 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09986848 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.09330331 
+
+
+Iteration number  2  ..
+New best ks:  0.09330331 
+Best ks:  0.09986848 
+Found feature that improves KS score!
+KS score:  0.09330331 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.06228348 
+
+
+Iteration number  3  ..
+New best ks:  0.06228348 
+Best ks:  0.09330331 
+Found feature that improves KS score!
+KS score:  0.06228348 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 20 
+Global best score so far:  0.06228348 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.07426294 
+Best ks:  0.06228348 
+KS score:  0.07426294 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  1 
+Global best score so far:  0.06228348 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06228348 
+Features returned in ESet:  Deletion Peak 11 Amplification Peak 16 Amplification Peak 21 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03034985 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.03034985 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.09925456 
+Best ks:  0.03034985 
+KS score:  0.09925456 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.03034985 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03034985 
+Features returned in ESet:  Deletion Peak 40 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05218378 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.05218378 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.05534694 
+Best ks:  0.05218378 
+KS score:  0.05534694 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.05218378 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05218378 
+Features returned in ESet:  Deletion Peak 31 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1180096 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 14 
+Global best score so far:  0.1123904 
+
+
+Iteration number  2  ..
+New best ks:  0.1123904 
+Best ks:  0.1180096 
+Found feature that improves KS score!
+KS score:  0.1123904 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.1123904 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1387629 
+Best ks:  0.1123904 
+KS score:  0.1387629 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  2 
+Global best score so far:  0.1123904 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1123904 
+Features returned in ESet:  Amplification Peak  5 Amplification Peak 14 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1179241 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.1026415 
+
+
+Iteration number  2  ..
+New best ks:  0.1026415 
+Best ks:  0.1179241 
+Found feature that improves KS score!
+KS score:  0.1026415 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.1026415 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1290966 
+Best ks:  0.1026415 
+KS score:  0.1290966 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.1009211 
+
+
+Iteration number  4  ..
+New best ks:  0.1009211 
+Best ks:  0.1290966 
+Found feature that improves KS score!
+KS score:  0.1009211 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.1009211 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.1313349 
+Best ks:  0.1009211 
+KS score:  0.1313349 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.1009211 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1009211 
+Features returned in ESet:  Amplification Peak  6 Amplification Peak  5 Deletion Peak 19 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02280385 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.01173142 
+
+
+Iteration number  2  ..
+New best ks:  0.01173142 
+Best ks:  0.02280385 
+Found feature that improves KS score!
+KS score:  0.01173142 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.01173142 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.02319552 
+Best ks:  0.01173142 
+KS score:  0.02319552 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.01173142 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01173142 
+Features returned in ESet:  Amplification Peak 14 Amplification Peak 13 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09483568 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 27 
+Global best score so far:  0.09483568 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1215877 
+Best ks:  0.09483568 
+KS score:  0.1215877 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.09483568 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.09483568 
+Features returned in ESet:  Deletion Peak 47 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09335923 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.08421263 
+
+
+Iteration number  2  ..
+New best ks:  0.08421263 
+Best ks:  0.09335923 
+Found feature that improves KS score!
+KS score:  0.08421263 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.08421263 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.09025649 
+Best ks:  0.08421263 
+KS score:  0.09025649 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.08421263 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.08421263 
+Features returned in ESet:  Amplification Peak 19 Deletion Peak 31 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09554503 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.09554503 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.125218 
+Best ks:  0.09554503 
+KS score:  0.125218 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.09554503 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.09554503 
+Features returned in ESet:  Deletion Peak 46 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08159221 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.06719395 
+
+
+Iteration number  2  ..
+New best ks:  0.06719395 
+Best ks:  0.08159221 
+Found feature that improves KS score!
+KS score:  0.06719395 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  1 
+Global best score so far:  0.06719395 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.08235079 
+Best ks:  0.06719395 
+KS score:  0.08235079 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 19 
+Global best score so far:  0.06719395 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06719395 
+Features returned in ESet:  Deletion Peak 40 Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03782163 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.02694235 
+
+
+Iteration number  2  ..
+New best ks:  0.02694235 
+Best ks:  0.03782163 
+Found feature that improves KS score!
+KS score:  0.02694235 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.02694235 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.0416678 
+Best ks:  0.02694235 
+KS score:  0.0416678 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.02694235 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02694235 
+Features returned in ESet:  Amplification Peak 23 Amplification Peak  5 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03397439 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.03397439 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.06614777 
+Best ks:  0.03397439 
+KS score:  0.06614777 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.03397439 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03397439 
+Features returned in ESet:  Deletion Peak 35 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05355806 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.03655401 
+
+
+Iteration number  2  ..
+New best ks:  0.03655401 
+Best ks:  0.05355806 
+Found feature that improves KS score!
+KS score:  0.03655401 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.03655401 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.05439576 
+Best ks:  0.03655401 
+KS score:  0.05439576 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.03655401 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03655401 
+Features returned in ESet:  Deletion Peak  3 Deletion Peak 24 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01749752 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 36 
+Global best score so far:  0.01749752 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.03015763 
+Best ks:  0.01749752 
+KS score:  0.03015763 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.01749752 
+
+
+Iteration number  3  ..
+New best ks:  0.02115871 
+Best ks:  0.03015763 
+Found feature that improves KS score!
+KS score:  0.02115871 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.01749752 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.03832527 
+Best ks:  0.02115871 
+KS score:  0.03832527 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.01749752 
+
+
+Iteration number  5  ..
+New best ks:  0.02521163 
+Best ks:  0.03832527 
+Found feature that improves KS score!
+KS score:  0.02521163 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.01749752 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.04493093 
+Best ks:  0.02521163 
+KS score:  0.04493093 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.01749752 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  6 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01749752 
+Features returned in ESet:  Deletion Peak 39 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08569151 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.06063935 
+
+
+Iteration number  2  ..
+New best ks:  0.06063935 
+Best ks:  0.08569151 
+Found feature that improves KS score!
+KS score:  0.06063935 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.06063935 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.07491928 
+Best ks:  0.06063935 
+KS score:  0.07491928 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  5 
+Global best score so far:  0.06063935 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06063935 
+Features returned in ESet:  Amplification Peak  9 Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.001932314 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.001932314 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.0177163 
+Best ks:  0.001932314 
+KS score:  0.0177163 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.001932314 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.001932314 
+Features returned in ESet:  Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01462258 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.005111154 
+
+
+Iteration number  2  ..
+New best ks:  0.005111154 
+Best ks:  0.01462258 
+Found feature that improves KS score!
+KS score:  0.005111154 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.005111154 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.007840869 
+Best ks:  0.005111154 
+KS score:  0.007840869 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 20 
+Global best score so far:  0.005111154 
+
+
+Iteration number  4  ..
+New best ks:  0.006939484 
+Best ks:  0.007840869 
+Found feature that improves KS score!
+KS score:  0.006939484 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.005111154 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.01020183 
+Best ks:  0.006939484 
+KS score:  0.01020183 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.005111154 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.005111154 
+Features returned in ESet:  Amplification Peak 19 Deletion Peak 35 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.002320841 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.002320841 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.004794524 
+Best ks:  0.002320841 
+KS score:  0.004794524 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.002320841 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.002320841 
+Features returned in ESet:  Deletion Peak 40 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.00962029 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.008332935 
+
+
+Iteration number  2  ..
+New best ks:  0.008332935 
+Best ks:  0.00962029 
+Found feature that improves KS score!
+KS score:  0.008332935 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.008332935 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.01850512 
+Best ks:  0.008332935 
+KS score:  0.01850512 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.008332935 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.008332935 
+Features returned in ESet:  Amplification Peak 20 Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02103494 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.02103494 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.02899696 
+Best ks:  0.02103494 
+KS score:  0.02899696 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.02103494 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02103494 
+Features returned in ESet:  Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07407422 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.06845935 
+
+
+Iteration number  2  ..
+New best ks:  0.06845935 
+Best ks:  0.07407422 
+Found feature that improves KS score!
+KS score:  0.06845935 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 20 
+Global best score so far:  0.06332021 
+
+
+Iteration number  3  ..
+New best ks:  0.06332021 
+Best ks:  0.06845935 
+Found feature that improves KS score!
+KS score:  0.06332021 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.04107386 
+
+
+Iteration number  4  ..
+New best ks:  0.04107386 
+Best ks:  0.06332021 
+Found feature that improves KS score!
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak 23" "Deletion Peak 40"      "Amplification Peak 20" "Deletion Peak 25"     
+KS score:  0.04107386 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.04107386 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.0571095 
+Best ks:  0.04107386 
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak 23" "Deletion Peak 40"      "Amplification Peak 20" "Deletion Peak 25"     
+KS score:  0.0571095 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.04107386 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04107386 
+Features returned in ESet:  Amplification Peak 23 Deletion Peak 40 Amplification Peak 20 Deletion Peak 25 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09766591 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.09766591 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1487593 
+Best ks:  0.09766591 
+KS score:  0.1487593 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.09766591 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.09766591 
+Features returned in ESet:  Deletion Peak  4 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02027182 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.01990465 
+
+
+Iteration number  2  ..
+New best ks:  0.01990465 
+Best ks:  0.02027182 
+Found feature that improves KS score!
+KS score:  0.01990465 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.01990465 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.02167847 
+Best ks:  0.01990465 
+KS score:  0.02167847 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.01990465 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01990465 
+Features returned in ESet:  Amplification Peak 23 Deletion Peak 34 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01868246 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.01293583 
+
+
+Iteration number  2  ..
+New best ks:  0.01293583 
+Best ks:  0.01868246 
+Found feature that improves KS score!
+KS score:  0.01293583 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.01293583 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.02729776 
+Best ks:  0.01293583 
+KS score:  0.02729776 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.01293583 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01293583 
+Features returned in ESet:  Deletion Peak 31 Deletion Peak 19 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.078352 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.06901391 
+
+
+Iteration number  2  ..
+New best ks:  0.06901391 
+Best ks:  0.078352 
+Found feature that improves KS score!
+KS score:  0.06901391 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.06901391 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.0845169 
+Best ks:  0.06901391 
+KS score:  0.0845169 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 20 
+Global best score so far:  0.06901391 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06901391 
+Features returned in ESet:  Deletion Peak 39 Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1775489 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.1004317 
+
+
+Iteration number  2  ..
+New best ks:  0.1004317 
+Best ks:  0.1775489 
+Found feature that improves KS score!
+KS score:  0.1004317 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.1004317 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1095234 
+Best ks:  0.1004317 
+KS score:  0.1095234 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 47 
+Global best score so far:  0.1004317 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1004317 
+Features returned in ESet:  Deletion Peak 46 Deletion Peak 40 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1005381 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.0778841 
+
+
+Iteration number  2  ..
+New best ks:  0.0778841 
+Best ks:  0.1005381 
+Found feature that improves KS score!
+KS score:  0.0778841 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.0778841 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1399379 
+Best ks:  0.0778841 
+KS score:  0.1399379 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.0778841 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.0778841 
+Features returned in ESet:  Deletion Peak 29 Deletion Peak 40 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1264816 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.07797228 
+
+
+Iteration number  2  ..
+New best ks:  0.07797228 
+Best ks:  0.1264816 
+Found feature that improves KS score!
+KS score:  0.07797228 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.07797228 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1040774 
+Best ks:  0.07797228 
+KS score:  0.1040774 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.07797228 
+
+
+Iteration number  4  ..
+New best ks:  0.08872778 
+Best ks:  0.1040774 
+Found feature that improves KS score!
+KS score:  0.08872778 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.07797228 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.09527508 
+Best ks:  0.08872778 
+KS score:  0.09527508 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.07797228 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  5 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.07797228 
+Features returned in ESet:  Deletion Peak 27 Deletion Peak 24 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1697201 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.1697201 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.2375782 
+Best ks:  0.1697201 
+KS score:  0.2375782 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.1697201 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1697201 
+Features returned in ESet:  Deletion Peak 18 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07078033 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.03893308 
+
+
+Iteration number  2  ..
+New best ks:  0.03893308 
+Best ks:  0.07078033 
+Found feature that improves KS score!
+KS score:  0.03893308 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 44 
+Global best score so far:  0.03893308 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.04576302 
+Best ks:  0.03893308 
+KS score:  0.04576302 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.03893308 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03893308 
+Features returned in ESet:  Deletion Peak 31 Deletion Peak 40 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.005913089 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.005913089 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.006960675 
+Best ks:  0.005913089 
+KS score:  0.006960675 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.005913089 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.005913089 
+Features returned in ESet:  Deletion Peak  4 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03878249 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  2 
+Global best score so far:  0.03878249 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.08060537 
+Best ks:  0.03878249 
+KS score:  0.08060537 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.03878249 
+
+
+Iteration number  3  ..
+New best ks:  0.07922472 
+Best ks:  0.08060537 
+Found feature that improves KS score!
+KS score:  0.07922472 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  1 
+Global best score so far:  0.03878249 
+
+
+Iteration number  4  ..
+New best ks:  0.06594023 
+Best ks:  0.07922472 
+Found feature that improves KS score!
+KS score:  0.06594023 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.03878249 
+
+
+Iteration number  5  ..
+New best ks:  0.05607277 
+Best ks:  0.06594023 
+Found feature that improves KS score!
+KS score:  0.05607277 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.03878249 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.07426367 
+Best ks:  0.05607277 
+KS score:  0.07426367 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.03878249 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  6 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03878249 
+Features returned in ESet:  Deletion Peak 25 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1700095 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.09178325 
+
+
+Iteration number  2  ..
+New best ks:  0.09178325 
+Best ks:  0.1700095 
+Found feature that improves KS score!
+KS score:  0.09178325 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 43 
+Global best score so far:  0.09178325 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.09752042 
+Best ks:  0.09178325 
+KS score:  0.09752042 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.09178325 
+
+
+Iteration number  4  ..
+New best ks:  0.0963323 
+Best ks:  0.09752042 
+Found feature that improves KS score!
+KS score:  0.0963323 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.09138665 
+
+
+Iteration number  5  ..
+New best ks:  0.09138665 
+Best ks:  0.0963323 
+Found feature that improves KS score!
+KS score:  0.09138665 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.09138665 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.1273928 
+Best ks:  0.09138665 
+KS score:  0.1273928 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.09138665 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  6 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.09138665 
+Features returned in ESet:  Deletion Peak 20 Deletion Peak 40 Deletion Peak 19 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06813698 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.06591498 
+
+
+Iteration number  2  ..
+New best ks:  0.06591498 
+Best ks:  0.06813698 
+Found feature that improves KS score!
+KS score:  0.06591498 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.06591498 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.08769964 
+Best ks:  0.06591498 
+KS score:  0.08769964 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.06591498 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06591498 
+Features returned in ESet:  Deletion Peak 35 Amplification Peak 21 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1871771 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  5 
+Global best score so far:  0.1121161 
+
+
+Iteration number  2  ..
+New best ks:  0.1121161 
+Best ks:  0.1871771 
+Found feature that improves KS score!
+KS score:  0.1121161 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.1121161 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1395207 
+Best ks:  0.1121161 
+KS score:  0.1395207 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.1121161 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1121161 
+Features returned in ESet:  Amplification Peak 24 Deletion Peak  5 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03023811 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.03023811 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.03863332 
+Best ks:  0.03023811 
+KS score:  0.03863332 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 44 
+Global best score so far:  0.03023811 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03023811 
+Features returned in ESet:  Deletion Peak 38 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08486187 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.08486187 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1088869 
+Best ks:  0.08486187 
+KS score:  0.1088869 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.08486187 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.08486187 
+Features returned in ESet:  Amplification Peak 25 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02319599 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.01845828 
+
+
+Iteration number  2  ..
+New best ks:  0.01845828 
+Best ks:  0.02319599 
+Found feature that improves KS score!
+KS score:  0.01845828 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.01845828 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.04231838 
+Best ks:  0.01845828 
+KS score:  0.04231838 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.01845828 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01845828 
+Features returned in ESet:  Amplification Peak 25 Deletion Peak 34 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.04613744 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 23 
+Global best score so far:  0.0297916 
+
+
+Iteration number  2  ..
+New best ks:  0.0297916 
+Best ks:  0.04613744 
+Found feature that improves KS score!
+KS score:  0.0297916 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.0297916 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.04467554 
+Best ks:  0.0297916 
+KS score:  0.04467554 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  2 
+Global best score so far:  0.0297916 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.0297916 
+Features returned in ESet:  Deletion Peak 44 Amplification Peak 23 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1891238 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.149596 
+
+
+Iteration number  2  ..
+New best ks:  0.149596 
+Best ks:  0.1891238 
+Found feature that improves KS score!
+KS score:  0.149596 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.149596 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1812694 
+Best ks:  0.149596 
+KS score:  0.1812694 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.1291227 
+
+
+Iteration number  4  ..
+New best ks:  0.1291227 
+Best ks:  0.1812694 
+Found feature that improves KS score!
+KS score:  0.1291227 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.1267293 
+
+
+Iteration number  5  ..
+New best ks:  0.1267293 
+Best ks:  0.1291227 
+Found feature that improves KS score!
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak  5" "Amplification Peak  6" "Deletion Peak  4"      "Amplification Peak 13"
+KS score:  0.1267293 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.1267293 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.1507877 
+Best ks:  0.1267293 
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak  5" "Amplification Peak  6" "Deletion Peak  4"      "Amplification Peak 13"
+KS score:  0.1507877 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.1267293 
+
+
+Iteration number  7  ..
+New best ks:  0.1352728 
+Best ks:  0.1507877 
+Found feature that improves KS score!
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak  5" "Amplification Peak  6" "Deletion Peak  4"      "Amplification Peak 13"
+KS score:  0.1352728 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 44 
+Global best score so far:  0.1267293 
+Allowing for one non-minimizing step..
+
+
+Iteration number  8  ..
+New best ks:  0.1801019 
+Best ks:  0.1352728 
+Performing backward search step..
+Iterating over  4  chosen features..
+[1] "Amplification Peak  5" "Amplification Peak  6" "Deletion Peak  4"      "Amplification Peak 13"
+KS score:  0.1801019 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.1267293 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  8 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1267293 
+Features returned in ESet:  Amplification Peak  5 Amplification Peak  6 Deletion Peak  4 Amplification Peak 13 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07569429 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.07569429 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.08786197 
+Best ks:  0.07569429 
+KS score:  0.08786197 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.07569429 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.07569429 
+Features returned in ESet:  Deletion Peak 24 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01283833 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 21 
+Global best score so far:  0.01283833 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.01778144 
+Best ks:  0.01283833 
+KS score:  0.01778144 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.01283833 
+
+
+Iteration number  3  ..
+New best ks:  0.01321845 
+Best ks:  0.01778144 
+Found feature that improves KS score!
+KS score:  0.01321845 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.01283833 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.02256006 
+Best ks:  0.01321845 
+KS score:  0.02256006 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  6 
+Global best score so far:  0.01283833 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01283833 
+Features returned in ESet:  Deletion Peak 19 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02295418 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.02295418 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.02842191 
+Best ks:  0.02295418 
+KS score:  0.02842191 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 15 
+Global best score so far:  0.02295418 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02295418 
+Features returned in ESet:  Amplification Peak 13 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.08199673 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.08199673 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.112955 
+Best ks:  0.08199673 
+KS score:  0.112955 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.08199673 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.08199673 
+Features returned in ESet:  Deletion Peak 28 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.2093729 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 14 
+Global best score so far:  0.09005285 
+
+
+Iteration number  2  ..
+New best ks:  0.09005285 
+Best ks:  0.2093729 
+Found feature that improves KS score!
+KS score:  0.09005285 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.05613957 
+
+
+Iteration number  3  ..
+New best ks:  0.05613957 
+Best ks:  0.09005285 
+Found feature that improves KS score!
+KS score:  0.05613957 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.05613957 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.08042413 
+Best ks:  0.05613957 
+KS score:  0.08042413 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 25 
+Global best score so far:  0.05613957 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05613957 
+Features returned in ESet:  Amplification Peak  2 Amplification Peak 14 Amplification Peak 12 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02842242 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.02842242 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.0432019 
+Best ks:  0.02842242 
+KS score:  0.0432019 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.02842242 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02842242 
+Features returned in ESet:  Deletion Peak 28 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1093437 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 23 
+Global best score so far:  0.1032032 
+
+
+Iteration number  2  ..
+New best ks:  0.1032032 
+Best ks:  0.1093437 
+Found feature that improves KS score!
+KS score:  0.1032032 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.1032032 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1460549 
+Best ks:  0.1032032 
+KS score:  0.1460549 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.1032032 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1032032 
+Features returned in ESet:  Deletion Peak 27 Amplification Peak 23 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.04641155 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.03438397 
+
+
+Iteration number  2  ..
+New best ks:  0.03438397 
+Best ks:  0.04641155 
+Found feature that improves KS score!
+KS score:  0.03438397 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.03438397 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.05081178 
+Best ks:  0.03438397 
+KS score:  0.05081178 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 22 
+Global best score so far:  0.03438397 
+
+
+Iteration number  4  ..
+New best ks:  0.05035014 
+Best ks:  0.05081178 
+Found feature that improves KS score!
+KS score:  0.05035014 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.03438397 
+Allowing for one non-minimizing step..
+
+
+Iteration number  5  ..
+New best ks:  0.06399412 
+Best ks:  0.05035014 
+KS score:  0.06399412 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  8 
+Global best score so far:  0.03438397 
+
+
+Iteration number  6  ..
+New best ks:  0.04904794 
+Best ks:  0.06399412 
+Found feature that improves KS score!
+KS score:  0.04904794 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  5 
+Global best score so far:  0.03438397 
+Allowing for one non-minimizing step..
+
+
+Iteration number  7  ..
+New best ks:  0.06607305 
+Best ks:  0.04904794 
+KS score:  0.06607305 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 20 
+Global best score so far:  0.03438397 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  7 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03438397 
+Features returned in ESet:  Amplification Peak  6 Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07694214 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 20 
+Global best score so far:  0.06690033 
+
+
+Iteration number  2  ..
+New best ks:  0.06690033 
+Best ks:  0.07694214 
+Found feature that improves KS score!
+KS score:  0.06690033 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.06690033 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1031806 
+Best ks:  0.06690033 
+KS score:  0.1031806 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 36 
+Global best score so far:  0.06690033 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06690033 
+Features returned in ESet:  Amplification Peak  2 Deletion Peak 20 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06064795 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.02734635 
+
+
+Iteration number  2  ..
+New best ks:  0.02734635 
+Best ks:  0.06064795 
+Found feature that improves KS score!
+KS score:  0.02734635 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.02734635 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.02955527 
+Best ks:  0.02734635 
+KS score:  0.02955527 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.02734635 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02734635 
+Features returned in ESet:  Amplification Peak  5 Deletion Peak 37 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.0833723 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 24 
+Global best score so far:  0.06583838 
+
+
+Iteration number  2  ..
+New best ks:  0.06583838 
+Best ks:  0.0833723 
+Found feature that improves KS score!
+KS score:  0.06583838 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.06583838 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.07353289 
+Best ks:  0.06583838 
+KS score:  0.07353289 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.06583838 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06583838 
+Features returned in ESet:  Amplification Peak 25 Deletion Peak 24 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.01354894 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.01354894 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.02491203 
+Best ks:  0.01354894 
+KS score:  0.02491203 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.01354894 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.01354894 
+Features returned in ESet:  Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1045264 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.1045264 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1173183 
+Best ks:  0.1045264 
+KS score:  0.1173183 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.1045264 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1045264 
+Features returned in ESet:  Deletion Peak 35 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.001780659 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.001780659 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.002000881 
+Best ks:  0.001780659 
+KS score:  0.002000881 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.001780659 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.001780659 
+Features returned in ESet:  Deletion Peak 38 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.007409505 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.007409505 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.01371536 
+Best ks:  0.007409505 
+KS score:  0.01371536 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.007409505 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.007409505 
+Features returned in ESet:  Amplification Peak 23 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1052035 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.06944174 
+
+
+Iteration number  2  ..
+New best ks:  0.06944174 
+Best ks:  0.1052035 
+Found feature that improves KS score!
+KS score:  0.06944174 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.06944174 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.0911756 
+Best ks:  0.06944174 
+KS score:  0.0911756 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.06944174 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06944174 
+Features returned in ESet:  Amplification Peak  9 Amplification Peak 12 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.008624995 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 16 
+Global best score so far:  0.008447016 
+
+
+Iteration number  2  ..
+New best ks:  0.008447016 
+Best ks:  0.008624995 
+Found feature that improves KS score!
+KS score:  0.008447016 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.008447016 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.02312492 
+Best ks:  0.008447016 
+KS score:  0.02312492 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.008447016 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.008447016 
+Features returned in ESet:  Amplification Peak 26 Amplification Peak 16 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.2794085 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 19 
+Global best score so far:  0.2343858 
+
+
+Iteration number  2  ..
+New best ks:  0.2343858 
+Best ks:  0.2794085 
+Found feature that improves KS score!
+KS score:  0.2343858 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 14 
+Global best score so far:  0.2343858 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.2592047 
+Best ks:  0.2343858 
+KS score:  0.2592047 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.2343858 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.2343858 
+Features returned in ESet:  Deletion Peak 20 Deletion Peak 19 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.02671987 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  1 
+Global best score so far:  0.02116075 
+
+
+Iteration number  2  ..
+New best ks:  0.02116075 
+Best ks:  0.02671987 
+Found feature that improves KS score!
+KS score:  0.02116075 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.02116075 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.03218661 
+Best ks:  0.02116075 
+KS score:  0.03218661 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.02116075 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.02116075 
+Features returned in ESet:  Deletion Peak 35 Amplification Peak  1 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07356704 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.03338215 
+
+
+Iteration number  2  ..
+New best ks:  0.03338215 
+Best ks:  0.07356704 
+Found feature that improves KS score!
+KS score:  0.03338215 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.03338215 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.0390845 
+Best ks:  0.03338215 
+KS score:  0.0390845 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.03338215 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03338215 
+Features returned in ESet:  Deletion Peak 34 Amplification Peak 26 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07230613 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.06919566 
+
+
+Iteration number  2  ..
+New best ks:  0.06919566 
+Best ks:  0.07230613 
+Found feature that improves KS score!
+KS score:  0.06919566 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak  2 
+Global best score so far:  0.06919566 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.09027971 
+Best ks:  0.06919566 
+KS score:  0.09027971 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  5 
+Global best score so far:  0.06919566 
+
+
+Iteration number  4  ..
+New best ks:  0.0708875 
+Best ks:  0.09027971 
+Found feature that improves KS score!
+KS score:  0.0708875 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.06523095 
+
+
+Iteration number  5  ..
+New best ks:  0.06523095 
+Best ks:  0.0708875 
+Found feature that improves KS score!
+KS score:  0.06523095 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 40 
+Global best score so far:  0.06523095 
+Allowing for one non-minimizing step..
+
+
+Iteration number  6  ..
+New best ks:  0.07091228 
+Best ks:  0.06523095 
+KS score:  0.07091228 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.06523095 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  6 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.06523095 
+Features returned in ESet:  Deletion Peak  4 Deletion Peak  3 Deletion Peak 34 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1237944 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 15 
+Global best score so far:  0.1237944 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1595609 
+Best ks:  0.1237944 
+KS score:  0.1595609 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.1237944 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1237944 
+Features returned in ESet:  Deletion Peak 39 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1373878 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.1209428 
+
+
+Iteration number  2  ..
+New best ks:  0.1209428 
+Best ks:  0.1373878 
+Found feature that improves KS score!
+KS score:  0.1209428 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.1209428 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.1898859 
+Best ks:  0.1209428 
+KS score:  0.1898859 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.1209428 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1209428 
+Features returned in ESet:  Amplification Peak 23 Deletion Peak  3 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.07492437 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.07492437 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1067683 
+Best ks:  0.07492437 
+KS score:  0.1067683 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 48 
+Global best score so far:  0.07492437 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.07492437 
+Features returned in ESet:  Deletion Peak 35 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.03855322 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 18 
+Global best score so far:  0.03155331 
+
+
+Iteration number  2  ..
+New best ks:  0.03155331 
+Best ks:  0.03855322 
+Found feature that improves KS score!
+KS score:  0.03155331 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.03155331 
+Allowing for one non-minimizing step..
+
+
+Iteration number  3  ..
+New best ks:  0.04239751 
+Best ks:  0.03155331 
+KS score:  0.04239751 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.03155331 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  3 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03155331 
+Features returned in ESet:  Deletion Peak 37 Deletion Peak 18 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.007830623 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.002556784 
+
+
+Iteration number  2  ..
+New best ks:  0.002556784 
+Best ks:  0.007830623 
+Found feature that improves KS score!
+KS score:  0.002556784 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 23 
+Global best score so far:  0.002244381 
+
+
+Iteration number  3  ..
+New best ks:  0.002244381 
+Best ks:  0.002556784 
+Found feature that improves KS score!
+KS score:  0.002244381 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 35 
+Global best score so far:  0.002244381 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.01018643 
+Best ks:  0.002244381 
+KS score:  0.01018643 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 34 
+Global best score so far:  0.002244381 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.002244381 
+Features returned in ESet:  Amplification Peak 16 Deletion Peak  3 Amplification Peak 23 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.05217225 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 31 
+Global best score so far:  0.05217225 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.05225279 
+Best ks:  0.05217225 
+KS score:  0.05225279 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.03975903 
+
+
+Iteration number  3  ..
+New best ks:  0.03975903 
+Best ks:  0.05225279 
+Found feature that improves KS score!
+KS score:  0.03975903 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.03975903 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.04631665 
+Best ks:  0.03975903 
+KS score:  0.04631665 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  4 
+Global best score so far:  0.03975903 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.03975903 
+Features returned in ESet:  Amplification Peak 12 Deletion Peak 37 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1011161 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 26 
+Global best score so far:  0.1011161 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.1108426 
+Best ks:  0.1011161 
+KS score:  0.1108426 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 23 
+Global best score so far:  0.1011161 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1011161 
+Features returned in ESet:  Deletion Peak 29 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.1366434 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 12 
+Global best score so far:  0.1366434 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.2211198 
+Best ks:  0.1366434 
+KS score:  0.2211198 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  1 
+Global best score so far:  0.1366434 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  2 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.1366434 
+Features returned in ESet:  Amplification Peak 21 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.06179449 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.06179449 
+Allowing for one non-minimizing step..
+
+
+Iteration number  2  ..
+New best ks:  0.06550849 
+Best ks:  0.06179449 
+KS score:  0.06550849 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 13 
+Global best score so far:  0.04836441 
+
+
+Iteration number  3  ..
+New best ks:  0.04836441 
+Best ks:  0.06550849 
+Found feature that improves KS score!
+KS score:  0.04836441 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 25 
+Global best score so far:  0.04836441 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.06747998 
+Best ks:  0.04836441 
+KS score:  0.06747998 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak  3 
+Global best score so far:  0.04836441 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.04836441 
+Features returned in ESet:  Deletion Peak 24 Amplification Peak 13 
+
+
+Using provided ordering to re-rank samples..
+Using  pval  as measure of improvement measure ..
+
+Ranking ESet features by metric..
+Starting with feature having best ranking ..
+Score:  0.09904827 
+
+
+Iteration number  1  ..
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 38 
+Global best score so far:  0.0641844 
+
+
+Iteration number  2  ..
+New best ks:  0.0641844 
+Best ks:  0.09904827 
+Found feature that improves KS score!
+KS score:  0.0641844 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 39 
+Global best score so far:  0.05466693 
+
+
+Iteration number  3  ..
+New best ks:  0.05466693 
+Best ks:  0.0641844 
+Found feature that improves KS score!
+KS score:  0.05466693 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Deletion Peak 37 
+Global best score so far:  0.05466693 
+Allowing for one non-minimizing step..
+
+
+Iteration number  4  ..
+New best ks:  0.06147285 
+Best ks:  0.05466693 
+KS score:  0.06147285 
+Forming meta-feature matrix with all other features in dataset..
+Feature that produced best score in combination with previous meta-feature:  Amplification Peak 12 
+Global best score so far:  0.05466693 
+Allowing for one non-minimizing step..
+
+
+Number of iterations covered:  4 
+Number of continuous mistakes made:  2 
+Best KS score attained over iterations:  0.05466693 
+Features returned in ESet:  Amplification Peak 13 Deletion Peak 38 Deletion Peak 39 
+
+
+FINISHED
+Time elapsed:  1.04  mins 
+
+Permutation p-value:  0.00990099 
+

@@ -1,3 +1,18 @@
+#' Verbose control for diagnostic messages
+#' 
+#' Control verbosity of messages used for stepwise heuristic search tracking
+#' @param ...
+#' @return a message corresponding to a print statement if verbose is set to TRUE
+#' @export 
+verbose <- function(...){
+  #Fetch verbose option set in the ks.stepwise function
+  opt <- getOption("verbose",FALSE)
+  if(!opt) return(invisible(NULL))
+  msgs <- list(...)
+  #msgs <- do.call(paste, c(msgs))
+  message(msgs)
+}
+
 #' Pre-filter features
 #' 
 #' Pre-filter a dataset prior to running step-wise heuristic search in order to avoid testing features that are too prevalent across samples in the dataset
@@ -19,11 +34,13 @@ prefilter_data<-function(ES,
 #' 
 #' Evaluates a list of stepwise search results from the ks.stepwise function for overlapping features. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
 #' @param l a list of expression sets returned by each stepwise search run of the top 'n' specified features
+#' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided". 
 #' @param do.plot a logical indicating whether you want to only plot the resulting evaluation matrix instead of returning it. Default is TRUE 
 #' @return A binary overlap matrix (or a heatmap thereof) with rows being the union of all reported features and the column being the starting feature for each run. 
 #' 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
 #' @export  
-topn.eval<-function(l,                                 
+topn.eval<-function(l,
+                    alt="two.sided", 
                     do.plot=TRUE){
   
   f_list<-lapply(l,featureNames)  #Get the list of feature names from each ESet
@@ -38,20 +55,31 @@ topn.eval<-function(l,
   m<-do.call(cbind,f_checklist)*1   #Multiplying by 1 is just to convert boolean values into 1's and 0's
   rownames(m)<-f_union
   
-  colnames(m)<-paste(colnames(m)," [",seq(1,ncol(m)),"]",sep="")
+  #Let us compute the KS scores for each top_n run so that we can arrange the results by score
+  #This is just to prioritize results, in a way, instead of just clustering them heirarchically
+  m.list<-lapply(l,FUN=function(x){t(matrix(ifelse(colSums(exprs(x))==0,0,1)))})
+  
+  #Fetch the p-values corresponding to the KS test for each top-n union
+  s<-sapply(lapply(m.list,ks.genescore.mat,"less",NULL),"[[",2) # Here alternative is "less" and weight = NULL
+  names(s)<-topn_names
+  
+  #Order matrix in increasing order of KS score p-values
+  #Add labels of which rank it was originally, and what the meta-feature p-value is
+  # Here I take the logit() transform of the p-value just to avoid 0s (if p-values are too small)
+  colnames(m)<-paste(colnames(m)," [",seq(1,ncol(m)),"] ",round(logit(s),3),sep="")
+  m<-m[,order(s)]
   
   if(do.plot){
-    #plot_title=paste("Meta-feature evaluation for top ",ncol(m),"\nstarting feature points",sep="")
     heatmap.2(x = m,
-              #col=c("white","grey","firebrick3"),
-              col=c("white","firebrick3"),
+              col=c("white","firebrick2"),
+              Colv=FALSE,
+              dendrogram="none",
               margins=c(10,10),
-              cexRow=0.95,
-              cexCol=0.95,
+              cexRow=0.7,
+              cexCol=0.7,
               cex.main=0.8,
               key=F,
               trace="none",
-              #         main=plot_title,
               sepwidth=c(0.1,0.1),
               sepcolor="grey90",
               colsep=1:ncol(m),
@@ -59,7 +87,7 @@ topn.eval<-function(l,
     
     legend("topleft",
            legend=c("Present","Absent"),
-           fill=c("firebrick3","white"),
+           fill=c("firebrick2","white"),
            #legend=c("Present","Absent","Starting"),
            #fill=c("grey","white","firebrick3"),
            bty="n")
@@ -85,9 +113,9 @@ backward_check<-function(ESet,
                          m,
                          alt,
                          wts){ 
-  cat("Performing backward search step..\n")
-  cat("Iterating over ",length(glob.f)," chosen features..\n")
-  print(glob.f)
+  verbose("Performing backward search step..\n")
+  verbose("Iterating over ",length(glob.f)," chosen features..\n")
+  #print(glob.f)
   #Matrix of only global best features so far
   gmat<-exprs(ESet[glob.f,])
   rownames(gmat)<-glob.f #Not sure if this is required (might already be the case)
@@ -113,7 +141,7 @@ backward_check<-function(ESet,
   f.best.score<-f.scores[f.best.index]
   #Check if any one of the computed scores has a better score than the entire meta-feature's score
   if(ifelse(m=="pval", (sign(f.best.score)>0 & abs(f.best.score) < abs(glob.f.ks)),f.best.score > glob.f.ks)){
-    cat("Found improvement on removing existing feature..\n")
+    verbose("Found improvement on removing existing feature..\n")
     #Return the set of features that gave a better score than the existing best score, and the score as well
     return(list(f.names[[f.best.index]],f.best.score))  
   } else{
@@ -135,7 +163,8 @@ backward_check<-function(ESet,
 #' @param decr a logical indicating whether samples are sorted in decreasing order of phenotype of interest. This affects how the ks statistic is interpreted
 #' @param best_score_only a logical indicating whether or not the function should return only the score corresponding to the search results
 #' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"
-#' @param wts a vector of weights to use if performing weighted-KS testing. Default is NULL 
+#' @param wts a vector of weights to use if performing weighted-KS testing. Default is NULL
+#' @param verb a logical indicating whether or not to print diagnostic messages. Default is FALSE 
 #' @return If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, an expression set object containing the features whose union gave the best score is returned. 
 #' @export
 ks.stepwise<-function(ranking=NULL,  
@@ -144,23 +173,27 @@ ks.stepwise<-function(ranking=NULL,
                       top_score_start=TRUE, 
                       back_search=TRUE, 
                       cust_start=NULL,
-                      decr=T, #Set this to true if ASSIGN score sorting is done in decreasing order of ASSIGN scores. False otherwise
+                      decr=TRUE, #Set this to true if ASSIGN score sorting is done in decreasing order of ASSIGN scores. False otherwise
                       #Reverses direction of KS statistic, and hence, direction of feature sorting 
                       best_score_only=FALSE, 
                       alt="two.sided", 
-                      wts=NULL 
+                      wts=NULL,
+                      verb=FALSE
 ){
   
-  #Use ranking to re-order 
+  #Setup verbose option definition
+  options(verbose=verb)
+  
+  #Use ranking to re-order samples 
   if(!(is.null(ranking))){
     if(length(ranking)!=ncol(ES))
       stop("Ranking variable has to be of the same length as the number of samples\n\n")
-    cat("Using provided ordering to re-rank samples..\n")
+    verbose("Using provided ordering to re-rank samples..\n")
     ES<-ES[,ranking]
   }
   #Compute row-wise directional KS scores for existing (raw/starting) binary features in ESet
   if(!(is.null(wts)))
-    cat("Using weighted method for KS testing using provided weights..\n")
+    verbose("Using weighted method for KS testing using provided weights..\n")
   
   ks<-ks.genescore.mat(mat=exprs(ES),alt=alt,weight=wts)
   ks.stat<-ks[1,]
@@ -173,23 +206,36 @@ ks.stepwise<-function(ranking=NULL,
   score<-ifelse(rep(metric,nrow(ES)) %in% "pval",sign(ks.stat)*ks.pval, ks.stat)
   
   
-  cat("Using ",metric," as measure of improvement measure ..\n\n")
+  verbose("Using ",metric," as measure of improvement measure ..\n\n")
   
   
-  #Make sure the ESet is ordered in increasing/decreasing order of user-defined score (ks stat or p-val)
+  
+  #ADDED
+  #Order ESet in increasing/decreasing order of user-defined score (ks stat or p-val)
+  #This comes in handy when doing the top-N evaluation of the top N 'best' features
+  
+  score.rank<-if (metric!="pval") order(score) else order(-sign(score),score)
+  verbose("Ranking ESet features by metric..\n")
+  ES<-ES[score.rank,]
+  score<-score[score.rank]
+  ##
+  
   #Here, we will assume ASSIGN scores have samples ranked in decreasing order
   #This means an higher/positive KS stat is associated with a higher ASSIGN score 
   
   #Let us start with the first (top ranked) feature
   #Fetch index of feature having best KS score. We start here
   if(top_score_start==T){
-    cat("Starting with feature having best ranking ..\n")
-    best.ks.index<-ifelse(metric!="pval",which.max(score),order(-sign(score),score)[1]) #This assumes that samples are ordered in decreasing order of ASSIGN score
+    verbose("Starting with feature having best ranking ..\n")
+    #MODIFIED
+    #best.ks.index<-ifelse(metric!="pval",which.max(score),order(-sign(score),score)[1]) #This assumes that samples are ordered in decreasing order of ASSIGN score
+    best.ks.index<-1
+    ##
     best.ks<-score[best.ks.index]
     
   } else {
     if(!is.null(cust_start)) {
-      cat("Starting with specified sample feature ..\n")
+      verbose("Starting with specified sample feature ..\n")
       best.ks.index<-cust_start
       best.ks<-score[best.ks.index]		
     } else {
@@ -198,8 +244,9 @@ ks.stepwise<-function(ranking=NULL,
     }
   }
   #Print the featureData for this starting point feature so that we are aware
-  print(as.character(fData(ES)[best.ks.index,1]))
-  cat("Score: ",best.ks,"\n")
+  start_feature <- as.character(fData(ES)[best.ks.index,1])
+  verbose("Feature: ",start_feature,"\n")
+  verbose("Score: ",best.ks,"\n")
   
   #Fetch the vector corresponding to best score
   #Set this as the initial 'meta-feature'
@@ -226,27 +273,27 @@ ks.stepwise<-function(ranking=NULL,
   global.best.ks.index<-best.ks.index
   global.best.ks.features<-c(as.character(fData(ES)[best.ks.index,1]))
   
+  
   ###### BEGIN ITERATIONS ###############
   #######################################
   
-  
+  verbose("\n\nBeginning stepwise search..\n\n")
   
   #This condition defines the search criteria
   while (ifelse(metric=="pval", (sign(new.best.ks)>0 & abs(new.best.ks) < abs(best.ks)),new.best.ks > best.ks) | b < 2){
-    #while(new.best.ks < best.ks | b < 3 ) {
-    cat("\n\n")
-    cat("Iteration number ",i+1," ..\n")
+    verbose("\n\n")
+    verbose("Iteration number ",i+1," ..\n")
     
     
     if(i!=0){
       #Not the first iteration	
       
-      cat("New best ks: ",new.best.ks,"\n")
-      cat("Best ks: ",best.ks,"\n")
+      verbose("New best ks: ",new.best.ks,"\n")
+      verbose("Best ks: ",best.ks,"\n")
       
       if(ifelse(metric=="pval", (sign(new.best.ks)>0 & abs(new.best.ks) < abs(best.ks)),new.best.ks > best.ks))
       {
-        cat("Found feature that improves KS score!\n")
+        verbose("Found feature that improves KS score!\n")
         #Now that we have an improvement, let us reset the 'continuous mistake counter' to 0
         b=0
       }
@@ -274,16 +321,16 @@ ks.stepwise<-function(ranking=NULL,
       #Reset current minimum values and feature to new minimum values and feature
       best.meta<-new.best.meta
       best.ks<-new.best.ks
-      cat("KS score: ", best.ks,"\n")
+      verbose("KS score: ", best.ks,"\n")
     }
     
     
     #Take the OR function between that feature and all other features, to see which gives the best KS score
     #Keep in mind, the number of rows in meta.mat keeps reducing by one each time we find a hit that improves the KS score
-    cat("Forming meta-feature matrix with all other features in dataset..\n")
+    verbose("Forming meta-feature matrix with all other features in dataset..\n")
     meta.mat<-sweep(exprs(ES)[-best.ks.index,],2,best.meta,`|`)*1
     
-    #cat("Number of rows in meta-feature matrix: ",nrow(meta.mat),"\n")
+    #verbose("Number of rows in meta-feature matrix: ",nrow(meta.mat),"\n")
     #print(rownames(meta.mat))
     
     
@@ -312,16 +359,16 @@ ks.stepwise<-function(ranking=NULL,
     new.best.ks<-scores[hit.best.ks.index] #This is within the meta matrix
     
     #Diagnostic
-    #cat("Best score from meta matrix: ",new.best.ks,"\n")
+    #verbose("Best score from meta matrix: ",new.best.ks,"\n")
     
     
     #Find which feature produced that score, in combination with meta feature used
     best.feature<-rownames(meta.mat)[hit.best.ks.index]
-    cat("Feature that produced best score in combination with previous meta-feature: ",best.feature,"\n")
+    verbose("Feature that produced best score in combination with previous meta-feature: ",best.feature,"\n")
     #Diagnostics
-    #cat("Meta mat index: ",hit.best.ks.index,"\n")
-    #cat("Estimated ES index for feature: ", which(rownames(ES)==best.feature),"\n")
-    #cat("Actual index of feature in ES: ",which(rownames(ES)==best.feature),"\n")
+    #verbose("Meta mat index: ",hit.best.ks.index,"\n")
+    #verbose("Estimated ES index for feature: ", which(rownames(ES)==best.feature),"\n")
+    #verbose("Actual index of feature in ES: ",which(rownames(ES)==best.feature),"\n")
     
     
     #Checking whether it's a new best score
@@ -333,12 +380,12 @@ ks.stepwise<-function(ranking=NULL,
       global.best.ks.features<-c(global.best.ks.features,best.feature)
     }
     
-    cat("Global best score so far: ",global.best.ks,"\n")
+    verbose("Global best score so far: ",global.best.ks,"\n")
     #to the entire ES which will have x more rows than the meta matrix 
     #Let us set a parameter that can allow for a few mistakes
     #If the ks score isn't improving for the metafeature, add a counter (constrained in the while loop entry)
     if(ifelse(metric=="pval", sign(new.best.ks)<0 | (abs(new.best.ks) >= abs(best.ks)),new.best.ks <= best.ks)){
-      cat("Allowing for one non-minimizing step..\n")
+      verbose("Allowing for one non-minimizing step..\n")
       b=b+1
     }
     #Increment counter
@@ -346,23 +393,29 @@ ks.stepwise<-function(ranking=NULL,
   } #########End of while loop
   
   
-  cat("\n\n")
-  cat("Number of iterations covered: ",i,"\n")
-  cat("Number of continuous mistakes made: ",b,"\n")
-  #cat("Total number of mistakes made: ",c,"\n")
-  cat("Best KS score attained over iterations: ",global.best.ks,"\n")
-  cat("Features returned in ESet: ",global.best.ks.features,"\n")
-  cat("\n\n")
+  verbose("\n\n")
+  verbose("Number of iterations covered: ",i,"\n")
+  verbose("Number of continuous mistakes made: ",b,"\n")
+  
+  
+  verbose("\n\nFinished!\n\n")
+  verbose("Best KS score attained over iterations: ",global.best.ks,"\n")
+  verbose("Features returned in ESet: ",global.best.ks.features,"\n")
+  verbose("\n\n")
   
   if(best_score_only==F){
     
     #We don't just want the combination (meta-feature) at the end. We want all the features that make up the meta-feature
     #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
-    if(length(global.best.ks.index)!=1)
+    if(length(global.best.ks.features)!=1){
       #If returning only those features that led to the best global score
-      return(ES[global.best.ks.features,])
+      ES.best<-ES[global.best.ks.features,]
+      #Here, give the returned ESet an annotation based on the starting feature that gave these best results
+      annotation(ES.best) <- start_feature
+      return(ES.best) 
+    }
     else{
-      cat("No meta-feature that improves the enrichment was found ..\n")
+      verbose("No meta-feature that improves the enrichment was found ..\n")
       return(NULL)
     }
   } else{
@@ -385,14 +438,14 @@ generate_permutations<-function(ord, #These are the sample orderings to be permu
   perm <- matrix(NA, nrow=n_perms, ncol=length(ord) )
   if ( !is.null(seed) ){
     set.seed(seed)
-    cat("Seed set: ", seed,"\n")
+    verbose("Seed set: ", seed,"\n")
   }
-  cat("Generating ",n_perms," permuted sample ranks..\n")
+  verbose("Generating ",n_perms," permuted sample ranks..\n")
   for ( i in (1:n_perms) ) {
     perm[i,] <- sample(ord,m)
   }
-  cat("Are all generated permutations unique?..\n")
-  cat(nrow(perm)==nrow(unique.matrix(perm)))
+  verbose("Are all generated permutations unique?..\n")
+  verbose(nrow(perm)==nrow(unique.matrix(perm)))
   return(perm) 
 }
 
@@ -428,6 +481,7 @@ null_ks<-function(ranking=NULL,
   
   cat("\n\n\nBEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n\n\n")
   
+  
   if(!is.null(cust_start)) 
     tss<-FALSE
   else
@@ -441,7 +495,7 @@ null_ks<-function(ranking=NULL,
   if(ncores > 1 && require(doMC)){
     registerDoMC(ncores)
     parallel = T
-    cat("Running tests in parallel..\n")
+    verbose("Running tests in parallel..\n")
   } else {
     registerDoSEQ()
     progress = "text"
@@ -451,6 +505,10 @@ null_ks<-function(ranking=NULL,
                                             n_perms=nperm,
                                             seed=seed)
   
+  #Set verbose to FALSE since we don't want to print anything
+  options(.null_ks.verb=FALSE)
+  
+  cat("Computing observed best score ..\n\n")
   obs.best_score<-unlist(ks.stepwise(ranking=ranking, #Here, we would pass the SAME ranks specified in the null_ks function, intended for the observed search results
                                      ES = ES,
                                      metric=metric,
@@ -458,28 +516,24 @@ null_ks<-function(ranking=NULL,
                                      top_score_start = tss,
                                      cust_start=cust_start,
                                      best_score_only = T,
-                                     alt=alt))
+                                     alt=alt,
+                                     wts=wts,
+                                     verb=FALSE))
+  #Use logit transform
+  obs.best_score<-logit(obs.best_score)
   
-  
+  cat("Computing permutation-based scores ..\n\n")
   
   ptm<-proc.time()
-  perm.best_scores<-unlist(alply(perm_labels_matrix,1,ks.stepwise,ES = ES,metric=metric,top_score_start = tss,cust_start=cust_start,best_score_only=T,alt=alt,.parallel=parallel))
+  perm.best_scores<-unlist(alply(perm_labels_matrix,1,ks.stepwise,ES = ES,metric=metric,top_score_start = tss,cust_start=cust_start,best_score_only=T,alt=alt,wts=wts,verb=F,.parallel=parallel))
+
+  #Use logit transform
+  perm.best_scores <- logit(perm.best_scores)
+
   cat("FINISHED\n")
   cat("Time elapsed: ",round((proc.time()-ptm)[3]/60,2)," mins \n\n")
   ############################################################################################## 
   
-  #  perm.best_scores<-c()
-  #  pb <- winProgressBar(title = "Stepwise permutation testing progress", min = 0,
-  #                   max = nperm, width = 300)
-  #  cat("Performing permutation-based significance testing..\n")
-  #  for(n in seq(nperm)){
-  #Here, let us use the random feature sampling method for evaluating a completely random starting point/search method
-  #Set top_score_start to FALSE to do this
-  #  perm.best_scores<-c(perm.best_scores,ks.stepwise(ES = ES[,sample(seq(1,ncol(ES)))],top_score_start = F,metric = metric,best_score_only = T,alt=alt))
-  #  setWinProgressBar(pb, n, title=paste("Stepwise permutation testing  progress: ", round((n/nperm)*100, 0),
-  #                                      "% done"))
-  #   }
-  #  close(pb)
   
   #Add a smoothening factor of 1 if specified
   #This is just to not return a p-value of 0
@@ -487,22 +541,30 @@ null_ks<-function(ranking=NULL,
   if(smooth)
     c=1
   if(metric=="pval")
-    perm.pval<-(sum(abs(perm.best_scores)<abs(obs.best_score))+c)/(nperm+c) 
+    #perm.pval<-(sum(abs(perm.best_scores) < abs(obs.best_score)) + c)/(nperm + c) 
+    perm.pval<-(sum(perm.best_scores < obs.best_score) + c)/(nperm + c) 
   else
-    perm.pval<-(sum(perm.best_scores>obs.best_score)+c)/(nperm+c) 
+    perm.pval<-(sum(perm.best_scores > obs.best_score) + c)/(nperm + c) 
+  
+  
+  cat("Permutation p-value: ",perm.pval,"\n\n")
+
   if(plot==T){
     #Here, let us plot the absolute values of the permutation p-values, for simplicity
     #You only consider absolute values when calculating the permutation p-values
-    g<-ggplot(data=data.frame("x"=abs(perm.best_scores)),aes(x=x))+geom_histogram(fill="black",color="gray")+theme_classic()
-    #geom_density(fill="blue",alpha=0.2)+
+    g<-ggplot(data=data.frame("x"=perm.best_scores),aes(x=x))+
+      geom_histogram(fill="black",color="gray")+
+      theme_classic()
     
     g<-g+geom_vline(xintercept=obs.best_score,linetype="longdash",size=1.5,colour="red")+
       labs(title=paste("Emperical Null distribution (N = ",nperm,")\n Permutation p-val <= ",round(perm.pval,5),"\nBest observed score: ",round(obs.best_score,5),sep=""),
            x="Score",
            y="Count")+
-      scale_x_continuous(expand = c(0, 0),limits=c(0,1)) + scale_y_continuous(expand = c(0, 0))
+      #scale_x_continuous(expand = c(0, 0),limits=c(0,1)) + scale_y_continuous(expand = c(0, 0))
+      scale_x_continuous(expand = c(0, 0)) +
+      scale_y_continuous(expand = c(0, 0))
+    
     print(g)
   }
   
-  cat("Permutation p-value: ",perm.pval,"\n\n")
 }

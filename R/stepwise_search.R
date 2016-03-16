@@ -35,13 +35,15 @@ prefilter_data<-function(ES,
 #' Evaluates a list of stepwise search results from the ks.stepwise function for overlapping features. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
 #' @param l a list of expression sets returned by each stepwise search run of the top 'n' specified features
 #' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided". 
-#' @param do.plot a logical indicating whether you want to only plot the resulting evaluation matrix instead of returning it. Default is TRUE 
-#' @return A binary overlap matrix (or a heatmap thereof) with rows being the union of all reported features and the column being the starting feature for each run. 
+#' @param do.plot a logical indicating whether you want to only plot the resulting evaluation matrix instead of returning it. Default is TRUE
+#' @param best.score.only a logical indicating whether or no to only return the best meta-feature score over the top 'n' evaluation. Default is FALSE 
+#' @return Default is a binary overlap matrix (or a heatmap thereof) with rows being the union of all reported features and the column being the starting feature for each run. If best.score.only is set to TRUE, returns only the numeric score for the best meta-feature score over the top 'n' runs
 #' 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
 #' @export  
 topn.eval<-function(l,
                     alt="two.sided", 
-                    do.plot=TRUE){
+                    do.plot=TRUE,
+                    best.score.only=FALSE){
   
   f_list<-lapply(l,featureNames)  #Get the list of feature names from each ESet
   topn_names<-names(f_list)  #Get the feature names for each top n KSS start 
@@ -62,6 +64,9 @@ topn.eval<-function(l,
   #Fetch the p-values corresponding to the KS test for each top-n union
   s<-sapply(lapply(m.list,ks.genescore.mat,"less",NULL),"[[",2) # Here alternative is "less" and weight = NULL
   names(s)<-topn_names
+  
+  #Fetch the best score from the iterations
+  best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most sig
   
   #Order matrix in increasing order of KS score p-values
   #Add labels of which rank it was originally, and what the meta-feature p-value is
@@ -92,6 +97,9 @@ topn.eval<-function(l,
            #fill=c("grey","white","firebrick3"),
            bty="n")
   }
+  
+  if(best.score.only==TRUE)
+    return(best_score)
   else
     return(m)
 }
@@ -407,17 +415,16 @@ ks.stepwise<-function(ranking=NULL,
     
     #We don't just want the combination (meta-feature) at the end. We want all the features that make up the meta-feature
     #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
-    if(length(global.best.ks.features)!=1){
-      #If returning only those features that led to the best global score
-      ES.best<-ES[global.best.ks.features,]
-      #Here, give the returned ESet an annotation based on the starting feature that gave these best results
-      annotation(ES.best) <- start_feature
-      return(ES.best) 
+    #If returning only those features that led to the best global score
+    ES.best<-ES[global.best.ks.features,]
+    #Here, give the returned ESet an annotation based on the starting feature that gave these best results
+    annotation(ES.best) <- start_feature
+    
+    if(length(global.best.ks.features)==1){
+      verbose("No meta-feature that improves the enrichment was found ..\n") 
     }
-    else{
-      verbose("No meta-feature that improves the enrichment was found ..\n")
-      return(NULL)
-    }
+    
+    return(ES.best)
   } else{
     return(list(global.best.ks)) }
 }

@@ -497,14 +497,15 @@ null_ks<-function(ranking=NULL,
   
   ################################# UNDER CONSTRUCTION #########################################
   # Sets up the parallel backend which will be used by Plyr.
-  parallel = F
+  parallel = FALSE
   progress = "none"
   if(ncores > 1 && require(doMC)){
-    registerDoMC(ncores)
-    parallel = T
-    verbose("Running tests in parallel..\n")
+    registerDoParallel(cores = ncores)
+    parallel = TRUE
+    progress = "none"
+    cat("Running tests in parallel..\n")
+    cat("Using ",ncores," cores..\n")
   } else {
-    registerDoSEQ()
     progress = "text"
   }
   
@@ -532,7 +533,7 @@ null_ks<-function(ranking=NULL,
   cat("Computing permutation-based scores ..\n\n")
   
   ptm<-proc.time()
-  perm.best_scores<-unlist(alply(perm_labels_matrix,1,ks.stepwise,ES = ES,metric=metric,top_score_start = tss,cust_start=cust_start,best_score_only=T,alt=alt,wts=wts,verb=F,.parallel=parallel))
+  perm.best_scores<-unlist(alply(perm_labels_matrix,1,ks.stepwise,ES = ES,metric=metric,top_score_start = tss,cust_start=cust_start,best_score_only=T,alt=alt,wts=wts,verb=F,.parallel=parallel,.progress = progress))
 
   #Use logit transform
   perm.best_scores <- logit(perm.best_scores)
@@ -540,7 +541,7 @@ null_ks<-function(ranking=NULL,
   cat("FINISHED\n")
   cat("Time elapsed: ",round((proc.time()-ptm)[3]/60,2)," mins \n\n")
   ############################################################################################## 
-  
+  registerDoParallel(cores = 1) #Return to using just a single core
   
   #Add a smoothening factor of 1 if specified
   #This is just to not return a p-value of 0

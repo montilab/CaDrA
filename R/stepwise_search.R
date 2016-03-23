@@ -468,7 +468,8 @@ generate_permutations<-function(ord, #These are the sample orderings to be permu
 #' @param plot logical indicating whether or not to plot the emperical null distribution with the observed p-value
 #' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"
 #' @param wts a vector of weights to use if performing weighted-KS testing. Default is NULL 
-#' @param smooth logical indicating whether or not to smoothen the p-value calculation to avoid p-value of 0. Default is TRUE 
+#' @param smooth logical indicating whether or not to smoothen the p-value calculation to avoid p-value of 0. Default is TRUE
+#' @param return_best_score logical indicating whether or not to return the permutation-based p-value computed by the function. Default is FALSE 
 #' @param seed seed set for permutation. Default = 123
 #' @param ncores number of cores to use, if using parallelization. Default = 1
 #' @return a list object containing the permutation-based p-value based on the generated empirical null distribution of stepwise KS searching
@@ -483,6 +484,7 @@ null_ks<-function(ranking=NULL,
                   alt="two.sided",
                   wts=NULL,
                   smooth=TRUE,
+                  return_best_score=FALSE,
                   seed=123,
                   ncores=1){
   
@@ -575,4 +577,6 @@ null_ks<-function(ranking=NULL,
     print(g)
   }
   
+  if(return_best_score)
+      return(perm.pval)
 }

@@ -3,7 +3,8 @@
 # Each plot will be left-aligned
 # Each plot should first be made a ggplotGrob object
 # Ex: grid.draw(rbind_gtable_max(ggplotGrob(ggplot1),ggpotGrob(ggplot2)))
-
+#' @import gtable
+#' @importFrom grid unit.pmax
 rbind_gtable_max <- function(...){
   
   gtl <- list(...)
@@ -35,16 +36,18 @@ rbind_gtable_max <- function(...){
 #' @param d a data frame object with columns 'x' and 'y' containing the necessary data for an ES plot (returned by ks.genescore() when plot.dat is set to TRUE for a given dataset)
 #' @return A plot graphic of the Enrichment Score (ES) for a given distribution
 #' @export
+#' @import ggplot2
 plot_ES<-function(d 
 ){
-  g<-ggplot(data = d,aes(x=x,y=y))
-  g<-g+
+  g <- ggplot(data = d,aes(x=x,y=y))
+  g <- g+
     #geom_line(size=1.25,colour="blueviolet")+
     geom_line(size=1.25,colour="darkgoldenrod1")+
     geom_hline(yintercept=0,linetype=2)+
     geom_point(data=d[which.max(d$y),],aes(x=x,y=y),colour="black",fill="red",size=3,shape=21)+
-    annotate("text",x=d[which.max(d$y),1]+8,y=max(d$y),label=as.character(round(max(d$y),3)),size=2.5)+
+    annotate("text",x=d[which.max(d$y),1]+8,y=max(d$y),label=as.character(round(max(d$y),3)),size=3)+
     scale_x_continuous(expand = c(0,0))+
+    scale_y_reverse()+ # This inverts the ES score statistic line
     theme_classic()+
     theme(panel.border=element_rect(colour="black",fill=NA))+
     labs(x="",y="Enrichment Score (ES)")
@@ -61,6 +64,8 @@ plot_ES<-function(d
 #' @param var.name a string object describing the name of the continuous measure used, which will be used as the y-axis label for the metric plot
 #' @return A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
 #' @export
+#' @import ggplot2 reshape2
+#' @importFrom grid unit.pmax grid.draw
 meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data with samples ordered by a given measure
                     var.score=NULL, #Ordered vector of measure used for search
                     var.name=""){
@@ -84,8 +89,13 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
     
     m.plot<-ggplot(var.d,aes(x=sample,y=measure,group=1))+
       geom_area(alpha=0.6,fill="deepskyblue4",linetype=1,size=0.5,color="black")+
-      scale_y_continuous(limits=c(0,1),expand = c(0,0))+
-      theme_classic()+labs(x=x_lab,y=y_lab)+theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+      scale_y_continuous(expand = c(0,0))+
+      scale_x_discrete(expand = c(0,0))+
+      theme_classic()+labs(x=x_lab,y=y_lab)+
+      theme(axis.text.x=element_blank(),
+            axis.ticks.x=element_blank(),
+            axis.line.x=element_line(color="black"),
+            axis.line.y=element_line(color="black"))
   }
   
   
@@ -123,7 +133,7 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
   x.m$Var1<-factor(as.character(x.m$Var1),levels=rev(unique(as.character(x.m$Var1))))
   
   # Plot for mutation/CNA feature profile (with summary OR)
-  feature.plot<-ggplot(x.m,aes(x=factor(Var2),y=Var1,fill=value))+
+  feature.plot <- ggplot(x.m,aes(x=factor(Var2),y=Var1,fill=value))+
     geom_tile(colour=NA)+ #So that there are no line borders around each cell
     scale_fill_gradient2( #This is only if we want different colors for different values
       high="red", #This will be for our OR function values (which have 2's for 1's, based on our pre-processing) 
@@ -132,7 +142,7 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
       midpoint = 1)+ 
     theme(line=element_blank(),
           axis.text.x=element_blank(),
-          axis.text.y=element_text(size=5,colour="black",face="bold"),
+          axis.text.y=element_text(size=8,colour="black",face="bold"),
           panel.border=element_rect(colour="black",fill=NA))+
     labs(x="",y="Feature") 
   
@@ -166,23 +176,24 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
 #' @param topN.list a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See ks.stepwise()). This is computed within, and can be returned by the topn.eval() function.
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
 #' @export
+#' @import gplots
 topn.plot <- function(topN.list){
   
   eset.l <- lapply(topN.list, "[[", 1)
   scores.l <- lapply(topN.list, "[[", 2)
   
   
-  f_list<-lapply(eset.l,featureNames)  #Get the list of feature names from each ESet
+  f_list <- lapply(eset.l,featureNames)  #Get the list of feature names from each ESet
   
-  f_union<-Reduce(f = union,f_list) #Get the union of all features that were returned across all top N runs
+  f_union <- Reduce(f = union,f_list) #Get the union of all features that were returned across all top N runs
   
   f_checklist<-lapply(f_list,function(x,ref=f_union){
     return(f_union %in% x)
   })
   
   # Make a matrix indicating which features are found across each top n run
-  m<-do.call(cbind,f_checklist)*1   #Multiplying by 1 is just to convert boolean values into 1's and 0's
-  rownames(m)<-f_union
+  m <- do.call(cbind,f_checklist)*1   #Multiplying by 1 is just to convert boolean values into 1's and 0's
+  rownames(m) <- f_union
   
   # Working with scores for each top N run
   s <- unlist(scores.l)

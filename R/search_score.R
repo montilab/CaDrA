@@ -14,15 +14,33 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
 {
   # Additional arguments for ks or wilcox.genescore.mat functions
   compute_score_args <- list(...)
+  
+  if(nrow(mat) < 2)
+    warning("You are computing a row-wise statistic over a matrix with nrow < 2\n")
+  
+  # If no alternative is specified
   if(is.null(compute_score_args$alt)){
     warning("No alternative hypothesis specified. Using 'less' by default ..\n")
-    compute_score_args <- "less"
+    compute_score_args$alt <- "less"
   }
   
+  # If invalid method specification
   if(!(method %in% c("ks","wilcox")))
      stop("Invalid method specification to compute scores.. please specify either 'ks' or 'wilcox'..\n")
-     
-     s <- switch(method,
+   
+  # Check if there are rows with ALL 0's or 1's (cannot use wilcox or KS test if this is the case)
+  # This may occur when taking unions of meta-feature with existing features (feature 'saturation') where they all become 1 upon taking the union
+  if(any(rowSums(mat)==ncol(mat))){
+    num_1_f <- sum(rowSums(mat)==ncol(mat))
+    stop(num_1_f, " entries with all 1's present.. Cannot compute statistics for such features!\n")
+  } 
+  
+  if (any(rowSums(mat)==0)){
+    num_0_f <- sum(rowSums(mat)==0)
+    stop(num_0_f, " entries with all 0's present.. Cannot compute statistics for such features!\n") 
+  }
+  
+  s <- switch(method,
                  ks=ks.genescore.mat(mat,
                                      alt=compute_score_args$alt,
                                      weight=compute_score_args$wts),
@@ -30,9 +48,9 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
                                              alt=compute_score_args$alt,
                                              ranks=compute_score_args$rnks)) 
      
-    # Score returned by either ks or wilcox-based functions
+  # Score returned by either ks or wilcox-based functions
                  
-     return(s) 
+  return(s) 
 }
 
 #' Row-wise matrix Kolmogorov-Smirnov scoring
@@ -53,7 +71,7 @@ ks.genescore.mat<-function
   
   #Compute the ks statitic and p-value per row in the matrix
   ks<-apply(X = mat, 1, FUN = function(x,w=weight){
-    ks.genescore(n.x=length(x),y=which(x==1),alternative=alt,weight=w,bare=T,exact=FALSE)
+    ks.genescore(n.x=length(x),y=which(x==1),alternative=alt,weight=w,bare=TRUE)
     })
   #bare=T will simply return a 'two-tuple' containing the ks statistic and the p-value
   #Applying this across the matrix will create a two row matrix, with the first the statistic and the second the p-value
@@ -193,13 +211,14 @@ ks.genescore <- function
     points( x.axis[i.max], y.axis[i.max], pch=20, col="red")
     text(x.axis[i.max]+n.x/20,y.axis[i.max],round(y.axis[i.max],2))
   }
-  if ( !do.pval )
+  if (!do.pval)
     return(score)
   
   # ELSE, compute asymptotic p-value
   #
   names(score) <- switch(alternative, two.sided="D", greater="D^+", less="D^-")
-  PVAL <- ks.test(1:n.x,y=y,alternative=alternative,exact=exact)$p.value
+  # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
+  PVAL <- suppressWarnings(ks.test(1:n.x,y=y,alternative=alternative,exact=exact)$p.value)
   
   if ( bare ) {
     return( c(score=score, p.value=PVAL) )
@@ -238,11 +257,13 @@ wilcox.genescore <- function
   x <- x[is.finite(x)]
   y <- y[is.finite(y)]
   
-  if (length(x) < 1L) 
-    stop("not enough (finite) 'x' observations")
+  if (length(x) < 1L) {
+    print(x)
+    stop("not enough (finite) 'x' observations")}
   
-  if (length(y) < 1L) 
-    stop("not enough 'y' observations")
+  if (length(y) < 1L){
+    print(y)
+    stop("not enough 'y' observations")}
   
   METHOD <- "Wilcoxon rank sum test"
   

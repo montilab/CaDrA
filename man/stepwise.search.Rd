@@ -6,7 +6,7 @@
 \usage{
 stepwise.search(ranking = NULL, ES, max.size = 7, metric, method = c("ks",
   "wilcox"), back_search = TRUE, cust_start = NULL,
-  best_score_only = FALSE, alt = "two.sided", wts = NULL, rnks = NULL,
+  best.score.only = FALSE, alt = "two.sided", wts = NULL, rnks = NULL,
   verb = FALSE)
 }
 \arguments{
@@ -22,9 +22,9 @@ stepwise.search(ranking = NULL, ES, max.size = 7, metric, method = c("ks",
 
 \item{back_search}{a logical indicating whether or not to perform a forward-backward search (i.e. remove features along the search if it improves the best score). Default is TRUE. Uses function backward_check()}
 
-\item{cust_start}{an integer specifying a specific index within the expression set object of the feature to start the step-wise search with. Default is NULL}
+\item{cust_start}{an integer specifying a specific index within the expression set object of the feature to start the step-wise search with. Default is NULL. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(dataset)), then the search starts with the Nth best feature. If a string is specified, then the search starts with the feature with this name (must be a valid rowname in the dataset)}
 
-\item{best_score_only}{a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE}
+\item{best.score.only}{a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE}
 
 \item{alt}{a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"}
 

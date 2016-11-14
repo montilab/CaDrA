@@ -15,6 +15,7 @@ verbose <- function(...){
 #' @param min.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)
 #' @return An expression set object with only the filtered-in features given the filter thresholds specified
 #' @export
+#' @import Biobase
 prefilter_data<-function(ES, 
                          max.cutoff=0.6,
                          min.cutoff=0.03){
@@ -42,7 +43,8 @@ prefilter_data<-function(ES,
 #' @param ... additional parameters passed to the stepwise.search() function, which will be applied to each top 'N' run 
 #' @return Default is a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See stepwise.search()). If best.score.only is set to TRUE, only the best score over the top N space is returned (useful for permutation-based testing)
 #' 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
-#' @export  
+#' @export
+#' @import Biobase gplots
 topn.eval <- function(ranking=NULL,
                       ESet,
                       N=1,
@@ -68,7 +70,9 @@ topn.eval <- function(ranking=NULL,
     # Working with scores for each top N run
     s <- unlist(scores.l)
     #Fetch the best score from the iterations
-    best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most sig
+    # This ASSUMES you're using metric = "pval"
+    # NEEDS UPDATING TO ACCOMODATE STATISTIC 
+    best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most sig 
     
     return(best_score)
   } #best.score.only
@@ -84,14 +88,13 @@ topn.eval <- function(ranking=NULL,
 backward_check <- function
 (
   ESet,                    # an Expression Set object with the same sample ordering and features as processed by the stepwise.search() function 
-  glob.f,                  # a vector containing the feature names whose union gives the best score (so far) in the search. Feature names should match those of the provided expression set object
+  glob.f,                  # a vector containing the feature (row) names whose union gives the best score (so far) in the search. Feature names should match those of the provided expression set object
   glob.f.s,                # score corresponding to the union of the specified vector of features 
   m,                       # a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the  p-value or statistic. Uses value passed in the stepwise.search() function
   ...                      # additional parameters passed to the compute_score() function (method, alternative etc.)
   ){ 
   verbose("Performing backward search step..\n")
   verbose("Iterating over ",length(glob.f)," chosen features..\n")
-  #print(glob.f)
   
   # Matrix of only global best features so far
   gmat <- exprs(ESet[glob.f,])
@@ -101,17 +104,21 @@ backward_check <- function
   f.scores <- c()
   
   # We want to see if leaving anyone feature out improves the overall meta-feature  score
+  # Here we only consider previous features in the meta-feature to remove (i.e. not the last one which was just added)
   for(n in 1:(length(glob.f)-1)){
     
     f.names[[n]] <- glob.f[-n]
     #Take leave-one-out union of features from matrix
+    # This will result in a single vector to compute the scores on
     u <- ifelse(colSums(gmat[-n,])==0,0,1)
     
-    #Compute  scores for this meta feature
-    u.s <- compute_score(mat=t(matrix(u)),...) 
+    # Compute  scores for this meta feature
+    # Here we suprress warnings just to avoid messages warning-related single vector score computation (nrow(mat) < 2)
+    u.s <- suppressWarnings(compute_score(mat=t(matrix(u)),...) )
     score <- ifelse(m %in% "pval",sign(u.s[1,])*u.s[2,], u.s[1,]) # Assuming bare=TRUE in compute_score call
     f.scores <- c(f.scores,score)
-  }
+  } # end for loop
+  
   if(m!="pval"){
     f.best.index <- which.max(f.scores) #This is the index within the meta matrix
   } else { #If signed pvalues
@@ -120,8 +127,11 @@ backward_check <- function
   f.best.score <- f.scores[f.best.index]
  
   # Check if any one of the computed scores has a better score than the entire meta-feature's score
-  if(ifelse(m=="pval", (sign(f.best.score)>0 & abs(f.best.score) < abs(glob.f.s)),f.best.score > glob.f.s)){
+  if(ifelse(m=="pval", (sign(f.best.score) > 0 & abs(f.best.score) < abs(glob.f.s)),f.best.score > glob.f.s)){
     verbose("Found improvement on removing existing feature..\n")
+    verbose("New feature set: ",f.names[[f.best.index]],"\n")
+    verbose("New global best score: ",f.best.score,"\n")
+    
     #Return the set of features that gave a better score than the existing best score, and the score as well
     return(list(f.names[[f.best.index]],f.best.score))  
   } else{
@@ -139,14 +149,15 @@ backward_check <- function
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox"
 #' @param metric a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic
 #' @param back_search a logical indicating whether or not to perform a forward-backward search (i.e. remove features along the search if it improves the best score). Default is TRUE. Uses function backward_check() 
-#' @param cust_start an integer specifying a specific index within the expression set object of the feature to start the step-wise search with. Default is NULL 
-#' @param best_score_only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
+#' @param cust_start an integer specifying a specific index within the expression set object of the feature to start the step-wise search with. Default is NULL. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(dataset)), then the search starts with the Nth best feature. If a string is specified, then the search starts with the feature with this name (must be a valid rowname in the dataset)
+#' @param best.score.only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
 #' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"
 #' @param wts an integer vector of weights to use if performing weighted-KS testing. Default is NULL. Value passed to compute_score() function  
 #' @param rnks an integer vector of sample rankings to use if performing Wilcoxon rank sum testing. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to compute_score() function 
 #' @param verb a logical indicating whether or not to print diagnostic messages. Default is FALSE 
 #' @return If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, an expression set object containing the features whose union gave the best score is returned. 
 #' @export
+#' @import Biobase 
 stepwise.search<-function(ranking=NULL,  
                       ES, 
                       max.size=7,
@@ -154,161 +165,171 @@ stepwise.search<-function(ranking=NULL,
                       method=c("ks","wilcox"),
                       back_search=TRUE, 
                       cust_start=NULL,
-                      best_score_only=FALSE, 
+                      best.score.only=FALSE, 
                       alt="two.sided", 
                       wts=NULL,
                       rnks=NULL,
                       verb=FALSE
 ){
   
-  #Setup verbose option definition
+  # Setup verbose option definition
   options(verbose=verb)
   
+  # We will rely on matrix row names, so make sure the input ES has rownames for features
+  if(is.null(rownames(ES)))
+    stop("ESet object provided does not have rownames/featureData to identify/track features by .. please provide unique feature names as rownames of the input ESet..\n")
   
   ###### SAMPLE PRE-RANKING #####
+  #################################
   
   #Use ranking to re-order samples 
   if(!(is.null(ranking))){
     if(length(ranking)!=ncol(ES))
       stop("Ranking variable has to be of the same length as the number of samples\n\n")
     verbose("Using provided ordering to re-rank samples..\n")
-    ES<-ES[,ranking]
+    ES <- ES[,ranking]
   }
   
   if(length(method)==1 & method %in% c("ks","wilcox"))
   {
-  #Compute row-wise directional KS scores for existing (raw/starting) binary features in ESet
-  if(method=="ks"){
-    verbose("Using KS method for feature scoring..\n")
-    if(!(is.null(wts)))
-      verbose("Using weighted method for KS testing using provided weights..\n")
-  } 
-  if(method=="wilcox"){
+    #Compute row-wise directional KS scores for existing (raw/starting) binary features in ESet
+    if(method=="ks"){
+      verbose("Using KS method for feature scoring..\n")
+      if(!(is.null(wts)))
+        verbose("Using weighted method for KS testing using provided weights..\n")
+    }
+    #Compute row-wise Wilcox rank sum scores for existing (raw/starting) binary features in ESet 
+    if(method=="wilcox"){
       verbose("Using Wilcoxon method for feature scoring..\n")
       if(!(is.null(rnks)))
         verbose("Using provided ranks for Wilcoxon rank sum testing..\n")
     } 
   } else {
-      stop("Invalid method specification to compute scores.. please specify either 'ks' or 'wilcox'..\n")
-    }
+    stop("Invalid method specification to compute scores.. please specify either 'ks' or 'wilcox'..\n")
+  }
+  
+  ###### INVALID FEATURE REMOVAL #####
+  #####################################
+  # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
+  
+  if(any(rowSums(exprs(ES))==0) | any(rowSums(exprs(ES))==ncol(ES))){
+    warning("Provided dataset has features that are either all 0 or 1.. removing these features prior to beginning search\n\n")
+    ES <- ES[!(rowSums(exprs(ES))==0 | rowSums(exprs(ES))==ncol(ES)),]
+  }
+  
+  # Compute initial scores per feature given the dataset
   
   s <- compute_score(mat=exprs(ES),method=method,alt=alt,weight=wts,ranks=rnks)
   s.stat <- s[1,]
   s.pval <- s[2,]
   
-  #Define scores based on specified metric of interest
+  # Define scores based on specified metric of interest
   
   if(!metric %in% c('stat','pval'))
     stop("Please specify metric parameter as either 'stat' or 'pval' to use for search..\n")
+  
   score <- ifelse(rep(metric,nrow(ES)) %in% "pval",sign(s.stat)*s.pval, s.stat)
-  
-  
   verbose("Using ",metric," as measure of improvement measure ..\n\n")
   
   
   ###### FEATURE PRE-RANKING #####
+  ##################################
   
-  #ADDED
-  #Order ESet in increasing/decreasing order of user-defined score (s stat or p-val)
-  #This comes in handy when doing the top-N evaluation of the top N 'best' features
+  
+  # Re-order ESet in decreasing order of user-defined score (s stat or p-val)
+  # This comes in handy when doing the top-N evaluation of the top N 'best' features
   
   score.rank <- if (metric!="pval") order(score) else order(-sign(score),score)
   verbose("Ranking ESet features by metric..\n")
+  
   ES <- ES[score.rank,]
   score <- score[score.rank]
   
-  
-  ###### FEATURE PRE-RANKING #####
-  
-  
-  #Here, we will assume ASSIGN scores have samples ranked in decreasing order
-  #This means an higher/positive stat is associated with a higher ASSIGN score 
-  
-  #Let us start with the first (top ranked) feature
-  #Fetch index of feature having best score. We start here
-  if(is.null(cust_start)){
-    
+  if(is.null(cust_start)){ 
     verbose("Starting with feature having best ranking ..\n")
-    #MODIFIED
-    #best.s.index<-ifelse(metric!="pval",which.max(score),order(-sign(score),score)[1]) #This assumes that samples are ordered in decreasing order of ASSIGN score
-    best.s.index <- 1 
-    
-    
+    best.s.index <- 1  
   } else {
+    if(is.numeric(cust_start)){ 
+      # User-specified feature index (has to be an integer from 1:nrow(ES))
+      verbose("Starting with specified sorted feature index ..\n")
+      
+      if(cust_start > nrow(ES)) # Index out of range
+        stop("Invalid starting index specified.. Please specify a valid starting index within the range of the existing ESet..\n")
+      
+      best.s.index <- cust_start 
+    }
     
-    verbose("Starting with specified sample feature ..\n")
-    if(!(cust_start <= nrow(ES)))
-      stop("Invalid starting index specified.. Please specify a valid starting index within the range of the existing ESet..\n")
-    best.s.index <- cust_start
-    
-  } 
+    if(is.character(cust_start)){
+      # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
+      verbose("Starting with specified feature name ..\n")
+      
+      if(!(cust_start %in% rownames(ES))) #provided feature name not in rownames
+        stop("Provided starting feature does not exist among ESet's rownames .. please check stepwise.search cust_start parameter options for more details ..\n\n")
+      
+      best.s.index <- which(rownames(ES)==cust_start)  
+    } # end if is.character 
+  } # end else (!is.null)
+  ###### INITIALIZE VARIABLES ###########
+  #######################################
   
+  # Print the featureData for this starting point feature so that we are aware
+  # Here we assume the ESet's fData is included as rownames
+  #start.feature <- as.character(fData(ES)[best.s.index,1])
+  start.feature <- rownames(ES)[best.s.index]
+  best.feature <- start.feature
   best.s <- score[best.s.index]
   
-  #Print the featureData for this starting point feature so that we are aware
-  start_feature <- as.character(fData(ES)[best.s.index,1])
-  verbose("Feature: ",start_feature,"\n")
+  
+  verbose("Feature: ",start.feature,"\n")
   verbose("Score: ",best.s,"\n")
   
   #Fetch the vector corresponding to best score
   #Set this as the initial 'meta-feature'
   best.meta <- as.numeric(exprs(ES)[best.s.index,])
   
-  #This is just so that it enters the while loop for the first iteration
-  new.best.s <- best.s
-  
-  ###### INITIALIZE VARIABLES ###########
-  #######################################
   
   #counter variable for number of iterations
   i=0
-  #Parameter for number of continuous 'mistakes' (no improvement in score)
-  b=0
   
   #Variable to store best score attained over all iterations
   #initialize this to the starting best score
   global.best.s <- best.s
-  #Variable to store indices to make meta-feature with best score attained over all iterations
-  #initialize this to the starting feature's index
-  global.best.s.index <- best.s.index
-  global.best.s.features <- c(as.character(fData(ES)[best.s.index,1]))
   
+  # Vector of features in the (growing) obtained metafeature. Begin with just the starting feature
+  global.best.s.features <- c()
   
   ###### BEGIN ITERATIONS ###############
   #######################################
   
   verbose("\n\nBeginning stepwise search..\n\n")
   
-  #This condition defines the overall search criteria
-  while ((ifelse(metric=="pval", (sign(new.best.s)>0 & abs(new.best.s) < abs(best.s)),new.best.s > best.s) | b < 2) & (length(global.best.s.features) < max.size)){
+  while ((ifelse(metric=="pval", (sign(best.s) > 0 & (abs(best.s) < abs(global.best.s))),best.s > global.best.s) | i == 0) & (length(global.best.s.features) < max.size)){
     verbose("\n\n")
-    verbose("Iteration number ",i+1," ..\n")
+    verbose("Iteration number ",(i+1)," ..\n")
+    verbose("Global best score: ",global.best.s,"\n")
+    verbose("Previous score: ",best.s,"\n")
     
+    
+    
+    # Update scores and feature set since since entry into the loop means there is an improvement (iteration > 0)
+    global.best.s <- best.s
+    global.best.s.features <- c(global.best.s.features,best.feature)
+    
+    verbose("Current feature set: ",global.best.s.features,"\n")
     
     if(i!=0){
-      #Not the first iteration	
-      
-      verbose("New best s: ",new.best.s,"\n")
-      verbose("Best s: ",best.s,"\n")
-      
-      if(ifelse(metric=="pval", (sign(new.best.s)>0 & abs(new.best.s) < abs(best.s)),new.best.s > best.s))
-      {
-        verbose("Found feature that improves  score!\n")
-        #Now that we have an improvement, let us reset the 'continuous mistake counter' to 0
-        b=0
-      }
-      new.best.meta <- meta.mat[hit.best.s.index,]
-      
+      verbose("Found feature that improves  score!\n")
+      # Update the new best meta feature (from meta mat)
+      best.meta <- meta.mat[hit.best.s.index,]  
       #Add that index to the group of indices to be excluded for subsequent checks
-      #Here we go off the rownames to find which index to exclude from the ESet
+      #Here we go off the rownames in the original matrix to find which index to exclude from the ESet in subsequent iterations
       best.s.index <- c(best.s.index,which(rownames(ES)==best.feature))
+    } 
+    
+    # Perform a backward check on the list of existing features and update global scores/feature lists accordingly  
+    if(length(global.best.s.features) > 3 & back_search==TRUE){
       
-      #If performing a forward-backward search, we need to check if adding this last feature
-      #works better when leaving any of the existing best features out
-      #This is only useful if you have at least 4 features
-      if(length(global.best.s.features) > 3 & back_search==T){
-        
-        backward_search.results <- backward_check(ESet=ES,
+      backward_search.results <- backward_check(ESet=ES,
                                                 glob.f=global.best.s.features, #Global feature set so far
                                                 glob.f.s=global.best.s, # score corresponding to this global feature set
                                                 m=metric,
@@ -316,33 +337,28 @@ stepwise.search<-function(ranking=NULL,
                                                 alt=alt,        # passed to compute_score() function
                                                 wts=wts,        # passed to compute_score() function
                                                 rnks=rnks)      # passed to compute_score() function
-        global.best.s.features <- backward_search.results[[1]]
-        global.best.s <- backward_search.results[[2]]
-      }
-      
-      #Reset current minimum values and feature to new minimum values and feature
-      best.meta <- new.best.meta
-      best.s <- new.best.s
-      verbose(" score: ", best.s,"\n")
+      # Update globlal features, scores 
+      global.best.s.features <- backward_search.results[[1]]
+      global.best.s <- backward_search.results[[2]]
+      # Update best.meta based on feature set
+      best.meta <- as.numeric(ifelse(colSums(exprs(ES)[global.best.s.features,])==0,0,1))
     }
-    
     
     #Take the OR function between that feature and all other features, to see which gives the best  score
     #Keep in mind, the number of rows in meta.mat keeps reducing by one each time we find a hit that improves the  score
     verbose("Forming meta-feature matrix with all other features in dataset..\n")
+    # Here "*1" is used to convert the boolean back to integer 1's and 0's
+    # Notice we remove anything in best.s.index from the original matrix first, to form the meta matrix.
     meta.mat <- sweep(exprs(ES)[-best.s.index,],2,best.meta,`|`)*1
     
-    #verbose("Number of rows in meta-feature matrix: ",nrow(meta.mat),"\n")
-    #print(rownames(meta.mat))
     
+    # Check if there are any features that are all 1's generated on taking the union
+    # We cannot compute statistics for such features and they thus need to be filtered out
+    if(any(rowSums(meta.mat)==ncol(meta.mat))){
+      warning("Features with all 1's generated upon taking matrix union .. removing such features before progressing..\n")
+      meta.mat <- meta.mat[rowSums(meta.mat) != ncol(meta.mat),]
+    }
     
-    #####<Still need to implement this functionality>######
-    
-    
-    #Let us see if any of the newly formed meta features are the same as the feature itself
-    #Leave out these metafeatures as they add no new information
-    
-    #####<Still need to implement this functionality>######
     
     
     #With the newly formed 'meta-feature' matrix, compute directional  scores and choose the feature that gives the best  score
@@ -352,87 +368,71 @@ stepwise.search<-function(ranking=NULL,
     s.pval <- s[2,]
     
     
+    # Take signed pval or stat depending on user-defined metric
+    # This will be the same length as nrow(meta.mat)
     scores <- ifelse(rep(metric,nrow(meta.mat)) %in% "pval",sign(s.stat)*s.pval,s.stat)
     
     
-    
     #Find index of feature that gives lowest s score when combined with chosen starting feature
-    if(metric!="pval")
+    if(metric!="pval"){
       hit.best.s.index <- which.max(scores) #This is the index within the meta matrix
-    else #If signed pvalues
+    } else { #If signed pvalues
       hit.best.s.index <- order(-sign(scores),scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
-    new.best.s <- scores[hit.best.s.index] #This is within the meta matrix
+    }
     
-    #Diagnostic
-    #verbose("Best score from meta matrix: ",new.best.s,"\n")
+    best.s <- scores[hit.best.s.index] #This is the best score from the meta matrix
     
-    
-    #Find which feature produced that score, in combination with meta feature used
+    # Find which feature produced that score, in combination with meta feature used
+    # We go from index to rowname space here in the meta matrix
+    # We can do this because rownames are preserved between the original and meta features on using sweep()
     best.feature <- rownames(meta.mat)[hit.best.s.index]
     verbose("Feature that produced best score in combination with previous meta-feature: ",best.feature,"\n")
-    #Diagnostics
-    #verbose("Meta mat index: ",hit.best.s.index,"\n")
-    #verbose("Estimated ES index for feature: ", which(rownames(ES)==best.feature),"\n")
-    #verbose("Actual index of feature in ES: ",which(rownames(ES)==best.feature),"\n")
+    verbose("Score: ",best.s,"\n")
     
-    
-    #Checking whether it's a new best score
-    if(ifelse(metric=="pval", (sign(new.best.s)>0 & abs(new.best.s) < abs(global.best.s)),new.best.s > global.best.s))
-      #if(new.best.s<global.best.s)
-      #Update best score
-    { global.best.s <- new.best.s
-      global.best.s.index <- c(global.best.s.index,hit.best.s.index+(nrow(ES)-nrow(meta.mat))) #Here we add the difference in rows because it is relative 
-      global.best.s.features <- c(global.best.s.features,best.feature)
+    # If no improvement (exiting loop)
+    if(ifelse(metric=="pval", sign(best.s) < 0 | (abs(best.s) >= abs(global.best.s)),best.s <= global.best.s)){
+      verbose("No further improvement in score has been found..\n")
     }
     
-    verbose("Global best score so far: ",global.best.s,"\n")
-    #to the entire ES which will have x more rows than the meta matrix 
-    #Let us set a parameter that can allow for a few mistakes
-    #If the score isn't improving for the metafeature, add a counter (constrained in the while loop entry)
-    if(ifelse(metric=="pval", sign(new.best.s) < 0 | (abs(new.best.s) >= abs(best.s)),new.best.s <= best.s)){
-      verbose("Allowing for one non-minimizing step..\n")
-      b=b+1
-    }
     #Increment counter
     i=i+1
+    
   } #########End of while loop
   
-  
   verbose("\n\n")
-  verbose("Number of iterations covered: ",i,"\n")
-  verbose("Number of continuous mistakes made: ",b,"\n")
-  
-  
   verbose("\n\nFinished!\n\n")
+  verbose("Number of iterations covered: ",i,"\n")
   verbose("Best  score attained over iterations: ",global.best.s,"\n")
+  if(length(global.best.s.features)==1){
+    warning("No meta-feature that improves the enrichment was found ..\n") 
+  }
+  
   verbose("Features returned in ESet: ",global.best.s.features,"\n")
   verbose("\n\n")
   
-  if(best_score_only==F){
+  if(best.score.only==FALSE){
     
     #We don't just want the combination (meta-feature) at the end. We want all the features that make up the meta-feature
     #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
     #If returning only those features that led to the best global score
     ES.best <- ES[global.best.s.features,]
     #Here, give the returned ESet an annotation based on the starting feature that gave these best results
-    annotation(ES.best) <- start_feature
-    
-    if(length(global.best.s.features)==1){
-      verbose("No meta-feature that improves the enrichment was found ..\n") 
-    }
+    annotation(ES.best) <- start.feature
+    colnames(ES.best) <- colnames(ES)
     
     #Make a list contaning two elements. 
     #The first will be the ESet with the features that gave the best meta-feature
     #The second will be the score corresponding to the meta-feature (named by the starting feature that led to that score)
     #Assign the name of the best meta-feature score to be the starting feature that gave that score
-    names(global.best.s) <- start_feature 
+    names(global.best.s) <- start.feature 
     
     return(list("ESet"= ES.best,"Score"= global.best.s))
     
   } else{
     #Just return the score. Here we put this in the list just to support permutation-based apply functionality
-    return(list(global.best.s)) }
-}
+    return(list(global.best.s)) 
+  }
+} # end stepwise.search function
 
 #' Random permutation matrix generator
 #' 
@@ -481,6 +481,7 @@ generate_permutations<-function(ord, #These are the sample orderings to be permu
 #' @param ... additional parameters passed to the stepwise.seach() function, which will be applied to each permutation run (called within topn.eval())
 #' @return If return.perm.pval is set to TRUE, will return the permutation p-value
 #' @export
+#' @import Biobase R.cache doParallel ggplot2 plyr
 null_ks<-function(ranking=NULL,
                   ES,
                   nperm=1000,
@@ -495,6 +496,9 @@ null_ks<-function(ranking=NULL,
   
   #Here we fetch the additional arguments passed to stepwise.search() so that it can be accessed
   null.args <- list(...)
+  topN = null.args$N # This will either be null (if not specified) or user-defined for the top-N evaluation
+  m <- null.args$metric
+  met <- null.args$method
   
   ####### CACHE CHECKING #######
   
@@ -507,9 +511,15 @@ null_ks<-function(ranking=NULL,
     cat("Setting cache root path as: ",getCacheRootPath(),"\n")
   }
   
-  # We use the ESet, top N, score metric and seed for random permutation as the key for each cached result  
-  key <- list(ES,N,null.args$metric,seed)
+  # We use the ESet, top N (or cust_start), score metric, scoring method and seed for random permutation as the key for each cached result  
+  if(!is.null(topN)) # If N is defined here, we will use it as part of the key (topn.eval is called)
+   key <- list(ESet=ES,topN=topN,method=met,metric=m,seed=seed)
+  else # If N is not defined, we will use the cust_start parameter as part of the key instead (stepwise.search is called)
+   key <- list(ESet=ES,cust_start=null.args$cust_start,method=met,metric=m,seed=seed)
   
+  cat("Using the following as the key for saving/loading cached permutation values:\n")
+  print(key)
+  cat("\n\n")
   perm.best.scores <- loadCache(key)
   
   #Start the 'clock' to see how long the process takes
@@ -560,9 +570,11 @@ null_ks<-function(ranking=NULL,
     
     
     cat("Computing permutation-based scores for N = ",nperm," ..\n\n")
-    
-    perm.best.scores<-unlist(alply(perm_labels_matrix,1,topn.eval,ES = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))
-    
+    if(!is.null(topN)){ # Run top N evaluation if N is specified
+    perm.best.scores<-unlist(alply(perm_labels_matrix,1,topn.eval,ESet = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))
+    } else { # Run basic stepwise search otherwise
+      perm.best.scores<-unlist(alply(perm_labels_matrix,1,stepwise.search,ES = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))  
+    }
     #Save computed scores to cache 
     cat("Saving to cache ..\n")
     saveCache(perm.best.scores,key=key,comment="null_ks()")
@@ -578,15 +590,26 @@ null_ks<-function(ranking=NULL,
   
   if(is.null(obs.best.score)){
     cat("Computing observed best score ..\n\n")
+    if(!is.null(topN)){
     obs.best.score <- topn.eval(ranking=ranking, #This is passed to the null_ks function
-                              ES = ES,
+                              ESet = ES,
                               best.score.only = TRUE,
                               verb=FALSE,
-                              ...)
+                              ...) 
+    } else {
+    obs.best.score <- stepwise.search(ranking=ranking, #This is passed to the null_ks function
+                                  ES = ES,
+                                  best.score.only = TRUE,
+                                  verb=FALSE,
+                                  ...) 
+      
+    } 
   } else{
     cat("Using provided value of observed best score ..\n\n")
   }
   
+  cat("Observed score: ",unlist(obs.best.score),"\n\n")
+
   ########### PERMUTATION P-VALUE COMPUTATION ############
   cat("Number of permutation-based scores being considered: ",length(perm.best.scores), "\n")
   #Add a smoothening factor of 1 if specified
@@ -598,7 +621,7 @@ null_ks<-function(ranking=NULL,
   if(null.args$metric=="pval"){
     
     #Use negative log transform of returned search score (either computed above, or passed to the null_ks function if previously computed)
-    obs.best.score <- -(log(obs.best.score))
+    obs.best.score <- -(log(unlist(obs.best.score)))
     
     #Use negative log transform on the permuted scores (either computed above or loaded from Cache)
     perm.best.scores <- -(log(perm.best.scores))
@@ -613,15 +636,22 @@ null_ks<-function(ranking=NULL,
   
   ########### END PERMUTATION P-VALUE COMPUTATION ############
   
-  if(plot==T){
+  if(plot==TRUE){
+    plot.title <- paste("Emperical Null distribution (N = ",length(perm.best.scores),")\n Permutation p-val <= ",round(perm.pval,5),"\nBest observed score: ",round(obs.best.score,5),sep="")
+    if(!is.null(topN))
+      plot.title <- paste(plot.title,"\n Top N: ",topN,sep="")
+    else
+      plot.title <- paste(plot.title,"\n Seed: ",null.args$cust_start,sep="")
+    
     #Here, let us plot the absolute values of the permutation p-values, for simplicity
     #You only consider absolute values when calculating the permutation p-values
     g <- ggplot(data=data.frame("x"=perm.best.scores),aes(x=x))+
       geom_histogram(fill="black",color="gray")+
-      theme_classic()
+      theme_classic()+theme(axis.line.x=element_line(color="black"),
+                            axis.line.y=element_line(color="black"))
     
     g <- g+geom_vline(xintercept=obs.best.score,linetype="longdash",size=1.5,colour="red")+
-      labs(title=paste("Emperical Null distribution (N = ",length(perm.best.scores),")\n Permutation p-val <= ",round(perm.pval,5),"\nBest observed score: ",round(obs.best.score,5),sep=""),
+      labs(title=plot.title,
            x="Score",
            y="Count")+
       scale_x_continuous(expand = c(0, 0)) +

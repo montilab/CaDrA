@@ -158,7 +158,7 @@ backward_check <- function
 #' @return If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, an expression set object containing the features whose union gave the best score is returned. 
 #' @export
 #' @import Biobase 
-stepwise.search<-function(ranking=NULL,  
+stepwise.search <- function(ranking=NULL,  
                       ES, 
                       max.size=7,
                       metric,
@@ -482,7 +482,7 @@ generate_permutations<-function(ord, #These are the sample orderings to be permu
 #' @return If return.perm.pval is set to TRUE, will return the permutation p-value
 #' @export
 #' @import Biobase R.cache doParallel ggplot2 plyr
-null_ks<-function(ranking=NULL,
+null.search <- function(ranking=NULL,
                   ES,
                   nperm=1000,
                   plot=TRUE,

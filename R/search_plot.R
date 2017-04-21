@@ -1,3 +1,15 @@
+# Function to convert units depending on the version of R (for adjusting the dimensions of the ggplots)
+.setup.tab.heights <- function(plot.tab, dims) {
+  panels <- plot.tab$layout$t[grep("panel", plot.tab$layout$name)]
+  has.unit.vec <- getRversion() > '3.3'
+  if(has.unit.vec) {
+    plot.tab$heights[panels] <- unit(dims, units="null")
+  }
+  else {
+    plot.tab$heights[panels] <- lapply(dims, unit, "null") 
+  }
+  return(plot.tab)
+}
 
 # Solution to drawing arbitrary number of plots stacked above one another
 # Each plot will be left-aligned
@@ -109,13 +121,13 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
   mat<-rbind(mat,or)
   
   # Get x and y axis data for ES plot of cumulative function of individual features (i.e. the OR function)
-  ES.dat<-ks.genescore(n.x=length(or),y=which(or==1),plot.dat = T, do.plot = T,alternative = "less")
+  ES.dat <- ks.genescore(n.x=length(or),y=which(or==1),plot.dat = TRUE, do.plot = TRUE,alternative = "less")
   
   # Plot for ES scores
-  ES.plot<-plot_ES(d = ES.dat)
+  ES.plot <- plot_ES(d = ES.dat)
   
   # Give the last row no row name (this is just for the purpose of the plot)
-  rownames(mat)[nrow(mat)]<-""
+  rownames(mat)[nrow(mat)] <- ""
   
   
   mat[nrow(mat),]<-2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
@@ -149,19 +161,17 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
   
   if(!is.null(var.score)){
     # Align the three plots, adjusting the widths to match
-    plot.tab<-rbind_gtable_max(ggplotGrob(m.plot),ggplotGrob(feature.plot+theme(legend.position="none")),ggplotGrob(ES.plot))
+    plot.tab <- rbind_gtable_max(ggplotGrob(m.plot),ggplotGrob(feature.plot+theme(legend.position="none")),ggplotGrob(ES.plot))
     
     # Set heights for each panel
-    panels <- plot.tab$layout$t[grep("panel", plot.tab$layout$name)]
-    plot.tab$heights[panels] <- lapply(c(2,1.25,3), unit, "null")
+    plot.tab <- .setup.tab.heights(plot.tab, c(2,1.25,3))
     
   } else{
     
-    plot.tab<-rbind_gtable_max(ggplotGrob(feature.plot+theme(legend.position="none")),ggplotGrob(ES.plot))
+    plot.tab <- rbind_gtable_max(ggplotGrob(feature.plot+theme(legend.position="none")),ggplotGrob(ES.plot))
     
     # Set heights for each panel
-    panels <- plot.tab$layout$t[grep("panel", plot.tab$layout$name)]
-    plot.tab$heights[panels] <- lapply(c(1.25,3), unit, "null") 
+    plot.tab <- .setup.tab.heights(plot.tab, c(1.25, 3))
   }
   
   

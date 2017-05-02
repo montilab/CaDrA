@@ -147,11 +147,11 @@ backward_check <- function
 #' @param ES an expression set object of binary features. The first column of the featureData for the expression set must contain the names of the corresponding features, which are used in the search   
 #' @param max.size an integer specifying the maximum size a meta-feature can extend do for a given search. Default is 7
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox"
-#' @param metric a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic
+#' @param metric a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'
 #' @param back_search a logical indicating whether or not to perform a forward-backward search (i.e. remove features along the search if it improves the best score). Default is TRUE. Uses function backward_check() 
 #' @param cust_start an integer specifying a specific index within the expression set object of the feature to start the step-wise search with. Default is NULL. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(dataset)), then the search starts with the Nth best feature. If a string is specified, then the search starts with the feature with this name (must be a valid rowname in the dataset)
 #' @param best.score.only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
-#' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"
+#' @param alt a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "less" for left-skewed significance testing.
 #' @param wts an integer vector of weights to use if performing weighted-KS testing. Default is NULL. Value passed to compute_score() function  
 #' @param rnks an integer vector of sample rankings to use if performing Wilcoxon rank sum testing. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to compute_score() function 
 #' @param verb a logical indicating whether or not to print diagnostic messages. Default is FALSE 
@@ -161,12 +161,12 @@ backward_check <- function
 stepwise.search <- function(ranking=NULL,  
                       ES, 
                       max.size=7,
-                      metric,
+                      metric="pval",
                       method=c("ks","wilcox"),
                       back_search=TRUE, 
                       cust_start=NULL,
                       best.score.only=FALSE, 
-                      alt="two.sided", 
+                      alt="less", 
                       wts=NULL,
                       rnks=NULL,
                       verb=FALSE
@@ -499,6 +499,19 @@ null.search <- function(ranking=NULL,
   topN = null.args$N # This will either be null (if not specified) or user-defined for the top-N evaluation
   m <- null.args$metric
   met <- null.args$method
+  m.size <- null.args$max.size # This is the max size specification parameter for the search
+  
+  # If there isn't any overriding of the default max meta-feature size
+  if(is.null(m.size))
+    m.size <- 7 # Assign the default (this is only for the key assignment)
+  
+  # If there isn't any overriding of the default metric to use for the search
+  if(is.null(m))
+    m <- "pval" # Assign the default (this is only for the key assignment)
+  
+  # If there isn't any specification for the method to use (CaDrA needs one of "ks" or "wilcox" specified)
+  if(is.null(met)) # Throw an error
+    stop('CaDrA requires a statistical method specification. Please see ?stepwise.search for options when specifying this "method" parameter, which will be applied to all null searches\n\n')
   
   ####### CACHE CHECKING #######
   
@@ -513,9 +526,9 @@ null.search <- function(ranking=NULL,
   
   # We use the ESet, top N (or cust_start), score metric, scoring method and seed for random permutation as the key for each cached result  
   if(!is.null(topN)) # If N is defined here, we will use it as part of the key (topn.eval is called)
-   key <- list(ESet=ES,topN=topN,method=met,metric=m,seed=seed)
+   key <- list(ESet=ES,topN=topN,method=met,metric=m,max_size=m.size,seed=seed)
   else # If N is not defined, we will use the cust_start parameter as part of the key instead (stepwise.search is called)
-   key <- list(ESet=ES,cust_start=null.args$cust_start,method=met,metric=m,seed=seed)
+   key <- list(ESet=ES,cust_start=null.args$cust_start,method=met,metric=m,max_size=m.size,seed=seed)
   
   cat("Using the following as the key for saving/loading cached permutation values:\n")
   print(key)
@@ -618,7 +631,7 @@ null.search <- function(ranking=NULL,
   if(smooth)
     c=1
   
-  if(null.args$metric=="pval"){
+  if(m=="pval"){
     
     #Use negative log transform of returned search score (either computed above, or passed to the null_ks function if previously computed)
     obs.best.score <- -(log(unlist(obs.best.score)))

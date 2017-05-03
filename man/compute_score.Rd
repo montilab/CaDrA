@@ -14,6 +14,6 @@ compute_score(mat, method = c("ks", "wilcox"), ...)
 \item{...}{additional arguments provided to either ks.genescore() or wilcox.genescore() functions depending on method of choice}
 }
 \description{
-Compute scores based on skewdness of a given binary vector (based on sample ordering) used in the stepwise search
+Compute scores based on skewdness of a given binary matrix (based on sample ordering) used in the stepwise search
 }
 

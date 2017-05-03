@@ -4,9 +4,9 @@
 \alias{stepwise.search}
 \title{Step-wise search}
 \usage{
-stepwise.search(ranking = NULL, ES, max.size = 7, metric, method = c("ks",
-  "wilcox"), back_search = TRUE, cust_start = NULL,
-  best.score.only = FALSE, alt = "two.sided", wts = NULL, rnks = NULL,
+stepwise.search(ranking = NULL, ES, max.size = 7, metric = "pval",
+  method = c("ks", "wilcox"), back_search = TRUE, cust_start = NULL,
+  best.score.only = FALSE, alt = "less", wts = NULL, rnks = NULL,
   verb = FALSE)
 }
 \arguments{
@@ -16,7 +16,7 @@ stepwise.search(ranking = NULL, ES, max.size = 7, metric, method = c("ks",
 
 \item{max.size}{an integer specifying the maximum size a meta-feature can extend do for a given search. Default is 7}
 
-\item{metric}{a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic}
+\item{metric}{a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'}
 
 \item{method}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox"}
 
@@ -26,7 +26,7 @@ stepwise.search(ranking = NULL, ES, max.size = 7, metric, method = c("ks",
 
 \item{best.score.only}{a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE}
 
-\item{alt}{a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "two.sided"}
+\item{alt}{a character string specifying the alternative hypothesis, must be one of "two.sided","greater" or "less". Default is "less" for left-skewed significance testing.}
 
 \item{wts}{an integer vector of weights to use if performing weighted-KS testing. Default is NULL. Value passed to compute_score() function}
 

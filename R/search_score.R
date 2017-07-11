@@ -1,6 +1,6 @@
 #' Compute skewdness scores per feature
 #'
-#' Compute scores based on skewdness of a given binary vector (based on sample ordering) used in the stepwise search
+#' Compute scores based on skewdness of a given binary matrix (based on sample ordering) used in the stepwise search
 #' @param mat matrix of binary features to compute row-wise ks scores for
 #' @param method a character string specifying the method used to score features, must be one of "ks" or "wilcox"
 #' @param ... additional arguments provided to either ks.genescore() or wilcox.genescore() functions depending on method of choice
@@ -18,7 +18,7 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
   if(nrow(mat) < 2)
     warning("You are computing a row-wise statistic over a matrix with nrow < 2\n")
   
-  # If no alternative is specified
+  # If no alternative is specified, we use "less" as default.
   if(is.null(compute_score_args$alt)){
     warning("No alternative hypothesis specified. Using 'less' by default ..\n")
     compute_score_args$alt <- "less"
@@ -42,7 +42,7 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
   
   s <- switch(method,
                  ks=ks.genescore.mat(mat,
-                                     alt=compute_score_args$alt,
+                                     alt=compute_score_args$alt, 
                                      weight=compute_score_args$wts),
                  wilcox=wilcox.genescore.mat(mat,
                                              alt=compute_score_args$alt,

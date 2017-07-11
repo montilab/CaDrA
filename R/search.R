@@ -85,6 +85,29 @@ topn.eval <- function(ranking=NULL,
   return(topn.l) #Default is to return the top N stepwise search results as a list of lists
 }
 
+#' Top 'N' best
+#' 
+#' Takes the resulting list of meta-features returned from topn.eval() function and fetches the meta-feature with best (local) score
+#' @param topn.list The nested list object that is returned by topn.eval() function when best.score.only is set to FALSE. This contains both the ESets as well as the scores for each resulting meta-feature in the top 'N'  search mode.
+#' @return A list containing the (local) best meta-feature ESet, as well as its corresponding search score
+#' @export
+#' @import Biobase
+topn.best <- function(topn.list){
+  
+  # Fetch the index housing the best ESet (this wil be the one with the best score)
+  n <- which.min(sapply(topn.list,"[[",2))
+  
+  # Also store the score
+  top.score <- min(sapply(topn.list,"[[",2))
+  
+  # Corresponding ESet object
+  best.meta <- topn.l[[n]]$ESet
+  
+  return(list("ESet"=best.meta,
+              "Score"=top.score))
+
+}
+
 backward_check <- function
 (
   ESet,                    # an Expression Set object with the same sample ordering and features as processed by the stepwise.search() function 
@@ -155,7 +178,7 @@ backward_check <- function
 #' @param wts an integer vector of weights to use if performing weighted-KS testing. Default is NULL. Value passed to compute_score() function  
 #' @param rnks an integer vector of sample rankings to use if performing Wilcoxon rank sum testing. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to compute_score() function 
 #' @param verb a logical indicating whether or not to print diagnostic messages. Default is FALSE 
-#' @return If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, an expression set object containing the features whose union gave the best score is returned. 
+#' @return If best.score.only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ESet object pertaining to the returned meta-feature as well as the corresponding score  is returned. 
 #' @export
 #' @import Biobase 
 stepwise.search <- function(ranking=NULL,  
@@ -667,6 +690,7 @@ null.search <- function(ranking=NULL,
       labs(title=plot.title,
            x="Score",
            y="Count")+
+      theme(plot.title = element_text(hjust = 0.5))+
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_continuous(expand = c(0, 0))
     

@@ -83,9 +83,9 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
                     var.name=""){
   
   #Plot y axis label
-  y_lab<-paste(var.name,"\nscore",sep="")
+  y_lab <- var.name
   #Plot x axis label
-  x_lab<-paste("Samples (n = ",ncol(ESet),")",sep="")
+  x_lab <- paste("Samples (n = ",ncol(ESet),")",sep="")
   
   
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)

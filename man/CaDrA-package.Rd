@@ -33,5 +33,4 @@ Maintainer: Vinay Kartha <vkartha@bu.edu>
 ~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
 }

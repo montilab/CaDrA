@@ -35,7 +35,7 @@ stepwise.search(ranking = NULL, ES, max.size = 7, metric = "pval",
 \item{verb}{a logical indicating whether or not to print diagnostic messages. Default is FALSE}
 }
 \value{
-If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, an expression set object containing the features whose union gave the best score is returned.
+If best.score.only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ESet object pertaining to the returned meta-feature as well as the corresponding score  is returned.
 }
 \description{
 Performs step-wise heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.

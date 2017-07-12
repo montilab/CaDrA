@@ -1,9 +1,9 @@
 # CaDrA
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 
-CaDrA is an R package that allows one to query a binary genomic dataset (where the rows are 1/0 vectors indicating the presence/absence of genomic features like somatic mutations or copy number alteration events) with an associated sample ranking (where the samples are ranked by a certain phenotypic readout of interest like protein expression, pathway activity) in order to determine a set of features that, together (based on the union or 'logical OR'), provide the best score associated with the observed ranking.
+CaDrA is an R package that allows one to query a binary genomic dataset (where the rows are 1/0 vectors indicating the presence/absence of genomic features such as somatic mutations or copy number alteration events) with an associated sample ranking (where the samples are ranked by a certain phenotypic readout of interest such as protein expression, pathway activity etc.) in order to determine a set of features that, together (i.e. based on their union or 'logical OR'), provide the best score associated with the observed ranking.
 
-For more information, please see the associated manuscript <link to pre-print>
+For more information, please see the associated manuscript (Kartha et al. CaDrA: A computational framework for the identification of candidate drivers of signature activity)
 
 In order to get CaDrA up and running in R, you'll need to make sure some dependencies are pre-installed:
 

@@ -215,14 +215,16 @@ topn.plot <- function(topN.list){
   # Note that this means the HIGHER the transformed score, the more significant
   s.log <- -log(s) 
   
-  colnames(m)<-paste(colnames(m)," [",seq(1,ncol(m)),"] ",round(s.log,3),sep="")
-  m<-m[,order(s.log,decreasing = T)] #We order matrix columns in increasing order of search p-value (i.e. decreasing negative-log p-value)
+  colnames(m) <- paste(colnames(m)," [",seq(1,ncol(m)),"] ",round(s.log,3),sep="")
+  m <- m[,order(s.log,decreasing = T)] #We order matrix columns in increasing order of search p-value (i.e. decreasing negative-log p-value)
+
+  colcode <- if (all(m==1)) c("firebrick2","white") else c("white","firebrick2")
   
   if(ncol(m)>=2){
     
     cat("Generating top N overlap heatmap..\n\n")
     heatmap.2(x = m,
-              col=c("white","firebrick2"),
+              col=colcode,
               Colv=FALSE,
               dendrogram="none",
               margins=c(10,10),

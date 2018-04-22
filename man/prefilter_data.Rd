@@ -19,4 +19,16 @@ An expression set object with only the filtered-in features given the filter thr
 \description{
 Pre-filter a dataset prior to running step-wise heuristic search in order to avoid testing features that are too prevalent or too sparse across samples in the dataset
 }
+\examples{
+data(sim.ES)
+
+# Filter out features having < 3 and > 60\% prevalence across all samples (default)
+sim.ES.filt1 <- prefilter_data(sim.ES)
+
+# Change the min cut-off to 1\% prevalence, instead of the default 3\%
+sim.ES.filt2 <- prefilter_data(sim.ES,min.cutoff=0.01)
+
+# Change the max cut-off to 65\% prevalence, instead of the default 60\%
+sim.ES.filt3 <- prefilter_data(sim.ES,max.cutoff=0.65)
+}
 

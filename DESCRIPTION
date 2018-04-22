@@ -5,16 +5,12 @@ Version: 1.0
 Date: 2015-11-24
 Author: Vinay Kartha <vkartha@bu,edu>, Stefano Monti <smonti@bu.edu>
 Maintainer: Vinay Kartha <vkartha@bu.edu>
-Description: Performs a stepwise heuristic search for candidate (epi)genetic
-    drivers based on ranked binary data. CaDrA's main objective is to
-    identify features that are significantly skewed or enriched
-    pertaining to a given sample ranking (Ex: Pathway activity),
-    by exploiting their unions or combinations to account
-    for cross-sample heterogeneity of genomic anomalies.
+Description: Performs a stepwise heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
 Depends: R (>= 3.1.1)
 Imports: Biobase, doParallel, plyr, ggplot2, grid, gplots, gtable,
         R.cache, reshape2
-License: MIT
+LazyData: true
+License: MIT + file LICENSE
 URL: https://github.com/montilab/CaDrA/
 RoxygenNote: 5.0.1
 Packaged: 2017-07-10 18:44:45 UTC; vkartha

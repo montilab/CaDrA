@@ -71,10 +71,25 @@ plot_ES<-function(d
 #' Step-wise heuristic search plot
 #' 
 #' Plot the stepwise search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable (top), 
-#' @param ESet an ESet object containing only the features returned from the ks.stepwise() function (if any) 
+#' @param ESet an ESet object containing only the features returned from the stepwise.search() function (if any) 
 #' @param var.score an optional integer vector of continuous measures used to rank samples for the stepwise search (assumed in matching order)
 #' @param var.name a string object describing the name of the continuous measure used, which will be used as the y-axis label for the metric plot
 #' @return A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
+#' @examples
+#' data(sim.ES)
+#' data(topn.list)
+#' 
+#' # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
+#' # To find the combination of features that had the best score
+#' best.meta <- topn.best(topn.list) 
+#' 
+#' # Now we can plot this set of features
+#' meta.plot(best.meta$ESet)
+#' 
+#' # If a continuous ranking variable was used for the sample-ranking, we can visualize it together
+#' # Just for illustation purposes, we simulate random sample scores
+#' sample.scores <- sort(runif(ncol(sim.ES),0,1),decreasing=TRUE)
+#' meta.plot(best.meta$ESet,var.score=sample.scores,var.name="My ranking variable")
 #' @export
 #' @import ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw
@@ -185,8 +200,13 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
 #' Plots a heatmap representation of overlapping features given a list of top N stepwise search results
 #' @param topN.list a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See ks.stepwise()). This is computed within, and can be returned by the topn.eval() function.
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
+#' @examples
+#' # Load pre-computed Top-N list generated for sim.ES dataset
+#' data(topn.list)
+#' topn.plot(topn.list)
 #' @export
 #' @import gplots
+#' @importFrom graphics legend
 topn.plot <- function(topN.list){
   
   eset.l <- lapply(topN.list, "[[", 1)

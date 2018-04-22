@@ -1,12 +1,11 @@
 \name{CaDrA-package}
 \alias{CaDrA-package}
-\alias{CaDrA}
 \docType{package}
 \title{
 Candidate Driver Analysis
 }
 \description{
-This is a package to support analyses involving the identification of candidate upstream (epi) genetic regulators of pathway activity based on a step-wise heuristic search algorithm.
+Supports the identification of candidate (epi)genetic drivers using a step-wise heuristic search approach given ranked genomic data.
 }
 \details{
 \tabular{ll}{
@@ -14,7 +13,7 @@ Package: \tab CaDrA\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2015-11-24\cr
-License: \tab What license is it under?\cr
+License: \tab MIT\cr
 }
 library(CaDrA)
 }
@@ -25,12 +24,9 @@ Stefano Monti
 Maintainer: Vinay Kartha <vkartha@bu.edu>
 }
 \references{
-~~ Literature or other references for background information ~~
+Kartha VK, Kern JG, Sebastiani P, Zhang L,
+Varelas X, Monti S (2017) CaDrA: A computational framework for performing
+candidate driver analyses using binary genomic features.
+(\href{https://www.biorxiv.org/content/early/2017/11/23/221846}{bioRxiv})
 }
 \keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
-}

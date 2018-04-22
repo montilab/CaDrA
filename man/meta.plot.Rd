@@ -7,7 +7,7 @@
 meta.plot(ESet, var.score = NULL, var.name = "")
 }
 \arguments{
-\item{ESet}{an ESet object containing only the features returned from the ks.stepwise() function (if any)}
+\item{ESet}{an ESet object containing only the features returned from the stepwise.search() function (if any)}
 
 \item{var.score}{an optional integer vector of continuous measures used to rank samples for the stepwise search (assumed in matching order)}
 
@@ -18,5 +18,21 @@ A plot graphic with the ranked metric plot (optional), a tile plot of the featur
 }
 \description{
 Plot the stepwise search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable (top),
+}
+\examples{
+data(sim.ES)
+data(topn.list)
+
+# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
+# To find the combination of features that had the best score
+best.meta <- topn.best(topn.list)
+
+# Now we can plot this set of features
+meta.plot(best.meta$ESet)
+
+# If a continuous ranking variable was used for the sample-ranking, we can visualize it together
+# Just for illustation purposes, we simulate random sample scores
+sample.scores <- sort(runif(ncol(sim.ES),0,1),decreasing=TRUE)
+meta.plot(best.meta$ESet,var.score=sample.scores,var.name="My ranking variable")
 }
 

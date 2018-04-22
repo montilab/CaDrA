@@ -15,4 +15,9 @@ a heatmap of the top N evaluation for a given top N search evaluation
 \description{
 Plots a heatmap representation of overlapping features given a list of top N stepwise search results
 }
+\examples{
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
+topn.plot(topn.list)
+}
 

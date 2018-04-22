@@ -112,7 +112,7 @@ wilcox.genescore.mat <- function
   return(w)
 }
 
-
+#' @importFrom stats ks.test
 ks.genescore <- function
 (
   n.x,                                         # length of ranked list
@@ -198,19 +198,19 @@ ks.genescore <- function
     d<-data.frame("x"=x.axis,"y"=y.axis)
     return(d)
   }
-  if ( do.plot )
-  {
-    plot( x.axis, y.axis, type="l",
-          xlab=paste("up-regulated for class ", cls.lev[2], " (KS>0) vs ",
-                     "up-regulated for class ", cls.lev[1], " (KS<0)", sep="" ),
-          ylab="gene hits",...)
-    abline(h=0)
-    abline(v=n.x/2,lty=3)
-    axis(1,at=y,labels=plot.labels,tcl=0.25,las=2)
-    i.max <- which.max(abs(y.axis))
-    points( x.axis[i.max], y.axis[i.max], pch=20, col="red")
-    text(x.axis[i.max]+n.x/20,y.axis[i.max],round(y.axis[i.max],2))
-  }
+# if ( do.plot )
+#  {
+#    plot( x.axis, y.axis, type="l",
+#          xlab=paste("up-regulated for class ", cls.lev[2], " (KS>0) vs ",
+#                     "up-regulated for class ", cls.lev[1], " (KS<0)", sep="" ),
+#          ylab="gene hits",...)
+#    abline(h=0)
+#    abline(v=n.x/2,lty=3)
+#    axis(1,at=y,labels=plot.labels,tcl=0.25,las=2)
+#    i.max <- which.max(abs(y.axis))
+#    points( x.axis[i.max], y.axis[i.max], pch=20, col="red")
+#    text(x.axis[i.max]+n.x/20,y.axis[i.max],round(y.axis[i.max],2))
+#  }
   if (!do.pval)
     return(score)
   
@@ -232,6 +232,7 @@ ks.genescore <- function
     return(RVAL)
 }
 
+#' @importFrom stats pnorm pwilcox
 wilcox.genescore <- function 
 (x,                                                  # ranks for group 1
  y,                                                  # ranks for group 2

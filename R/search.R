@@ -14,6 +14,18 @@ verbose <- function(...){
 #' @param max.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)
 #' @param min.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)
 #' @return An expression set object with only the filtered-in features given the filter thresholds specified
+#' @examples
+#' data(sim.ES)
+#' 
+#' # Filter out features having < 3 and > 60% prevalence across all samples (default)
+#' sim.ES.filt1 <- prefilter_data(sim.ES)
+#' 
+#' # Change the min cut-off to 1% prevalence, instead of the default 3%
+#' sim.ES.filt2 <- prefilter_data(sim.ES,min.cutoff=0.01)
+#' 
+#' # Change the max cut-off to 65% prevalence, instead of the default 60%
+#' sim.ES.filt3 <- prefilter_data(sim.ES,max.cutoff=0.65) 
+#' 
 #' @export
 #' @import Biobase
 prefilter_data<-function(ES, 
@@ -586,7 +598,7 @@ null.search <- function(ranking=NULL,
     # Sets up the parallel backend which will be utilized by Plyr.
     parallel = FALSE
     progress = "text"
-    if(ncores > 1 && require(doMC)){
+    if(ncores > 1){
       registerDoParallel(cores = ncores)
       parallel = TRUE
       progress = "none"
@@ -659,7 +671,10 @@ null.search <- function(ranking=NULL,
     #Use negative log transform of returned search score (either computed above, or passed to the null_ks function if previously computed)
     obs.best.score <- -(log(unlist(obs.best.score)))
     
-    #Use negative log transform on the permuted scores (either computed above or loaded from Cache)
+    # Use negative log transform on the permuted scores (either computed above or loaded from Cache)
+    # NOTE: there is a very small chance some signed observed scores (p-values) are anti-correlated (meaning negative)
+    # To avoid NaNs, we remove these. Keep in mind this is uncommon and will contribute very few permutations (n<10) if running N=1000
+    perm.best.scores <- perm.best.scores[perm.best.scores > 0]
     perm.best.scores <- -(log(perm.best.scores))
     
   }

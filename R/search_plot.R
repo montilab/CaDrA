@@ -11,6 +11,7 @@
   return(plot.tab)
 }
 
+
 # Solution to drawing arbitrary number of plots stacked above one another
 # Each plot will be left-aligned
 # Each plot should first be made a ggplotGrob object
@@ -31,7 +32,12 @@ rbind_gtable_max <- function(...){
     y$layout$t <- y$layout$t + nrow(x)
     y$layout$b <- y$layout$b + nrow(x)
     x$layout <- rbind(x$layout, y$layout)
-    x$heights <- gtable:::insert.unit(x$heights, y$heights)
+
+    # Katia This line causes a warning during the package check() and
+    # and considered to be not a good practice
+    # See the note in ?`:::` about the use of this operator
+    #x$heights <- gtable:::insert.unit(x$heights, y$heights)
+    x$heights <- grid::unit.c(x$heights, y$heights)
     x$rownames <- c(x$rownames, y$rownames)
     x$widths <- grid::unit.pmax(x$widths, y$widths)
     x$grobs <- append(x$grobs, y$grobs)
@@ -51,12 +57,16 @@ rbind_gtable_max <- function(...){
 #' @import ggplot2
 plot_ES<-function(d 
 ){
-  g <- ggplot(data = d,aes(x=x,y=y))
+  #Katia: adding ".data" to avoid a warning during check:
+  # no visible binding for global variable ‘measure’
+  g <- ggplot(data = d,aes(x=.data$x,y=.data$y))
   g <- g+
     #geom_line(size=1.25,colour="blueviolet")+
     geom_line(size=1.25,colour="darkgoldenrod1")+
     geom_hline(yintercept=0,linetype=2)+
-    geom_point(data=d[which.max(d$y),],aes(x=x,y=y),colour="black",fill="red",size=3,shape=21)+
+    #Katia: adding ".data" to avoid a warning during check:
+    # no visible binding for global variable
+    geom_point(data=d[which.max(d$y),],aes(x=.data$x,y=.data$y),colour="black",fill="red",size=3,shape=21)+
     annotate("text",x=d[which.max(d$y),1]+8,y=max(d$y),label=as.character(round(max(d$y),3)),size=3)+
     scale_x_continuous(expand = c(0,0))+
     scale_y_reverse()+ # This inverts the ES score statistic line
@@ -114,7 +124,9 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
     # This plot assumes that there are two columns in the data frame called 'sample' and 'measure'
     # The 'sample' variable has to be a factor with ordered levels for displaying in the correct sample order
     
-    m.plot<-ggplot(var.d,aes(x=sample,y=measure,group=1))+
+    #Katia: adding ".data" to avoid a warning during check:
+    # no visible binding for global variable ‘measure’
+    m.plot<-ggplot(var.d,aes(x=.data$sample,y=.data$measure,group=1))+
       geom_area(alpha=0.6,fill="deepskyblue4",linetype=1,size=0.5,color="black")+
       scale_y_continuous(expand = c(0,0))+
       scale_x_discrete(expand = c(0,0))+
@@ -160,7 +172,9 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
   x.m$Var1<-factor(as.character(x.m$Var1),levels=rev(unique(as.character(x.m$Var1))))
   
   # Plot for mutation/CNA feature profile (with summary OR)
-  feature.plot <- ggplot(x.m,aes(x=factor(Var2),y=Var1,fill=value))+
+  #Katia: adding ".data" to avoid a warning during check:
+  # no visible binding for global variable ‘Var2’
+  feature.plot <- ggplot(x.m,aes(x=factor(.data$Var2),y=.data$Var1,fill=.data$value))+
     geom_tile(colour=NA)+ #So that there are no line borders around each cell
     scale_fill_gradient2( #This is only if we want different colors for different values
       high="red", #This will be for our OR function values (which have 2's for 1's, based on our pre-processing) 

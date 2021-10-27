@@ -58,8 +58,8 @@ rbind_gtable_max <- function(...){
 plot_ES<-function(d 
 ){
   #Katia: adding ".data" to avoid a warning during check:
-  # no visible binding for global variable ‘measure’
-  g <- ggplot(data = d,aes(x=.data$x,y=.data$y))
+  # no visible binding for global variable 
+  g <- ggplot(data = d,aes(x=.data$x, y=.data$y))
   g <- g+
     #geom_line(size=1.25,colour="blueviolet")+
     geom_line(size=1.25,colour="darkgoldenrod1")+
@@ -125,7 +125,7 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
     # The 'sample' variable has to be a factor with ordered levels for displaying in the correct sample order
     
     #Katia: adding ".data" to avoid a warning during check:
-    # no visible binding for global variable ‘measure’
+    # no visible binding for global variable 
     m.plot<-ggplot(var.d,aes(x=.data$sample,y=.data$measure,group=1))+
       geom_area(alpha=0.6,fill="deepskyblue4",linetype=1,size=0.5,color="black")+
       scale_y_continuous(expand = c(0,0))+
@@ -173,7 +173,7 @@ meta.plot<-function(ESet, #ExpressoinSet containing somatic mutation/CNA data wi
   
   # Plot for mutation/CNA feature profile (with summary OR)
   #Katia: adding ".data" to avoid a warning during check:
-  # no visible binding for global variable ‘Var2’
+  # no visible binding for global variable 
   feature.plot <- ggplot(x.m,aes(x=factor(.data$Var2),y=.data$Var1,fill=.data$value))+
     geom_tile(colour=NA)+ #So that there are no line borders around each cell
     scale_fill_gradient2( #This is only if we want different colors for different values

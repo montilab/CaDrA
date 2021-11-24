@@ -696,7 +696,9 @@ null.search <- function(ranking=NULL,
     
     #Here, let us plot the absolute values of the permutation p-values, for simplicity
     #You only consider absolute values when calculating the permutation p-values
-    g <- ggplot(data=data.frame("x"=perm.best.scores),aes(x=x))+
+    #Katia: adding ".data" to avoid a warning during check:
+    # no visible binding for global variable 
+    g <- ggplot(data=data.frame("x"=perm.best.scores),aes(x=.data$x))+
       geom_histogram(fill="black",color="gray")+
       theme_classic()+theme(axis.line.x=element_line(color="black"),
                             axis.line.y=element_line(color="black"))

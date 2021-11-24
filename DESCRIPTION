@@ -1,9 +1,9 @@
 Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
-Version: 1.0
-Date: 2015-11-24
-Author: Vinay Kartha <vkartha@bu,edu>, Stefano Monti <smonti@bu.edu>
+Version: 1.1
+Date: 2021-10-09
+Author: Vinay Kartha <vkartha@bu,edu>, Stefano Monti <smonti@bu.edu>, Reina Chau <rchau88@bu.edu>, Katia Bulekova <ktrn@bu.edu>
 Maintainer: Vinay Kartha <vkartha@bu.edu>
 Description: Performs a stepwise heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
 Depends: R (>= 3.1.1)
@@ -12,5 +12,4 @@ Imports: Biobase, doParallel, plyr, ggplot2, grid, gplots, gtable,
 LazyData: true
 License: MIT + file LICENSE
 URL: https://github.com/montilab/CaDrA/
-RoxygenNote: 5.0.1
 Packaged: 2017-07-10 18:44:45 UTC; vkartha

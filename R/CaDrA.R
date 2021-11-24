@@ -1,11 +1,7 @@
 
-# Define global options 
-method_options <- c("ks", "wilcox", "mi")
-search_options <- c("forward", 'backward', "both")
-
-#' Candidate Search
+#' CaDrA Permutation-Based Candidate Searching
 #' 
-#' Performs step-wise heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
+#' Performs permutation-based significance testing of candidate search results.
 #' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
 #' @param input_score a vector containing score for sample ordering (required). 
 #' @param max.size an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7
@@ -23,14 +19,14 @@ search_options <- c("forward", 'backward', "both")
 #' @return If best.score.only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ESet object pertaining to the returned meta-feature as well as the corresponding score  is returned. 
 #' @export
 #' @import Biobase 
-candidate_search <- function(
+CaDrA <- function(
   ES, 
   input_score, 
-  method = method_options,
+  method = c("ks", "wilcox", "mi"),
   metric = "pval",
   max_size = 7,
   search_start = 1,
-  search_method = search_options, 
+  search_method = c("forward", 'backward', "both"), 
   best_score_only = FALSE, 
   alternative = "less", 
   weights = NULL,

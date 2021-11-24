@@ -1,7 +1,7 @@
 
 #' Candidate Search
 #' 
-#' Performs step-wise heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
+#' Performs heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
 #' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
 #' @param input_score a vector containing score for sample ordering (required). 
 #' @param max.size an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7

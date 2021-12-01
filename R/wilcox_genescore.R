@@ -43,74 +43,74 @@ wilcox_genescore <- function
   # exact = NULL                                          # compute exact p-value
   # correct = TRUE                                        # for contuity correction (p-value)
   
-  if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu))) 
-    stop("'mu' must be a single number")
-  if (!is.numeric(x)) 
-    stop("'x' must be numeric")
-  if (!is.numeric(y)) 
-    stop("'y' must be numeric")
-  
-  DNAME <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
-  
-  x <- x[is.finite(x)]
-  y <- y[is.finite(y)]
-  
-  if (length(x) < 1L) {
-    print(x)
-    stop("not enough (finite) 'x' observations")}
-  
-  if (length(y) < 1L){
-    print(y)
-    stop("not enough 'y' observations")}
-  
-  METHOD <- "Wilcoxon rank sum test"
-  
-  ##### Modification ######
-  # Take input as ranks instead of continuous measures (normally internally ranked: see below)
-  r <- c(x,y)
-  
-  #r <- rank(c(x - mu, y))
-  
-  n.x <- as.double(length(x))
-  n.y <- as.double(length(y))
-  if (is.null(exact)) 
-    exact <- (n.x < 50) && (n.y < 50)
-  STATISTIC <- c(W = sum(r[seq_along(x)]) - n.x * (n.x + 1)/2)
-  TIES <- (length(r) != length(unique(r)))
-  if (exact && !TIES) {
-    PVAL <- switch(alternative, two.sided = {
-      p <- if (STATISTIC > (n.x * n.y/2)) pwilcox(STATISTIC - 
-                                                    1, n.x, n.y, lower.tail = FALSE) else pwilcox(STATISTIC, 
-                                                                                                  n.x, n.y)
-      min(2 * p, 1)
-    }, greater = {
-      pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
-    }, less = pwilcox(STATISTIC, n.x, n.y))
-  } else {
-    NTIES <- table(r)
-    z <- STATISTIC - n.x * n.y/2
-    SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - 
-                                      sum(NTIES^3 - NTIES)/((n.x + n.y) * (n.x + n.y - 
-                                                                             1))))
-    if (correct) {
-      CORRECTION <- switch(alternative, two.sided = sign(z) * 
-                             0.5, greater = 0.5, less = -0.5)
-      METHOD <- paste(METHOD, "with continuity correction")
-    }
-    z <- (z - CORRECTION)/SIGMA
-    PVAL <- switch(alternative, less = pnorm(z), greater = pnorm(z, lower.tail = FALSE), two.sided = 2 * min(pnorm(z), pnorm(z, lower.tail = FALSE)))
-    if (exact && TIES) 
-      warning("cannot compute exact p-value with ties")
-  }
-  names(mu) <- ifelse (paired || !is.null(y),"location shift","location") 
-  
-  RVAL <- list(statistic = STATISTIC, parameter = NULL, p.value = as.numeric(PVAL), 
-               null.value = mu, alternative = alternative, method = METHOD, 
-               data.name = DNAME)
-  
-  class(RVAL) <- "htest"
-  
-  return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))         
+  # if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu))) 
+  #   stop("'mu' must be a single number")
+  # if (!is.numeric(x)) 
+  #   stop("'x' must be numeric")
+  # if (!is.numeric(y)) 
+  #   stop("'y' must be numeric")
+  # 
+  # DNAME <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
+  # 
+  # x <- x[is.finite(x)]
+  # y <- y[is.finite(y)]
+  # 
+  # if (length(x) < 1L) {
+  #   print(x)
+  #   stop("not enough (finite) 'x' observations")}
+  # 
+  # if (length(y) < 1L){
+  #   print(y)
+  #   stop("not enough 'y' observations")}
+  # 
+  # METHOD <- "Wilcoxon rank sum test"
+  # 
+  # ##### Modification ######
+  # # Take input as ranks instead of continuous measures (normally internally ranked: see below)
+  # r <- c(x,y)
+  # 
+  # #r <- rank(c(x - mu, y))
+  # 
+  # n.x <- as.double(length(x))
+  # n.y <- as.double(length(y))
+  # if (is.null(exact)) 
+  #   exact <- (n.x < 50) && (n.y < 50)
+  # STATISTIC <- c(W = sum(r[seq_along(x)]) - n.x * (n.x + 1)/2)
+  # TIES <- (length(r) != length(unique(r)))
+  # if (exact && !TIES) {
+  #   PVAL <- switch(alternative, two.sided = {
+  #     p <- if (STATISTIC > (n.x * n.y/2)) pwilcox(STATISTIC - 
+  #                                                   1, n.x, n.y, lower.tail = FALSE) else pwilcox(STATISTIC, 
+  #                                                                                                 n.x, n.y)
+  #     min(2 * p, 1)
+  #   }, greater = {
+  #     pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
+  #   }, less = pwilcox(STATISTIC, n.x, n.y))
+  # } else {
+  #   NTIES <- table(r)
+  #   z <- STATISTIC - n.x * n.y/2
+  #   SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - 
+  #                                     sum(NTIES^3 - NTIES)/((n.x + n.y) * (n.x + n.y - 
+  #                                                                            1))))
+  #   if (correct) {
+  #     CORRECTION <- switch(alternative, two.sided = sign(z) * 
+  #                            0.5, greater = 0.5, less = -0.5)
+  #     METHOD <- paste(METHOD, "with continuity correction")
+  #   }
+  #   z <- (z - CORRECTION)/SIGMA
+  #   PVAL <- switch(alternative, less = pnorm(z), greater = pnorm(z, lower.tail = FALSE), two.sided = 2 * min(pnorm(z), pnorm(z, lower.tail = FALSE)))
+  #   if (exact && TIES) 
+  #     warning("cannot compute exact p-value with ties")
+  # }
+  # names(mu) <- ifelse (paired || !is.null(y),"location shift","location") 
+  # 
+  # RVAL <- list(statistic = STATISTIC, parameter = NULL, p.value = as.numeric(PVAL), 
+  #              null.value = mu, alternative = alternative, method = METHOD, 
+  #              data.name = DNAME)
+  # 
+  # class(RVAL) <- "htest"
+  # 
+  # return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))         
   
 } #end function
 

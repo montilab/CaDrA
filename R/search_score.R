@@ -1,3 +1,7 @@
+#' @useDynLib CaDrA ks_genescore_mat_
+ks_genescore_mat <- function(mat) .Call(ks_genescore_mat_, mat)
+
+
 #' Compute skewdness scores per feature
 #'
 #' Compute scores based on skewdness of a given binary matrix (based on sample ordering) used in the stepwise search
@@ -41,9 +45,10 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
   }
   
   s <- switch(method,
-                 ks=ks.genescore.mat(mat,
-                                     alt=compute_score_args$alt, 
-                                     weight=compute_score_args$wts),
+                 #ks=ks.genescore.mat(mat,
+                 #                     alt=compute_score_args$alt, 
+                 #                     weight=compute_score_args$wts),
+                 ks = ks_genescore_mat(mat),
                  wilcox=wilcox.genescore.mat(mat,
                                              alt=compute_score_args$alt,
                                              ranks=compute_score_args$rnks)) 

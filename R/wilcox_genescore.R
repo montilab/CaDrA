@@ -1,14 +1,13 @@
 
 #' Compute rank sum scores for each row of a given binary matrix
 #' 
-#' @param x 
-#' @param y 
-#' @param mu 
+#' @param x description
+#' @param y description
+#' @param mu description
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks.genescore() function
-#' @param paired 
-#' @param exact
-#' @param correct 
-#' @return 
+#' @param paired description
+#' @param exact description
+#' @param correct description
 #' @export
 #' @importFrom stats pnorm pwilcox
 wilcox_genescore <- function 
@@ -110,7 +109,8 @@ wilcox_genescore <- function
   # 
   # class(RVAL) <- "htest"
   # 
-  # return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))         
+  # return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))    
+  return (NULL)
   
 } #end function
 

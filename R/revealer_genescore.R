@@ -6,7 +6,6 @@
 #' @param z A binary feature which is often known as "causes" of activation
 #' @param assoc_metric Association Metric: "IC" information coefficient (default) or "COR" correlation
 #' @param target_match Direction of the match (negative or positive). Use "positive" to match the higher values of the target, "negative" to match the lower values. Default is positive. 
-#' @return 
 #' @export
 revealer_genescore <- function(
   x,

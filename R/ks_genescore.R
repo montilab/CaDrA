@@ -1,15 +1,14 @@
 
 #' Compute directional KS scores for each row of a given binary matrix
 #' 
-#' @param x 
-#' @param y 
-#' @param weight 
-#' @param weight.p 
+#' @param x   description
+#' @param y description
+#' @param weight description
+#' @param weight.p description
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks.genescore() function
-#' @param do.pval 
-#' @param absolute 
-#' @param exact
-#' @return 
+#' @param do.pval description
+#' @param absolute description
+#' @param exact description
 #' @export
 #' @importFrom stats ks.test
 ks_genescore <- function

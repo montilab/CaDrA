@@ -4,11 +4,10 @@
 #' Performs permutation-based significance testing of candidate search results.
 #' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
 #' @param input_score a vector containing score for sample ordering (required). 
-#' @param max.size an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7
+#' @param max_size an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
 #' @param metric a character string specifying which metric to use for candidate search. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'
-#' @param cust_function a customize function that computes the score. It will be used when the 'method' is set to 'custom'
-#' @param start an integer specifying a specific index within the expression set object of the features to start the candidate search. Default is 1 where the search starts with the top ranked feature. If an integer N is specified (where N < nrow(dataset), then the search starts with the Nth best feature. If a string is specified, then the search starts with the feature with this name (must be a valid rowname in the Eset)
+#' @param search_start an integer specifying a specific index within the expression set object of the features to start the candidate search. Default is 1 where the search starts with the top ranked feature. If an integer N is specified (where N < nrow(dataset), then the search starts with the Nth best feature. If a string is specified, then the search starts with the feature with this name (must be a valid rowname in the Eset)
 #' @param search_method a character string specifying which method to perform or filter out the best candidates. Default is 'forward'.
 #' @param best_score_only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided", "greater" or "less". Default is "less" for left-skewed significance testing.
@@ -34,6 +33,7 @@ CaDrA <- function(
   verbose = TRUE,
   outdir = NULL
 ){
+  # cust_function a customize function that computes the score. It will be used when the 'method' is set to 'custom'
   
   # Set up verbose option
   options(verbose=verbose)

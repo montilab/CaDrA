@@ -8,29 +8,32 @@ ks_genescore(
   x,
   y,
   weight = NULL,
-  weight.p = 1,
+  weight_p = 1,
   alternative = "less",
-  do.pval = TRUE,
+  do_pval = TRUE,
   absolute = FALSE,
   exact = NULL
 )
 }
 \arguments{
-\item{x}{description}
+\item{x}{ranked list}
 
-\item{y}{description}
+\item{y}{positions of geneset items in ranked list (ranks)}
 
-\item{weight}{description}
+\item{weight}{weights for weighted score (see Subramanian et al.) (usually, sort(score))}
 
-\item{weight.p}{description}
+\item{weight_p}{weights exponent}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks.genescore() function}
+\item{alternative}{alternative hypothesis for p-value calculation}
 
-\item{do.pval}{description}
+\item{do_pval}{compute asymptotic p-value}
 
-\item{absolute}{description}
+\item{absolute}{takes max - min score rather than the maximum deviation from null}
 
-\item{exact}{description}
+\item{exact}{compute exact p-value}
+}
+\value{
+A data frame
 }
 \description{
 Compute directional KS scores for each row of a given binary matrix

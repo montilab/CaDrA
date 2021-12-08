@@ -33,39 +33,39 @@ CaDrA <- function(
   verbose = TRUE,
   outdir = NULL
 ){
-  # cust_function a customize function that computes the score. It will be used when the 'method' is set to 'custom'
-  
-  # Set up verbose option
-  options(verbose=verbose)
-  
-  # Check if the ES is provided
+  # # cust_function a customize function that computes the score. It will be used when the 'method' is set to 'custom'
+  # 
+  # # Set up verbose option
+  # options(verbose=verbose)
+  # 
+  # #Check if the ES is provided
   # if(length(ES) == 0){
-  #   
+  # 
   #   stop("ES was not provided (required).\n")
-  #   
+  # 
   # }else{
-  #   
+  # 
   #   # Check if ES is an expression matrix or an expressionSet from BioBase
   #   es_check <- tryCatch({
-  #     
+  # 
   #     # Get expression matrix
   #     eset <- exprs(ES)
-  #     
+  # 
   #     return("ExpressionSet")
-  #     
+  # 
   #   }, error=function(err){
-  #     
+  # 
   #     # if not an expressionSet from BioBase, check if it is an expression matrix
   #     if(is.matrix(ES)){ return("ExpressionMatrix") } else { return(FALSE) }
-  #     
+  # 
   #   })
   # 
   # }
   # 
   # # If expressionSet from BioBase was provided, extract the expression matrix only
-  # if(es_check == "ExpressionSet"){ 
-  #   eset_matrix = exprs(ES) 
-  # }else if(es_check == "ExpressionMatrix"){ 
+  # if(es_check == "ExpressionSet"){
+  #   eset_matrix = exprs(ES)
+  # }else if(es_check == "ExpressionMatrix"){
   #   eset_matrix = as.matrix(ES)
   # }else{
   #   stop("Invalid ES input. ES can be an expression set from BioBase or an expression matrix.\n")
@@ -82,79 +82,79 @@ CaDrA <- function(
   # 
   # # Check input_score is provided
   # if(length(input_score) == 0){
-  #   
+  # 
   #   stop("input_score was not provided (required).\n")
-  #   
+  # 
   # }else{
-  #   
+  # 
   #   # Make sure the input_score has the same length as number of samples in ES
   #   if(length(input_score) != ncol(eset_matrix))
   #     stop("input_score variable must have the same length as the number of samples in ES.\n")
-  #   
+  # 
   #   # check if input_score are ranked values or computed values
-  #   ranking = ifelse(all(sort(input_score) == 1:ncol(eset_matrix)), TRUE, FALSE) 
-  #   
-  #   if(ranking){
-  #     
-  #     verbose("A vector of ranked input_score was provided. Using the ordering to re-rank the samples..\n")
-  #     eset_matrix <- eset_matrix[,ranking]
-  #     
-  #   }else{
-  #     
-  #     verbose("A vector of input_score values was provided. Using the computed values to re-ordering the samples..\n")
-  #     
-  #     ordering <- data.frame(position=1:length(input_score), input_score=input_score) %>% dplyr::arrange(desc(input_score))
-  #     eset_matrix <- eset_matrix[,ordering]
-  #     
-  #   }
-  #   
+  #   ranking = ifelse(all(sort(input_score) == 1:ncol(eset_matrix)), TRUE, FALSE)
+  # 
+  #   # if(ranking){
+  #   # 
+  #   #   verbose("A vector of ranked input_score was provided. Using the ordering to re-rank the samples..\n")
+  #   #   eset_matrix <- eset_matrix[,ranking]
+  #   # 
+  #   # }else{
+  #   # 
+  #   #   verbose("A vector of input_score values was provided. Using the computed values to re-ordering the samples..\n")
+  #   # 
+  #   #   ordering <- data.frame(position=1:length(input_score), input_score=input_score) %>% dplyr::arrange(desc(input_score))
+  #   #   eset_matrix <- eset_matrix[,ordering]
+  #   # 
+  #   # }
+  # 
   # }
   # 
-  # # Check the method 
+  # # Check the method
   # if(length(method) > 0 && method %in% method_options){
-  #   
+  # 
   #   # Compute row-wise directional KS scores for existing (raw/starting) binary features in ES
   #   if(method == "ks"){
   #     verbose("Using KS method for feature scoring..\n")
   #   }
-  #   
-  #   # Compute row-wise Wilcox rank sum scores for existing (raw/starting) binary features in ES 
+  # 
+  #   # Compute row-wise Wilcox rank sum scores for existing (raw/starting) binary features in ES
   #   if(method == "wilcox"){
   #     verbose("Using Wilcoxon method for feature scoring..\n")
   #   }
-  #   
-  #   # Compute mutually exclusive method for existing (raw/starting) binary features in ES 
+  # 
+  #   # Compute mutually exclusive method for existing (raw/starting) binary features in ES
   #   if(method == "mi"){
   #     verbose("Using Mutually Exclusive method for feature scoring.\n")
   #   }
-  #   
-  #   # Other future methods can be implemented here and its verbose message go here
-  #   
-  #   
-  # } else {
-  #   
-  #   stop(paste0("Invalid method specified. The method can be ", paste0(paste0("'", method_options, "'"), collapse=","), "\n"))
-  #   
-  # } 
   # 
-  # # Select the appropriate method to compute scores based on skewdness of a given binary matrix  
+  #   # Other future methods can be implemented here and its verbose message go here
+  # 
+  # 
+  # } else {
+  # 
+  #   stop(paste0("Invalid method specified. The method can be ", paste0(paste0("'", method_options, "'"), collapse=","), "\n"))
+  # 
+  # }
+  # 
+  # # Select the appropriate method to compute scores based on skewdness of a given binary matrix
   # s <- switch(
   #   method,
-  #   ks = ks_genescore_mat(
-  #     mat = eset_matrix,
-  #     alt = alternative, 
-  #     weight = weights
-  #   ),
+  #   #ks = ks_genescore_mat(
+  #   #  mat = eset_matrix,
+  #   #  alt = alternative,
+  #   #  weight = weights
+  #   #),
   #   wilcox = wilcox_genescore_mat(
   #     mat = eset_matrix,
-  #     alt = alternative,
-  #     ranks = ranks
-  #   ),
-  #   mi = revealer_genescore_mat(
-  #     mat = eset_matrix,
-  #     alt = alternative
-  #   )
-  # ) 
+  #     alternative = alternative,
+  #     rank = ranks
+  #   )#,
+  #   ##mi = revealer_genescore_mat(
+  #   #  mat = eset_matrix,
+  #   #  alt = alternative
+  #   #)
+  # )
   # 
   # # Score returned by either ks or wilcox-based functions
   # s.stat <- s[1,]
@@ -180,29 +180,29 @@ CaDrA <- function(
   # ES <- ES[score.rank,]
   # score <- score[score.rank]
   # 
-  # if(is.null(cust_start)){ 
+  # if(is.null(cust_start)){
   #   verbose("Starting with feature having best ranking ..\n")
-  #   best.s.index <- 1  
+  #   best.s.index <- 1
   # } else {
-  #   if(is.numeric(cust_start)){ 
+  #   if(is.numeric(cust_start)){
   #     # User-specified feature index (has to be an integer from 1:nrow(ES))
   #     verbose("Starting with specified sorted feature index ..\n")
-  #     
+  # 
   #     if(cust_start > nrow(ES)) # Index out of range
   #       stop("Invalid starting index specified.. Please specify a valid starting index within the range of the existing ESet..\n")
-  #     
-  #     best.s.index <- cust_start 
+  # 
+  #     best.s.index <- cust_start
   #   }
-  #   
+  # 
   #   if(is.character(cust_start)){
   #     # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
   #     verbose("Starting with specified feature name ..\n")
-  #     
+  # 
   #     if(!(cust_start %in% rownames(ES))) #provided feature name not in rownames
   #       stop("Provided starting feature does not exist among ESet's rownames .. please check stepwise.search cust_start parameter options for more details ..\n\n")
-  #     
-  #     best.s.index <- which(rownames(ES)==cust_start)  
-  #   } # end if is.character 
+  # 
+  #     best.s.index <- which(rownames(ES)==cust_start)
+  #   } # end if is.character
   # } # end else (!is.null)
   # 
   # ###### INITIALIZE VARIABLES ###########
@@ -242,25 +242,25 @@ CaDrA <- function(
   #   verbose("Iteration number ",(i+1)," ..\n")
   #   verbose("Global best score: ",global.best.s,"\n")
   #   verbose("Previous score: ",best.s,"\n")
-  #   
+  # 
   #   # Update scores and feature set since since entry into the loop means there is an improvement (iteration > 0)
   #   global.best.s <- best.s
   #   global.best.s.features <- c(global.best.s.features,best.feature)
-  #   
+  # 
   #   verbose("Current feature set: ",global.best.s.features,"\n")
-  #   
+  # 
   #   if(i!=0){
   #     verbose("Found feature that improves  score!\n")
   #     # Update the new best meta feature (from meta mat)
-  #     best.meta <- meta.mat[hit.best.s.index,]  
+  #     best.meta <- meta.mat[hit.best.s.index,]
   #     #Add that index to the group of indices to be excluded for subsequent checks
   #     #Here we go off the rownames in the original matrix to find which index to exclude from the ESet in subsequent iterations
   #     best.s.index <- c(best.s.index,which(rownames(ES)==best.feature))
-  #   } 
-  #   
-  #   # Perform a backward check on the list of existing features and update global scores/feature lists accordingly  
+  #   }
+  # 
+  #   # Perform a backward check on the list of existing features and update global scores/feature lists accordingly
   #   if(length(global.best.s.features) > 3 & back_search==TRUE){
-  #     
+  # 
   #     backward_search.results <- backward_check(ESet=ES,
   #                                               glob.f=global.best.s.features, #Global feature set so far
   #                                               glob.f.s=global.best.s, # score corresponding to this global feature set
@@ -269,66 +269,66 @@ CaDrA <- function(
   #                                               alt=alt,        # passed to compute_score() function
   #                                               wts=wts,        # passed to compute_score() function
   #                                               rnks=rnks)      # passed to compute_score() function
-  #     # Update globlal features, scores 
+  #     # Update globlal features, scores
   #     global.best.s.features <- backward_search.results[[1]]
   #     global.best.s <- backward_search.results[[2]]
   #     # Update best.meta based on feature set
   #     best.meta <- as.numeric(ifelse(colSums(exprs(ES)[global.best.s.features,])==0,0,1))
   #   }
-  #   
+  # 
   #   #Take the OR function between that feature and all other features, to see which gives the best  score
   #   #Keep in mind, the number of rows in meta.mat keeps reducing by one each time we find a hit that improves the  score
   #   verbose("Forming meta-feature matrix with all other features in dataset..\n")
   #   # Here "*1" is used to convert the boolean back to integer 1's and 0's
   #   # Notice we remove anything in best.s.index from the original matrix first, to form the meta matrix.
   #   meta.mat <- sweep(exprs(ES)[-best.s.index,],2,best.meta,`|`)*1
-  #   
-  #   
+  # 
+  # 
   #   # Check if there are any features that are all 1's generated on taking the union
   #   # We cannot compute statistics for such features and they thus need to be filtered out
   #   if(any(rowSums(meta.mat)==ncol(meta.mat))){
   #     warning("Features with all 1's generated upon taking matrix union .. removing such features before progressing..\n")
   #     meta.mat <- meta.mat[rowSums(meta.mat) != ncol(meta.mat),]
   #   }
-  #   
-  #   
-  #   
+  # 
+  # 
+  # 
   #   #With the newly formed 'meta-feature' matrix, compute directional  scores and choose the feature that gives the best  score
   #   #Compute row-wise directional  scores for existing (raw/starting) binary features in ESet
   #   s <- compute_score(mat=meta.mat,method=method,alt=alt,weight=wts,ranks=rnks)
   #   s.stat <- s[1,]
   #   s.pval <- s[2,]
-  #   
-  #   
+  # 
+  # 
   #   # Take signed pval or stat depending on user-defined metric
   #   # This will be the same length as nrow(meta.mat)
   #   scores <- ifelse(rep(metric,nrow(meta.mat)) %in% "pval",sign(s.stat)*s.pval,s.stat)
-  #   
-  #   
+  # 
+  # 
   #   #Find index of feature that gives lowest s score when combined with chosen starting feature
   #   if(metric!="pval"){
   #     hit.best.s.index <- which.max(scores) #This is the index within the meta matrix
   #   } else { #If signed pvalues
   #     hit.best.s.index <- order(-sign(scores),scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
   #   }
-  #   
+  # 
   #   best.s <- scores[hit.best.s.index] #This is the best score from the meta matrix
-  #   
+  # 
   #   # Find which feature produced that score, in combination with meta feature used
   #   # We go from index to rowname space here in the meta matrix
   #   # We can do this because rownames are preserved between the original and meta features on using sweep()
   #   best.feature <- rownames(meta.mat)[hit.best.s.index]
   #   verbose("Feature that produced best score in combination with previous meta-feature: ",best.feature,"\n")
   #   verbose("Score: ",best.s,"\n")
-  #   
+  # 
   #   # If no improvement (exiting loop)
   #   if(ifelse(metric=="pval", sign(best.s) < 0 | (abs(best.s) >= abs(global.best.s)),best.s <= global.best.s)){
   #     verbose("No further improvement in score has been found..\n")
   #   }
-  #   
+  # 
   #   #Increment counter
   #   i=i+1
-  #   
+  # 
   # } #########End of while loop
   # 
   # verbose("\n\n")
@@ -336,14 +336,14 @@ CaDrA <- function(
   # verbose("Number of iterations covered: ",i,"\n")
   # verbose("Best  score attained over iterations: ",global.best.s,"\n")
   # if(length(global.best.s.features)==1){
-  #   warning("No meta-feature that improves the enrichment was found ..\n") 
+  #   warning("No meta-feature that improves the enrichment was found ..\n")
   # }
   # 
   # verbose("Features returned in ESet: ",global.best.s.features,"\n")
   # verbose("\n\n")
   # 
   # if(best.score.only==FALSE){
-  #   
+  # 
   #   #We don't just want the combination (meta-feature) at the end. We want all the features that make up the meta-feature
   #   #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
   #   #If returning only those features that led to the best global score
@@ -351,20 +351,20 @@ CaDrA <- function(
   #   #Here, give the returned ESet an annotation based on the starting feature that gave these best results
   #   annotation(ES.best) <- start.feature
   #   colnames(ES.best) <- colnames(ES)
-  #   
-  #   #Make a list contaning two elements. 
+  # 
+  #   #Make a list contaning two elements.
   #   #The first will be the ESet with the features that gave the best meta-feature
   #   #The second will be the score corresponding to the meta-feature (named by the starting feature that led to that score)
   #   #Assign the name of the best meta-feature score to be the starting feature that gave that score
-  #   names(global.best.s) <- start.feature 
-  #   
+  #   names(global.best.s) <- start.feature
+  # 
   #   return(list("ESet"= ES.best,"Score"= global.best.s))
-  #   
+  # 
   # } else{
   #   #Just return the score. Here we put this in the list just to support permutation-based apply functionality
-  #   return(list(global.best.s)) 
+  #   return(list(global.best.s))
   # }
-  # 
+
 }  
 
 

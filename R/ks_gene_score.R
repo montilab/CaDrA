@@ -13,7 +13,7 @@
 #' @return A data frame
 #' @export
 #' @importFrom stats ks.test
-ks_genescore <- function
+ks_gene_score <- function
 (
   x,                                             
   y,                                             

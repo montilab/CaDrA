@@ -9,13 +9,13 @@ wilcox_genescore_mat(mat, rank = NULL, alternative = "less")
 \arguments{
 \item{mat}{matrix of binary features to compute row-wise scores for based on the Wilcoxon rank sum test}
 
-\item{rank}{a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox.genescore() function}
+\item{rank}{a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox.genescore() function}
+\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function}
 }
 \value{
-A 2 x N matrix (N = number of rows in matrix) with the first and second rows corresponding to the rank sum statistic scores and p-values, respectively
+A data frame
 }
 \description{
-Compute rank sum scores for each row of a given binary matrix
+Row-wise matrix Wilcoxon rank sum scoring
 }

@@ -1,117 +1,97 @@
 
 #' Compute rank sum scores for each row of a given binary matrix
-#' 
-#' @param x description
-#' @param y description
-#' @param mu description
-#' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks.genescore() function
-#' @param paired description
-#' @param exact description
-#' @param correct description
+#'
+#' @param x ranks for group 1
+#' @param y ranks for group 2
+#' @param mu a number specifying an optional parameter used to form null hypothesis
+#' @param alternative alternative hypothesis for p-value calculation
+#' @param paired paired test
+#' @param exact compute exact p-value
+#' @param correct for continuity correction (p-value)
+#'
+#' @return A data frame
 #' @export
+#'
 #' @importFrom stats pnorm pwilcox
 wilcox_genescore <- function 
 (
-  x,                                                  # ranks for group 1
-  y,                                                  # ranks for group 2
-  mu = 0,                                             # a number specifying an optional parameter used to form null hypothesis
-  alternative = "less",                               # alternative hypothesis for p-value calculation
-  paired = FALSE,                                     # paired test
-  exact = FALSE,                                      # compute exact p-value
-  correct = TRUE                                      # for continuity correction (p-value)
+  x,                                                  
+  y,                                                  
+  mu = 0,                                             
+  alternative = "less",                               
+  paired = FALSE,                                     
+  exact = FALSE,                                      
+  correct = TRUE
 ) 
 {
- 
-  # ## Required R packages
-  # library(CaDrA)
-  # library(Biobase)
-  # library(tidyverse)
-  # 
-  # ## Read in the simulated dataset from CaDrA
-  # data("sim.ES")
-  # mat <- exprs(sim.ES)
-  # feature = mat[1,]
-  # ranks = 1:length(feature)
-  # 
-  # ## Define the parameters for testing
-  # x = ranks[which(feature==1)]                          # ranks for group 1
-  # y = ranks[which(feature==0)]                          # ranks for group 2
-  # mu = 0                                                # a number specifying an optional parameter used to form null hypothesis
-  # alternative = "less"                                  # alternative hypothesis for p-value calculation
-  # paired = FALSE                                        # paired test
-  # exact = NULL                                          # compute exact p-value
-  # correct = TRUE                                        # for contuity correction (p-value)
   
-  # if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu))) 
-  #   stop("'mu' must be a single number")
-  # if (!is.numeric(x)) 
-  #   stop("'x' must be numeric")
-  # if (!is.numeric(y)) 
-  #   stop("'y' must be numeric")
-  # 
-  # DNAME <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
-  # 
-  # x <- x[is.finite(x)]
-  # y <- y[is.finite(y)]
-  # 
-  # if (length(x) < 1L) {
-  #   print(x)
-  #   stop("not enough (finite) 'x' observations")}
-  # 
-  # if (length(y) < 1L){
-  #   print(y)
-  #   stop("not enough 'y' observations")}
-  # 
-  # METHOD <- "Wilcoxon rank sum test"
-  # 
-  # ##### Modification ######
-  # # Take input as ranks instead of continuous measures (normally internally ranked: see below)
-  # r <- c(x,y)
-  # 
-  # #r <- rank(c(x - mu, y))
-  # 
-  # n.x <- as.double(length(x))
-  # n.y <- as.double(length(y))
-  # if (is.null(exact)) 
-  #   exact <- (n.x < 50) && (n.y < 50)
-  # STATISTIC <- c(W = sum(r[seq_along(x)]) - n.x * (n.x + 1)/2)
-  # TIES <- (length(r) != length(unique(r)))
-  # if (exact && !TIES) {
-  #   PVAL <- switch(alternative, two.sided = {
-  #     p <- if (STATISTIC > (n.x * n.y/2)) pwilcox(STATISTIC - 
-  #                                                   1, n.x, n.y, lower.tail = FALSE) else pwilcox(STATISTIC, 
-  #                                                                                                 n.x, n.y)
-  #     min(2 * p, 1)
-  #   }, greater = {
-  #     pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
-  #   }, less = pwilcox(STATISTIC, n.x, n.y))
-  # } else {
-  #   NTIES <- table(r)
-  #   z <- STATISTIC - n.x * n.y/2
-  #   SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - 
-  #                                     sum(NTIES^3 - NTIES)/((n.x + n.y) * (n.x + n.y - 
-  #                                                                            1))))
-  #   if (correct) {
-  #     CORRECTION <- switch(alternative, two.sided = sign(z) * 
-  #                            0.5, greater = 0.5, less = -0.5)
-  #     METHOD <- paste(METHOD, "with continuity correction")
-  #   }
-  #   z <- (z - CORRECTION)/SIGMA
-  #   PVAL <- switch(alternative, less = pnorm(z), greater = pnorm(z, lower.tail = FALSE), two.sided = 2 * min(pnorm(z), pnorm(z, lower.tail = FALSE)))
-  #   if (exact && TIES) 
-  #     warning("cannot compute exact p-value with ties")
-  # }
-  # names(mu) <- ifelse (paired || !is.null(y),"location shift","location") 
-  # 
-  # RVAL <- list(statistic = STATISTIC, parameter = NULL, p.value = as.numeric(PVAL), 
-  #              null.value = mu, alternative = alternative, method = METHOD, 
-  #              data.name = DNAME)
-  # 
-  # class(RVAL) <- "htest"
-  # 
-  # return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))    
-  return (NULL)
+  if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu))) 
+    stop("'mu' must be a single number")
+  if (!is.numeric(x)) 
+    stop("'x' must be numeric")
+  if (!is.numeric(y)) 
+    stop("'y' must be numeric")
   
-} #end function
-
-
+  DNAME <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
+  
+  x <- x[is.finite(x)]
+  y <- y[is.finite(y)]
+  
+  if (length(x) < 1L) {
+    print(x)
+    stop("not enough (finite) 'x' observations")}
+  
+  if (length(y) < 1L){
+    print(y)
+    stop("not enough 'y' observations")}
+  
+  METHOD <- "Wilcoxon rank sum test"
+  
+  ##### Modification ######
+  # Take input as ranks instead of continuous measures (normally internally ranked: see below)
+  r <- c(x,y)
+  
+  #r <- rank(c(x - mu, y))
+  
+  n.x <- as.double(length(x))
+  n.y <- as.double(length(y))
+  if (is.null(exact)) 
+    exact <- (n.x < 50) && (n.y < 50)
+  STATISTIC <- c(W = sum(r[seq_along(x)]) - n.x * (n.x + 1)/2)
+  TIES <- (length(r) != length(unique(r)))
+  if (exact && !TIES) {
+    PVAL <- switch(alternative, two.sided = {
+      p <- if (STATISTIC > (n.x * n.y/2)) pwilcox(STATISTIC - 
+                                                    1, n.x, n.y, lower.tail = FALSE) else pwilcox(STATISTIC, 
+                                                                                                  n.x, n.y)
+      min(2 * p, 1)
+    }, greater = {
+      pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
+    }, less = pwilcox(STATISTIC, n.x, n.y))
+  } else {
+    NTIES <- table(r)
+    z <- STATISTIC - n.x * n.y/2
+    SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - 
+                                      sum(NTIES^3 - NTIES)/((n.x + n.y) * (n.x + n.y - 
+                                                                             1))))
+    if (correct) {
+      CORRECTION <- switch(alternative, two.sided = sign(z) * 
+                             0.5, greater = 0.5, less = -0.5)
+      METHOD <- paste(METHOD, "with continuity correction")
+    }
+    z <- (z - CORRECTION)/SIGMA
+    PVAL <- switch(alternative, less = pnorm(z), greater = pnorm(z, lower.tail = FALSE), two.sided = 2 * min(pnorm(z), pnorm(z, lower.tail = FALSE)))
+    if (exact && TIES) 
+      warning("cannot compute exact p-value with ties")
+  }
+  names(mu) <- ifelse (paired || !is.null(y),"location shift","location") 
+  
+  RVAL <- list(statistic = STATISTIC, parameter = NULL, p.value = as.numeric(PVAL), 
+               null.value = mu, alternative = alternative, method = METHOD, 
+               data.name = DNAME)
+  
+  class(RVAL) <- "htest"
+  
+  return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))         
+  
+}

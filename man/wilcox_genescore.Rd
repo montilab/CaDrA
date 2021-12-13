@@ -15,19 +15,22 @@ wilcox_genescore(
 )
 }
 \arguments{
-\item{x}{description}
+\item{x}{ranks for group 1}
 
-\item{y}{description}
+\item{y}{ranks for group 2}
 
-\item{mu}{description}
+\item{mu}{a number specifying an optional parameter used to form null hypothesis}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks.genescore() function}
+\item{alternative}{alternative hypothesis for p-value calculation}
 
-\item{paired}{description}
+\item{paired}{paired test}
 
-\item{exact}{description}
+\item{exact}{compute exact p-value}
 
-\item{correct}{description}
+\item{correct}{for continuity correction (p-value)}
+}
+\value{
+A data frame
 }
 \description{
 Compute rank sum scores for each row of a given binary matrix

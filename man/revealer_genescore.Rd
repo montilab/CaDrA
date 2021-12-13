@@ -17,11 +17,14 @@ revealer_genescore(
 
 \item{y}{A binary feature for response of interest}
 
-\item{z}{A binary feature which is often known as "causes" of activation}
+\item{z}{A binary feature which is often known as causes of activation}
 
-\item{assoc_metric}{Association Metric: "IC" information coefficient (default) or "COR" correlation}
+\item{assoc_metric}{Association Metric: information coefficient (IC by default) or correlation (COR)}
 
 \item{target_match}{Direction of the match (negative or positive). Use "positive" to match the higher values of the target, "negative" to match the lower values. Default is positive.}
+}
+\value{
+A data frame
 }
 \description{
 Compute conditional mutual information scores of x and y given z

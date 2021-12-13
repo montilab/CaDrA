@@ -18,7 +18,11 @@ Imports:
     R.cache,
     reshape2,
     magrittr,
-    purrr
+    purrr,
+    stats,
+    MASS,
+    misc3d,
+    ppcor
 LazyData: true
 License: MIT + file LICENSE
 URL: https://github.com/montilab/CaDrA/

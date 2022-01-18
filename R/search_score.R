@@ -1,5 +1,5 @@
 #' @useDynLib CaDrA ks_genescore_mat_
-ks_genescore_mat <- function(mat) .Call(ks_genescore_mat_, mat)
+ks_genescore_mat <- function(mat,alt, weight) .Call(ks_genescore_mat_, mat, alt, weight)
 
 
 #' Compute skewdness scores per feature
@@ -45,10 +45,10 @@ method=c("ks","wilcox"), # Scoring method to apply over each row in matrix
   }
   
   s <- switch(method,
-                 #ks=ks.genescore.mat(mat,
-                 #                     alt=compute_score_args$alt, 
-                 #                     weight=compute_score_args$wts),
-                 ks = ks_genescore_mat(mat),
+                 ks=ks_genescore_mat(mat,
+                                      alt=compute_score_args$alt, 
+                                      weight=compute_score_args$wts),
+                 #ks = ks_genescore_mat(mat),
                  wilcox=wilcox.genescore.mat(mat,
                                              alt=compute_score_args$alt,
                                              ranks=compute_score_args$rnks)) 

@@ -1,8 +1,12 @@
 #' @useDynLib CaDrA ks_genescore_mat_
 ks_genescore_mat <- function(mat,alt, weight) {
-  alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L)
-  res <- .Call(ks_genescore_mat_, mat, alt_int, weight)
-  print(res)
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  res <- .Call(ks_genescore_mat_, mat, weight, alt_int)
   res
 }
 

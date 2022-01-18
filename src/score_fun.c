@@ -329,27 +329,27 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
     int N, ncol, nrow, nw, i, j;
     int *yarray;
     
-    int alt = asInteger(alternative); /* +1 = left-sided, 0 = double sided, -1 = right sided */
-
+    int alt;
+    
     ymat = REAL(mat);
-    weight = INTEGER(w);
     
     Rdim = getAttrib(mat, R_DimSymbol);
     nrow = INTEGER(Rdim)[0];
     ncol = INTEGER(Rdim)[1];
     nw = LENGTH(w);
+    //printf("length of w: %d\n", nw);
     
-    nw = 0;
-    
+    if (LENGTH(alternative) > 0) {
+       alt= INTEGER(alternative)[0]; /* +1 = left-sided, 0 = double sided, -1 = right sided */
+    } else {
+      alt = 1;
+    }
+
     if (nw > 0 && nw != ncol) {
-      //printf("Weights must be the same legth as ranked list\n");
       return(R_NilValue);
     }
-    
-    //printf("alt=%d\n", alt);
-    //printf("nw=%d\n", nw);
-    nw=0;
-    alt=1;
+    if (nw > 0) weight = INTEGER(w);
+
     
     yarray = (int*) malloc( ncol * sizeof(int) );
     PROTECT(ans = allocMatrix(REALSXP, 2, nrow ));

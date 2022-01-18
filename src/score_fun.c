@@ -339,11 +339,17 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
     ncol = INTEGER(Rdim)[1];
     nw = LENGTH(w);
     
+    nw = 0;
+    
     if (nw > 0 && nw != ncol) {
       //printf("Weights must be the same legth as ranked list\n");
       return(R_NilValue);
     }
     
+    //printf("alt=%d\n", alt);
+    //printf("nw=%d\n", nw);
+    nw=0;
+    alt=1;
     
     yarray = (int*) malloc( ncol * sizeof(int) );
     PROTECT(ans = allocMatrix(REALSXP, 2, nrow ));

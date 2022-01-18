@@ -1,5 +1,10 @@
 #' @useDynLib CaDrA ks_genescore_mat_
-ks_genescore_mat <- function(mat,alt, weight) .Call(ks_genescore_mat_, mat, alt, weight)
+ks_genescore_mat <- function(mat,alt, weight) {
+  alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L)
+  res <- .Call(ks_genescore_mat_, mat, alt_int, weight)
+  print(res)
+  res
+}
 
 
 #' Compute skewdness scores per feature

@@ -412,7 +412,7 @@ stepwise.search <- function(ranking=NULL,
     if(metric!="pval"){
       hit.best.s.index <- which.max(scores) #This is the index within the meta matrix
     } else { #If signed pvalues
-      hit.best.s.index <- order(-sign(scores),scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
+      hit.best.s.index <- order(-sign(scores),round(scores,13))[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
     }
     
     best.s <- scores[hit.best.s.index] #This is the best score from the meta matrix

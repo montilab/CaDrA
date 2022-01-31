@@ -1,6 +1,5 @@
 #' @useDynLib CaDrA ks_genescore_mat_
-ks_genescore_mat <- function(mat,alt, weight) {
-  
+ks_genescore_mat <- function(mat, alt, weight) {
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
   } else {

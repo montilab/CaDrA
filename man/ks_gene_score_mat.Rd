@@ -4,17 +4,24 @@
 \alias{ks_gene_score_mat}
 \title{Row-wise matrix Kolmogorov-Smirnov scoring}
 \usage{
-ks_gene_score_mat(mat, weight = NULL, alternative = "less")
+ks_gene_score_mat(
+  mat,
+  weights = NULL,
+  alternative = c("two.sided", "greater", "less"),
+  verbose = TRUE
+)
 }
 \arguments{
-\item{mat}{matrix of binary features to compute row-wise scores for based on the Kolmogorov-Smirnov test}
+\item{mat}{A matrix of binary features to compute row-wise scores based on the Kolmogorov-Smirnov test}
 
-\item{weight}{a vector of weights to use if performing a weighted-KS test. Default is NULL. Value passed to ks_genescore() function}
+\item{weights}{a vector of weights to perform a weighted-KS test. Default is NULL. Value is passed to ks_gene_score() function.}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks_genescore() function}
+\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks_gene_score() function.}
+
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
 }
 \value{
-A data frame
+A data frame with two columns: score and p_value
 }
 \description{
 Compute directional KS scores for each row of a given binary matrix

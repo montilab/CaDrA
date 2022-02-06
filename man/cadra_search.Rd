@@ -60,8 +60,11 @@ cadra_search(
 \item{ncores}{number of cores to use, if using parallelization for permutation testing. Default = 4.}
 }
 \value{
-If return_perm_pval is set to TRUE, will return the permutation p-value.
+If \code{return_perm_pval} is set to \code{TRUE}, will return the permutation p-value.
 }
 \description{
 Performs permutation-based significance testing of step-wise search results.
+}
+\author{
+Reina Chau
 }

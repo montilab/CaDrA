@@ -1,5 +1,13 @@
+#' Compute KS scores for each row of a given matrix
+#'
+#' Compute directional Kolmogorov-Smirnov scores for each row of a given binary matrix
+#' @param mat matrix of binary features to compute row-wise ks scores for
+#' @param alt an integer value specifying the alternative hypothesis
+#' @param weight a vector of weights to use if performing a weighted-KS test
 #' @useDynLib CaDrA ks_genescore_mat_
-ks_genescore_mat <- function(mat, alt, weight) {
+ks_genescore_mat <- function(mat, alt="less", weight) {
+  
+  if(!is.matrix(mat)) stop("Input argument to ks_genescore_mat function is not a matrix")
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
   } else {

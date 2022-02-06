@@ -1,7 +1,7 @@
-
 #' Permutation-based step-wise searching
 #' 
 #' Performs permutation-based significance testing of step-wise search results.
+#'
 #' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
 #' @param input_score a vector of ranked or continuous values (required). 
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
@@ -20,9 +20,13 @@
 #' @param seed seed set for permutation. Default = 123.
 #' @param ncores number of cores to use, if using parallelization for permutation testing. Default = 4.
 #' 
-#' @return If return_perm_pval is set to TRUE, will return the permutation p-value.
+#' @return If \code{return_perm_pval} is set to \code{TRUE}, will return the permutation p-value.
+#'
 #' @export
 #' @import Biobase R.cache doParallel ggplot2 plyr
+#'
+#' @author Reina Chau
+#' 
 cadra_search <- function(
   ES,
   input_score,
@@ -42,6 +46,9 @@ cadra_search <- function(
   seed = 123,
   ncores = 4
 ){
+  
+  # Check arguments
+  if (class(ES)[1] != "ExpressionSet") stop("'ES' must be an  ExpressionSet class argument")
   
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){

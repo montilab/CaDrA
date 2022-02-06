@@ -1,47 +1,52 @@
 
+
 #' Row-wise matrix Wilcoxon rank sum scoring
 #'
 #' @param mat matrix of binary features to compute row-wise scores for based on the Wilcoxon rank sum test
-#' @param rank a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function 
+#' @param ranks a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function 
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function
+#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
 #'
-#' @return A data frame
+#' @return A data frame with two columns: score and p_value
 #' @export
 #' @importFrom purrr map_dfr
 wilcox_genescore_mat <- function
 (
   mat,
-  rank = NULL,
-  alternative = "less"
+  ranks = NULL,
+  alternative = c("two.sided", "greater", "less"),
+  verbose = TRUE
 )
 {
+
+  # Set up verbose option
+  options(verbose=verbose)
+  
+  # Check if the matrix has only binary 0 or 1 values 
+  if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)))
+    stop("mat variable must be a matrix with binary values only.\n")
   
   # If no alternative is specified, we use "less" as default.
   if(length(alternative) == 0 || nchar(alternative) == 0){
     warning("No alternative hypothesis specified. Using 'less' by default ..\n")
     alternative <- "less"
   }else if(length(alternative) == 1 && !alternative %in% c("two.sided", "greater", "less")){
-    warning(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis specified must be 'two.sided', 'greater', or 'less'. Using 'less' by default.\n")
-    alternative <- "less"    
+    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
   }else if(length(alternative) > 1 && all(!alternative %in% c("two.sided", "greater", "less"))){
-    warning(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis specified must be 'two.sided', 'greater', or 'less'. Using 'less' by default.\n")
-    alternative <- "less"
+    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
   }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
     alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
     warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
   }
   
-  # If ranks for samples are not provided, assume it's ordered by decreasing rank and assign rank 1:N (N: number of samples)
-  if(length(rank) > 0){
-    if(length(rank) < ncol(mat))
-      stop("'The provided rank must have the same length as the number of samples in the feature matrix.\n")
-    verbose("Using provided rank for Wilcoxon rank sum testing.\n")
+  # If ranks for samples are not provided, assume it's ordered by decreasing ranks and assign rank 1:N (N: number of samples)
+  if(length(ranks) > 0){
+    if(length(ranks) != ncol(mat))
+      stop("'The provided ranks must have the same length as the number of columns in the expression matrix.\n")
+    verbose("Using the provided ranks for Wilcoxon rank sum testing.\n")
   }else{
-    rank <- seq(1, ncol(mat))
+    ranks <- seq(1, ncol(mat))
   }
-  
-  ###### REMOVE INVALID FEATURE #####
-  #####################################
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
   if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
@@ -57,7 +62,7 @@ wilcox_genescore_mat <- function
     purrr::map_dfr(
       function(r){
         #r=1;
-        feature = mat[r,]; x = rank[which(feature==1)]; y = rank[which(feature==0)]    
+        feature = mat[r,]; x = ranks[which(feature==1)]; y = ranks[which(feature==0)]    
         wilcox_genescore(x=x, y=y, alternative=alternative)
       }
     )

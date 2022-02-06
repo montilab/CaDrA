@@ -7,7 +7,7 @@
 ks_gene_score(
   x,
   y,
-  weight = NULL,
+  weights = NULL,
   weight_p = 1,
   alternative = "less",
   do_pval = TRUE,
@@ -20,7 +20,7 @@ ks_gene_score(
 
 \item{y}{positions of geneset items in ranked list (ranks)}
 
-\item{weight}{weights for weighted score (see Subramanian et al.) (usually, sort(score))}
+\item{weights}{weights for weighted score (see Subramanian et al.) (usually, sort(score))}
 
 \item{weight_p}{weights exponent}
 

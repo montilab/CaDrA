@@ -7,15 +7,11 @@
 revealer_genescore_mat(
   mat,
   target,
-  target_match = "positive",
+  target_match = c("positive", "negative"),
   seed_names = NULL,
-  seed_combination_op = "max",
-  exclude_features = NULL,
-  normalize_features = FALSE,
-  count_thres_low = NULL,
-  count_thres_high = NULL,
+  seed_combination_op = c("min", "max"),
   assoc_metric = "IC",
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,20 +25,12 @@ revealer_genescore_mat(
 
 \item{seed_combination_op}{Operation to consolidate and summarize seeds to one vector of values. "max" is default}
 
-\item{exclude_features}{Features to exclude in the search iterations}
-
-\item{normalize_features}{Feature row normalization: FALSE (default) or "standardize" or "0.1.rescaling"}
-
-\item{count_thres_low}{Filter out features with less than count.thres.low. NULL by default.}
-
-\item{count_thres_high}{Filter out features with more than count.thres.high. NULL by default.}
-
 \item{assoc_metric}{Assocication Metric: "IC" information coeff. (default) or "COR" correlation.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE.}
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
 }
 \value{
-A data frame
+A data frame with two columns: score and p_value
 }
 \description{
 Compute conditional mutual information scores of x and y given z for each row of a given binary matrix

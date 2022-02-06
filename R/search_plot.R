@@ -55,7 +55,7 @@ rbind_gtable_max <- function(...){
 #' @return A plot graphic of the Enrichment Score (ES) for a given distribution
 #' @export
 #' @import ggplot2
-plot_ES<-function(d 
+plot_ES <- function(d 
 ){
   #Katia: adding ".data" to avoid a warning during check:
   # no visible binding for global variable 

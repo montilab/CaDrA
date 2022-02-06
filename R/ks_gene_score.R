@@ -3,7 +3,7 @@
 #'
 #' @param x ranked list
 #' @param y positions of geneset items in ranked list (ranks)
-#' @param weight weights for weighted score (see Subramanian et al.) (usually, sort(score))
+#' @param weights weights for weighted score (see Subramanian et al.) (usually, sort(score))
 #' @param weight_p weights exponent
 #' @param alternative alternative hypothesis for p-value calculation
 #' @param do_pval compute asymptotic p-value
@@ -17,7 +17,7 @@ ks_gene_score <- function
 (
   x,                                             
   y,                                             
-  weight = NULL,
+  weights = NULL,
   weight_p = 1,
   alternative = "less",  
   do_pval = TRUE, 
@@ -29,7 +29,7 @@ ks_gene_score <- function
   # Get the length of ranked list
   n.x = length(x);                            
   
-  # efficient version of ks.score (should give same results as ks.test, when weight=NULL)
+  # efficient version of ks.score (should give same results as ks.test, when weights=NULL)
   #
   alternative <- match.arg(alternative, c("two.sided", "greater", "less"))
   DNAME <- paste( "1:", n.x, " and ", deparse(substitute(y)), sep="" )
@@ -38,18 +38,18 @@ ks_gene_score <- function
   if ( n.y < 1 )  stop("Not enough y data")
   if ( any(y>n.x) ) stop( "y must be <= n.x: ", max(y) )
   if ( any(y<1) ) stop( "y must be positive: ", min(y) )
-  if ( do_pval && !is.null(weight) ) warning("p-value meaningless w/ weighted score")
-  if ( !is.null(weight) && length(weight)!=n.x ) stop("weights must be same length as ranked list: ", length(weight), " vs ", n.x)
+  if ( do_pval && !is.null(weights) ) warning("p-value meaningless w/ weighted score")
+  if ( !is.null(weights) && length(weights)!=n.x ) stop("weights must be same length as ranked list: ", length(weights), " vs ", n.x)
   x.axis <- y.axis <- NULL
   
   # weighted GSEA score
   #
-  if ( !is.null(weight) )
+  if ( !is.null(weights) )
   {
-    weight <- abs(weight[y])^weight_p
+    weights <- abs(weights[y])^weight_p
     
     Pmis <- rep(1, n.x); Pmis[y] <- 0; Pmis <- cumsum(Pmis); Pmis <- Pmis/(n.x-n.y)
-    Phit <- rep(0, n.x); Phit[y] <- weight; Phit <- cumsum(Phit); Phit <- Phit/Phit[n.x]
+    Phit <- rep(0, n.x); Phit[y] <- weights; Phit <- cumsum(Phit); Phit <- Phit/Phit[n.x]
     z <- Phit-Pmis
     
     score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]

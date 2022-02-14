@@ -3,8 +3,8 @@
 #' Candidate Search
 #' 
 #' Performs heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
-#' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
-#' @param input_score a vector of ranked or continuous values (required). 
+#' @param ES an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
+#' @param input_score a vector of continuous values (required). 
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
 #' @param custom_function a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
 #' @param custom_paramters a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
@@ -24,7 +24,8 @@
 #' data(sim.ES)
 #' 
 #' # Provide a vector of ranking or a list of continuous scores
-#' input_score = 1:ncol(sim.ES)
+#' input_score = ncol(sim.ES):1
+#' names(input_score) <- colnames(sim.ES)
 #' 
 #' # Define additional parameters and start the candidate search
 #' candidate_search_result <- candidate_search(
@@ -54,20 +55,29 @@ candidate_search <- function(
   options(verbose=verbose)
   
   # Check if the ES is provided
-  if(length(ES) == 0)
-    stop("ES was not provided (required).\n")
+  if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
+    stop("'ES' must be an  ExpressionSet class argument (required).")
   
   # Check input_score is provided
-  if(length(input_score) == 0)
-    stop("input_score was not provided (required).\n")
+  if(length(input_score) == 0 || !is.numeric(input_score))
+    stop("input_score must be a vector of continous values where the vector names matched colnames of ExpressionSet (required).\n")
   
-  # Make sure the input ES has rownames for features
+  # Make sure the input ES has rownames for features tracking
   if(is.null(rownames(ES)))
     stop("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
   
+  # Make sure the input_score has names as the colnames of ES
+  if(is.null(names(input_score)))
+    stop("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
+  
   # Make sure the input_score has the same length as number of samples in ES
-  if(length(input_score) != ncol(ES))
+  if(length(input_score) != ncol(ES)){
     stop("The input_score must have the same length as the number of columns in ES.\n")
+  }else{
+    if(any(names(input_score) != colnames(ES))){
+      stop("The input_score object must have names or labels that matches colnames of the expression matrix.\n")
+    }
+  }
   
   # Check if the dataset has only binary 0 or 1 values 
   if(!all(exprs(ES) %in% c(0,1))){
@@ -80,31 +90,13 @@ candidate_search <- function(
     ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
   }
   
-  # Exclude samples with input_score == NA
-  if(length(which(is.na(input_score))) > 0){
-    verbose(paste0("Excluding NAs from input_score..."))
-    locs <- which(!is.na(input_score))
-    input_score <- input_score[locs]
-    ES <- ES[,locs]
-    verbose(paste0("Length of input_score after removing NAs: ", length(input_score)))   
-  }
-  
-  # Check if input_score are ranked values or computed values
-  ranking = ifelse(all(sort(input_score) == 1:ncol(ES)), TRUE, FALSE) 
-  
-  if(ranking){
-    verbose("A vector of ranked input_score was provided. Using the ordering to re-rank the samples.\n")
-    ES <- ES[,input_score]
-  }else{
-    verbose("A vector of continuous input_score was provided.\n")
-  }
-  
   # Check the method 
   if(length(method)==1 & method %in% c("ks", "wilcox", "revealer", "custom")){
     
     # Compute row-wise directional KS scores for binary features in ES
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
+      ES <- ES[,names(sort(input_score, decreasing=T))]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 

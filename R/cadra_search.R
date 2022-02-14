@@ -2,8 +2,8 @@
 #' 
 #' Performs permutation-based significance testing of step-wise search results.
 #'
-#' @param ES an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
-#' @param input_score a vector of ranked or continuous values (required). 
+#' @param ES an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
+#' @param input_score a vector of continuous values (required). 
 #' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided", "greater" or "less". Default is "less" for left-skewed significance testing.
 #' @param metric a character string specifying which metric to use for candidate search. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'
@@ -47,8 +47,71 @@ cadra_search <- function(
   ncores = 4
 ){
   
-  # Check arguments
-  if (class(ES)[1] != "ExpressionSet") stop("'ES' must be an  ExpressionSet class argument")
+  # Check if the ES is provided
+  if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
+    stop("'ES' must be an  ExpressionSet class argument (required).")
+  
+  # Check input_score is provided
+  if(length(input_score) == 0 || !is.numeric(input_score))
+    stop("input_score must be a vector of continous values where the vector names matched colnames of ExpressionSet (required).\n")
+  
+  # Make sure the input ES has rownames for features tracking
+  if(is.null(rownames(ES)))
+    stop("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
+  
+  # Make sure the input_score has names as the colnames of ES
+  if(is.null(names(input_score)))
+    stop("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
+  
+  # Make sure the input_score has the same length as number of samples in ES
+  if(length(input_score) != ncol(ES)){
+    stop("The input_score must have the same length as the number of columns in ES.\n")
+  }else{
+    if(any(names(input_score) != colnames(ES))){
+      stop("The input_score object must have names or labels that matches colnames of the expression matrix.\n")
+    }
+  }
+  
+  # Check if the dataset has only binary 0 or 1 values 
+  if(!all(exprs(ES) %in% c(0,1))){
+    stop("The expression matrix (ES) must contain only binary values (0 or 1).\n")
+  }
+  
+  # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
+  if(any(rowSums(exprs(ES)) == 0) || any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
+    warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
+    ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
+  }
+  
+  # Check the method 
+  if(length(method)==1 & method %in% c("ks", "wilcox", "revealer", "custom")){
+    
+    # Compute row-wise directional KS scores for binary features in ES
+    if(method == "ks"){
+      verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
+      ES <- ES[,names(sort(input_score, decreasing=T))]
+    }
+    
+    # Compute row-wise Wilcox rank sum scores for binary features in ES 
+    if(method == "wilcox"){
+      verbose("Using Wilcoxon method for features scoring.\n")
+    }
+    
+    # Compute mutually exclusive method for binary features in ES 
+    if(method == "revealer"){
+      verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
+    }
+    
+    # Other future methods can be implemented here and add its verbose message here
+    if(method == "custom"){
+      verbose("Using a customized method for features scoring.\n")
+    }
+    
+  } else {
+    
+    stop(paste0("Invalid method specified. The method can be ", paste0(c("ks", "wilcox", "revealer", "custom"), collapse="/"), "."))
+    
+  } 
   
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){

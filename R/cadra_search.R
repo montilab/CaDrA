@@ -18,9 +18,9 @@
 #' @param smooth logical indicating whether or not to smoothen the p-value calculation to avoid p-value of 0. Default is TRUE
 #' @param return_perm_pval logical indicating whether or not to return the permutation-based p-value computed by the function. Default is FALSE 
 #' @param seed seed set for permutation. Default = 123.
-#' @param ncores number of cores to use, if using parallelization for permutation testing. Default = 4.
+#' @param ncores number of cores to use, if using parallelization for permutation testing. Default = 1..
 #' 
-#' @return If \code{return_perm_pval} is set to \code{TRUE}, will return the permutation p-value.
+#' @return If \code{return_perm_pval} is set to \code{TRUE} will return a permutation p-value.
 #'
 #' @export
 #' @import Biobase R.cache doParallel ggplot2 plyr
@@ -44,7 +44,7 @@ cadra_search <- function(
   smooth = TRUE,
   return_perm_pval = FALSE,
   seed = 123,
-  ncores = 4
+  ncores = 1
 ){
   
   # Check if the ES is provided

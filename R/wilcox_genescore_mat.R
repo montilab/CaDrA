@@ -7,7 +7,7 @@
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function
 #' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
 #'
-#' @return A data frame with two columns: score and p_value
+#' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @export
 #' @importFrom purrr map_dfr
 wilcox_genescore_mat <- function

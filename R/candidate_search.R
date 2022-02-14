@@ -18,7 +18,7 @@
 #' @param best_score_only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
 #' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
 #'
-#' @return If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned. 
+#' @return If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned. 
 #' @examples
 #' # Load pre-computed expression set
 #' data(sim.ES)

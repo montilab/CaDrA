@@ -11,7 +11,7 @@
 #' @param assoc_metric Assocication Metric: "IC" information coeff. (default) or "COR" correlation.
 #' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
 #'
-#' @return A data frame with two columns: score and p_value
+#' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @export
 #' @importFrom purrr map_dfr
 revealer_genescore_mat <- function

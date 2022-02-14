@@ -8,7 +8,7 @@ wilcox_genescore_mat(
   mat,
   ranks = NULL,
   alternative = c("two.sided", "greater", "less"),
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -18,11 +18,25 @@ wilcox_genescore_mat(
 
 \item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
 }
 \value{
-A data frame with two columns: score and p_value
+A data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
 Row-wise matrix Wilcoxon rank sum scoring
+}
+\examples{
+# Load R library
+library(Biobase)
+# Load pre-computed expression set
+data(sim.ES)
+
+# Compute the score
+wilcox_genescore_mat_result <- wilcox_genescore_mat(
+  mat = exprs(sim.ES), 
+  ranks = NULL,
+  alternative = "less"
+)
+
 }

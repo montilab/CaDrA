@@ -8,7 +8,7 @@ ks_gene_score_mat(
   mat,
   weights = NULL,
   alternative = c("two.sided", "greater", "less"),
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -18,11 +18,26 @@ ks_gene_score_mat(
 
 \item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks_gene_score() function.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
 }
 \value{
-A data frame with two columns: score and p_value
+A data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
 Compute directional KS scores for each row of a given binary matrix
+}
+\examples{
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# Compute the score
+ks_genescore_mat_result <- ks_gene_score_mat(
+  mat = exprs(sim.ES), 
+  weights = NULL,
+  alternative = "less"
+)
+
 }

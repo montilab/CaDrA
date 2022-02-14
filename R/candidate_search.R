@@ -16,10 +16,13 @@
 #' @param search_method a character string specifying which method to perform or filter out the best candidates. Default is 'forward'.
 #' @param max_size an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7
 #' @param best_score_only a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
+#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is FALSE 
 #'
 #' @return If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned. 
 #' @examples
+#' # Load R library
+#' library(Biobase)
+#'
 #' # Load pre-computed expression set
 #' data(sim.ES)
 #' 
@@ -29,9 +32,10 @@
 #' 
 #' # Define additional parameters and start the candidate search
 #' candidate_search_result <- candidate_search(
-#' ES=sim.ES,input_score=input_score,method="ks",
-#' alternative="less",metric="pval",search_method="both",max_size=7,
-#' best_score_only=FALSE)
+#' ES = sim.ES, input_score = input_score, method = "ks",
+#' alternative = "less", metric = "pval", search_method = "both", max_size = 7,
+#' best_score_only = FALSE
+#' )
 #' 
 #' @export
 candidate_search <- function(
@@ -48,15 +52,15 @@ candidate_search <- function(
   search_method = c("forward", "both"), 
   max_size = 7,
   best_score_only = FALSE,
-  verbose = TRUE
+  verbose = FALSE
 ){
   
   # Set up verbose option
-  options(verbose=verbose)
+  options(verbose=FALSE)
   
   # Check if the ES is provided
   if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
-    stop("'ES' must be an  ExpressionSet class argument (required).")
+    stop("'ES' must be an ExpressionSet class argument (required).")
   
   # Check input_score is provided
   if(length(input_score) == 0 || !is.numeric(input_score))

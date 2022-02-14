@@ -6,9 +6,23 @@
 #' @param mat A matrix of binary features to compute row-wise scores based on the Kolmogorov-Smirnov test
 #' @param weights a vector of weights to perform a weighted-KS test. Default is NULL. Value is passed to ks_gene_score() function.
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks_gene_score() function.
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
+#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is FALSE 
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
+#' @examples
+#' # Load R library
+#' library(Biobase)
+#' 
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # Compute the score
+#' ks_genescore_mat_result <- ks_gene_score_mat(
+#'   mat = exprs(sim.ES), 
+#'   weights = NULL,
+#'   alternative = "less"
+#' )
+#' 
 #' @export 
 #' @importFrom purrr map_dfr
 ks_gene_score_mat <- function
@@ -16,12 +30,12 @@ ks_gene_score_mat <- function
   mat, 
   weights = NULL,
   alternative = c("two.sided", "greater", "less"),
-  verbose = TRUE
+  verbose = FALSE
 )
 {
   
   # Set up verbose option
-  options(verbose=verbose)
+  options(verbose=FALSE)
   
   # Check if the ES is provided
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)))

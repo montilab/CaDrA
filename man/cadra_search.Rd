@@ -21,13 +21,13 @@ cadra_search(
   smooth = TRUE,
   return_perm_pval = FALSE,
   seed = 123,
-  ncores = 4
+  ncores = 1
 )
 }
 \arguments{
-\item{ES}{an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.}
+\item{ES}{an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.}
 
-\item{input_score}{a vector of ranked or continuous values (required).}
+\item{input_score}{a vector of continuous values (required).}
 
 \item{method}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method}
 
@@ -57,13 +57,35 @@ cadra_search(
 
 \item{seed}{seed set for permutation. Default = 123.}
 
-\item{ncores}{number of cores to use, if using parallelization for permutation testing. Default = 4.}
+\item{ncores}{number of cores to use, if using parallelization for permutation testing. Default = 1..}
 }
 \value{
-If \code{return_perm_pval} is set to \code{TRUE}, will return the permutation p-value.
+If \code{return_perm_pval} is set to \code{TRUE} will return a permutation p-value.
 }
 \description{
-Performs permutation-based significance testing of step-wise search results.
+Performs permutation-based significance testing of \code{candidate search} results.
+}
+\examples{
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# Provide a vector of ranking or a list of continuous scores
+input_score = ncol(sim.ES):1
+names(input_score) <- colnames(sim.ES)
+
+# Define additional parameters and start the cadra search
+# Not run as this would take some time to run
+#candidate_search_result <- cadra_search(
+#ES = sim.ES, input_score = input_score, method = "ks", alternative = "less", 
+#metric = "pval", search_method = "both",
+#search_start = NULL, max_size = 7, top_N = NULL, n_perm = 1000,
+#plot = TRUE, obs_best_score = NULL, 
+#smooth = TRUE, return_perm_pval = FALSE, seed = 123, ncores = 1
+#)
+
 }
 \author{
 Reina Chau

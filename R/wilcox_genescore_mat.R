@@ -5,9 +5,23 @@
 #' @param mat matrix of binary features to compute row-wise scores for based on the Wilcoxon rank sum test
 #' @param ranks a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function 
 #' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
+#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is FALSE 
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
+#' @examples
+#' # Load R library
+#' library(Biobase)
+#
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # Compute the score
+#' wilcox_genescore_mat_result <- wilcox_genescore_mat(
+#'   mat = exprs(sim.ES), 
+#'   ranks = NULL,
+#'   alternative = "less"
+#' )
+#' 
 #' @export
 #' @importFrom purrr map_dfr
 wilcox_genescore_mat <- function
@@ -15,12 +29,12 @@ wilcox_genescore_mat <- function
   mat,
   ranks = NULL,
   alternative = c("two.sided", "greater", "less"),
-  verbose = TRUE
+  verbose = FALSE
 )
 {
 
   # Set up verbose option
-  options(verbose=verbose)
+  options(verbose=FALSE)
   
   # Check if the matrix has only binary 0 or 1 values 
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)))

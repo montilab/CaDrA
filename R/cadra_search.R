@@ -1,6 +1,7 @@
-#' Permutation-based step-wise searching
+
+#' Permutation-based step-wise and backward searching
 #' 
-#' Performs permutation-based significance testing of step-wise search results.
+#' Performs permutation-based significance testing of \code{candidate search} results.
 #'
 #' @param ES an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.   
 #' @param input_score a vector of continuous values (required). 
@@ -21,7 +22,27 @@
 #' @param ncores number of cores to use, if using parallelization for permutation testing. Default = 1..
 #' 
 #' @return If \code{return_perm_pval} is set to \code{TRUE} will return a permutation p-value.
+#' @examples
+#' # Load R library
+#' library(Biobase)
 #'
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # Provide a vector of ranking or a list of continuous scores
+#' input_score = ncol(sim.ES):1
+#' names(input_score) <- colnames(sim.ES)
+#' 
+#' # Define additional parameters and start the cadra search
+#' # Not run as this would take some time to run
+#' #candidate_search_result <- cadra_search(
+#' #ES = sim.ES, input_score = input_score, method = "ks", alternative = "less", 
+#' #metric = "pval", search_method = "both",
+#' #search_start = NULL, max_size = 7, top_N = NULL, n_perm = 1000,
+#' #plot = TRUE, obs_best_score = NULL, 
+#' #smooth = TRUE, return_perm_pval = FALSE, seed = 123, ncores = 1
+#' #)
+#' 
 #' @export
 #' @import Biobase R.cache doParallel ggplot2 plyr
 #'
@@ -49,7 +70,7 @@ cadra_search <- function(
   
   # Check if the ES is provided
   if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
-    stop("'ES' must be an  ExpressionSet class argument (required).")
+    stop("'ES' must be an ExpressionSet class argument (required).")
   
   # Check input_score is provided
   if(length(input_score) == 0 || !is.numeric(input_score))

@@ -11,7 +11,7 @@ revealer_genescore_mat(
   seed_names = NULL,
   seed_combination_op = c("min", "max"),
   assoc_metric = "IC",
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -27,10 +27,10 @@ revealer_genescore_mat(
 
 \item{assoc_metric}{Assocication Metric: "IC" information coeff. (default) or "COR" correlation.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE.}
 }
 \value{
-A data frame with two columns: score and p_value
+A data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
 Compute conditional mutual information scores of x and y given z for each row of a given binary matrix

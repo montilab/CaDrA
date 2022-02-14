@@ -1,6 +1,6 @@
 
 
-#' Row-wise matrix conditional mutual information I(x, y | z) from REVEALER
+#' Row-wise matrix conditional mutual information I(x, y | z) from \code{REVEALER}
 #' 
 #' Compute conditional mutual information scores of x and y given z for each row of a given binary matrix
 #' @param mat row matrix of binary features to compute row-wise scores for based on the REVEALER MUTUALLY EXCLUSIVE test
@@ -9,7 +9,7 @@
 #' @param seed_names Starting seed, one or more binary features(s) representing known causes of activation or features associated with the target
 #' @param seed_combination_op Operation to consolidate and summarize seeds to one vector of values. "max" is default
 #' @param assoc_metric Assocication Metric: "IC" information coeff. (default) or "COR" correlation.
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
+#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is FALSE. 
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @export
@@ -22,12 +22,12 @@ revealer_genescore_mat <- function
   seed_names = NULL,
   seed_combination_op = c("min", "max"), 
   assoc_metric = "IC",
-  verbose = TRUE
+  verbose = FALSE
 )
 {
   
   # Setup verbose option definition
-  options(verbose=verbose)
+  options(verbose=FALSE)
   
   # Check if the matrix has only binary 0 or 1 values 
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)))

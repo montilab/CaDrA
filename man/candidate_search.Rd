@@ -18,13 +18,13 @@ candidate_search(
   search_method = c("forward", "both"),
   max_size = 7,
   best_score_only = FALSE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
-\item{ES}{an expression set object of binary features (required). It can be a BioBase expressionSet object or an expression matrix. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.}
+\item{ES}{an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.}
 
-\item{input_score}{a vector of ranked or continuous values (required).}
+\item{input_score}{a vector of continuous values (required).}
 
 \item{method}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method}
 
@@ -48,25 +48,30 @@ candidate_search(
 
 \item{best_score_only}{a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is TRUE.}
+\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
 }
 \value{
-If best_score_only is set to TRUE, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.
+If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.
 }
 \description{
 Performs heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
 }
 \examples{
+# Load R library
+library(Biobase)
+
 # Load pre-computed expression set
 data(sim.ES)
 
 # Provide a vector of ranking or a list of continuous scores
-input_score = 1:ncol(sim.ES)
+input_score = ncol(sim.ES):1
+names(input_score) <- colnames(sim.ES)
 
 # Define additional parameters and start the candidate search
 candidate_search_result <- candidate_search(
-ES=sim.ES,input_score=input_score,method="ks",
-alternative="less",metric="pval",search_method="both",max_size=7,
-best_score_only=FALSE)
+ES = sim.ES, input_score = input_score, method = "ks",
+alternative = "less", metric = "pval", search_method = "both", max_size = 7,
+best_score_only = FALSE
+)
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cadra_search.R
 \name{cadra_search}
 \alias{cadra_search}
-\title{Permutation-based step-wise searching}
+\title{Permutation-based step-wise and backward searching}
 \usage{
 cadra_search(
   ES,

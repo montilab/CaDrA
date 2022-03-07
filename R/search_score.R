@@ -1,3 +1,26 @@
+#' ks.genescore wrapper
+#'
+#' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
+#' @param n_x length of ranked list
+#' @param y positions of geneset items in ranked list (ranks)
+#' @param weight a vector of weights 
+#' @param alt alternative hypothesis for p-value calculation
+#' @useDynLib CaDrA ks_genescore_wrap_
+ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  y <- as.integer(y)
+  n_x <- as.integer(n_x)
+  res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
+  res
+}
+
+
+
 #' Compute KS scores for each row of a given matrix
 #'
 #' Compute directional Kolmogorov-Smirnov scores for each row of a given binary matrix

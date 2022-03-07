@@ -325,7 +325,7 @@ static
 // ----------------------------------------------------
 static
   struct ks_score 
-  ks_genscore( int n_x, int n_y, int* y, int n_w, int* weight, int alt)
+  ks_genscore( int n_x, int n_y, int* y, int n_w, double* weight, int alt)
   /* +1 = left-sided, 0 - two-sided, -1 = right-sided */
   {
     struct ks_score res;
@@ -338,7 +338,7 @@ static
     int *y2;
     int y2_N;
     
-    int *Phit, *Pmis;
+    double *Phit, *Pmis;
     
     int* D;
     int* y_match;
@@ -348,30 +348,32 @@ static
     
     if (n_w == n_x)
     {
-      Pmis = (int*) malloc (n_x * sizeof(int) );
-      Phit = (int*) malloc (n_y * sizeof(int) );
+      Pmis = (double*) malloc (n_x * sizeof(double) );
+      Phit = (double*) malloc (n_x * sizeof(double) );
       
       for (i = 0; i < n_x; i++) {
-        Pmis[i] = 1;
-        Phit[i] = 0;
+        Pmis[i] = 1.;
+        Phit[i] = 0.;
       }
+
+
       for (i = 0; i < n_y; i++){
-        Pmis[ y[i] ] = 0;
-        Phit[ y[i] ] = (weight[ y[i] ] >0) ? weight[ y[i] ]: -weight[ y[i] ];
+        Pmis[ y[i] -1 ] = 0.0;
+        Phit[ y[i] -1 ] = (weight[ y[i] -1 ] >0) ? weight[ y[i] -1 ]: -weight[ y[i] -1 ];
       }
       for (i = 1; i < n_x; i++) {
         Pmis[i] += Pmis[i-1];
         Phit[i] += Phit[i-1];
+
       }
       for (i = 0; i < n_x; i++){
         
-        if (fabs( Pmis[i]/(1.0*n_x - n_y) - Phit[i]/(1.0*n_x ) ) > zmax) {
-          zmax = fabs( Pmis[i]/(1.0*n_x - n_y) - Phit[i]/(1.0*n_x ) ) ;
-          i_save = i;
+        if ( fabs( Pmis[i]/(n_x - n_y) - Phit[i]/Phit[ n_x -1]  ) > zmax) {
+          zmax = fabs( Pmis[i]/(n_x - n_y) - Phit[i]/Phit[ n_x -1 ] ) ;
         }
       }
-      res.score = fabs( Pmis[i_save]/(1.0*n_x - n_y) - Phit[i_save]/(1.0*n_x ) ) ;
-      
+      res.score = zmax;
+ 
       free(Pmis);
       free(Phit);
       
@@ -407,6 +409,51 @@ static
     return(res);
   }
 
+// ---------------------------------------------------------------------- //
+//                                                                        //
+//  Wrapper for ks_genescore function                                     //
+//
+// ---------------------------------------------------------------------- //
+SEXP ks_genescore_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
+{
+  struct ks_score ks;
+  int *y;
+  double *w;
+  int alt;
+  int n_x, n_y, n_w;
+  double *rans;
+  SEXP ans;
+
+  n_x = INTEGER(in_n_x)[0];
+  n_y = LENGTH(in_y);
+  n_w = LENGTH(in_w);
+  if (LENGTH(in_w)) w = REAL(in_w);
+  if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
+  y = INTEGER(in_y);
+  
+  if (LENGTH(alternative) > 0) 
+  {
+    alt= INTEGER(alternative)[0]; /* +1 = left-sided, 0 = double sided, -1 = right sided */
+  } else 
+  {
+    alt = 1;
+  }
+
+  PROTECT(ans = allocVector(REALSXP, 2 ));
+  rans = REAL(ans);
+
+ 
+  ks = ks_genscore( n_x, n_y, y, n_w, w, alt);
+  rans[0] = ks.score;
+  rans[1] = ks.pvalue;
+
+  UNPROTECT(1);
+  return (ans);
+
+
+  }
+
+
 
 // ---------------------------------------------------------------------- //
 //                                                                        //
@@ -430,7 +477,7 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
 {
   struct ks_score ks;
   double *ymat, *rans;
-  int *weight;
+  double *weight;
   int N, ncol, nrow, nw, i, j;
   int *yarray;
   int alt;
@@ -457,7 +504,7 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
     return(R_NilValue);
   }
   
-  if (nw > 0) weight = INTEGER(w);
+  if (nw > 0) weight = REAL(w);
   
   yarray = (int*) malloc( ncol * sizeof(int) );
   PROTECT(ans = allocMatrix(REALSXP, 2, nrow ));

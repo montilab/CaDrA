@@ -2,7 +2,7 @@
 % Please edit documentation in R/revealer_genescore_mat.R
 \name{revealer_genescore_mat}
 \alias{revealer_genescore_mat}
-\title{Row-wise matrix conditional mutual information I(x, y | z) from REVEALER}
+\title{Row-wise matrix conditional mutual information I(x, y | z) from \code{REVEALER}}
 \usage{
 revealer_genescore_mat(
   mat,

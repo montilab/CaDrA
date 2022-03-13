@@ -2,21 +2,22 @@
 % Please edit documentation in R/topn_plot.R
 \name{topn_plot}
 \alias{topn_plot}
-\title{Top 'N' plot}
+\title{Top 'N' Plot}
 \usage{
 topn_plot(topN_list)
 }
 \arguments{
-\item{topN_list}{a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See ks.stepwise()). This is computed within, and can be returned by the topn.eval() function.}
+\item{topN_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.}
 }
 \value{
 a heatmap of the top N evaluation for a given top N search evaluation
 }
 \description{
-Plots a heatmap representation of overlapping features given a list of top N stepwise search results
+Plots a heatmap representation of overlapping features given a list of top N candidate search results
 }
 \examples{
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
 topn_plot(topn.list)
+
 }

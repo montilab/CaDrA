@@ -7,54 +7,57 @@
 candidate_search(
   ES,
   input_score,
-  method = c("ks", "wilcox", "revealer", "custom"),
+  method = "ks",
   custom_function = NULL,
-  custom_paramters = NULL,
-  alternative = c("two.sided", "less", "greater"),
-  metric = c("stat", "pval"),
+  custom_parameters = NULL,
+  alternative = "less",
+  metric = "stat",
   weights = NULL,
   ranks = NULL,
+  target_match = "positive",
   search_start = NULL,
-  search_method = c("forward", "both"),
+  search_method = "both",
   max_size = 7,
   best_score_only = FALSE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{ES}{an expression set object of binary features (required). It must be a BioBase expressionSet object. The rownames or featureData of the expression set must contain the names of the corresponding features which are used in the search.}
+\item{ES}{an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.}
 
-\item{input_score}{a vector of continuous values (required).}
+\item{input_score}{a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.}
 
-\item{method}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method}
+\item{method}{a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.}
 
-\item{custom_function}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method}
+\item{custom_function}{if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.}
 
-\item{custom_paramters}{a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method}
+\item{custom_parameters}{if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided", "greater" or "less". Default is "less" for left-skewed significance testing.}
+\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifying which metric to use for candidate search. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'}
+\item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
 
-\item{weights}{an integer vector of weight to use if performing weighted-KS testing. Default is NULL. Value passed to compute_score() function}
+\item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{ranks}{an integer vector of sample rankings to use if performing Wilcoxon rank sum testing. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to compute_score() function}
+\item{ranks}{a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.}
 
-\item{search_start}{a customize function that computes the score. It will be used when the 'method' is set to 'custom'}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
-\item{search_method}{a character string specifying which method to perform or filter out the best candidates. Default is 'forward'.}
+\item{search_start}{an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)}
 
-\item{max_size}{an integer specifying the maximum size a meta-feature can extend to do for a given search. Default is 7}
+\item{search_method}{a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).}
 
-\item{best_score_only}{a logical indicating whether or not the function should return only the score corresponding to the search results. Default is FALSE}
+\item{max_size}{an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
+\item{best_score_only}{a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.}
+
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If this is set to FALSE, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.
+If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.
 }
 \description{
-Performs heuristic search using an ordered set of binary features to see whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
+Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
 }
 \examples{
 # Load R library
@@ -63,15 +66,16 @@ library(Biobase)
 # Load pre-computed expression set
 data(sim.ES)
 
-# Provide a vector of ranking or a list of continuous scores
-input_score = ncol(sim.ES):1
+# Provide a vector of continuous scores for a target profile with names to each score value 
+input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
-# Define additional parameters and start the candidate search
+# Define additional parameters and run the function
 candidate_search_result <- candidate_search(
-ES = sim.ES, input_score = input_score, method = "ks",
-alternative = "less", metric = "pval", search_method = "both", max_size = 7,
-best_score_only = FALSE
+  ES = sim.ES, input_score = input_score, method = "ks", 
+  alternative = "less", weights = NULL, metric = "pval", 
+  search_start = NULL, search_method = "both", 
+  max_size = 7, best_score_only = FALSE
 )
 
 }

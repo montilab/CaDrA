@@ -2,7 +2,7 @@
 % Please edit documentation in R/wilcox_genescore.R
 \name{wilcox_genescore}
 \alias{wilcox_genescore}
-\title{Compute rank sum scores for each row of a given binary matrix}
+\title{Compute rank sum scores for a given binary feature}
 \usage{
 wilcox_genescore(
   x,
@@ -15,23 +15,23 @@ wilcox_genescore(
 )
 }
 \arguments{
-\item{x}{ranks for group 1}
+\item{x}{an integer values for group 1}
 
-\item{y}{ranks for group 2}
+\item{y}{an integer values for group 2}
 
-\item{mu}{a number specifying an optional parameter used to form null hypothesis}
+\item{mu}{a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.}
 
-\item{alternative}{alternative hypothesis for p-value calculation}
+\item{alternative}{alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{paired}{paired test}
+\item{paired}{whether to perform paired test. Default is \code{FALSE}.}
 
-\item{exact}{compute exact p-value}
+\item{exact}{whether to compute exact p-value. Default is \code{FALSE}.}
 
-\item{correct}{for continuity correction (p-value)}
+\item{correct}{whether to consider continuity correction for p-value. Default is \code{TRUE}.}
 }
 \value{
-A data frame
+a data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Compute rank sum scores for each row of a given binary matrix
+Compute rank sum scores for a given binary feature
 }

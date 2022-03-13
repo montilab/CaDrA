@@ -1,54 +1,101 @@
 
-#' Top 'N' evaluate
+#' Evaluate Top 'N' Best Features
 #' 
-#' Generates and evaluates stepwise search results for the top 'N' starting indices, checking for overlapping resulting features from each case. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
-#' @param ESet an ordered expression set object with the same sample ordering and features as processed by the stepwise.search() function when performing a step-wise heuristic search
-#' @param input_score a vector of ranked or continuous values (required). 
-#' @param method a character string specifying the method used to compute scores for features, must be one of "ks" or "wilcox" or "mi" (mutually exclusive method from REVEALER) or "custom" (a personal customization method). If input_score contains ranked scores, then 'ks' method is used by default. Otherwise, 'mi" is the default method
-#' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided", "greater" or "less". Default is "less" for left-skewed significance testing.
-#' @param metric a character string specifying which metric to use for candidate search. One of either 'pval' or 'stat' may be used, corresponding to the score p-value or statistic. Default is 'pval'
-#' @param search_method a character string specifying which method to perform or filter out the best candidates. Default is 'forward'.
-#' @param max_size an integer specifying the maximum size a meta-feature can extend do for a given search. Default is 7.
-#' @param best_score_only a logical indicating whether or not to only return the best meta-feature score over the top 'N' evaluation. Default is TRUE
-#' @param N an integer specifying the number of features to start the search over, starting from the top 'N' features in each case. Default is 1
-#' @param do_plot a logical indicating whether you want to plot the resulting evaluation matrix. Default is TRUE
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is TRUE. 
+#' Generates and evaluates candidate search results for the top 'N' starting indices, checking for overlapping resulting features from each case. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
+#' @param ES an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.   
+#' @param input_score a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.
+#' @param method a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.
+#' @param custom_function if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.
+#' @param custom_parameters if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.
+#' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
+#' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
+#' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
+#' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
+#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
+#' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.
+#' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
+#' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
+#' @param best_score_only a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.
+#' @param do_plot a logical value indicates whether or not to plot the resulting evaluation matrix. Default is \code{TRUE}.
+#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #' 
-#' @return Default is a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See stepwise.search()). If best_score_only is set to TRUE, only the best score over the top N space is returned (useful for permutation-based testing)
+#' @return By default, this function will return a list of lists, where each list entry is one that is returned by the candidate search for a given starting index (See \code{candidate_search()}). If \code{best_score_only} is set to \code{TRUE}, only the best score over the top N space is returned (useful for permutation-based testing)
 #' 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
+#' @examples
+#' # Load R library
+#' library(Biobase)
+#'
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # Provide a vector of continuous scores for a target profile with names to each score value 
+#' input_score = rnorm(n = ncol(sim.ES))
+#' names(input_score) <- colnames(sim.ES)
+#' 
+#' # Define additional parameters and run the function
+#' topn_eval <- topn_eval(
+#'   ES = sim.ES, input_score = input_score, method = "ks",
+#'   alternative = "less", metric = "pval", top_N = 3, search_method = "both", 
+#'   max_size = 7, best_score_only = FALSE
+#' )
+#' 
 #' @export
 #' @import Biobase gplots
 topn_eval <- function(
-  ESet,
+  ES,
   input_score,
   method = "ks", 
+  custom_function = NULL,
+  custom_parameters = NULL,
   alternative = "less", 
   metric = "pval", 
+  weights = NULL,
+  ranks = NULL, 
+  target_match = "positive",
+  top_N = 1,
   search_method = "both", 
   max_size = 7,
   best_score_only = TRUE,
-  N = 1,
   do_plot = TRUE,
-  verbose = TRUE
+  verbose = FALSE
 ){
   
   # Set up verbose option
-  options(verbose=verbose)
+  options(verbose = FALSE)
   
-  if (N > nrow(ESet))
-    stop("Please specify an N value that is less than the number of features in the ESet..\n")
+  if (top_N > nrow(ES))
+    stop("Please specify an top_N value that is less than the number of features in the ES.\n")
   
-  if (N > 10)
-    warning("N value specified is greater than 10. This may result in longer search time..\n")
+  if (top_N > 10)
+    warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
   
-  verbose("Evaluating search over top features: ", 1:N, "\n\n")
+  verbose("Evaluating search over top features: ", 1:top_N, "\n\n")
   
-  #Performs stepwise search over top N indices
-  topn_l <- sapply(1:N, function(x){ 
-    candidate_search(ES=ESet, input_score=input_score, method=method, alternative=alternative, metric=metric, search_method=search_method, max_size=max_size, search_start=x) 
+  # Performs candidate search over top top_N indices
+  topn_l <- sapply(1:top_N, function(x){ 
+    
+    candidate_search(
+      ES = ES, 
+      input_score = input_score, 
+      method = method, 
+      custom_function = custom_function,
+      custom_parameters = custom_parameters,
+      alternative = alternative, 
+      metric = metric, 
+      weights = weights,
+      ranks = ranks, 
+      target_match = target_match,
+      search_start = x,
+      search_method = search_method, 
+      max_size = max_size,
+      best_score_only = best_score_only
+    ) 
+    
   }, simplify = FALSE) 
   
-  if(best_score_only==TRUE){
+  # best_score_only
+  if(best_score_only == TRUE){
+    
     scores_l <- lapply(topn_l, "[[", 2)
     
     # Working with scores for each top N run
@@ -57,15 +104,18 @@ topn_eval <- function(
     #Fetch the best score from the iterations
     # This ASSUMES you're using metric = "pval"
     # NEEDS UPDATING TO ACCOMODATE STATISTIC 
-    best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most sig 
+    best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most significant 
     
     return(best_score)
-  } #best_score_only
+    
+  }
   
-  
+  # do_plot
   if(do_plot){
-    topn_plot(topN_list=topn_l)  
-  } #do_plot
+    
+    topn_plot(topN_list = topn_l)  
+    
+  }
   
   return(topn_l) #Default is to return the top N stepwise search results as a list of lists
   

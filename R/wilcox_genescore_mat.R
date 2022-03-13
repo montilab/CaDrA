@@ -1,11 +1,13 @@
 
 
-#' Row-wise matrix Wilcoxon rank sum scoring
+#' Wilcoxon Rank Sum Scoring Method
 #'
-#' @param mat matrix of binary features to compute row-wise scores for based on the Wilcoxon rank sum test
-#' @param ranks a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function 
-#' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function
-#' @param verbose a logical indicating whether or not to verbose diagnostic messages. Default is FALSE 
+#' Compute directional Wilcoxon rank sum score for each row of a given binary matrix
+#'
+#' @param mat a matrix of binary features (required).
+#' @param ranks a vector of sample rankings use to perform the \code{Wilcoxon test}. Default is \code{NULL}. If NULL, then samples are assumed to be ordered by increasing rankings. If not NULL, ranks must include labels or names that associated with the colnames of the feature matrix.
+#' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing. 
+#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
@@ -15,7 +17,7 @@
 #' # Load pre-computed expression set
 #' data(sim.ES)
 #' 
-#' # Compute the score
+#' # Define additional parameters and run the function
 #' wilcox_genescore_mat_result <- wilcox_genescore_mat(
 #'   mat = exprs(sim.ES), 
 #'   ranks = NULL,
@@ -32,32 +34,28 @@ wilcox_genescore_mat <- function
   verbose = FALSE
 )
 {
-
+  
   # Set up verbose option
   options(verbose=FALSE)
   
   # Check if the matrix has only binary 0 or 1 values 
-  if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)))
-    stop("mat variable must be a matrix with binary values only.\n")
+  if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
+    stop("mat variable must be a matrix with binary values (no empty values).\n")
   
-  # If no alternative is specified, we use "less" as default.
-  if(length(alternative) == 0 || nchar(alternative) == 0){
-    warning("No alternative hypothesis specified. Using 'less' by default ..\n")
-    alternative <- "less"
-  }else if(length(alternative) == 1 && !alternative %in% c("two.sided", "greater", "less")){
-    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
-  }else if(length(alternative) > 1 && all(!alternative %in% c("two.sided", "greater", "less"))){
-    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
-  }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
-    alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
-  }
+  # Make sure the mat variable has rownames for features tracking
+  if(is.null(rownames(mat)))
+    stop("The mat object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
   
-  # If ranks for samples are not provided, assume it's ordered by decreasing ranks and assign rank 1:N (N: number of samples)
+  # If ranks for samples are not provided, assume it's ordered by decreasing ranks and assign ranks as 1:N (N: number of samples)
   if(length(ranks) > 0){
-    if(length(ranks) != ncol(mat))
+    if(length(ranks) != ncol(mat)){
       stop("'The provided ranks must have the same length as the number of columns in the expression matrix.\n")
-    verbose("Using the provided ranks for Wilcoxon rank sum testing.\n")
+    }else{
+      if(any(names(ranks) != colnames(mat))){
+        stop("The ranks object must have names or labels that matches the colnames of the expression matrix.\n")
+      }
+      mat <- mat[,names(ranks)]
+    }
   }else{
     ranks <- seq(1, ncol(mat))
   }
@@ -71,6 +69,19 @@ wilcox_genescore_mat <- function
   if(nrow(mat) < 2)
     warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
+  # If no alternative is specified, we use "less" as default.
+  if(length(alternative) == 0 || nchar(alternative) == 0){
+    alternative <- "less"
+    warning("No alternative hypothesis specified. Using 'less' by default.\n")
+  }else if(length(alternative) == 1 && !alternative %in% c("two.sided", "greater", "less")){
+    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
+  }else if(length(alternative) > 1 && all(!alternative %in% c("two.sided", "greater", "less"))){
+    stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
+  }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
+    alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
+    warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
+  }
+  
   #Compute the wilcox rank sum statitic and p-value per row in the matrix
   wilcox <- 1:nrow(mat) %>% 
     purrr::map_dfr(
@@ -81,6 +92,12 @@ wilcox_genescore_mat <- function
       }
     )
   
+  colnames(wilcox) <- c("score", "p_value")
+  rownames(wilcox) <- rownames(mat)
+  
   return(wilcox)
   
 }
+
+
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/wilcox_genescore_mat.R
 \name{wilcox_genescore_mat}
 \alias{wilcox_genescore_mat}
-\title{Row-wise matrix Wilcoxon rank sum scoring}
+\title{Wilcoxon Rank Sum Scoring Method}
 \usage{
 wilcox_genescore_mat(
   mat,
@@ -12,19 +12,19 @@ wilcox_genescore_mat(
 )
 }
 \arguments{
-\item{mat}{matrix of binary features to compute row-wise scores for based on the Wilcoxon rank sum test}
+\item{mat}{a matrix of binary features (required).}
 
-\item{ranks}{a vector of ranks to use when performing the Wilcoxon test. Default is NULL. If NULL, then samples are assumed to be ordered by increasing ranking. Value passed to wilcox_genescore() function}
+\item{ranks}{a vector of sample rankings use to perform the \code{Wilcoxon test}. Default is \code{NULL}. If NULL, then samples are assumed to be ordered by increasing rankings. If not NULL, ranks must include labels or names that associated with the colnames of the feature matrix.}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to wilcox_genescore() function}
+\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 A data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Row-wise matrix Wilcoxon rank sum scoring
+Compute directional Wilcoxon rank sum score for each row of a given binary matrix
 }
 \examples{
 # Load R library
@@ -32,7 +32,7 @@ library(Biobase)
 # Load pre-computed expression set
 data(sim.ES)
 
-# Compute the score
+# Define additional parameters and run the function
 wilcox_genescore_mat_result <- wilcox_genescore_mat(
   mat = exprs(sim.ES), 
   ranks = NULL,

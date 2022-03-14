@@ -2,7 +2,7 @@
 % Please edit documentation in R/ks_gene_score.R
 \name{ks_gene_score}
 \alias{ks_gene_score}
-\title{Compute directional KS scores for each row of a given binary matrix}
+\title{Compute a Kolmogorov-Smirnov score for a given ranked list}
 \usage{
 ks_gene_score(
   x,
@@ -33,8 +33,8 @@ ks_gene_score(
 \item{exact}{compute exact p-value}
 }
 \value{
-A data frame
+a data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Compute directional KS scores for each row of a given binary matrix
+Compute a Kolmogorov-Smirnov score for a given ranked list
 }

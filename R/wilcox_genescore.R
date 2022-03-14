@@ -1,15 +1,15 @@
 
-#' Compute rank sum scores for each row of a given binary matrix
+#' Compute rank sum scores for a given binary feature
 #'
-#' @param x ranks for group 1
-#' @param y ranks for group 2
-#' @param mu a number specifying an optional parameter used to form null hypothesis
-#' @param alternative alternative hypothesis for p-value calculation
-#' @param paired paired test
-#' @param exact compute exact p-value
-#' @param correct for continuity correction (p-value)
+#' @param x an integer values for group 1
+#' @param y an integer values for group 2
+#' @param mu a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.
+#' @param alternative alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
+#' @param paired whether to perform paired test. Default is \code{FALSE}.
+#' @param exact whether to compute exact p-value. Default is \code{FALSE}.
+#' @param correct whether to consider continuity correction for p-value. Default is \code{TRUE}.
 #'
-#' @return A data frame
+#' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export
 #'
 #' @importFrom stats pnorm pwilcox
@@ -92,6 +92,6 @@ wilcox_genescore <- function
   
   class(RVAL) <- "htest"
   
-  return(data.frame(score=RVAL$statistic, p.value=RVAL$p.value))         
+  return(data.frame(score=RVAL$statistic, p_value=RVAL$p.value))         
   
 }

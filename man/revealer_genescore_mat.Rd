@@ -2,36 +2,53 @@
 % Please edit documentation in R/revealer_genescore_mat.R
 \name{revealer_genescore_mat}
 \alias{revealer_genescore_mat}
-\title{Row-wise matrix conditional mutual information I(x, y | z) from \code{REVEALER}}
+\title{\code{REVEALER} Scoring Method}
 \usage{
 revealer_genescore_mat(
   mat,
   target,
-  target_match = c("positive", "negative"),
+  target_match = "positive",
   seed_names = NULL,
-  seed_combination_op = c("min", "max"),
+  seed_combination_op = "max",
   assoc_metric = "IC",
   verbose = FALSE
 )
 }
 \arguments{
-\item{mat}{row matrix of binary features to compute row-wise scores for based on the REVEALER MUTUALLY EXCLUSIVE test}
+\item{mat}{a matrix of binary features (required)}
 
-\item{target}{a matrix of continuous functional response of interest}
+\item{target}{a vector of continuous values of a target profile (required). target must include labels or names that associated with the colnames of the feature matrix.}
 
-\item{target_match}{Direction of the match (negative or positive). Use "positive" to match the higher values of the target, "negative" to match the lower values. Default is positive.}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
-\item{seed_names}{Starting seed, one or more binary features(s) representing known causes of activation or features associated with the target}
+\item{seed_names}{one or more features(s) that associated with the activation of a given target profile}
 
-\item{seed_combination_op}{Operation to consolidate and summarize seeds to one vector of values. "max" is default}
+\item{seed_combination_op}{An operation to consolidate and summarize vectors of seed_names (\code{"max"} or \code{"min"} or \code{"mean"} or \code{"median"}). Default is \code{max}.}
 
-\item{assoc_metric}{Assocication Metric: "IC" information coeff. (default) or "COR" correlation.}
+\item{assoc_metric}{an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE.}
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-A data frame with two columns: \code{score} and \code{p_value}
+a data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Compute conditional mutual information scores of x and y given z for each row of a given binary matrix
+Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
+}
+\examples{
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# Provide a vector of continuous scores for a target profile
+target = rnorm(n = ncol(sim.ES))
+names(target) <- colnames(sim.ES)
+
+# Define additional parameters and start the function
+revealer_genescore_result <- revealer_genescore_mat(
+  mat = exprs(sim.ES), target = target, target_match = "positive", assoc_metric = "IC"
+)
+ 
 }

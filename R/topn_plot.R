@@ -1,13 +1,15 @@
 
-#' Top 'N' plot
+#' Top 'N' Plot
 #' 
-#' Plots a heatmap representation of overlapping features given a list of top N stepwise search results
-#' @param topN_list a list of lists, where each list entry is one that is returned by the stepwise search run for a given starting index (See ks.stepwise()). This is computed within, and can be returned by the topn.eval() function.
+#' Plots a heatmap representation of overlapping features given a list of top N candidate search results
+#' @param topN_list a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.
+#' 
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
 #' @examples
 #' # Load pre-computed Top-N list generated for sim.ES dataset
 #' data(topn.list)
 #' topn_plot(topn.list)
+#' 
 #' @export
 #' @import gplots
 #' @importFrom graphics legend

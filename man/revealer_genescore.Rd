@@ -2,7 +2,7 @@
 % Please edit documentation in R/revealer_genescore.R
 \name{revealer_genescore}
 \alias{revealer_genescore}
-\title{Compute conditional mutual information scores of x and y given z}
+\title{Compute Conditional Mutual Information of x and y given z from \code{REVEALER}}
 \usage{
 revealer_genescore(
   x,
@@ -13,19 +13,19 @@ revealer_genescore(
 )
 }
 \arguments{
-\item{x}{A continuous functional response of interest}
+\item{x}{a vector of continuous values of a given functional response of interest}
 
-\item{y}{A binary feature for response of interest}
+\item{y}{a binary feature for a given response of interest}
 
-\item{z}{A binary feature which is often known as causes of activation}
+\item{z}{a binary feature often known as causes of activation that associated with a given response of interest}
 
-\item{assoc_metric}{Association Metric: information coefficient (IC by default) or correlation (COR)}
+\item{assoc_metric}{an association metric: information coefficient (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}}
 
-\item{target_match}{Direction of the match (negative or positive). Use "positive" to match the higher values of the target, "negative" to match the lower values. Default is positive.}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 }
 \value{
-A data frame
+a data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Compute conditional mutual information scores of x and y given z
+Compute Conditional Mutual Information of x and y given z from \code{REVEALER}
 }

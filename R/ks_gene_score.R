@@ -1,5 +1,5 @@
 
-#' Compute directional KS scores for each row of a given binary matrix
+#' Compute a Kolmogorov-Smirnov score for a given ranked list
 #'
 #' @param x ranked list
 #' @param y positions of geneset items in ranked list (ranks)
@@ -10,7 +10,7 @@
 #' @param absolute takes max - min score rather than the maximum deviation from null
 #' @param exact compute exact p-value
 #'
-#' @return A data frame
+#' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export
 #' @importFrom stats ks.test
 ks_gene_score <- function
@@ -85,3 +85,4 @@ ks_gene_score <- function
   return(data.frame(score=score, p_value=PVAL))
   
 }
+

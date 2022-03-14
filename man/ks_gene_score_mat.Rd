@@ -2,7 +2,7 @@
 % Please edit documentation in R/ks_gene_score_mat.R
 \name{ks_gene_score_mat}
 \alias{ks_gene_score_mat}
-\title{Row-wise matrix Kolmogorov-Smirnov scoring}
+\title{Kolmogorov-Smirnov Scoring Method}
 \usage{
 ks_gene_score_mat(
   mat,
@@ -12,13 +12,13 @@ ks_gene_score_mat(
 )
 }
 \arguments{
-\item{mat}{A matrix of binary features to compute row-wise scores based on the Kolmogorov-Smirnov test}
+\item{mat}{a matrix of binary features to compute row-wise scores based on the \code{Kolmogorov-Smirnov} test.}
 
-\item{weights}{a vector of weights to perform a weighted-KS test. Default is NULL. Value is passed to ks_gene_score() function.}
+\item{weights}{a vector of weights to perform a \code{weighted-KS} test. Default is \code{NULL}. If not NULL, weights must include labels or names that associated with the colnames of the feature matrix.}
 
-\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided","less" or "greater". Value passed to ks_gene_score() function.}
+\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{verbose}{a logical indicating whether or not to verbose diagnostic messages. Default is FALSE}
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 A data frame with two columns: \code{score} and \code{p_value}
@@ -33,8 +33,8 @@ library(Biobase)
 # Load pre-computed expression set
 data(sim.ES)
 
-# Compute the score
-ks_genescore_mat_result <- ks_gene_score_mat(
+# Define additional parameters and start the function
+ks_gene_score_mat_result <- ks_gene_score_mat(
   mat = exprs(sim.ES), 
   weights = NULL,
   alternative = "less"

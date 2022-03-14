@@ -8,7 +8,7 @@
 #' @param custom_function if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
+#' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
 #' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
@@ -49,9 +49,9 @@ candidate_search <- function(
   metric = "stat",
   weights = NULL,
   ranks = NULL,  
-  target_match = "positive",             
+  target_match = "positive",          
   search_start = NULL,
-  search_method = "both", 
+  search_method = "both",
   max_size = 7,
   best_score_only = FALSE,
   verbose = FALSE
@@ -64,13 +64,18 @@ candidate_search <- function(
   if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
     stop("'ES' must be an ExpressionSet class argument (required).")
   
-  # Check input_score is provided
-  if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
-    stop("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix (required).\n")
+  # Check if the dataset has only binary 0 or 1 values 
+  if(!all(exprs(ES) %in% c(0,1))){
+    stop("The expression matrix (ES) must contain only binary values with no NAs.\n")
+  }
   
   # Make sure the input ES has rownames for features tracking
   if(is.null(rownames(ES)))
     stop("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
+    
+  # Check input_score is provided
+  if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
+    stop("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix (required).\n")
   
   # Make sure the input_score has same names as the colnames of ES
   if(is.null(names(input_score)))
@@ -80,21 +85,25 @@ candidate_search <- function(
   if(length(input_score) != ncol(ES)){
     stop("The input_score must have the same length as the number of columns in ES.\n")
   }else{
-    if(any(names(input_score) != colnames(ES))){
+    if(any(!names(input_score) %in% colnames(ES))){
       stop("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
     }
-    ES <- ES[,names(input_score)]
-  }
-  
-  # Check if the dataset has only binary 0 or 1 values 
-  if(!all(exprs(ES) %in% c(0,1))){
-    stop("The expression matrix (ES) must contain binary values with no NAs.\n")
+    # match colnames of expression matrix with names of provided input_score values
+    if(nrow(ES) == 1){
+      ES <- t(ES[,names(input_score)]) 
+    }else{
+      ES <- ES[,names(input_score)]
+    }
   }
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
   if(any(rowSums(exprs(ES)) == 0) || any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
     warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
     ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
+  }
+  
+  if(nrow(exprs(ES)) == 0){
+    stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
   
   # Check the method 
@@ -128,28 +137,33 @@ candidate_search <- function(
   } 
   
   # Define scores based on specified metric of interest
-  if(!metric %in% c('stat','pval'))
+  if(!metric %in% c('stat', 'pval'))
     stop("Please specify metric parameter as either 'stat' or 'pval' to use for candidate_search().\n")  
   
-  # Select the appropriate method to compute scores based on skewdness of a given binary matrix  
+  # Select the appropriate method to compute scores based on skewdness of a given binary matrix
+  mat <- exprs(ES)
+    
   s <- switch(
     method,
     ks = ks_gene_score_mat(
-      mat = exprs(ES),
+      mat = mat,
       alternative = alternative, 
       weights = weights
     ),
     wilcox = wilcox_genescore_mat(
-      mat = exprs(ES),
+      mat = mat,
       alternative = alternative,
       ranks = ranks
     ),
     revealer = revealer_genescore_mat(
-      mat = exprs(ES),                                   
+      mat = mat,                                   
       target = input_score,      
-      target_match = target_match
+      seed_names = NULL,
+      target_match = target_match,
+      assoc_metric = "IC"
     ),
     custom = custom_genescore_mat(
+      mat = mat,
       custom_function = custom_function,
       custom_parameters = custom_parameters
     )
@@ -157,23 +171,15 @@ candidate_search <- function(
   
   # Check if the returning result has one or two columns: score or p_value or both
   if(ncol(s) == 1){
-    
     if(colnames(s) == "score" & metric == "pval"){
-      warning("metric provided is 'pval' but the custom function return only score values. Thus, switching to 'stat' as a metric for score values.")
+      warning("metric = 'pval' is provided but the method function only return score values. Thus, using 'stat' as metric to search for best features.")
       metric <- "stat"
     }
-    
     if(colnames(s) == "p_value" & metric == "stat"){
-      warning("metric provided is 'stat' but the custom function return only p-values. Thus, switching to 'pval' as a metric for p-values.")
+      warning("metric provided is 'stat' but the method function only return p-values. Thus, using 'pval' as metric to search for best features.")
       metric <- "pval"
     }
-  
     metric <- metric
-    
-  }else{
-    
-    metric <- metric
-
   }
   
   # Score returned by the given method
@@ -210,7 +216,7 @@ candidate_search <- function(
       verbose("Starting with specified sorted feature index ..\n")
       
       if(search_start > nrow(ES)) # Index out of range
-        stop("Invalid starting index specified.. Please specify a valid starting index within the range of the existing ES...\n")
+        stop("Invalid starting index specified... Please specify a valid starting index within the range of the existing ES...\n")
       
       best.s.index <- search_start 
     }
@@ -296,8 +302,8 @@ candidate_search <- function(
       
       backward_search.results <- forward_backward_check(ES = ES,
                                                         input_score = input_score,
-                                                        glob.f = global.best.s.features, #Global feature set so far
-                                                        glob.f.s = global.best.s, # score corresponding to this global feature set
+                                                        glob.f = global.best.s.features, # Global feature set so far
+                                                        glob.f.s = global.best.s,        # score corresponding to this global feature set
                                                         method = method, 
                                                         custom_function = custom_function,
                                                         custom_parameters = custom_parameters,
@@ -345,33 +351,28 @@ candidate_search <- function(
       revealer = revealer_genescore_mat(
         mat = meta.mat,                                   
         target = input_score,      
-        target_match = target_match
+        seed_names = NULL,
+        target_match = target_match,
+        assoc_metric = "IC"
       ),
       custom = custom_genescore_mat(
+        mat = meta.mat,
         custom_function = custom_function,
         custom_parameters = custom_parameters
       )
     ) 
-    
+
     # Check if the returning result has one or two columns: score or p_value or both
     if(ncol(s) == 1){
-      
       if(colnames(s) == "score" & metric == "pval"){
-        warning("metric provided is 'pval' but the custom function return only score values. Thus, switching to 'stat' as a metric for score values.")
+        warning("metric = 'pval' is provided but the method function only return score values. Thus, using 'stat' as metric to search for best features.")
         metric <- "stat"
       }
-      
       if(colnames(s) == "p_value" & metric == "stat"){
-        warning("metric provided is 'stat' but the custom function return only p-values. Thus, switching to 'pval' as a metric for p-values.")
+        warning("metric provided is 'stat' but the method function only return p-values. Thus, using 'pval' as metric to search for best features.")
         metric <- "pval"
       }
-      
       metric <- metric
-      
-    }else{
-      
-      metric <- metric
-      
     }
     
     # Score returned by the given method
@@ -484,9 +485,8 @@ forward_backward_check <- function
     
     # Compute scores for this meta feature
     # Here we suprress warnings just to avoid messages warning-related single vector score computation (nrow(mat) < 2)
-    u.mat <- t(matrix(u))
-    rownames(u.mat) <- "sum"
-    
+    u.mat <- matrix(t(matrix(u)), nrow=1, byrow=T, dimnames=list(c("sum"), colnames(ES)))
+
     s <- suppressWarnings(
       switch(
         method,
@@ -503,9 +503,12 @@ forward_backward_check <- function
         revealer = revealer_genescore_mat(
           mat = u.mat,                                   
           target = input_score,      
-          target_match = target_match
+          seed_names = NULL,
+          target_match = target_match,
+          assoc_metric = "IC"
         ),
         custom = custom_genescore_mat(
+          mat = u.mat,
           custom_function = custom_function,
           custom_parameters = custom_parameters
         )
@@ -514,23 +517,15 @@ forward_backward_check <- function
     
     # Check if the returning result has one or two columns: score or p_value or both
     if(ncol(s) == 1){
-      
       if(colnames(s) == "score" & metric == "pval"){
-        warning("metric provided is 'pval' but the custom function return only score values. Thus, switching to 'stat' as a metric for score values.")
+        warning("metric = 'pval' is provided but the method function only return score values. Thus, using 'stat' as metric to search for best features.")
         metric <- "stat"
       }
-      
       if(colnames(s) == "p_value" & metric == "stat"){
-        warning("metric provided is 'stat' but the custom function return only p-values. Thus, switching to 'pval' as a metric for p-values.")
+        warning("metric provided is 'stat' but the method function only return p-values. Thus, using 'pval' as metric to search for best features.")
         metric <- "pval"
       }
-      
       metric <- metric
-      
-    }else{
-      
-      metric <- metric
-      
     }
     
     # Score returned by the given method

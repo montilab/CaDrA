@@ -9,8 +9,7 @@ revealer_genescore_mat(
   target,
   target_match = "positive",
   seed_names = NULL,
-  seed_combination_op = "max",
-  assoc_metric = "IC",
+  assoc_metric = c("IC", "COR"),
   verbose = FALSE
 )
 }
@@ -23,14 +22,12 @@ revealer_genescore_mat(
 
 \item{seed_names}{one or more features(s) that associated with the activation of a given target profile}
 
-\item{seed_combination_op}{An operation to consolidate and summarize vectors of seed_names (\code{"max"} or \code{"min"} or \code{"mean"} or \code{"median"}). Default is \code{max}.}
-
 \item{assoc_metric}{an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.}
 
 \item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-a data frame with two columns: \code{score} and \code{p_value}
+a data frame with one column: \code{score}
 }
 \description{
 Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix

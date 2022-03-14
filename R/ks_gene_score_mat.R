@@ -39,7 +39,7 @@ ks_gene_score_mat <- function
   
   # Check if the matrix has only binary 0 or 1 values 
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
-    stop("mat variable must be a matrix with binary values (no empty values).\n")
+    stop("mat variable must be a matrix of binary values (no empty values).\n")
   
   # Make sure the mat variable has rownames for features tracking
   if(is.null(rownames(mat)))
@@ -50,10 +50,15 @@ ks_gene_score_mat <- function
     if(length(weights) != ncol(mat)){
       stop("'The provided weights must have the same length as the number of columns in the expression matrix.\n")
     }else{
-      if(any(names(weights) != colnames(mat))){
+      if(any(!names(weights) %in% colnames(mat))){
         stop("The weights object must have names or labels that matches the colnames of the expression matrix.\n")
       }
-      mat <- mat[,names(weights)]
+      # match colnames of expression matrix with names of provided weights values
+      if(nrow(mat) == 1){
+        mat <- t(mat[,names(weights)]) 
+      }else{
+        mat <- mat[,names(weights)]
+      }
     }
   }
   
@@ -61,6 +66,10 @@ ks_gene_score_mat <- function
   if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
     warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
+  }
+  
+  if(nrow(mat) == 0){
+    stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
   
   if(nrow(mat) < 2)

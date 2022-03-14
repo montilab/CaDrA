@@ -6,11 +6,10 @@
 #' @param target a vector of continuous values of a target profile (required). target must include labels or names that associated with the colnames of the feature matrix. 
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param seed_names one or more features(s) that associated with the activation of a given target profile
-#' @param seed_combination_op An operation to consolidate and summarize vectors of seed_names (\code{"max"} or \code{"min"} or \code{"mean"} or \code{"median"}). Default is \code{max}.
 #' @param assoc_metric an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
-#' @return a data frame with two columns: \code{score} and \code{p_value}
+#' @return a data frame with one column: \code{score}
 #' @examples
 #' # Load R library
 #' library(Biobase)
@@ -35,8 +34,7 @@ revealer_genescore_mat <- function
   target, 
   target_match = "positive",             
   seed_names = NULL,
-  seed_combination_op = "max", 
-  assoc_metric = "IC",
+  assoc_metric = c("IC", "COR"),
   verbose = FALSE
 )
 {
@@ -46,7 +44,7 @@ revealer_genescore_mat <- function
   
   # Check if the matrix has only binary values and no empty values
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
-    stop("mat variable must be a matrix with binary values (no empty values).\n")
+    stop("mat variable must be a matrix of binary values (no empty values).\n")
   
   # Check if target is provided and no empty values
   if(length(target) == 0 || any(!is.numeric(target)) || any(is.na(target)))
@@ -64,17 +62,22 @@ revealer_genescore_mat <- function
   if(length(target) != ncol(mat)){
     stop("The target variable must have the same length as the number of columns in mat.\n")
   }else{
-    if(any(names(target) != colnames(mat))){
+    if(any(!names(target) %in% colnames(mat))){
       stop("The target object must have names or labels that matches the colnames of the expression matrix.\n")
     }
-    mat <- mat[,names(target)]
+    # match colnames of expression matrix with names of provided target values
+    if(nrow(mat) == 1){
+      mat <- t(mat[,names(target)]) 
+    }else{
+      mat <- mat[,names(target)]
+    }
   }
   
   # Check if seed_names is provided
   if(length(seed_names) > 0){
     if(any(!seed_names %in% rownames(mat))){
-      stop("The provided seed_names must be part of the features or rownames of the expression matrix.\n")
-    }   
+      stop(paste0("The provided seed_names, ", paste0(seed_names, collapse = ","), ", does not exist among the rownames of expression matrix.\n"))
+    } 
   }else{
     seed_names <- "NULLSEED"   
   }
@@ -84,42 +87,47 @@ revealer_genescore_mat <- function
     warning("The target_match variable is not specified. Using 'positive' by default ..\n")
     target_match <- "positive"
   }else if(length(target_match) == 1 && !target_match %in% c("positive", "negative")){
-    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'positive'.")
+    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.")
   }else if(length(target_match) > 1 && all(!target_match %in% c("positive", "negative"))){
-    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'positive'.")
+    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.")
   }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
     target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
     warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
   }
   
-  # If seed_combination_op variable is not specified, use "max" as default.
-  if(length(seed_combination_op) == 0 || nchar(seed_combination_op) == 0){
-    warning("The seed_combination_op variable is not specified. Using 'max' by default ..\n")
-    seed_combination_op <- "max"
-  }else if(length(seed_combination_op) == 1 && !seed_combination_op %in% c("max", "min", "mean", "median")){
-    stop(paste0(seed_combination_op, collapse=", "), " is not a valid seed_combination_op value. The seed_combination_op variable must be 'max' or 'min' or 'mean' or 'median'.")
-  }else if(length(seed_combination_op) > 1 && all(!seed_combination_op %in% c("max", "min", "mean", "median"))){
-    stop(paste0(seed_combination_op, collapse=", "), " is not a valid seed_combination_op value. The seed_combination_op variable must be 'max' or 'min' or 'mean' or 'median'.")
-  }else if(length(seed_combination_op) > 1 && any(seed_combination_op %in% c("max", "min", "mean", "median"))){
-    seed_combination_op <- seed_combination_op[which(seed_combination_op %in% c("max", "min", "mean", "median"))][1]
-    warning("More than one seed_combination_op values were specified. Only the first valid seed_combination_op value, '", seed_combination_op, "', is used.")
+  # If assoc_metric variable is not specified, use "IC" as default.
+  if(length(assoc_metric) == 0 || nchar(assoc_metric) == 0){
+    warning("The assoc_metric variable is not specified. Using 'IC' by default ..\n")
+    assoc_metric <- "IC"
+  }else if(length(assoc_metric) == 1 && !assoc_metric %in% c("IC", "COR")){
+    stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.")
+  }else if(length(assoc_metric) > 1 && all(!assoc_metric %in% c("IC", "COR"))){
+    stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.")
+  }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
+    assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
+    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
   }
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
   if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
-    warning("The provided matrix has some features that are either all 0 or 1. These features will be removed from the computation.\n")
+    warning("The provided matrix has some features that are either all 0 or 1. These features will be removed from downsteam computation.\n")
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
   }
   
-  if(nrow(mat) < 2)
+  if(nrow(mat) == 0){
+    stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
+  }
+  
+  if(nrow(mat) < 2){
     warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+  }
   
   # Define seed from given seed_names
   if (seed_names == "NULLSEED") {
     seed <- as.vector(rep(0, ncol(mat)))      
   } else {
     if (length(seed_names) > 1) {
-      seed <- apply(mat[seed_names,], MARGIN=2, FUN=seed_combination_op)
+      seed <- apply(mat[seed_names,], MARGIN=2, FUN=max)
     } else {
       seed <- mat[seed_names,]
     }
@@ -136,11 +144,11 @@ revealer_genescore_mat <- function
       }
     )
   
-  # Only score value return from revealer
+  # Only score value from revealer is returned
   colnames(cmi) <- c("score")
   rownames(cmi) <- rownames(mat)
   
   return(cmi)
-  
+
 }
 

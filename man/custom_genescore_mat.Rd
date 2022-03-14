@@ -4,9 +4,11 @@
 \alias{custom_genescore_mat}
 \title{Customized Scoring Method}
 \usage{
-custom_genescore_mat(custom_function, custom_parameters, verbose = FALSE)
+custom_genescore_mat(mat, custom_function, custom_parameters, verbose = FALSE)
 }
 \arguments{
+\item{mat}{a matrix of binary features (required). The provided \code{mat} along with \code{custom_parameters} will be passed as arguments to custom_function() which is used to compute row-wise scoring for each row of a given binary feature.}
+
 \item{custom_function}{a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). \code{NOTE:} This function must return a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}.}
 
 \item{custom_parameters}{a list of arguments to be passed to the custom_function() (required).}
@@ -41,19 +43,14 @@ data(sim.ES)
 # Extract the binary feature matrix
 mat = exprs(sim.ES)
 
-# Check if the dataset has any all 0 or 1 features 
-# These are to be removed since they are not informative
-if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
-  mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
-}
-
 # Provide a vector of continuous scores for a target profile
 target = rnorm(n = ncol(sim.ES))
  
 # Define additional parameters and start the function
 custom_genescore_result <- custom_genescore_mat(
+  mat = mat,
   custom_function = customized_genescore_mat, 
-  custom_parameters = list(mat = mat, target = target, alternative = "less")
+  custom_parameters = list(target = target, alternative = "less")
 )
  
 }

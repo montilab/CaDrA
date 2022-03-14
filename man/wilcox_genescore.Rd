@@ -15,9 +15,9 @@ wilcox_genescore(
 )
 }
 \arguments{
-\item{x}{an integer values for group 1}
+\item{x}{an integer ranked values for group 1}
 
-\item{y}{an integer values for group 2}
+\item{y}{an integer ranked values for group 2}
 
 \item{mu}{a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.}
 

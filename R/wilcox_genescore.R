@@ -1,8 +1,8 @@
 
 #' Compute rank sum scores for a given binary feature
 #'
-#' @param x an integer values for group 1
-#' @param y an integer values for group 2
+#' @param x an integer ranked values for group 1
+#' @param y an integer ranked values for group 2
 #' @param mu a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.
 #' @param alternative alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param paired whether to perform paired test. Default is \code{FALSE}.

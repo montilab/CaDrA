@@ -35,7 +35,7 @@ candidate_search(
 
 \item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
+\item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.}
 
 \item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
 

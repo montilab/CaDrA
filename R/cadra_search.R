@@ -78,87 +78,20 @@ cadra_search <- function(
   return_perm_pval = FALSE
 ){
   
-  # Check if the ES is provided
-  if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
-    stop("'ES' must be a BioBase ExpressionSet class argument (required).")
-  
-  # Check input_score is provided
-  if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
-    stop("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix (required).\n")
-  
-  # Make sure the input ES has rownames for features tracking
-  if(is.null(rownames(ES)))
-    stop("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
-  
-  # Make sure the input_score has same names as the colnames of ES
-  if(is.null(names(input_score)))
-    stop("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
-  
-  # Make sure the input_score has the same length as number of samples in ES
-  if(length(input_score) != ncol(ES)){
-    stop("The input_score must have the same length as the number of columns in ES.\n")
-  }else{
-    if(any(names(input_score) != colnames(ES))){
-      stop("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
-    }
-    ES <- ES[,names(input_score)]
-  }
-  
-  # Check if the dataset has only binary 0 or 1 values 
-  if(!all(exprs(ES) %in% c(0,1))){
-    stop("The expression matrix (ES) must contain binary values with no NAs.\n")
-  }
-  
-  # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
-  if(any(rowSums(exprs(ES)) == 0) || any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
-    warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
-    ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
-  }
-  
-  # Check the method 
-  if(length(method)==1 & method %in% c("ks", "wilcox", "revealer", "custom")){
-    
-    # Compute row-wise directional KS scores for binary features in ES
-    if(method == "ks"){
-      verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
-      ES <- ES[,names(sort(input_score, decreasing=T))]
-    }
-    
-    # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    if(method == "wilcox"){
-      verbose("Using Wilcoxon method for features scoring.\n")
-    }
-    
-    # Compute mutually exclusive method for binary features in ES 
-    if(method == "revealer"){
-      verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
-    }
-    
-    # Other future methods can be implemented here and add its verbose message here
-    if(method == "custom"){
-      verbose("Using a customized method for features scoring.\n")
-    }
-    
-  } else {
-    
-    stop(paste0("Invalid method specified. The method can be ", paste0(c("ks", "wilcox", "revealer", "custom"), collapse="/"), "."))
-    
-  } 
-  
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
-    cat("Using provided cache root path: ",cache_path,"\n")
+    cat("Using provided cache root path: ", cache_path, "\n")
     setCacheRootPath(cache_path)
   } else{
     setCacheRootPath()
-    cat("Setting cache root path as: ",getCacheRootPath(),"\n")
+    cat("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
   
   # We use the ES, top N (or search_start), score metric, scoring method and seed for random permutation as the key for each cached result  
   if(!is.null(top_N)) # If N is defined here, we will use it as part of the key (topn_eval is called)
-    key <- list(ES=ES,input_score=input_score,method=method,custom_function,custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,top_N=top_N,search_method=search_method,max_size=max_size,best_score_only=TRUE,seed=seed)
+    key <- list(ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,top_N=top_N,search_method=search_method,max_size=max_size,best_score_only=TRUE,seed=seed)
   else # If N is not defined, we will use the search_start parameter as part of the key instead (candidate_search is called)
-    key <- list(ES=ES,input_score=input_score,method=method,custom_function,custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,search_start=search_start,search_method=search_method,max_size=max_size,best_score_only=TRUE,seed=seed)
+    key <- list(ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,search_start=search_start,search_method=search_method,max_size=max_size,best_score_only=TRUE,seed=seed)
   
   cat("Using the following as the key for saving/loading cached permutation values:\n")
   print(key)
@@ -173,18 +106,15 @@ cadra_search <- function(
   # Check if, given the dataset and search-specific parameters, there is already a cached null distribution available 
   if (!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
     
-    cat("Found ",length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
+    cat("Found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
     cat("Loading permutation scores from cache..\n")
     
   }  else{
     
     if (is.null(perm_best_scores)){
-      
-      cat("No permutation scores for the specified dataset and search parameters were found in cache path ..\n")
-      
+      cat("No permutation scores for the specified dataset and search parameters were found in cache path...\n")
     } else if (length(perm_best_scores) < n_perm) {
-      
-      cat("n_perm is set to ",n_perm," but found ",length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
+      cat("n_perm is set to ", n_perm, " but found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
     }
     
     cat("\n\n\nBEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n\n\n")
@@ -201,7 +131,7 @@ cadra_search <- function(
       cat("Running tests in parallel..\n")
     } 
     
-    cat("Using ",ncores," core(s)..\n")
+    cat("Using ", ncores, " core(s)..\n")
     
     # Generate matrix of permutated labels  
     perm_labels_matrix <- generate_permutations(ord=seq(1,ncol(ES)), n_perms=n_perm, seed=seed)
@@ -209,12 +139,12 @@ cadra_search <- function(
     #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
     options(verbose=FALSE)
     
-    cat("Computing permutation-based scores for N = ", n_perm," ..\n\n")
+    cat("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     
     if(!is.null(top_N)){ # Run top N evaluation if N is specified
-      perm_best_scores <- unlist(alply(perm_labels_matrix,1,topn_eval,ES=ES,input_score=input_score,method=method,custom_function=custom_function,alternative=alternative,metric=metric,weights=weights,ranks=ranks,search_method=search_method,max_size=max_size,best_score_only=TRUE,top_N=top_N,.parallel=parallel,.progress=progress))
+      perm_best_scores <- unlist(alply(perm_labels_matrix,1,topn_eval,ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,top_N=top_N,search_method=search_method,max_size=max_size,best_score_only=TRUE,.parallel=parallel,.progress=progress))
     } else { # Run basic stepwise search otherwise
-      perm_best_scores <- unlist(alply(perm_labels_matrix,1,candidate_search,ES=ES,input_score=input_score,method=method,alternative=alternative,metric=metric,search_start=search_start,search_method=search_method,weights=weights,ranks=ranks,max_size=max_size,best_score_only=TRUE,.parallel=parallel,.progress=progress))  
+      perm_best_scores <- unlist(alply(perm_labels_matrix,1,candidate_search,ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,search_start=search_start,search_method=search_method,max_size=max_size,best_score_only=TRUE,.parallel=parallel,.progress=progress))  
     }
     
     #Save computed scores to cache 
@@ -268,10 +198,10 @@ cadra_search <- function(
     cat("Using provided value of observed best score ..\n\n")
   }
   
-  cat("Observed score: ",unlist(obs_best_score),"\n\n")
+  cat("Observed score: ", unlist(obs_best_score), "\n\n")
   
   ########### PERMUTATION P-VALUE COMPUTATION ############
-  cat("Number of permutation-based scores being considered: ",length(perm_best_scores), "\n")
+  cat("Number of permutation-based scores being considered: ", length(perm_best_scores), "\n")
   #Add a smoothening factor of 1 if specified
   #This is just to not return a p-value of 0
   c=0
@@ -294,13 +224,13 @@ cadra_search <- function(
   
   perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/(n_perm + c) 
   
-  cat("Permutation p-value: ",perm_pval,"\n\n")
+  cat("Permutation p-value: ", perm_pval, "\n\n")
   
   ########### END PERMUTATION P-VALUE COMPUTATION ############
   
-  if(plot==TRUE){
+  if(plot == TRUE){
     
-    plot_title <- paste("Emperical Null distribution (N = ",length(perm_best_scores),")\n Permutation p-val <= ",round(perm_pval,5),"\nBest observed score: ",round(obs_best_score,5),sep="")
+    plot_title <- paste("Emperical Null distribution (N = ",length(perm_best_scores), ")\n Permutation p-val <= ", round(perm_pval,5), "\nBest observed score: ", round(obs_best_score,5),sep="")
     
     if(!is.null(top_N)){
       plot_title <- paste(plot_title,"\n Top N: ",top_N,sep="")

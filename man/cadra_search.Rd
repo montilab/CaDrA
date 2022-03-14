@@ -26,7 +26,7 @@ cadra_search(
   obs_best_score = NULL,
   ncores = 1,
   cache_path = NULL,
-  return_perm_pval = FALSE
+  return_perm_pval = TRUE
 )
 }
 \arguments{
@@ -72,7 +72,7 @@ cadra_search(
 
 \item{cache_path}{a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.}
 
-\item{return_perm_pval}{a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{FALSE}.}
+\item{return_perm_pval}{a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{TRUE}.}
 }
 \value{
 If \code{return_perm_pval} is set to \code{TRUE}, it will return a permutation p-value.
@@ -98,7 +98,7 @@ names(input_score) <- colnames(sim.ES)
 #  alternative = "less", metric = "pval", top_N = NULL, 
 #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
 #  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
-#  ncores = 1, cache_path = NULL, return_perm_pval = FALSE
+#  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
 #)
 
 }

@@ -24,7 +24,7 @@
 #' @param obs_best_score a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we compute the observed score given the \code{input_score} and \code{ES} variables.
 #' @param ncores an integer specifies the number of cores to perform parallelization for permutation testing. Default is \code{1}.
 #' @param cache_path a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.
-#' @param return_perm_pval a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{FALSE}.
+#' @param return_perm_pval a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{TRUE}.
 #' 
 #' @return If \code{return_perm_pval} is set to \code{TRUE}, it will return a permutation p-value.
 #' @examples
@@ -45,7 +45,7 @@
 #' #  alternative = "less", metric = "pval", top_N = NULL, 
 #' #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
 #' #  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
-#' #  ncores = 1, cache_path = NULL, return_perm_pval = FALSE
+#' #  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
 #' #)
 #' 
 #' @export
@@ -75,7 +75,7 @@ cadra_search <- function(
   obs_best_score = NULL,
   ncores = 1,
   cache_path = NULL,
-  return_perm_pval = FALSE
+  return_perm_pval = TRUE
 ){
   
   ####### CACHE CHECKING #######
@@ -114,7 +114,7 @@ cadra_search <- function(
     if (is.null(perm_best_scores)){
       cat("No permutation scores for the specified dataset and search parameters were found in cache path...\n")
     } else if (length(perm_best_scores) < n_perm) {
-      cat("n_perm is set to ", n_perm, " but found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
+      cat("n_perm is set to ", n_perm, " but found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters...\n")
     }
     
     cat("\n\n\nBEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n\n\n")
@@ -134,7 +134,7 @@ cadra_search <- function(
     cat("Using ", ncores, " core(s)..\n")
     
     # Generate matrix of permutated labels  
-    perm_labels_matrix <- generate_permutations(ord=seq(1,ncol(ES)), n_perms=n_perm, seed=seed)
+    perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
     
     #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
     options(verbose=FALSE)
@@ -142,9 +142,9 @@ cadra_search <- function(
     cat("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     
     if(!is.null(top_N)){ # Run top N evaluation if N is specified
-      perm_best_scores <- unlist(alply(perm_labels_matrix,1,topn_eval,ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,top_N=top_N,search_method=search_method,max_size=max_size,best_score_only=TRUE,.parallel=parallel,.progress=progress))
+      perm_best_scores <- unlist(alply(perm_labels_matrix,1,function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); topn_eval(ES=ES,input_score=perm_input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,top_N=top_N,search_method=search_method,max_size=max_size,best_score_only=TRUE) },.parallel=parallel,.progress=progress))
     } else { # Run basic stepwise search otherwise
-      perm_best_scores <- unlist(alply(perm_labels_matrix,1,candidate_search,ES=ES,input_score=input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,search_start=search_start,search_method=search_method,max_size=max_size,best_score_only=TRUE,.parallel=parallel,.progress=progress))  
+      perm_best_scores <- unlist(alply(perm_labels_matrix,1,function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES,input_score=perm_input_score,method=method,custom_function=custom_function,custom_parameters=custom_parameters,alternative=alternative,metric=metric,weights=weights,ranks=ranks,target_match=target_match,search_start=search_start,search_method=search_method,max_size=max_size,best_score_only=TRUE) },.parallel=parallel,.progress=progress))  
     }
     
     #Save computed scores to cache 
@@ -156,10 +156,11 @@ cadra_search <- function(
   registerDoParallel(cores = 1) #Return to using just a single core
   
   cat("FINISHED\n")
-  cat("Time elapsed: ", round((proc.time()-ptm)[3]/60,2)," mins \n\n")
+  cat("Time elapsed: ", round((proc.time()-ptm)[3]/60,2), " mins \n\n")
   ############################################################################################## 
   
   if(is.null(obs_best_score)){
+    
     cat("Computing observed best score ..\n\n")
     
     if(!is.null(top_N)){
@@ -178,6 +179,7 @@ cadra_search <- function(
                                   max_size = max_size,
                                   best_score_only = TRUE) 
     } else {
+      
       obs_best_score <- candidate_search(ES = ES,
                                          input_score = input_score, 
                                          method = method,
@@ -195,7 +197,9 @@ cadra_search <- function(
       
     } 
   } else{
+    
     cat("Using provided value of observed best score ..\n\n")
+    
   }
   
   cat("Observed score: ", unlist(obs_best_score), "\n\n")
@@ -230,12 +234,12 @@ cadra_search <- function(
   
   if(plot == TRUE){
     
-    plot_title <- paste("Emperical Null distribution (N = ",length(perm_best_scores), ")\n Permutation p-val <= ", round(perm_pval,5), "\nBest observed score: ", round(obs_best_score,5),sep="")
+    plot_title <- paste("Emperical Null distribution (N = ", length(perm_best_scores), ")\n Permutation p-val <= ", round(perm_pval,5), "\nBest observed score: ", round(obs_best_score,5),sep="")
     
     if(!is.null(top_N)){
-      plot_title <- paste(plot_title,"\n Top N: ",top_N,sep="")
+      plot_title <- paste(plot_title,"\n Top N: ", top_N, sep="")
     }else{
-      plot_title <- paste(plot_title,"\n Seed: ",search_start,sep="")
+      plot_title <- paste(plot_title,"\n Seed: ", search_start, sep="")
     }
     
     #Here, let us plot the absolute values of the permutation p-values, for simplicity

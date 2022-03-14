@@ -1,3 +1,47 @@
+#' ks_test_d_wrap_ wrapper
+#'
+#' Compute directional Kolmogorov-Smirnov scores
+#' @param n_x length of ranked list
+#' @param y positions of geneset items in ranked list (ranks)
+#' @param alt alternative hypothesis for p-value calculation
+#' @useDynLib CaDrA ks_test_d_wrap_
+ks_test_double_wrap <- function(n_x, y, alt="less") {
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  y <- as.numeric(y)
+  n_x <- as.integer(n_x)
+  res <- .Call(ks_test_d_wrap_,  n_x, y, alt_int)
+  res
+}
+
+#' ks_plot wrapper
+#'
+#' Return a dataframe from ks_genescore function
+#' @param n_x length of ranked list
+#' @param y positions of geneset items in ranked list (ranks)
+#' @param weight a vector of weights 
+#' @param alt alternative hypothesis for p-value calculation
+#' @useDynLib CaDrA ks_plot_wrap_
+ks_plot_wrap <- function(n_x, y, weight, alt="less") {
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  y <- as.integer(y)
+  n_x <- as.integer(n_x)
+  res <- .Call(ks_plot_wrap_, n_x, y, weight, alt_int)
+  res <- res[!is.na(res$X), ]
+  res
+}
+
+
+
 #' ks.genescore wrapper
 #'
 #' Compute directional Kolmogorov-Smirnov scores for each row of a given vector

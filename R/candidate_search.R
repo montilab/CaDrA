@@ -20,11 +20,15 @@
 #'
 #' @return If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned. 
 #' @examples
+#' 
 #' # Load R library
 #' library(Biobase)
 #'
 #' # Load pre-computed expression set
 #' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile with names to each score value 
 #' input_score = rnorm(n = ncol(sim.ES))
@@ -60,7 +64,7 @@ candidate_search <- function(
   # Set up verbose option
   options(verbose=FALSE)
   
-  # Check if the ES is provided
+  # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
     stop("'ES' must be an ExpressionSet class argument (required).")
   
@@ -73,11 +77,11 @@ candidate_search <- function(
   if(is.null(rownames(ES)))
     stop("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
     
-  # Check input_score is provided
+  # Check input_score is provided and is a continuous values with no NAs
   if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
     stop("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix (required).\n")
   
-  # Make sure the input_score has same names as the colnames of ES
+  # Make sure the input_score has names or labels that are the same as the colnames of ES
   if(is.null(names(input_score)))
     stop("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
   
@@ -88,20 +92,11 @@ candidate_search <- function(
     if(any(!names(input_score) %in% colnames(ES))){
       stop("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
     }
-    # match colnames of expression matrix with names of provided input_score values
-    if(nrow(ES) == 1){
-      ES <- t(ES[,names(input_score)]) 
-    }else{
-      ES <- ES[,names(input_score)]
-    }
+    # match colnames of expression matrix with names of provided input_score
+    ES <- ES[,names(input_score)]
   }
   
-  # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
-  if(any(rowSums(exprs(ES)) == 0) || any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
-    warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
-    ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
-  }
-  
+  # Make sure matrix is not empty after removing uninformative features
   if(nrow(exprs(ES)) == 0){
     stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
@@ -112,12 +107,24 @@ candidate_search <- function(
     # Compute row-wise directional KS scores for binary features in ES
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
+      
+      # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(sort(input_score, decreasing=T))]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
+      
+      # if ranks is NULL, re-order the samples by input_score sorted from highest to lowest values
+      if(is.null(ranks)){
+        ES <- ES[,names(sort(input_score, decreasing=T))]
+      }else{
+        # Check if ranks are a ranked list
+        if(any(!sort(ranks)==1:ncol(ES))){
+          stop("The provided ranks object must be a ranked list.")
+        }
+      }
     }
     
     # Compute mutually exclusive method for binary features in ES 
@@ -125,7 +132,7 @@ candidate_search <- function(
       verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
     }
     
-    # Other future methods can be implemented here and add its verbose message here
+    # Compute row-wise directional scores using user's customized function for binary features in ES
     if(method == "custom"){
       verbose("Using a customized method for features scoring.\n")
     }
@@ -164,6 +171,7 @@ candidate_search <- function(
     ),
     custom = custom_genescore_mat(
       mat = mat,
+      target = input_score,
       custom_function = custom_function,
       custom_parameters = custom_parameters
     )
@@ -357,6 +365,7 @@ candidate_search <- function(
       ),
       custom = custom_genescore_mat(
         mat = meta.mat,
+        target = input_score,
         custom_function = custom_function,
         custom_parameters = custom_parameters
       )
@@ -420,7 +429,7 @@ candidate_search <- function(
   verbose("Features returned in ES: ",global.best.s.features,"\n")
   verbose("\n\n")
   
-  if(best_score_only==FALSE){
+  if(best_score_only == FALSE){
     
     #We don't just want the combination (meta-feature) at the end. We want all the features that make up the meta-feature
     #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
@@ -439,8 +448,10 @@ candidate_search <- function(
     return(list("ES"= ES.best,"Score"= global.best.s))
     
   } else{
+    
     #Just return the score. Here we put this in the list just to support permutation-based apply functionality
     return(list(global.best.s)) 
+    
   }
   
 }  
@@ -509,6 +520,7 @@ forward_backward_check <- function
         ),
         custom = custom_genescore_mat(
           mat = u.mat,
+          target = input_score,
           custom_function = custom_function,
           custom_parameters = custom_parameters
         )
@@ -549,16 +561,16 @@ forward_backward_check <- function
   # Check if any one of the computed scores has a better score than the entire meta-feature's score
   if(ifelse(metric == "pval", (sign(f.best.score) > 0 & abs(f.best.score) < abs(glob.f.s)), f.best.score > glob.f.s)){
     
-    verbose("Found improvement on removing existing feature..\n")
-    verbose("New feature set: ",f.names[[f.best.index]],"\n")
-    verbose("New global best score: ",f.best.score,"\n")
+    verbose("Found improvement on removing existing feature...\n")
+    verbose("New feature set: ", f.names[[f.best.index]], "\n")
+    verbose("New global best score: ", f.best.score, "\n")
     
     #Return the set of features that gave a better score than the existing best score, and the score as well
-    return(list(f.names[[f.best.index]],f.best.score))  
+    return(list(f.names[[f.best.index]], f.best.score))  
     
   } else{
     
-    #Don't change anything. Return the existing best set of features and the corresponding  score
+    #Don't change anything. Return the existing best set of features and the corresponding score
     return(list(glob.f, glob.f.s))
     
   } 

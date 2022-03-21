@@ -11,6 +11,7 @@
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
+#' 
 #' # Load R library
 #' library(Biobase)
 #
@@ -51,15 +52,23 @@ wilcox_genescore_mat <- function
     if(length(ranks) != ncol(mat)){
       stop("'The provided ranks must have the same length as the number of columns in the expression matrix.\n")
     }else{
-      if(any(!names(ranks) %in% colnames(mat))){
-        stop("The ranks object must have names or labels that matches the colnames of the expression matrix.\n")
+      # check if ranks has any labels or names
+      if(length(names(ranks)) == 0){
+        stop("The ranks object must have names or labels that match the colnames of the expression matrix.\n")
       }
+      
+      # check if ranks has labels or names that matches the colnames of the expression matrix
+      if(any(!names(ranks) %in% colnames(mat))){
+        stop("The ranks object have names or labels that do not match the colnames of the expression matrix.\n")
+      }
+      
       # match colnames of expression matrix with names of provided ranks values
+      # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
       if(nrow(mat) == 1){
-        mat <- t(mat[,names(ranks)]) 
+        mat <- matrix(t(mat[,names(ranks)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat)))
       }else{
         mat <- mat[,names(ranks)]
-      }    
+      }
     }
   }else{
     ranks <- seq(1, ncol(mat))
@@ -71,10 +80,12 @@ wilcox_genescore_mat <- function
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
   }
   
+  # Make sure matrix is not empty after removing uninformative features
   if(nrow(mat) == 0){
     stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
   
+  # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2)
     warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
@@ -97,7 +108,7 @@ wilcox_genescore_mat <- function
       function(r){
         #r=1;
         feature = mat[r,]; x = ranks[which(feature==1)]; y = ranks[which(feature==0)]    
-        wilcox_genescore(x=x, y=y, alternative=alternative)
+        wilcox_genescore(x = x, y = y, alternative=alternative) 
       }
     )
   

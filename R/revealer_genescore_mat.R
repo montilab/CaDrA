@@ -11,11 +11,15 @@
 #'
 #' @return a data frame with one column: \code{score}
 #' @examples
+#' 
 #' # Load R library
 #' library(Biobase)
 #'
 #' # Load pre-computed expression set
 #' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile
 #' target = rnorm(n = ncol(sim.ES))
@@ -62,12 +66,20 @@ revealer_genescore_mat <- function
   if(length(target) != ncol(mat)){
     stop("The target variable must have the same length as the number of columns in mat.\n")
   }else{
-    if(any(!names(target) %in% colnames(mat))){
-      stop("The target object must have names or labels that matches the colnames of the expression matrix.\n")
+    # check if target has any labels or names
+    if(length(names(target)) == 0){
+      stop("The target object must have names or labels that match the colnames of the expression matrix.\n")
     }
+    
+    # check if target has labels or names that matches the colnames of the expression matrix
+    if(any(!names(target) %in% colnames(mat))){
+      stop("The target object have names or labels that do not match the colnames of the expression matrix.\n")
+    }
+    
     # match colnames of expression matrix with names of provided target values
+    # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
     if(nrow(mat) == 1){
-      mat <- t(mat[,names(target)]) 
+      mat <- matrix(t(mat[,names(target)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
     }else{
       mat <- mat[,names(target)]
     }
@@ -114,10 +126,12 @@ revealer_genescore_mat <- function
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
   }
   
+  # Make sure matrix is not empty after removing uninformative features
   if(nrow(mat) == 0){
     stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
   
+  # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2){
     warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   }

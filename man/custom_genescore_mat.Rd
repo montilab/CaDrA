@@ -4,28 +4,34 @@
 \alias{custom_genescore_mat}
 \title{Customized Scoring Method}
 \usage{
-custom_genescore_mat(mat, custom_function, custom_parameters, verbose = FALSE)
+custom_genescore_mat(
+  mat,
+  target,
+  custom_function,
+  custom_parameters = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{mat}{a matrix of binary features (required). The provided \code{mat} along with \code{custom_parameters} will be passed as arguments to custom_function() which is used to compute row-wise scoring for each row of a given binary feature.}
+\item{mat}{a matrix of binary features (required). \code{NOTE:} The provided \code{mat} along with \code{target} and \code{custom_parameters} will be passed as arguments to custom_function() which is later used to compute row-wise scoring for each row of a given binary feature.}
+
+\item{target}{a vector of continuous values for a target profile (required). \code{target} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{target} will be passed as one of the arguments to custom_function().}
 
 \item{custom_function}{a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). \code{NOTE:} This function must return a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}.}
 
-\item{custom_parameters}{a list of arguments to be passed to the custom_function() (required).}
+\item{custom_parameters}{a list of additional arguments to be passed to the custom_function() (exluding \code{mat} and \code{target} parameters).}
 
 \item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-a data frame with one or two columns: \code{score} and \code{p_value}
+a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}
 }
 \description{
 Compute row-wise scoring for each row of a given binary feature matrix
 }
 \examples{
-# Load R library
-library(Biobase)
 
-# Examples of customized function using ks-test function
+# Examples of a customized function using ks-test function
 customized_genescore_mat <- function(mat, target, alternative){
   result <- 1:nrow(mat) \%>\% 
     purrr::map_dfr(
@@ -37,20 +43,28 @@ customized_genescore_mat <- function(mat, target, alternative){
    })
 }
 
+# Load R library
+library(Biobase)
+
 # Load pre-computed expression set
 data(sim.ES)
 
 # Extract the binary feature matrix
 mat = exprs(sim.ES)
 
+# set seed
+set.seed(123)
+
 # Provide a vector of continuous scores for a target profile
 target = rnorm(n = ncol(sim.ES))
- 
+names(target) <- colnames(sim.ES)
+
 # Define additional parameters and start the function
 custom_genescore_result <- custom_genescore_mat(
   mat = mat,
+  target = target,
   custom_function = customized_genescore_mat, 
-  custom_parameters = list(target = target, alternative = "less")
+  custom_parameters = list(alternative = "less")
 )
  
 }

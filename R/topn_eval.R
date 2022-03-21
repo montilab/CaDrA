@@ -22,11 +22,15 @@
 #' @return By default, this function will return a list of lists, where each list entry is one that is returned by the candidate search for a given starting index (See \code{candidate_search()}). If \code{best_score_only} is set to \code{TRUE}, only the best score over the top N space is returned (useful for permutation-based testing)
 #' 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
 #' @examples
+#' 
 #' # Load R library
 #' library(Biobase)
 #'
 #' # Load pre-computed expression set
 #' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile with names to each score value 
 #' input_score = rnorm(n = ncol(sim.ES))
@@ -63,10 +67,10 @@ topn_eval <- function(
   # Set up verbose option
   options(verbose = FALSE)
   
-  if (top_N > nrow(ES))
+  if(top_N > nrow(ES))
     stop("Please specify an top_N value that is less than the number of features in the ES.\n")
   
-  if (top_N > 10)
+  if(top_N > 10)
     warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
   
   verbose("Evaluating search over top features: ", 1:top_N, "\n\n")
@@ -93,10 +97,17 @@ topn_eval <- function(
     
   }, simplify = FALSE) 
   
+  # do_plot
+  if(do_plot){
+    
+    topn_plot(topN_list = topn_l)  
+    
+  }
+  
   # best_score_only
   if(best_score_only == TRUE){
     
-    scores_l <- lapply(topn_l, "[[", 2)
+    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]] })
     
     # Working with scores for each top N run
     s <- unlist(scores_l)
@@ -107,13 +118,6 @@ topn_eval <- function(
     best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most significant 
     
     return(best_score)
-    
-  }
-  
-  # do_plot
-  if(do_plot){
-    
-    topn_plot(topN_list = topn_l)  
     
   }
   

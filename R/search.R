@@ -255,6 +255,7 @@ stepwise.search <- function(ranking=NULL,
   # Compute initial scores per feature given the dataset
   
   s <- compute_score(mat=exprs(ES),method=method,alt=alt,weight=wts,ranks=rnks)
+  
   s.stat <- s[1,]
   s.pval <- s[2,]
   
@@ -619,7 +620,7 @@ null.search <- function(ranking=NULL,
     
     cat("Computing permutation-based scores for N = ",nperm," ..\n\n")
     if(!is.null(topN)){ # Run top N evaluation if N is specified
-    perm.best.scores<-unlist(alply(perm_labels_matrix,1,topn.eval,ESet = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))
+      perm.best.scores<-unlist(alply(perm_labels_matrix,1,topn.eval,ESet = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))
     } else { # Run basic stepwise search otherwise
       perm.best.scores<-unlist(alply(perm_labels_matrix,1,stepwise.search,ES = ES,best.score.only=TRUE,verb=FALSE,...,.parallel=parallel,.progress = progress))  
     }

@@ -60,11 +60,15 @@ If \code{best_score_only} is set to \code{TRUE}, this function returns a list ob
 Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
 }
 \examples{
+
 # Load R library
 library(Biobase)
 
 # Load pre-computed expression set
 data(sim.ES)
+
+# set seed
+set.seed(123)
 
 # Provide a vector of continuous scores for a target profile with names to each score value 
 input_score = rnorm(n = ncol(sim.ES))

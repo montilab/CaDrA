@@ -64,11 +64,15 @@ By default, this function will return a list of lists, where each list entry is 
 Generates and evaluates candidate search results for the top 'N' starting indices, checking for overlapping resulting features from each case. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
 }
 \examples{
+
 # Load R library
 library(Biobase)
 
 # Load pre-computed expression set
 data(sim.ES)
+
+# set seed
+set.seed(123)
 
 # Provide a vector of continuous scores for a target profile with names to each score value 
 input_score = rnorm(n = ncol(sim.ES))

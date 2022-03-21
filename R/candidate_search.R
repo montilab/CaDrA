@@ -445,7 +445,7 @@ candidate_search <- function(
     #Assign the name of the best meta-feature score to be the starting feature that gave that score
     names(global.best.s) <- start.feature 
     
-    return(list("ES"= ES.best,"Score"= global.best.s))
+    return(list("ES" = ES.best, "Score"= global.best.s))
     
   } else{
     

@@ -92,7 +92,7 @@ topn_eval <- function(
       search_start = x,
       search_method = search_method, 
       max_size = max_size,
-      best_score_only = best_score_only
+      best_score_only = FALSE
     ) 
     
   }, simplify = FALSE) 
@@ -107,7 +107,7 @@ topn_eval <- function(
   # best_score_only
   if(best_score_only == TRUE){
     
-    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]] })
+    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]][['Score']] })
     
     # Working with scores for each top N run
     s <- unlist(scores_l)

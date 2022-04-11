@@ -160,7 +160,8 @@ ks.genescore.mat<-function
   #Compute the ks statitic and p-value per row in the matrix
   ks<-apply(X = mat, 1, FUN = function(x,w=weight){
     ks.genescore(n.x=length(x),y=which(x==1),alternative=alt,weight=w,bare=TRUE)
-    })
+  })
+  
   #bare=T will simply return a 'two-tuple' containing the ks statistic and the p-value
   #Applying this across the matrix will create a two row matrix, with the first the statistic and the second the p-value
   

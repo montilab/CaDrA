@@ -1,8 +1,8 @@
 
 #' Compute a Kolmogorov-Smirnov score for a given ranked list
 #'
-#' @param x ranked list
-#' @param y positions of geneset items in ranked list (ranks)
+#' @param n.x length of a ranked list
+#' @param y positions of interested geneset items in the ranked list 
 #' @param weights weights for weighted score (see Subramanian et al.) (usually, sort(score))
 #' @param weight_p weights exponent
 #' @param alternative alternative hypothesis for p-value calculation
@@ -15,7 +15,7 @@
 #' @importFrom stats ks.test
 ks_gene_score <- function
 (
-  x,                                             
+  n.x,                                             
   y,                                             
   weights = NULL,
   weight_p = 1,
@@ -26,9 +26,6 @@ ks_gene_score <- function
 )
 {
   
-  # Get the length of ranked list
-  n.x = length(x);                            
-  
   # efficient version of ks.score (should give same results as ks.test, when weights=NULL)
   #
   alternative <- match.arg(alternative, c("two.sided", "greater", "less"))
@@ -36,16 +33,17 @@ ks_gene_score <- function
   METHOD <- "Two-sample Kolmogorov-Smirnov test"
   n.y <- length(y)
   if ( n.y < 1 )  stop("Not enough y data")
-  if ( any(y>n.x) ) stop( "y must be <= n.x: ", max(y) )
-  if ( any(y<1) ) stop( "y must be positive: ", min(y) )
-  if ( do_pval && !is.null(weights) ) warning("p-value meaningless w/ weighted score")
-  if ( !is.null(weights) && length(weights)!=n.x ) stop("weights must be same length as ranked list: ", length(weights), " vs ", n.x)
+  if ( any(y > n.x) ) stop( "y must be <= n.x: ", max(y) )
+  if ( any(y < 1) ) stop( "y must be positive: ", min(y) )
+  if ( do_pval && !is.null(weights) ) warning("p-value is meaningless w/ weighted score")
+  if ( !is.null(weights) && length(weights) != n.x ) stop("weights must be same length as ranked list: ", length(weights), " vs ", n.x)
   x.axis <- y.axis <- NULL
   
   # weighted GSEA score
   #
   if ( !is.null(weights) )
   {
+    
     weights <- abs(weights[y])^weight_p
     
     Pmis <- rep(1, n.x); Pmis[y] <- 0; Pmis <- cumsum(Pmis); Pmis <- Pmis/(n.x-n.y)
@@ -56,11 +54,13 @@ ks_gene_score <- function
     
     x.axis <- 1:n.x
     y.axis <- z
+    
   }
   # KS score
   #
   else
   {
+    
     y <- sort(y)
     n <- n.x * n.y/(n.x + n.y)
     hit <- 1/n.y

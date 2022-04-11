@@ -10,6 +10,7 @@
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
+#' 
 #' # Load R library
 #' library(Biobase)
 #' 
@@ -50,12 +51,19 @@ ks_gene_score_mat <- function
     if(length(weights) != ncol(mat)){
       stop("'The provided weights must have the same length as the number of columns in the expression matrix.\n")
     }else{
-      if(any(!names(weights) %in% colnames(mat))){
-        stop("The weights object must have names or labels that matches the colnames of the expression matrix.\n")
+      # check if weights has any labels or names
+      if(length(names(weights)) == 0){
+        stop("The weights object must have names or labels that match the colnames of the expression matrix.\n")
       }
+      
+      if(any(!names(weights) %in% colnames(mat))){
+        stop("The weights object have names or labels that do not match the colnames of the expression matrix.\n")
+      }
+      
       # match colnames of expression matrix with names of provided weights values
+      # iif nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
       if(nrow(mat) == 1){
-        mat <- t(mat[,names(weights)]) 
+        mat <- matrix(t(mat[,names(weights)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
       }else{
         mat <- mat[,names(weights)]
       }
@@ -68,10 +76,12 @@ ks_gene_score_mat <- function
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
   }
   
+  # Make sure matrix is not empty after removing uninformative features
   if(nrow(mat) == 0){
     stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
   }
   
+  # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2)
     warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
@@ -89,7 +99,15 @@ ks_gene_score_mat <- function
   } 
   
   #Compute the ks statitic and p-value per row in the matrix
-  ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights) %>% t() %>% as.data.frame()
+  ks <- 1:nrow(mat) %>% 
+    purrr::map_dfr(
+      function(r){
+        #r=1;
+        x = mat[r,]; n.x = length(x); y = which(x==1);     
+        ks_gene_score(n.x = n.x, y = y, weights = weights, alternative=alternative)
+      }
+    )
+  
   colnames(ks) <- c("score", "p_value")
   rownames(ks) <- rownames(mat)
   

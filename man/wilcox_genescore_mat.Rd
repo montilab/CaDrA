@@ -27,6 +27,7 @@ A data frame with two columns: \code{score} and \code{p_value}
 Compute directional Wilcoxon rank sum score for each row of a given binary matrix
 }
 \examples{
+
 # Load R library
 library(Biobase)
 # Load pre-computed expression set

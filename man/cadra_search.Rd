@@ -11,7 +11,7 @@ cadra_search(
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = "less",
-  metric = "stat",
+  metric = "pval",
   weights = NULL,
   ranks = NULL,
   target_match = "positive",
@@ -21,9 +21,9 @@ cadra_search(
   max_size = 7,
   n_perm = 1000,
   seed = 123,
-  plot = TRUE,
   smooth = TRUE,
   obs_best_score = NULL,
+  plot = TRUE,
   ncores = 1,
   cache_path = NULL,
   return_perm_pval = TRUE
@@ -62,11 +62,11 @@ cadra_search(
 
 \item{seed}{a seed set for permutation. Default is \code{123}.}
 
-\item{plot}{a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is \code{TRUE}.}
-
 \item{smooth}{a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
 \item{obs_best_score}{a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we compute the observed score given the \code{input_score} and \code{ES} variables.}
+
+\item{plot}{a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is \code{TRUE}.}
 
 \item{ncores}{an integer specifies the number of cores to perform parallelization for permutation testing. Default is \code{1}.}
 
@@ -81,11 +81,15 @@ If \code{return_perm_pval} is set to \code{TRUE}, it will return a permutation p
 Performs a permutation-based testing using results from \code{candidate_search()} function.
 }
 \examples{
+
 # Load R library
 library(Biobase)
 
 # Load pre-computed expression set
 data(sim.ES)
+
+# set seed
+set.seed(123)
 
 # Provide a vector of continuous scores for a target profile with names to each score value 
 input_score = rnorm(n = ncol(sim.ES))

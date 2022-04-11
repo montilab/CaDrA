@@ -24,7 +24,7 @@ revealer_genescore <- function
 {
   
   # Convert x, y, z as vector and numeric  
-  x = as.vector(as.numeric(x)); y = as.vector(as.numeric(y)); z = as.vector(as.numeric(z)); 
+  x = as.numeric(x); y = as.numeric(y); z = as.numeric(z); 
   
   # Check if x is provided 
   if(length(x) == 0 || any(is.na(x)))

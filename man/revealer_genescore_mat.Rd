@@ -33,11 +33,15 @@ a data frame with one column: \code{score}
 Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
 }
 \examples{
+
 # Load R library
 library(Biobase)
 
 # Load pre-computed expression set
 data(sim.ES)
+
+# set seed
+set.seed(123)
 
 # Provide a vector of continuous scores for a target profile
 target = rnorm(n = ncol(sim.ES))

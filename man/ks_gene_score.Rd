@@ -5,7 +5,7 @@
 \title{Compute a Kolmogorov-Smirnov score for a given ranked list}
 \usage{
 ks_gene_score(
-  x,
+  n.x,
   y,
   weights = NULL,
   weight_p = 1,
@@ -16,9 +16,9 @@ ks_gene_score(
 )
 }
 \arguments{
-\item{x}{ranked list}
+\item{n.x}{length of a ranked list}
 
-\item{y}{positions of geneset items in ranked list (ranks)}
+\item{y}{positions of interested geneset items in the ranked list}
 
 \item{weights}{weights for weighted score (see Subramanian et al.) (usually, sort(score))}
 

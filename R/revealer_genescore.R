@@ -193,7 +193,9 @@ mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
   
   # Kernel-based prob. density
   
-  kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
+  #kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
+  kde2d.xy <- kde2d_wrap( x = x, y = y, h = delta, n= n.grid, lims = c(range(x), range(y)))
+  
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]
   dy <- kde2d.xy$y[2] - kde2d.xy$y[1]

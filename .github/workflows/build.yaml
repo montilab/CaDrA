@@ -15,9 +15,7 @@ jobs:
           libglpk-dev \
           libcurl4-openssl-dev \
           libxml2-dev \
-          libssl-dev && \
-          apt-get clean && \
-          rm -rf /var/lib/apt/lists/*
+          libssl-dev
 
       - name: Install CaDrA
         run: |

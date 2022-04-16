@@ -57,7 +57,7 @@ navbar:
       - text: "Installation"
         href: articles/docs/installation.html
       - text: "Basic Usage"
-        href: articles/docs/basics.html
+        href: articles/docs/basic.html
       - text: "Visualize Results"
         href: articles/docs/visualize.html
       - text: "Downloading Genesets"

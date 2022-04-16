@@ -1,5 +1,6 @@
 ---
 title: "Basic Usage"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Basic Usage}
   %\VignetteEngine{knitr::rmarkdown}

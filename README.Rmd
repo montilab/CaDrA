@@ -12,8 +12,9 @@ devtools::load_all(".")
 
 # CaDrA
 
-[![R-CMD-check](https://github.com/montilab/CaDrA/workflows/build/badge.svg)]
-  (https://github.com/r-lib/pkgdown/actions){.pkgdown-devel}
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions)
+<!-- badges: end -->
   
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 

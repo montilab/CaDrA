@@ -10,6 +10,7 @@ jobs:
       - name: Install CaDrA
         run: |
           options(repos = c(CRAN = "https://cran.r-project.org"))
+          install.packages('remotes')
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 

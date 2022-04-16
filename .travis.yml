@@ -1,0 +1,40 @@
+
+language: r
+os: linux
+dist: xenial
+cache: packages
+warnings_are_errors: false
+
+env:
+  global:
+    - BIOC_USE_DEVEL="FALSE"
+    - R_BUILD_ARGS="--no-build-vignettes --no-manual"
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual --timings"
+    - _R_CHECK_TIMINGS_="0"
+
+r:
+  - release
+
+r_build_args: --no-build-vignettes --no-manual
+r_check_args: --no-build-vignettes --no-manual --timings
+
+r_packages:
+  - Biobase
+  - doParallel
+  - plyr
+  - ggplot2
+  - grid
+  - gplots
+  - gtable
+  - R.cache
+  - reshape2
+  - magrittr
+  - purrr
+  - stats
+  - MASS
+  - misc3d
+  - ppcor
+
+bioc_required: true
+
+

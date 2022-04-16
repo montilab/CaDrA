@@ -6,7 +6,7 @@
 \usage{
 revealer_genescore_mat(
   mat,
-  target,
+  input_score,
   target_match = "positive",
   seed_names = NULL,
   assoc_metric = c("IC", "COR"),
@@ -16,11 +16,11 @@ revealer_genescore_mat(
 \arguments{
 \item{mat}{a matrix of binary features (required)}
 
-\item{target}{a vector of continuous values of a target profile (required). target must include labels or names that associated with the colnames of the feature matrix.}
+\item{input_score}{a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix.}
 
 \item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
-\item{seed_names}{one or more features(s) that associated with the activation of a given target profile}
+\item{seed_names}{one or more features(s) that associated with the activation of a given targeted profile}
 
 \item{assoc_metric}{an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.}
 
@@ -44,12 +44,12 @@ data(sim.ES)
 set.seed(123)
 
 # Provide a vector of continuous scores for a target profile
-target = rnorm(n = ncol(sim.ES))
-names(target) <- colnames(sim.ES)
+input_score = rnorm(n = ncol(sim.ES))
+names(input_score) <- colnames(sim.ES)
 
 # Define additional parameters and start the function
 revealer_genescore_result <- revealer_genescore_mat(
-  mat = exprs(sim.ES), target = target, target_match = "positive", assoc_metric = "IC"
+  mat = exprs(sim.ES), input_score = input_score, target_match = "positive", assoc_metric = "IC"
 )
  
 }

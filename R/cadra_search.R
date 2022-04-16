@@ -11,7 +11,6 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{NULL}.
 #' @param search_start an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)
@@ -66,7 +65,6 @@ cadra_search <- function(
   alternative = "less",
   metric = "pval",
   weights = NULL,
-  ranks = NULL, 
   target_match = "positive",
   top_N = NULL,
   search_start = NULL,
@@ -131,7 +129,6 @@ cadra_search <- function(
     # Compute row-wise directional KS scores for binary features in ES
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
-      
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(sort(input_score, decreasing=T))]
     }
@@ -139,16 +136,8 @@ cadra_search <- function(
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
-      
-      # if ranks is NULL, re-order the samples by input_score sorted from highest to lowest values
-      if(is.null(ranks)){
-        ES <- ES[,names(sort(input_score, decreasing=T))]
-      }else{
-        # Check if ranks are a ranked list
-        if(any(!sort(ranks)==1:ncol(ES))){
-          stop("The provided ranks object must be a ranked list.")
-        }
-      }
+      # Ranking the samples by input_score sorted from highest to lowest values
+      ES <- ES[,names(sort(input_score, decreasing=T))]
     }
     
     # Compute mutually exclusive method for binary features in ES
@@ -174,6 +163,7 @@ cadra_search <- function(
   # Select the appropriate method to compute scores based on skewdness of a given binary matrix
   mat <- exprs(ES)
   
+  # Compute the row-wise scoring
   s <- switch(
     method,
     ks = ks_gene_score_mat(
@@ -184,18 +174,18 @@ cadra_search <- function(
     wilcox = wilcox_genescore_mat(
       mat = mat,
       alternative = alternative,
-      ranks = ranks
+      ranks = NULL
     ),
     revealer = revealer_genescore_mat(
       mat = mat,                                   
-      target = input_score,      
+      input_score = input_score,      
       seed_names = NULL,
       target_match = target_match,
       assoc_metric = "IC"
     ),
     custom = custom_genescore_mat(
       mat = mat,
-      target = input_score,
+      input_score = input_score,      
       custom_function = custom_function,
       custom_parameters = custom_parameters
     )
@@ -224,10 +214,11 @@ cadra_search <- function(
   }
   
   # We use the ES, top N (or search_start), score metric, scoring method and seed for random permutation as the key for each cached result  
-  if(!is.null(top_N)) # If N is defined here, we will use it as part of the key (topn_eval is called)
-    key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, ranks=ranks, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE, seed=seed)
-  else # If N is not defined, we will use the search_start parameter as part of the key instead (candidate_search is called)
-    key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, ranks=ranks, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, seed=seed)
+  if(!is.null(top_N)){ # If N is defined here, we will use it as part of the key (topn_eval is called)
+    key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE, seed=seed)
+  }else{ # If N is not defined, we will use the search_start parameter as part of the key instead (candidate_search is called)
+    key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, seed=seed)
+  }
   
   cat("Using the following as the key for saving/loading cached permutation values:\n")
   print(key)
@@ -278,9 +269,9 @@ cadra_search <- function(
     cat("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     
     if(!is.null(top_N)){ # Run top N evaluation if N is specified
-      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); topn_eval(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, ranks=ranks, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))
+      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); topn_eval(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))
     } else { # Run basic candidate search otherwise
-      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, ranks=ranks, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))  
+      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))  
     }
     
     #Save computed scores to cache 
@@ -309,7 +300,6 @@ cadra_search <- function(
                                   alternative = alternative,
                                   metric = metric,
                                   weights = weights,
-                                  ranks = ranks,
                                   target_match = target_match,
                                   top_N = top_N,
                                   search_method = search_method,
@@ -326,7 +316,6 @@ cadra_search <- function(
                                          alternative = alternative,
                                          metric = metric,
                                          weights = weights,
-                                         ranks = ranks,
                                          target_match = target_match,
                                          search_start = search_start,
                                          search_method = search_method,
@@ -408,7 +397,41 @@ cadra_search <- function(
     
   }
   
-  if(return_perm_pval){ return(list(perm_best_scores=perm_best_scores, perm_pval=perm_pval, obs_best_score=obs_best_score)) }
+  if(return_perm_pval){ return(list(top_N=top_N, search_start=search_start, perm_best_scores=perm_best_scores, perm_pval=perm_pval, obs_best_score=obs_best_score)) }
   
 }
 
+
+#' Random permutation matrix generator
+#' 
+#' Produces a random permutation rank matrix given a vector of values
+#' @param ord vector to be permuted. This determines the number of columns in the permutation matrix
+#' @param n_perms number of permutations to generate. This determines the number of rows in the permutation matrix
+#' @param seed seed which can be set for reproducibility of 'random' results. Default is 123
+#' @return A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
+#' @export
+generate_permutations<-function(
+  ord,        #These are the sample orderings to be permuted
+  n_perms,    #Number of permutations to produce
+  seed=123    #Seed which can be set for reproducibility of results
+){
+  
+  m  <- length(ord)
+  perm <- matrix(NA, nrow=n_perms, ncol=length(ord) )
+  if ( !is.null(seed) ){
+    set.seed(seed)
+    verbose("Seed set: ", seed,"\n")
+  }
+  verbose("Generating ",n_perms," permuted sample ranks..\n")
+  for ( i in (1:n_perms) ) {
+    perm[i,] <- sample(ord,m)
+  }
+  verbose("Are all generated permutations unique?..\n")
+  verbose(nrow(perm)==nrow(unique.matrix(perm)))
+  
+  if(nrow(perm)!=nrow(unique.matrix(perm)))
+    stop("Not enough unique sample permutations for the permutation number specified.. Please provide a reasonabl nperm value ..\n")
+  
+  return(perm) 
+  
+}

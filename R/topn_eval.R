@@ -10,7 +10,6 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.
 #' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
@@ -54,7 +53,6 @@ topn_eval <- function(
   alternative = "less", 
   metric = "pval", 
   weights = NULL,
-  ranks = NULL, 
   target_match = "positive",
   top_N = 1,
   search_method = "both", 
@@ -87,7 +85,6 @@ topn_eval <- function(
       alternative = alternative, 
       metric = metric, 
       weights = weights,
-      ranks = ranks, 
       target_match = target_match,
       search_start = x,
       search_method = search_method, 
@@ -122,6 +119,28 @@ topn_eval <- function(
   }
   
   return(topn_l) #Default is to return the top N stepwise search results as a list of lists
+  
+}
+
+#' Top 'N' best
+#' 
+#' Takes the resulting list of meta-features returned from topn_eval() function and fetches the meta-feature with best (local) score
+#' @param topn_list The nested list object that is returned by topn_eval() function when best.score.only is set to FALSE. This contains both the ESets as well as the scores for each resulting meta-feature in the top 'N'  search mode.
+#' @return A list containing the (local) best meta-feature ESet, as well as its corresponding search score
+#' @export
+#' @import Biobase
+topn_best <- function(topn_list){
+  
+  # Fetch the index housing the best ESet (this wil be the one with the best score)
+  n <- which.min(sapply(topn_list,"[[",2))
+  
+  # Also store the score
+  top_score <- min(sapply(topn_list,"[[",2))
+  
+  # Corresponding ESet object
+  best_meta <- topn_list[[n]]$ESet
+  
+  return(list("ESet" = best_meta, "Score" = top_score))
   
 }
 

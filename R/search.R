@@ -1,10 +1,12 @@
 verbose <- function(...){
+  
   #Fetch verbose option set in the stepwise.search() function
   opt <- getOption("verbose",FALSE)
   if(!opt) return(invisible(NULL))
   msgs <- list(...)
   #msgs <- do.call(paste, c(msgs))
   message(msgs)
+  
 }
 
 #' Pre-filter features
@@ -28,7 +30,7 @@ verbose <- function(...){
 #' 
 #' @export
 #' @import Biobase
-prefilter_data<-function(ES, 
+prefilter_data <- function(ES, 
                          max.cutoff=0.6,
                          min.cutoff=0.03){
   # Compute the frequency of feature occurence across all samples  (i.e. fraction of samples having the feature)
@@ -41,6 +43,7 @@ prefilter_data<-function(ES,
   
   cat(nrow(ES)," features retained out of ",length(frac)," supplied features in dataset\n\n")
   return(ES)
+  
 }
 
 
@@ -478,7 +481,7 @@ stepwise.search <- function(ranking=NULL,
 #' @param seed seed which can be set for reproducibility of 'random' results. Default is 123
 #' @return A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
 #' @export
-generate_permutations<-function(ord, #These are the sample orderings to be permuted
+generate_permutations <- function(ord, #These are the sample orderings to be permuted
                                 n_perms, #Number of permutations to produce
                                 seed=123 #Seed which can be set for reproducibility of results
 ){

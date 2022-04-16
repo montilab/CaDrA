@@ -1,0 +1,73 @@
+url: https://github.com/montilab/CaDrA/
+
+development:
+  mode: auto
+
+template:
+  params:
+    bootswatch: cosmo
+
+authors:
+  Reina Chau:
+    href: https://github.com/RC-88
+  Stefano Monti:
+    href: https://github.com/tetomonti
+  Katia Bulekova:
+    href: https://github.com/katgit
+  Vinay Kartha:
+    href: https://github.com/vkartha
+    
+reference:
+- title: Workflow Methods
+  desc: ~
+  contents:
+  - '`cadra_search`'
+  - '`candidate_search`'
+  - '`topn_eval`'
+  - '`topn_best`'
+  - '`ks_gene_score_mat`'
+  - '`wilcox_genescore_mat`'
+  - '`revealer_genescore_mat`'
+  - '`custom_genescore_mat`'
+  - '`ks_gene_score`'
+  - '`wilcox_genescore`'
+  - '`revealer_genescore`'
+  - '`generate_permutations`'
+  - '`prefilter_data`'
+- title: Plot Methods
+  desc: ~
+  contents:
+  - '`meta_plot`'
+  - '`topn_plot`'
+  - '`permutation_plot`'
+- title: Data Objects
+  desc: ~
+  contents:
+  - '`sim.ES`'
+  - '`topn.list`'
+  - '`perm.res`'
+  
+navbar:
+  title: "CaDrA"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Docs"
+      menu:
+      - text: "Installation"
+        href: articles/installation.html
+      - text: "Basic Usage"
+        href: articles/basics.html
+      - text: "Visualize Results"
+        href: articles/visualize.html
+      - text: "Downloading Genesets"
+        href: articles/data.html
+    - text: "Reference"
+      href: reference/index.html
+  right:
+    - text: "Change Log"
+      href: news/index.html
+    - icon: fa-github
+      href: https://github.com/montilab/CaDrA
+
+

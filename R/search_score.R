@@ -16,6 +16,7 @@ ks_test_double_wrap <- function(n_x, y, alt="less") {
   n_x <- as.integer(n_x)
   res <- .Call(ks_test_d_wrap_,  n_x, y, alt_int)
   res
+  
 }
 
 #' ks_plot wrapper
@@ -38,6 +39,7 @@ ks_plot_wrap <- function(n_x, y, weight, alt="less") {
   res <- .Call(ks_plot_wrap_, n_x, y, weight, alt_int)
   res <- res[!is.na(res$X), ]
   res
+  
 }
 
 
@@ -61,6 +63,7 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
   n_x <- as.integer(n_x)
   res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
   res
+  
 }
 
 
@@ -82,6 +85,7 @@ ks_genescore_mat <- function(mat, alt="less", weight) {
   }
   res <- .Call(ks_genescore_mat_, mat, weight, alt_int)
   res
+  
 }
 
 

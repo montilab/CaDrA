@@ -13,7 +13,6 @@ candidate_search(
   alternative = "less",
   metric = "stat",
   weights = NULL,
-  ranks = NULL,
   target_match = "positive",
   search_start = NULL,
   search_method = "both",
@@ -38,8 +37,6 @@ candidate_search(
 \item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.}
 
 \item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
-
-\item{ranks}{a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.}
 
 \item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 

@@ -38,6 +38,16 @@ ks_gene_score_mat <- function
   # Set up verbose option
   options(verbose=FALSE)
   
+  ## Make sure mat variable is a matrix
+  mat <- as.matrix(mat)
+  
+  # If mat has only one column, it must be converted to a row-wise matrix form as it is needed for backward_forward_search() computation
+  # mat must have rownames to track features and columns to track samples
+  # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
+  if(ncol(mat) == 1){
+    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+  }
+  
   # Check if the matrix has only binary 0 or 1 values 
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
     stop("mat variable must be a matrix of binary values (no empty values).\n")
@@ -56,6 +66,7 @@ ks_gene_score_mat <- function
         stop("The weights object must have names or labels that match the colnames of the expression matrix.\n")
       }
       
+      # check if weights has labels or names that matches the colnames of the expression matrix
       if(any(!names(weights) %in% colnames(mat))){
         stop("The weights object have names or labels that do not match the colnames of the expression matrix.\n")
       }
@@ -98,17 +109,11 @@ ks_gene_score_mat <- function
     warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
   } 
   
-  #Compute the ks statitic and p-value per row in the matrix
-  ks <- 1:nrow(mat) %>% 
-    purrr::map_dfr(
-      function(r){
-        #r=1;
-        x = mat[r,]; n.x = length(x); y = which(x==1);     
-        ks_gene_score(n.x = n.x, y = y, weights = weights, alternative=alternative)
-      }
-    )
+  # Compute the ks statitic and p-value per row in the matrix
+  ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
   
-  colnames(ks) <- c("score", "p_value")
+  # Convert list to data.frame
+  ks <- data.frame(score=ks[1,], p_value=ks[2,])
   rownames(ks) <- rownames(mat)
   
   return(ks)

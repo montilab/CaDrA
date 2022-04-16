@@ -92,14 +92,16 @@
 <div class="section level1">
 <div class="page-header"><h1 id="cadra">CaDrA<a class="anchor" aria-label="anchor" href="#cadra"></a>
 </h1></div>
+<!-- badges: start -->
+
 <p>Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures</p>
 <p>CaDrA is an R package that supports a heuristic search framework aimed towards the identification of candidate drivers of oncogenic activity. Given a binary genomic dataset (where the rows are 1/0 vectors indicating the presence/absence of genomic features such as somatic mutations or copy number alteration events), together with an associated sample ranking (where the samples are ranked by a certain phenotypic readout of interest such as protein expression, pathway activity etc.), CaDrA implements a step-wise search algorithm to determine a set of features that, together (based on their occurence union or ‘logical OR’), is most-associated with the observed ranking, making it useful for finding mutually exclusive or largely non-overlapping anomalies that can lead to the same pathway phenotype.</p>
 <p>For more information, please see the associated manuscript <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Kartha et al. (2019)</a></p>
 <div class="section level2">
 <h2 id="1-installation">(1) Installation<a class="anchor" aria-label="anchor" href="#1-installation"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"montilab/CaDrA"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span></code></pre></div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="2-quickstart">(2) Quickstart<a class="anchor" aria-label="anchor" href="#2-quickstart"></a>
@@ -203,7 +205,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/montilab/CaDrA/actions"><img src="https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </div>
 </div>

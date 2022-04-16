@@ -3,6 +3,11 @@
 
 # CaDrA
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions)
+<!-- badges: end -->
+
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
 Functional Signatures
 
@@ -24,7 +29,13 @@ al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
-    devtools::install_github("montilab/CaDrA")
+<div class="pkgdown-devel">
+
+You can install the development version of CaDrA from GitHub with:
+devtools::install\_github(“montilab/CaDrA”)
+
+</div>
+
     library(CaDrA)
 
 ## (2) Quickstart

@@ -15,93 +15,99 @@ CaDrA is an R package that supports a heuristic search framework aimed
 towards the identification of candidate drivers of oncogenic activity.
 Given a binary genomic dataset (where the rows are 1/0 vectors
 indicating the presence/absence of genomic features such as somatic
-mutations or copy number alteration events), together with an associated
-sample ranking (where the samples are ranked by a certain phenotypic
-readout of interest such as protein expression, pathway activity etc.),
-CaDrA implements a step-wise search algorithm to determine a set of
-features that, together (based on their occurence union or ‘logical
-OR’), is most-associated with the observed ranking, making it useful for
-finding mutually exclusive or largely non-overlapping anomalies that can
-lead to the same pathway phenotype.
+mutations or copy number alteration events), together with a vector of
+continuous input scores (where the samples are ranked by a certain
+phenotypic readout of interest such as protein expression, pathway
+activity etc.), CaDrA implements a forward and backward search algorithm
+to determine a set of features that, together (based on their occurrence
+union or ‘logical OR’), is most-associated with the observed input
+scores, making it useful for finding mutually exclusive or largely
+non-overlapping anomalies that can lead to the same pathway phenotype.
 
 For more information, please see the associated manuscript [Kartha et
 al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
-<div class="pkgdown-devel">
+You can install the development version of CaDrA from GitHub
+(**Recommended**)
 
-You can install the development version of CaDrA from GitHub with:
-devtools::install\_github(“montilab/CaDrA”)
-
-</div>
-
-    library(CaDrA)
+``` r
+library(devtools)
+devtools::install_github("montilab/CaDrA")
+```
 
 ## (2) Quickstart
 
+``` r
+library(CaDrA)
+```
+
 ### Test run code on simulated data
 
-    data(sim.ES)
-    data(topn.list)
+``` r
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
 
-    # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
-    # To find the combination of features that had the best score
-    best.meta <- topn.best(topn.list)
+# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
+# To find the combination of features that had the best score
+best_meta <- topn_best(topn_list=topn.list) 
 
-    # Now we can plot this set of features
-    meta.plot(best.meta$ESet)
+# Now we can plot this set of features
+meta_plot(ESet=best_meta$ESet)
+```
 
-### Running on your own (actual) data
+<img src="README_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
-First, you need to have your data (we’ve used copy number variation,
-mutation calls or methylation data - anything that can basically be
-thresholded / binarized as 0/1) in an `ExpressionSet` object. In the
-example below, the expression set object is named `ES.GISTIC.Mut`. The
-only other thing you need is a variable used to rank the matrix by
-(below, we have a variable called `score`). The ranking of this variable
-is what dictates how CaDrA will search for grouped meta-features. By
-default, it will look for things that are left-skewed, so you can rank
-the variable in either ascending order or descending order to look for
-features that are enriched at either end (in the example below, we are
-interested in looking at features enriched for higher scores in samples,
-hence ranking them in descending order of score first)
+``` r
+topn_plot(topn_list=topn.list)
+```
 
-The function calls and pre-processing example steps are as follows:
+    #> Generating top N overlap heatmap..
 
-    # Binarize ES to only have 0's and 1's
-    exprs(ES.GISTIC.Mut)[exprs(ES.GISTIC.Mut)>1] <- 1
+<img src="README_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
-    # Pre-filter ESet based on occurrence frequency
-    ES.GISTIC.Mut.filt <- prefilter_data(ES = ES.GISTIC.Mut,max.cutoff = 0.7,min.cutoff = 0.03) # no more than 70%, no less than 3%
+### Running on actual data
 
-    # Order of samples in decreasing order of supplied continuous variable
-    sample.order <- order(score,decreasing=TRUE)
+In the example below, the `CCLE_MUT_CNA_AMP_DEL_REVEALER` expression set
+object was obtained from the **REVEALER** package. The other variable is
+called `input_score` which also from **REVEALER** which contains
+continuous measures of a targeted profile. The **input\_score** is what
+dictates how CaDrA will search for grouped meta-features.
 
-    # Number of top starting seed features to test and evaluate over  
-    top_n <- 7
+``` r
+# Load features dataset object from REVEALER
+data(CCLE_MUT_CNA_AMP_DEL_REVEALER)
 
-    # Metric used for stepwise greedy search
-    # Either ks or wilcox is supported
-    method <- "ks"
+# Load the targeted profile dataset
+data(CTNBB1_transcriptional_reporter)
 
-    topn.l <- topn.eval(ESet = ES.GISTIC.Mut.filt, 
-                        method=method,
-                        N = top_n,
-                        do.plot = FALSE, #We will plot it AFTER finding the best hits
-                        best.score.only = FALSE,
-                        ranking=sample.order,
-                        verb=FALSE)
+# Number of top starting seed features to test and evaluate over  
+top_N <- 7
 
-    # Now we can fetch the ESet and feature that corresponded to the best score over the top N search
-    topn.best.meta <- topn.best(topn.l)
+# Metric used for candidate search
+# Either ks or wilcox or revealer is supported
+method <- "ks"
 
-    # Visualize best result
-    meta.plot(ESet = topn.best.meta$ESet,
-              var.score = score[sample.order],
-              var.name = "Activity score") #Y-axis label for plot
+topn_l <- topn_eval(ES = CCLE_MUT_CNA_AMP_DEL_REVEALER, 
+                    input_score =  CTNBB1_transcriptional_reporter,
+                    method = method,
+                    alternative = "less",
+                    metric = "pval",
+                    top_N = top_N,
+                    search_method = "both",
+                    max_size = 7,
+                    do_plot = FALSE,     #We will plot it AFTER finding the best hits
+                    best_score_only = FALSE)
 
+# Now we can fetch the ESet and feature that corresponded to the best score over the top N search
+topn_best_meta <- topn_best(topn_l)
 
-    # You can also evaluate how robust the results are depending on which seed feature you started with
+# Visualize best result
+meta_plot(ESet = topn_best_meta$ESet,
+          var_score = input_score,
+          var_name = "Activity score") #Y-axis label for plot
 
-    topn.plot(topn.l) 
+# You can also evaluate how robust the results are depending on which seed feature you started with
+topn_plot(topn_l) 
+```

@@ -4,10 +4,10 @@
 \alias{topn_plot}
 \title{Top 'N' Plot}
 \usage{
-topn_plot(topN_list)
+topn_plot(topn_list)
 }
 \arguments{
-\item{topN_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.}
+\item{topn_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.}
 }
 \value{
 a heatmap of the top N evaluation for a given top N search evaluation

@@ -2,22 +2,25 @@
 % Please edit documentation in R/permutation_plot.R
 \name{permutation_plot}
 \alias{permutation_plot}
-\title{Permutation Plot}
+\title{Plot the Empirical Null Distribution of Permutation Best Scores}
 \usage{
 permutation_plot(permutation_results)
 }
 \arguments{
-\item{permutation_results}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.}
+\item{permutation_results}{a list of objects returned from the cadra_search()}
 }
 \value{
 a density plot
 }
 \description{
-Plots the Emperical Null distribution
+Plot the Empirical Null Distribution of Permutation Best Scores
 }
 \examples{
-# Load pre-computed Top-N list generated for sim.ES dataset
-data(topn.list)
-topn_plot(topn.list)
+
+# Load pre-computed permutation results
+data(perm.res)
+
+# Plot the permutation results
+permutation_plot(perm.res)
 
 }

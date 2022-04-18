@@ -13,22 +13,39 @@ library(tidyverse)
 devtools::load_all(".")
 ```
 
-## R Markdown
+## Meta-Features Plot
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r, fig.width=8, fig.align='center'}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
 
-```{r cars}
-summary(cars)
+# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
+# To find the combination of features that had the best score
+best_meta <- topn_best(topn_list=topn.list) 
+
+# Now we can plot this set of features
+meta_plot(ESet=best_meta$ESet)
+
 ```
 
-## Including Plots
+## Top 'N' Plot
+```{r, fig.width=8, fig.align='center'}
 
-You can also embed plots, for example:
+topn_plot(topn_list=topn.list)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Permutation Plot
+```{r, fig.width=8, fig.align='center'}
+
+# Load pre-computed permutation results
+data(perm.res)
+
+# Plot the permutation results
+permutation_plot(perm.res)
+
+```
+
+
+

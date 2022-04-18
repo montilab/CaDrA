@@ -1,13 +1,16 @@
 
 #' Candidate heuristic search plot
 #' 
-#' Plot the candidate search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable (top), 
+#' Plot the candidate search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable on the top. 
 #' @param ESet an ESet object containing only the features returned from the candidate_search() function (if any) 
-#' @param var_score an optional integer vector of continuous measures used to rank samples for the stepwise search (assumed in matching order)
+#' @param var_score an optional integer vector of continuous measures used to rank samples for the candidate search (assumed in matching order)
 #' @param var_name a string object describing the name of the continuous measure used, which will be used as the y-axis label for the metric plot
 #' @return A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
 #' @examples
+#' # Load pre-computed dataset
 #' data(sim.ES)
+#' 
+#' # Load pre-computed Top-N list generated for sim.ES dataset
 #' data(topn.list)
 #' 
 #' # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
@@ -15,12 +18,13 @@
 #' best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Now we can plot this set of features
-#' meta_plot(best_meta$ESet)
+#' meta_plot(ESet=best_meta$ESet)
 #' 
 #' # If a continuous ranking variable was used for the sample-ranking, we can visualize it together
 #' # Just for illustration purposes, we simulate random sample scores
 #' sample_scores <- sort(runif(ncol(sim.ES),0,1), decreasing=TRUE)
 #' meta_plot(ESet=best_meta$ESet, var_score=sample_scores, var_name="My ranking variable")
+#' 
 #' @export
 #' @import ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw

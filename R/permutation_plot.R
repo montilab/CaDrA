@@ -1,14 +1,16 @@
 
-#' Permutation Plot
+#' Plot the Empirical Null Distribution of Permutation Best Scores
 #' 
-#' Plots the Emperical Null distribution
-#' @param permutation_results a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.
+#' @param permutation_results a list of objects returned from the cadra_search() 
 #' 
 #' @return a density plot
 #' @examples
-#' # Load pre-computed Top-N list generated for sim.ES dataset
-#' data(topn.list)
-#' topn_plot(topn.list)
+#' 
+#' # Load pre-computed permutation results
+#' data(perm.res)
+#' 
+#' # Plot the permutation results
+#' permutation_plot(perm.res)
 #' 
 #' @export
 #' @import gplots

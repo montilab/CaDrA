@@ -1,20 +1,16 @@
 #' Permutation Results
 #'
-#' The resulting list object returned by topn.eval() when run
-#' on the \code{sim.ES} simulated dataset. All default parameters were used
-#' when running topn.eval() except for max.size which was set to 10 
-#' to account for the presence of 10 left-skewed (i.e. true positive or TP) 
-#' features in the sim.ES dataset.
+#' A list of objects returned from cadra_search() when it runs
+#' on the \code{sim.ES} simulated dataset with ks method. 
 #'
 #' @docType data
 #'
 #' @usage data(perm.res)
 #'
-#' @format A list object returned by \code{topn.eval}
-#' containing the ExpressionSet objects (and corresponding meta-feature scores)
-#' for each search run when starting with each of the top 7 ranked features.
-#' Returned ExpressionSet columns (i.e. samples) are ranked by the user-defined ranking variable.  
-#' See \code{\link[CaDrA]{topn.eval}} for more information.
+#' @format A list of objects returned by \code{cadra_search()}
+#' containing parameters such as top N features, search start, permutation best scores, permutation p-values and observed best score. 
+#' This resulting object can be used to visualize the null permutation distribution plot.
+#' See \code{\link[CaDrA]{cadra_search}} for more information. 
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2017) CaDrA: A computational framework for performing 

@@ -59,7 +59,7 @@
       <a href="articles/docs/visualize.html">Visualize Results</a>
     </li>
     <li>
-      <a href="articles/docs/data.html">Downloading Genesets</a>
+      <a href="articles/docs/data.html">Data Objects</a>
     </li>
   </ul>
 </li>
@@ -95,71 +95,79 @@
 <!-- badges: start -->
 
 <p>Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures</p>
-<p>CaDrA is an R package that supports a heuristic search framework aimed towards the identification of candidate drivers of oncogenic activity. Given a binary genomic dataset (where the rows are 1/0 vectors indicating the presence/absence of genomic features such as somatic mutations or copy number alteration events), together with an associated sample ranking (where the samples are ranked by a certain phenotypic readout of interest such as protein expression, pathway activity etc.), CaDrA implements a step-wise search algorithm to determine a set of features that, together (based on their occurence union or ‘logical OR’), is most-associated with the observed ranking, making it useful for finding mutually exclusive or largely non-overlapping anomalies that can lead to the same pathway phenotype.</p>
+<p>CaDrA is an R package that supports a heuristic search framework aimed towards the identification of candidate drivers of oncogenic activity. Given a binary genomic dataset (where the rows are 1/0 vectors indicating the presence/absence of genomic features such as somatic mutations or copy number alteration events), together with a vector of continuous input scores (where the samples are ranked by a certain phenotypic readout of interest such as protein expression, pathway activity etc.), CaDrA implements a forward and backward search algorithm to determine a set of features that, together (based on their occurrence union or ‘logical OR’), is most-associated with the observed input scores, making it useful for finding mutually exclusive or largely non-overlapping anomalies that can lead to the same pathway phenotype.</p>
 <p>For more information, please see the associated manuscript <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Kartha et al. (2019)</a></p>
 <div class="section level2">
 <h2 id="1-installation">(1) Installation<a class="anchor" aria-label="anchor" href="#1-installation"></a>
 </h2>
-
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span></code></pre></div>
+<p>You can install the development version of CaDrA from GitHub (<strong>Recommended</strong>)</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"montilab/CaDrA"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="2-quickstart">(2) Quickstart<a class="anchor" aria-label="anchor" href="#2-quickstart"></a>
 </h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></code></pre></div>
 <div class="section level3">
 <h3 id="test-run-code-on-simulated-data">Test run code on simulated data<a class="anchor" aria-label="anchor" href="#test-run-code-on-simulated-data"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(sim.ES)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(topn.list)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># To find the combination of features that had the best score</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>best.meta <span class="ot">&lt;-</span> <span class="fu">topn.best</span>(topn.list)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can plot this set of features</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">meta.plot</span>(best.meta<span class="sc">$</span>ESet)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span>
+
+<span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span>
+<span class="co"># To find the combination of features that had the best score</span>
+<span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> 
+
+<span class="co"># Now we can plot this set of features</span>
+<span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>ESet<span class="op">=</span><span class="va">best_meta</span><span class="op">$</span><span class="va">ESet</span><span class="op">)</span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Generating top N overlap heatmap..</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
-<h3 id="running-on-your-own-actual-data">Running on your own (actual) data<a class="anchor" aria-label="anchor" href="#running-on-your-own-actual-data"></a>
+<h3 id="running-on-actual-data">Running on actual data<a class="anchor" aria-label="anchor" href="#running-on-actual-data"></a>
 </h3>
-<p>First, you need to have your data (we’ve used copy number variation, mutation calls or methylation data - anything that can basically be thresholded / binarized as 0/1) in an <code>ExpressionSet</code> object. In the example below, the expression set object is named <code>ES.GISTIC.Mut</code>. The only other thing you need is a variable used to rank the matrix by (below, we have a variable called <code>score</code>). The ranking of this variable is what dictates how CaDrA will search for grouped meta-features. By default, it will look for things that are left-skewed, so you can rank the variable in either ascending order or descending order to look for features that are enriched at either end (in the example below, we are interested in looking at features enriched for higher scores in samples, hence ranking them in descending order of score first)</p>
-<p>The function calls and pre-processing example steps are as follows:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Binarize ES to only have 0's and 1's</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">exprs</span>(ES.GISTIC.Mut)[<span class="fu">exprs</span>(ES.GISTIC.Mut)<span class="sc">&gt;</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pre-filter ESet based on occurrence frequency</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ES.GISTIC.Mut.filt <span class="ot">&lt;-</span> <span class="fu">prefilter_data</span>(<span class="at">ES =</span> ES.GISTIC.Mut,<span class="at">max.cutoff =</span> <span class="fl">0.7</span>,<span class="at">min.cutoff =</span> <span class="fl">0.03</span>) <span class="co"># no more than 70%, no less than 3%</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Order of samples in decreasing order of supplied continuous variable</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>sample.order <span class="ot">&lt;-</span> <span class="fu">order</span>(score,<span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of top starting seed features to test and evaluate over  </span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>top_n <span class="ot">&lt;-</span> <span class="dv">7</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Metric used for stepwise greedy search</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Either ks or wilcox is supported</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>method <span class="ot">&lt;-</span> <span class="st">"ks"</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>topn.l <span class="ot">&lt;-</span> <span class="fu">topn.eval</span>(<span class="at">ESet =</span> ES.GISTIC.Mut.filt, </span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">method=</span>method,</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">N =</span> top_n,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">do.plot =</span> <span class="cn">FALSE</span>, <span class="co">#We will plot it AFTER finding the best hits</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                    <span class="at">best.score.only =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranking=</span>sample.order,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">verb=</span><span class="cn">FALSE</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>topn.best.meta <span class="ot">&lt;-</span> <span class="fu">topn.best</span>(topn.l)</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize best result</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">meta.plot</span>(<span class="at">ESet =</span> topn.best.meta<span class="sc">$</span>ESet,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">var.score =</span> score[sample.order],</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>          <span class="at">var.name =</span> <span class="st">"Activity score"</span>) <span class="co">#Y-axis label for plot</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># You can also evaluate how robust the results are depending on which seed feature you started with</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="fu">topn.plot</span>(topn.l) </span></code></pre></div>
+<p>In the example below, the <code>CCLE_MUT_CNA_AMP_DEL_REVEALER</code> expression set object was obtained from the <strong>REVEALER</strong> package. The other variable is called <code>input_score</code> which also from <strong>REVEALER</strong> which contains continuous measures of a targeted profile. The <strong>input_score</strong> is what dictates how CaDrA will search for grouped meta-features.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load features dataset object from REVEALER</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CCLE_MUT_CNA_AMP_DEL_REVEALER</span><span class="op">)</span>
+
+<span class="co"># Load the targeted profile dataset</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CTNBB1_transcriptional_reporter</span><span class="op">)</span>
+
+<span class="co"># Number of top starting seed features to test and evaluate over  </span>
+<span class="va">top_N</span> <span class="op">&lt;-</span> <span class="fl">7</span>
+
+<span class="co"># Metric used for candidate search</span>
+<span class="co"># Either ks or wilcox or revealer is supported</span>
+<span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"ks"</span>
+
+<span class="va">topn_l</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>ES <span class="op">=</span> <span class="va">CCLE_MUT_CNA_AMP_DEL_REVEALER</span>, 
+                    input_score <span class="op">=</span>  <span class="va">CTNBB1_transcriptional_reporter</span>,
+                    method <span class="op">=</span> <span class="va">method</span>,
+                    alternative <span class="op">=</span> <span class="st">"less"</span>,
+                    metric <span class="op">=</span> <span class="st">"pval"</span>,
+                    top_N <span class="op">=</span> <span class="va">top_N</span>,
+                    search_method <span class="op">=</span> <span class="st">"both"</span>,
+                    max_size <span class="op">=</span> <span class="fl">7</span>,
+                    do_plot <span class="op">=</span> <span class="cn">FALSE</span>,     <span class="co">#We will plot it AFTER finding the best hits</span>
+                    best_score_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span>
+<span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_l</span><span class="op">)</span>
+
+<span class="co"># Visualize best result</span>
+<span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>ESet <span class="op">=</span> <span class="va">topn_best_meta</span><span class="op">$</span><span class="va">ESet</span>,
+          var_score <span class="op">=</span> <span class="va">input_score</span>,
+          var_name <span class="op">=</span> <span class="st">"Activity score"</span><span class="op">)</span> <span class="co">#Y-axis label for plot</span>
+
+<span class="co"># You can also evaluate how robust the results are depending on which seed feature you started with</span>
+<span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_l</span><span class="op">)</span> </code></pre></div>
 </div>
 </div>
 </div>

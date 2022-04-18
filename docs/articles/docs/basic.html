@@ -59,7 +59,7 @@
       <a href="../../articles/docs/visualize.html">Visualize Results</a>
     </li>
     <li>
-      <a href="../../articles/docs/data.html">Downloading Genesets</a>
+      <a href="../../articles/docs/data.html">Data Objects</a>
     </li>
   </ul>
 </li>
@@ -101,26 +101,198 @@
     
     
 <div class="section level2">
-<h2 id="r-markdown">R Markdown<a class="anchor" aria-label="anchor" href="#r-markdown"></a>
+<h2 id="compute-skewdness-of-a-given-binary-feature-matrix">Compute skewdness of a given binary feature matrix<a class="anchor" aria-label="anchor" href="#compute-skewdness-of-a-given-binary-feature-matrix"></a>
 </h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="external-link uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+<div class="section level3">
+<h3 id="kolmogorov-smirnov-scoring-ks-method">1. Kolmogorov-Smirnov Scoring (KS) Method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-ks-method"></a>
+</h3>
+<p>Compute directional KS scores for each row of a given binary matrix</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></code></pre></div>
-<pre><code>     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  </code></pre>
+<code class="sourceCode R"><span class="co"># Load R library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span></code></pre></div>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: 'BiocGenerics'</code></pre>
+<pre><code>The following objects are masked from 'package:parallel':
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following object is masked from 'package:CaDrA':
+
+    sd</code></pre>
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    combine, intersect, setdiff, union</code></pre>
+<pre><code>The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs</code></pre>
+<pre><code>The following objects are masked from 'package:base':
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min</code></pre>
+<pre><code>Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load pre-computed expression set</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># Define additional parameters and start the function</span>
+<span class="va">ks_gene_score_mat_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/ks_gene_score_mat.html">ks_gene_score_mat</a></span><span class="op">(</span>
+  mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>, 
+  weights <span class="op">=</span> <span class="cn">NULL</span>,
+  alternative <span class="op">=</span> <span class="st">"less"</span>
+<span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ks_gene_score_mat_result</span><span class="op">)</span></code></pre></div>
+<pre><code>     score    p_value
+TP_1  0.56 0.05045534
+TP_2  0.51 0.08398283
+TP_3  0.52 0.07613569
+TP_4  0.55 0.05608133
+TP_5  0.50 0.09246248
+TP_6  0.62 0.02570802</code></pre>
 </div>
-<div class="section level2">
-<h2 id="including-plots">Including Plots<a class="anchor" aria-label="anchor" href="#including-plots"></a>
-</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="basic_files/figure-html/pressure-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div class="section level3">
+<h3 id="wilcoxon-scoring-method">2. Wilcoxon Scoring Method<a class="anchor" aria-label="anchor" href="#wilcoxon-scoring-method"></a>
+</h3>
+<p>Compute directional Wilcoxon rank sum score for each row of a given binary matrix</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load R library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span>
+<span class="co"># Load pre-computed expression set</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># Define additional parameters and run the function</span>
+<span class="va">wilcox_genescore_mat_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/wilcox_genescore_mat.html">wilcox_genescore_mat</a></span><span class="op">(</span>
+  mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>, 
+  ranks <span class="op">=</span> <span class="cn">NULL</span>,
+  alternative <span class="op">=</span> <span class="st">"less"</span>
+<span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">wilcox_genescore_mat_result</span><span class="op">)</span></code></pre></div>
+<pre><code>     score    p_value
+TP_1   145 0.07283094
+TP_2   127 0.04095534
+TP_3   118 0.02991493
+TP_4    96 0.01287417
+TP_5   184 0.20095305
+TP_6    93 0.01138019</code></pre>
+</div>
+<div class="section level3">
+<h3 id="revealer-soring-method">3. Revealer Soring Method<a class="anchor" aria-label="anchor" href="#revealer-soring-method"></a>
+</h3>
+<p>Compute conditional mutual information of x and y given z for each row of a given binary feature matrix</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load R library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span>
+
+<span class="co"># Load pre-computed expression set</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># set seed</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+
+<span class="co"># Provide a vector of continuous scores for a target profile</span>
+<span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># Define additional parameters and start the function</span>
+<span class="va">revealer_genescore_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/revealer_genescore_mat.html">revealer_genescore_mat</a></span><span class="op">(</span>
+  mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>, input_score <span class="op">=</span> <span class="va">input_score</span>, target_match <span class="op">=</span> <span class="st">"positive"</span>, assoc_metric <span class="op">=</span> <span class="st">"IC"</span>
+<span class="op">)</span>
+ 
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">revealer_genescore_result</span><span class="op">)</span> </code></pre></div>
+<pre><code>           score
+TP_1  0.07175471
+TP_2 -0.12173374
+TP_3  0.04824113
+TP_4  0.05657234
+TP_5 -0.08277836
+TP_6 -0.01871264</code></pre>
+</div>
+<div class="section level3">
+<h3 id="candidate-search-analysis">Candidate Search Analysis<a class="anchor" aria-label="anchor" href="#candidate-search-analysis"></a>
+</h3>
+<p>Performs a heuristic forward and forward search to identity candidate drivers of functional signatures (applied to Multi-Omic signatures and genesets).</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load R library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span>
+
+<span class="co"># Load pre-computed expression set</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># set seed</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+
+<span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span>
+<span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># Define additional parameters and run the function</span>
+<span class="va">candidate_search_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span>
+  ES <span class="op">=</span> <span class="va">sim.ES</span>, input_score <span class="op">=</span> <span class="va">input_score</span>, method <span class="op">=</span> <span class="st">"ks"</span>, 
+  alternative <span class="op">=</span> <span class="st">"less"</span>, weights <span class="op">=</span> <span class="cn">NULL</span>, metric <span class="op">=</span> <span class="st">"pval"</span>, 
+  search_start <span class="op">=</span> <span class="cn">NULL</span>, search_method <span class="op">=</span> <span class="st">"both"</span>, 
+  max_size <span class="op">=</span> <span class="fl">7</span>, best_score_only <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span>
+
+<span class="va">candidate_search_result</span></code></pre></div>
+<pre><code>$ES
+ExpressionSet (storageMode: lockedEnvironment)
+assayData: 7 features, 100 samples 
+  element names: exprs 
+protocolData: none
+phenoData: none
+featureData
+  featureNames: TN_206 TN_675 ... TN_653 (7 total)
+  fvarLabels: Feature Type
+  fvarMetadata: labelDescription
+experimentData: use 'experimentData(object)'
+Annotation: TN_206 
+
+$Score
+     TN_206 
+1.91488e-06 </code></pre>
+</div>
+<div class="section level3">
+<h3 id="permutation-based-testing">Permutation-based Testing<a class="anchor" aria-label="anchor" href="#permutation-based-testing"></a>
+</h3>
+<p>Performs permutation-based significance testing of candidate_search() results</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load R library</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span>
+
+<span class="co"># Load pre-computed expression set</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># set seed</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+
+<span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span>
+<span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
+
+<span class="co"># Define additional parameters and start the function</span>
+<span class="co"># DO NOT RUN as this may take some time to run</span>
+<span class="co"># candidate_search_result &lt;- cadra_search(</span>
+<span class="co">#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,</span>
+<span class="co">#  alternative = "less", metric = "pval", top_N = NULL,</span>
+<span class="co">#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,</span>
+<span class="co">#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL,</span>
+<span class="co">#  ncores = 1, cache_path = NULL, return_perm_pval = TRUE</span>
+<span class="co"># )</span>
+<span class="co"># </span>
+<span class="co"># candidate_search_result</span></code></pre></div>
+</div>
 </div>
   </div>
 

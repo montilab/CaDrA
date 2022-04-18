@@ -8,27 +8,146 @@ vignette: >
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(comment="", cache=FALSE, fig.align="center")
+knitr::opts_chunk$set(comment="", cache=FALSE, fig.width=8, fig.align="center")
 library(tidyverse)
 devtools::load_all(".")
 ```
 
-## R Markdown
+# Compute skewdness of a given binary feature matrix
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## 1. Kolmogorov-Smirnov Scoring (KS) Method
+Compute directional KS scores for each row of a given binary matrix
 
-```{r cars}
-summary(cars)
+```{r}
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# Define additional parameters and start the function
+ks_gene_score_mat_result <- ks_gene_score_mat(
+  mat = exprs(sim.ES), 
+  weights = NULL,
+  alternative = "less"
+)
+
+head(ks_gene_score_mat_result)
+
 ```
 
-## Including Plots
+## 2. Wilcoxon Scoring Method
+Compute directional Wilcoxon rank sum score for each row of a given binary matrix
 
-You can also embed plots, for example:
+```{r}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Load R library
+library(Biobase)
+# Load pre-computed expression set
+data(sim.ES)
+
+# Define additional parameters and run the function
+wilcox_genescore_mat_result <- wilcox_genescore_mat(
+  mat = exprs(sim.ES), 
+  ranks = NULL,
+  alternative = "less"
+)
+
+head(wilcox_genescore_mat_result)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## 3. Revealer Soring Method
+Compute conditional mutual information of x and y given z for each row of a given binary feature matrix
+
+```{r}
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# set seed
+set.seed(123)
+
+# Provide a vector of continuous scores for a target profile
+input_score = rnorm(n = ncol(sim.ES))
+names(input_score) <- colnames(sim.ES)
+
+# Define additional parameters and start the function
+revealer_genescore_result <- revealer_genescore_mat(
+  mat = exprs(sim.ES), input_score = input_score, target_match = "positive", assoc_metric = "IC"
+)
+ 
+head(revealer_genescore_result) 
+
+```
+
+## Candidate Search Analysis 
+
+Performs a heuristic forward and forward search to identity candidate drivers of functional signatures (applied to Multi-Omic signatures and genesets).
+
+```{r}
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# set seed
+set.seed(123)
+
+# Provide a vector of continuous scores for a target profile with names to each score value 
+input_score = rnorm(n = ncol(sim.ES))
+names(input_score) <- colnames(sim.ES)
+
+# Define additional parameters and run the function
+candidate_search_result <- candidate_search(
+  ES = sim.ES, input_score = input_score, method = "ks", 
+  alternative = "less", weights = NULL, metric = "pval", 
+  search_start = NULL, search_method = "both", 
+  max_size = 7, best_score_only = FALSE
+)
+
+candidate_search_result
+
+```
+
+## Permutation-based Testing
+
+Performs permutation-based significance testing of candidate_search() results
+
+```{r}
+
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# set seed
+set.seed(123)
+
+# Provide a vector of continuous scores for a target profile with names to each score value 
+input_score = rnorm(n = ncol(sim.ES))
+names(input_score) <- colnames(sim.ES)
+
+# Define additional parameters and start the function
+# DO NOT RUN as this may take some time to run
+# candidate_search_result <- cadra_search(
+#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
+#  alternative = "less", metric = "pval", top_N = NULL,
+#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
+#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL,
+#  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
+# )
+# 
+# candidate_search_result
+
+```
+

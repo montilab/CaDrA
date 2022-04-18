@@ -410,7 +410,7 @@ cadra_search <- function(
 #' @param seed seed which can be set for reproducibility of 'random' results. Default is 123
 #' @return A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
 #' @export
-generate_permutations<-function(
+generate_permutations <- function(
   ord,        #These are the sample orderings to be permuted
   n_perms,    #Number of permutations to produce
   seed=123    #Seed which can be set for reproducibility of results

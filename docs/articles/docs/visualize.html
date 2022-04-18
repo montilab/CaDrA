@@ -59,7 +59,7 @@
       <a href="../../articles/docs/visualize.html">Visualize Results</a>
     </li>
     <li>
-      <a href="../../articles/docs/data.html">Downloading Genesets</a>
+      <a href="../../articles/docs/data.html">Data Objects</a>
     </li>
   </ul>
 </li>
@@ -101,26 +101,39 @@
     
     
 <div class="section level2">
-<h2 id="r-markdown">R Markdown<a class="anchor" aria-label="anchor" href="#r-markdown"></a>
+<h2 id="meta-features-plot">Meta-Features Plot<a class="anchor" aria-label="anchor" href="#meta-features-plot"></a>
 </h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="external-link uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></code></pre></div>
-<pre><code>     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  </code></pre>
+<code class="sourceCode R"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span>
+
+<span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span>
+<span class="co"># To find the combination of features that had the best score</span>
+<span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> 
+
+<span class="co"># Now we can plot this set of features</span>
+<span class="fu"><a href="../../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>ESet<span class="op">=</span><span class="va">best_meta</span><span class="op">$</span><span class="va">ESet</span><span class="op">)</span></code></pre></div>
+<p><img src="visualize_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
-<h2 id="including-plots">Including Plots<a class="anchor" aria-label="anchor" href="#including-plots"></a>
+<h2 id="top-n-plot">Top ‘N’ Plot<a class="anchor" aria-label="anchor" href="#top-n-plot"></a>
 </h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="visualize_files/figure-html/pressure-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/topn_plot.html">topn_plot</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span></code></pre></div>
+<pre><code>Generating top N overlap heatmap..</code></pre>
+<p><img src="visualize_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="permutation-plot">Permutation Plot<a class="anchor" aria-label="anchor" href="#permutation-plot"></a>
+</h2>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load pre-computed permutation results</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span>
+
+<span class="co"># Plot the permutation results</span>
+<span class="fu"><a href="../../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></code></pre></div>
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="visualize_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
   </div>
 

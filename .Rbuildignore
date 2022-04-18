@@ -1,7 +1,6 @@
 ^docs$
 ^dev$
 ^vignettes$
-^tests$
 ^workflows$
 ^\.git$
 ^.*\.Rproj$

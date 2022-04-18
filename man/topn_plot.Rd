@@ -13,9 +13,10 @@ topn_plot(topn_list)
 a heatmap of the top N evaluation for a given top N search evaluation
 }
 \description{
-Plots a heatmap representation of overlapping features given a list of top N candidate search results
+Plots a heatmap representation of overlapping features given a list of top N features obtained from candidate_search() results
 }
 \examples{
+
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
 topn_plot(topn.list)

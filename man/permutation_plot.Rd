@@ -2,12 +2,12 @@
 % Please edit documentation in R/permutation_plot.R
 \name{permutation_plot}
 \alias{permutation_plot}
-\title{Plot the Empirical Null Distribution of Permutation Best Scores}
+\title{Permutation Best Scores Plot}
 \usage{
 permutation_plot(permutation_results)
 }
 \arguments{
-\item{permutation_results}{a list of objects returned from the cadra_search()}
+\item{permutation_results}{a list of objects returned from the cadra_search() using the simulated dataset (sim.ES) and random generated input_score = rnorm(n = ncol(sim.ES)) with setting seed(123). KS method and pval metric were used to filter out the best features.}
 }
 \value{
 a density plot

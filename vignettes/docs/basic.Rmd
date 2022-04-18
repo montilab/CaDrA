@@ -13,8 +13,7 @@ library(tidyverse)
 devtools::load_all(".")
 ```
 
-# Compute skewdness of a given binary feature matrix
-
+Compute skewdness of a given binary feature matrix
 
 ## 1. Kolmogorov-Smirnov Scoring (KS) Method
 Compute directional KS scores for each row of a given binary matrix
@@ -45,6 +44,7 @@ Compute directional Wilcoxon rank sum score for each row of a given binary matri
 
 # Load R library
 library(Biobase)
+
 # Load pre-computed expression set
 data(sim.ES)
 
@@ -137,17 +137,16 @@ set.seed(123)
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
-# Define additional parameters and start the function
-# DO NOT RUN as this may take some time to run
-# candidate_search_result <- cadra_search(
-#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
-#  alternative = "less", metric = "pval", top_N = NULL,
-#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
-#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL,
-#  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
-# )
-# 
-# candidate_search_result
+# Define additional parameters and start the cadra_search()
+candidate_search_result <- cadra_search(
+ ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
+ alternative = "less", metric = "pval", top_N = NULL,
+ search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
+ seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL,
+ ncores = 8, cache_path = NULL, return_perm_pval = TRUE
+)
+
+candidate_search_result
 
 ```
 

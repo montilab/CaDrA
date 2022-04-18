@@ -31,11 +31,9 @@ data(topn.list)
 best_meta <- topn_best(topn_list=topn.list) 
 
 # Now we can plot this set of features
-meta_plot(ESet=best_meta$ESet)
-
-# If a continuous ranking variable was used for the sample-ranking, we can visualize it together
+# If a continuous input_score variable was used for the sample-ranking, we can visualize it together
 # Just for illustration purposes, we simulate random sample scores
-sample_scores <- sort(runif(ncol(sim.ES),0,1), decreasing=TRUE)
+sample_scores <- sort(runif(ncol(sim.ES), 0, 1), decreasing=TRUE)
 meta_plot(ESet=best_meta$ESet, var_score=sample_scores, var_name="My ranking variable")
 
 }

@@ -1,7 +1,9 @@
 
-#' Plot the Empirical Null Distribution of Permutation Best Scores
+#' Permutation Best Scores Plot
 #' 
-#' @param permutation_results a list of objects returned from the cadra_search() 
+#' Plot the Empirical Null Distribution of Permutation Best Scores 
+#' 
+#' @param permutation_results a list of objects returned from the cadra_search() using the simulated dataset (sim.ES) and random generated input_score = rnorm(n = ncol(sim.ES)) with setting seed(123). KS method and pval metric were used to filter out the best features.
 #' 
 #' @return a density plot
 #' @examples

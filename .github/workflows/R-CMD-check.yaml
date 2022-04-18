@@ -11,19 +11,23 @@ name: R-CMD-check
 jobs:
   R-CMD-check:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
-      _R_CHECK_DOC_SIZES_: false
+    
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v2
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
+      - run: Rscript -e 'print("hello")'
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Installs packages declared in DESCRIPTION
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rcmdcheck
+          extra-packages: any::rcmdcheck
+          needs: check
 
-      - uses: r-lib/actions/check-r-package@v2
+      - name: Runs R CMD check on an R package
+        uses: r-lib/actions/check-r-package@v2
+        env:
+          _R_CHECK_FORCE_SUGGESTS_: false

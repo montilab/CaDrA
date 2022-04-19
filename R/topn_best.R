@@ -15,7 +15,7 @@ topn_best <- function(topn_list){
   top_score <- min(base::sapply(topn_list,"[[",2))
   
   # Corresponding ESet object
-  best_meta <- topn_list[[n]]$ESet
+  best_meta <- topn_list[[n]]$ES
   
   return(list("ESet" = best_meta, "Score" = top_score))
   

@@ -20,9 +20,7 @@
 #' @export
 #' @import ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw
-meta_plot <- function(
-  topn_best_list
-){
+meta_plot <- function(topn_best_list){
   
   # Get ESet and input_score for top N best features
   ESet =  topn_best_list[["ESet"]]                    

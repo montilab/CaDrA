@@ -37,6 +37,9 @@
 .Rproj.user
 *.Rproj
 
+# Unknown files
+.nfs00000000511ba62300000119
+
 # c++
 *.o
 *.so

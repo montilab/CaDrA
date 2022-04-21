@@ -37,12 +37,20 @@ reference:
   - '`revealer_genescore`'
   - '`generate_permutations`'
   - '`prefilter_data`'
+  - '`kde2d_wrap`'
+  - '`ks_genescore_mat`'
+  - '`ks_genescore_wrap`'
+  - '`ks_test_double_wrap`'
+
 - title: Plot Methods
   desc: ~
   contents:
   - '`meta_plot`'
   - '`topn_plot`'
   - '`permutation_plot`'
+  - '`plot_ESet`'
+  - '`ks_plot_wrap`'
+
 - title: Data Objects
   desc: ~
   contents:

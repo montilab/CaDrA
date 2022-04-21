@@ -5,7 +5,7 @@
 \alias{sim.ES}
 \title{Simulated binary genomic data}
 \format{
-An object of class {\link[Biobase]{ExpressionSet}}
+An object of class \code{ExpressionSet} from \code{Biobase} package
 containing a matrix of 1000 rows (features) and 200 columns (samples) 
 see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
 }

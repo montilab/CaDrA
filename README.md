@@ -12,17 +12,20 @@ Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
 Functional Signatures
 
 CaDrA is an R package that supports a heuristic search framework aimed
-towards the identification of candidate drivers of oncogenic activity.
-Given a binary genomic dataset (where the rows are 1/0 vectors
-indicating the presence/absence of genomic features such as somatic
-mutations or copy number alteration events), together with an associated
-sample ranking (where the samples are ranked by a certain phenotypic
-readout of interest such as protein expression, pathway activity etc.),
-CaDrA implements a step-wise search algorithm to determine a set of
-features that, together (based on their occurence union or ‘logical
-OR’), is most-associated with the observed ranking, making it useful for
-finding mutually exclusive or largely non-overlapping anomalies that can
-lead to the same pathway phenotype.
+at identifying candidate drivers of a molecular phenotype of interest.
+The main function takes two inputs: i) a binary multi-omics dataset
+(where the rows are 1/0 vectors indicating the presence/absence of
+‘omics’ features such as somatic mutations, copy number alterations,
+epigenetic marks, etc.); and ii) and a molecular phenotype represented
+as a vector of continuous scores (sample-specific scores representing a
+phenotypic readout of interest, such as protein expression, pathway
+activity, etc.), Based on this input, CaDrA implements a
+forward/backward search algorithm to find the set of features that
+together is maximally associated with the observed input scores, based
+on one of several scoring functions (Kolmogorov-Smirnov, Conditional
+Mutual Information, Wilcoxon, custom-defined scoring function), making
+it useful to find complementary omics features likely driving the input
+molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et
 al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)

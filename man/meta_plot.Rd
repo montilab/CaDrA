@@ -4,14 +4,10 @@
 \alias{meta_plot}
 \title{Candidate heuristic search plot}
 \usage{
-meta_plot(ESet, var_score = NULL, var_name = "")
+meta_plot(topn_best_list)
 }
 \arguments{
-\item{ESet}{an ESet object containing only the features returned from the candidate_search() function (if any)}
-
-\item{var_score}{an optional integer vector of continuous measures used to rank samples for the candidate search (assumed in matching order)}
-
-\item{var_name}{a string object describing the name of the continuous measure used, which will be used as the y-axis label for the metric plot}
+\item{topn_best_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.}
 }
 \value{
 A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
@@ -20,20 +16,16 @@ A plot graphic with the ranked metric plot (optional), a tile plot of the featur
 Plot the candidate search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable on the top.
 }
 \examples{
-# Load pre-computed dataset
-data(sim.ES)
 
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
 
 # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
 # To find the combination of features that had the best score
-best_meta <- topn_best(topn_list=topn.list) 
+topn_best_meta <- topn_best(topn_list=topn.list) 
 
 # Now we can plot this set of features
 # If a continuous input_score variable was used for the sample-ranking, we can visualize it together
-# Just for illustration purposes, we simulate random sample scores
-sample_scores <- sort(runif(ncol(sim.ES), 0, 1), decreasing=TRUE)
-meta_plot(ESet=best_meta$ESet, var_score=sample_scores, var_name="My ranking variable")
+meta_plot(topn_best_list=topn_best_meta)
 
 }

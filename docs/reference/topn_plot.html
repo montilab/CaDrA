@@ -81,7 +81,7 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_list</dt>
-<dd><p>a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.</p></dd>
+<dd><p>a list of lists where each list entry is returned from the candidate_search() for a given starting index. This is computed within and can be returned by the topn_eval() function.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -93,6 +93,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Get top N plot</span></span>
 <span class="r-in"><span class="fu">topn_plot</span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating top N overlap heatmap..</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

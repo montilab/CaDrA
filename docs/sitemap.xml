@@ -28,7 +28,16 @@
     <loc>https://github.com/montilab/CaDrA/index.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/news/index.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_CNA_AMP_DEL_REVEALER.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_SCNA.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_reporter.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_transcriptional_reporter.html</loc>

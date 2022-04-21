@@ -81,13 +81,24 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_list</dt>
-<dd><p>The nested list object that is returned by topn_eval() function when best.score.only is set to FALSE. This contains both the ESets as well as the scores for each resulting meta-feature in the top 'N'  search mode.</p></dd>
+<dd><p>A nested list object that is returned by topn_eval() function when best_score_only is set to FALSE. This contains both the ESets as well as the scores and its input scores for each resulting meta-feature in the top 'N' search mode.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing the (local) best meta-feature ESet, as well as its corresponding search score</p>
+    <p>A list containing the (local) best meta-feature ESet, as well as its corresponding search score and input scores</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+<span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Get the best meta-features list</span></span>
+<span class="r-in"><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">topn_best</span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

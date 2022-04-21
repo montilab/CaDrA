@@ -22,17 +22,21 @@ data(topn.list)
 
 # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
 # To find the combination of features that had the best score
-best_meta <- topn_best(topn_list=topn.list) 
+best_meta <- topn_best(topn_list = topn.list) 
 
 # Now we can plot this set of features
-meta_plot(ESet=best_meta$ESet)
+meta_plot(topn_best_list = best_meta)
 
 ```
 
 ## Top 'N' Plot
 ```{r, fig.width=8, fig.align='center'}
 
-topn_plot(topn_list=topn.list)
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
+
+# Get top N plot
+topn_plot(topn_list = topn.list)
 
 ```
 
@@ -43,7 +47,7 @@ topn_plot(topn_list=topn.list)
 data(perm.res)
 
 # Plot the permutation results
-permutation_plot(perm.res)
+permutation_plot(permutation_results = perm.res)
 
 ```
 

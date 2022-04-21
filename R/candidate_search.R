@@ -112,14 +112,22 @@ candidate_search <- function(
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       
+      # Sort input_score from highest to lowest values
+      input_score <- sort(input_score, decreasing=T)
+      
       # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(input_score)]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      
+      # Sort input_score from highest to lowest values
+      input_score <- sort(input_score, decreasing=T)
+      
+      # Re-order the samples by input_score sorted from highest to lowest values
+      ES <- ES[,names(input_score)]
     }
     
     # Compute mutually exclusive method for binary features in ES 
@@ -440,7 +448,7 @@ candidate_search <- function(
     #Assign the name of the best meta-feature score to be the starting feature that gave that score
     names(global.best.s) <- start.feature 
     
-    return(list("ES" = ES.best, "Score"= global.best.s))
+    return(list("ESet" = ES.best, "Score" = global.best.s, "input_score" = input_score))
     
   } else{
     

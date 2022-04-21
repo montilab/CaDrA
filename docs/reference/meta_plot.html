@@ -75,17 +75,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">meta_plot</span><span class="op">(</span><span class="va">ESet</span>, var_score <span class="op">=</span> <span class="cn">NULL</span>, var_name <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">meta_plot</span><span class="op">(</span><span class="va">topn_best_list</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>ESet</dt>
-<dd><p>an ESet object containing only the features returned from the candidate_search() function (if any)</p></dd>
-<dt>var_score</dt>
-<dd><p>an optional integer vector of continuous measures used to rank samples for the candidate search (assumed in matching order)</p></dd>
-<dt>var_name</dt>
-<dd><p>a string object describing the name of the continuous measure used, which will be used as the y-axis label for the metric plot</p></dd>
+    <dl><dt>topn_best_list</dt>
+<dd><p>a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -94,21 +90,17 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Load pre-computed dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span></span>
 <span class="r-in"><span class="co"># To find the combination of features that had the best score</span></span>
-<span class="r-in"><span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span>
+<span class="r-in"><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Now we can plot this set of features</span></span>
 <span class="r-in"><span class="co"># If a continuous input_score variable was used for the sample-ranking, we can visualize it together</span></span>
-<span class="r-in"><span class="co"># Just for illustration purposes, we simulate random sample scores</span></span>
-<span class="r-in"><span class="va">sample_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">meta_plot</span><span class="op">(</span>ESet<span class="op">=</span><span class="va">best_meta</span><span class="op">$</span><span class="va">ESet</span>, var_score<span class="op">=</span><span class="va">sample_scores</span>, var_name<span class="op">=</span><span class="st">"My ranking variable"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">meta_plot</span><span class="op">(</span>topn_best_list<span class="op">=</span><span class="va">topn_best_meta</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="meta_plot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 </code></pre></div>

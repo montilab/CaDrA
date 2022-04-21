@@ -110,11 +110,11 @@ ks_gene_score_mat <- function
   } 
   
   # Compute the ks statitic and p-value per row in the matrix
-  #ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
+  ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
   
-  ks <- apply(X = mat, 1, FUN = function(x, alt=alternative, w=weights){
-    ks_gene_score(n.x=length(x), y=which(x==1), alternative=alt, weights=w)
-  })
+  # ks <- apply(X = mat, 1, FUN = function(x, alt=alternative, w=weights){
+  #   ks_gene_score(n.x=length(x), y=which(x==1), alternative=alt, weights=w)
+  # })
   
   # Convert list to data.frame
   ks <- data.frame(score=ks[1,], p_value=ks[2,])

@@ -7,7 +7,7 @@
 topn_plot(topn_list)
 }
 \arguments{
-\item{topn_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.}
+\item{topn_list}{a list of lists where each list entry is returned from the candidate_search() for a given starting index. This is computed within and can be returned by the topn_eval() function.}
 }
 \value{
 a heatmap of the top N evaluation for a given top N search evaluation
@@ -19,6 +19,8 @@ Plots a heatmap representation of overlapping features given a list of top N fea
 
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
+
+# Get top N plot
 topn_plot(topn.list)
 
 }

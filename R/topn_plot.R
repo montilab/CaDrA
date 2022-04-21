@@ -2,13 +2,15 @@
 #' Top 'N' Plot
 #' 
 #' Plots a heatmap representation of overlapping features given a list of top N features obtained from candidate_search() results
-#' @param topn_list a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn.eval() function.
+#' @param topn_list a list of lists where each list entry is returned from the candidate_search() for a given starting index. This is computed within and can be returned by the topn_eval() function.
 #' 
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
 #' @examples
 #' 
 #' # Load pre-computed Top-N list generated for sim.ES dataset
 #' data(topn.list)
+#' 
+#' # Get top N plot
 #' topn_plot(topn.list)
 #' 
 #' @export
@@ -16,19 +18,20 @@
 #' @importFrom graphics legend
 topn_plot <- function(topn_list){
   
+  # Get eset and best scores for top n features
   eset_l <- lapply(topn_list, "[[", 1)
   scores_l <- lapply(topn_list, "[[", 2)
   
-  f_list <- lapply(eset_l,featureNames)  #Get the list of feature names from each ESet
+  f_list <- lapply(eset_l, featureNames)  #Get the list of feature names from each ESet
   
-  f_union <- Reduce(f = union,f_list) #Get the union of all features that were returned across all top N runs
+  f_union <- Reduce(f = union, f_list) #Get the union of all features that were returned across all top N runs
   
-  f_checklist<-lapply(f_list,function(x,ref=f_union){
+  f_checklist <- lapply(f_list, function(x,ref = f_union){
     return(f_union %in% x)
   })
   
   # Make a matrix indicating which features are found across each top n run
-  m <- do.call(cbind,f_checklist)*1   #Multiplying by 1 is just to convert boolean values into 1's and 0's
+  m <- do.call(cbind, f_checklist)*1   #Multiplying by 1 is just to convert boolean values into 1's and 0's
   rownames(m) <- f_union
   
   # Working with scores for each top N run

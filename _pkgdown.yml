@@ -16,7 +16,10 @@ authors:
     href: https://github.com/katgit
   Vinay Kartha:
     href: https://github.com/vkartha
-    
+
+news:
+  one_page: false
+  
 reference:
 - title: Workflow Methods
   desc: ~
@@ -46,6 +49,8 @@ reference:
   - '`sim.ES`'
   - '`topn.list`'
   - '`perm.res`'
+  - '`CCLE_MUT_SCNA`'
+  - '`CTNBB1_reporter`'
   
 navbar:
   title: "CaDrA"

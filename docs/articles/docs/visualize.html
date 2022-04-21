@@ -109,17 +109,21 @@
 
 <span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span>
 <span class="co"># To find the combination of features that had the best score</span>
-<span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> 
+<span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list <span class="op">=</span> <span class="va">topn.list</span><span class="op">)</span> 
 
 <span class="co"># Now we can plot this set of features</span>
-<span class="fu"><a href="../../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>ESet<span class="op">=</span><span class="va">best_meta</span><span class="op">$</span><span class="va">ESet</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">best_meta</span><span class="op">)</span></code></pre></div>
 <p><img src="visualize_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="top-n-plot">Top ‘N’ Plot<a class="anchor" aria-label="anchor" href="#top-n-plot"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../../reference/topn_plot.html">topn_plot</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span>
+
+<span class="co"># Get top N plot</span>
+<span class="fu"><a href="../../reference/topn_plot.html">topn_plot</a></span><span class="op">(</span>topn_list <span class="op">=</span> <span class="va">topn.list</span><span class="op">)</span></code></pre></div>
 <pre><code>Generating top N overlap heatmap..</code></pre>
 <p><img src="visualize_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
@@ -131,7 +135,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span>
 
 <span class="co"># Plot the permutation results</span>
-<span class="fu"><a href="../../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span>permutation_results <span class="op">=</span> <span class="va">perm.res</span><span class="op">)</span></code></pre></div>
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <p><img src="visualize_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>

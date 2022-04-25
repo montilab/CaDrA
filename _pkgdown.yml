@@ -69,12 +69,8 @@ navbar:
       menu:
       - text: "Installation"
         href: articles/docs/installation.html
-      - text: "Basic Usage"
-        href: articles/docs/basic.html
-      - text: "Visualize Results"
-        href: articles/docs/visualize.html
-      - text: "Data Objects"
-        href: articles/docs/data.html
+      - text: "YAP/TAZ Activity on Human Breast Carcinomas"
+        href: articles/docs/yaptaz_example.html
     - text: "Reference"
       href: reference/index.html
   right:

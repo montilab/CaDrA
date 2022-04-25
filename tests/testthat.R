@@ -1,4 +1,4 @@
 library(testthat)
 library(CaDrA)
 
-test_check("CaDrA")
+testthat::test_check("CaDrA")

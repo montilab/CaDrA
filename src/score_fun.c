@@ -839,9 +839,9 @@ SEXP ks_plot_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   n_w = LENGTH(in_w);
 
   if (LENGTH(in_w)) {
-           w = REAL(in_w);
+     w = REAL(in_w);
   } else {
-           return(R_NilValue);
+     w=NULL;
   }
   if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
   y = INTEGER(in_y);
@@ -919,7 +919,12 @@ SEXP ks_genescore_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   n_y = LENGTH(in_y);
   n_w = LENGTH(in_w);
 
-  if (LENGTH(in_w)) w = REAL(in_w);
+  if (LENGTH(in_w)) {
+    w = REAL(in_w);
+  } else {
+    w=NULL;
+  }
+
   if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
   y = INTEGER(in_y);
   
@@ -997,7 +1002,7 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
   if (nw > 0) {
     weight = REAL(w);
   }else{
-    return(R_NilValue);
+    weight=NULL;
   }
 
   

@@ -13,7 +13,6 @@ cadra_search(
   alternative = "less",
   metric = "pval",
   weights = NULL,
-  ranks = NULL,
   target_match = "positive",
   top_N = NULL,
   search_start = NULL,
@@ -45,8 +44,6 @@ cadra_search(
 \item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
 
 \item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
-
-\item{ranks}{a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.}
 
 \item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 

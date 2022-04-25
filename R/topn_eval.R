@@ -10,7 +10,6 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.
 #' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
@@ -54,7 +53,6 @@ topn_eval <- function(
   alternative = "less", 
   metric = "pval", 
   weights = NULL,
-  ranks = NULL, 
   target_match = "positive",
   top_N = 1,
   search_method = "both", 
@@ -87,7 +85,6 @@ topn_eval <- function(
       alternative = alternative, 
       metric = metric, 
       weights = weights,
-      ranks = ranks, 
       target_match = target_match,
       search_start = x,
       search_method = search_method, 
@@ -100,7 +97,7 @@ topn_eval <- function(
   # do_plot
   if(do_plot){
     
-    topn_plot(topN_list = topn_l)  
+    topn_plot(topn_list = topn_l)  
     
   }
   

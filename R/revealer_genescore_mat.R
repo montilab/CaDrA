@@ -3,9 +3,9 @@
 #' 
 #' Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
 #' @param mat a matrix of binary features (required)
-#' @param target a vector of continuous values of a target profile (required). target must include labels or names that associated with the colnames of the feature matrix. 
+#' @param input_score a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix. 
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
-#' @param seed_names one or more features(s) that associated with the activation of a given target profile
+#' @param seed_names one or more features(s) that associated with the activation of a given targeted profile
 #' @param assoc_metric an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
@@ -22,12 +22,12 @@
 #' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile
-#' target = rnorm(n = ncol(sim.ES))
-#' names(target) <- colnames(sim.ES)
+#' input_score = rnorm(n = ncol(sim.ES))
+#' names(input_score) <- colnames(sim.ES)
 #' 
 #' # Define additional parameters and start the function
 #' revealer_genescore_result <- revealer_genescore_mat(
-#'   mat = exprs(sim.ES), target = target, target_match = "positive", assoc_metric = "IC"
+#'   mat = exprs(sim.ES), input_score = input_score, target_match = "positive", assoc_metric = "IC"
 #' )
 #'  
 #' @export
@@ -35,7 +35,7 @@
 revealer_genescore_mat <- function
 (
   mat,                                   
-  target, 
+  input_score, 
   target_match = "positive",             
   seed_names = NULL,
   assoc_metric = c("IC", "COR"),
@@ -46,42 +46,52 @@ revealer_genescore_mat <- function
   # Setup verbose option definition
   options(verbose=FALSE)
   
+  ## Make sure mat variable is a matrix
+  mat <- as.matrix(mat)
+  
+  # If mat has only one column, it must be converted to a row-wise matrix form as it is needed for backward_forward_search() computation
+  # mat must have rownames to track features and columns to track samples
+  # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
+  if(ncol(mat) == 1){
+    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+  }
+  
   # Check if the matrix has only binary values and no empty values
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
     stop("mat variable must be a matrix of binary values (no empty values).\n")
   
-  # Check if target is provided and no empty values
-  if(length(target) == 0 || any(!is.numeric(target)) || any(is.na(target)))
-    stop("target variable must be provided and are numeric with no empty values.\n")
+  # Check if input_score is provided and no empty values
+  if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
+    stop("input_score variable must be provided and are numeric with no empty values.\n")
   
   # Make sure the mat variable has rownames for features tracking
   if(is.null(rownames(mat)))
     stop("The mat object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
   
-  # Make sure the target variable has names as the colnames in mat
-  if(is.null(names(target)))
-    stop("The target object must have names or labels to track the samples by. Please provide the sample names or labels that matches the colnames of the expression matrix.\n")
+  # Make sure the input_score variable has names as the colnames in mat
+  if(is.null(names(input_score)))
+    stop("The input_score object must have names or labels to track the samples by. Please provide the sample names or labels that matches the colnames of the expression matrix.\n")
   
-  # Make sure the target has the same length as number of samples in mat
-  if(length(target) != ncol(mat)){
-    stop("The target variable must have the same length as the number of columns in mat.\n")
+  # Make sure the input_score has the same length as number of samples in mat
+  if(length(input_score) != ncol(mat)){
+    stop("The input_score variable must have the same length as the number of columns in mat.\n")
   }else{
-    # check if target has any labels or names
-    if(length(names(target)) == 0){
-      stop("The target object must have names or labels that match the colnames of the expression matrix.\n")
+    # check if input_score has any labels or names
+    if(length(names(input_score)) == 0){
+      stop("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
     }
     
-    # check if target has labels or names that matches the colnames of the expression matrix
-    if(any(!names(target) %in% colnames(mat))){
-      stop("The target object have names or labels that do not match the colnames of the expression matrix.\n")
+    # check if input_score has labels or names that matches the colnames of the expression matrix
+    if(any(!names(input_score) %in% colnames(mat))){
+      stop("The input_score object have names or labels that do not match the colnames of the expression matrix.\n")
     }
     
-    # match colnames of expression matrix with names of provided target values
+    # match colnames of expression matrix with names of provided input_score values
     # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
     if(nrow(mat) == 1){
-      mat <- matrix(t(mat[,names(target)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
+      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
     }else{
-      mat <- mat[,names(target)]
+      mat <- mat[,names(input_score)]
     }
   }
   
@@ -151,15 +161,15 @@ revealer_genescore_mat <- function
   
   # Compute MI and % explained with original seed(s)
   cmi <- 1:nrow(mat) %>% 
-    purrr::map_dfr(
+    purrr::map_dbl(
       function(r){
-        #r=1;
-        revealer_genescore(x=target, y=mat[r,], z=seed, assoc_metric=assoc_metric, target_match=target_match) 
+        revealer_genescore(x=input_score, y=mat[r,], z=seed, assoc_metric=assoc_metric, target_match=target_match) 
       }
     )
   
+  # Convert list to data.frame
   # Only score value from revealer is returned
-  colnames(cmi) <- c("score")
+  cmi <- data.frame(score=cmi)
   rownames(cmi) <- rownames(mat)
   
   return(cmi)

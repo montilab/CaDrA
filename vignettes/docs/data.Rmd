@@ -1,0 +1,33 @@
+---
+title: "Data Objects"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Objects}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, messages=FALSE, warnings=FALSE}
+knitr::opts_chunk$set(comment="", cache=FALSE, fig.align="center")
+library(tidyverse)
+devtools::load_all(".")
+```
+
+# Simulated binary genomic data
+
+```{r}
+data(sim.ES)
+```
+
+# Top-N result list for simulated binary genomic data
+
+```{r}
+data(topn.list)
+```
+
+# Permutation results list from simulated binary genomic data
+
+```{r}
+data(perm.res)
+```
+

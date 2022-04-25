@@ -1,2 +1,15 @@
+^docs$
+^dev$
+^vignettes$
+^workflows$
+^\.git$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+^README_files$
+^NEWS\.Rmd$
+^NEWS_files$
+^\.travis\.yml$
+^_pkgdown\.yml$
+^\.github$
+^\.nfs00000000511ba62300000119$

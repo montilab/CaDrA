@@ -100,6 +100,6 @@ wilcox_genescore <- function
   
   class(RVAL) <- "htest"
   
-  return(data.frame(score=RVAL$statistic, p_value=RVAL$p.value))         
+  return(c(score=RVAL$statistic, p_value=RVAL$p.value))         
   
 }

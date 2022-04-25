@@ -1,0 +1,55 @@
+---
+title: "Visualization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Visualization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, messages=FALSE, warnings=FALSE}
+knitr::opts_chunk$set(comment="", cache=FALSE, fig.align="center")
+library(tidyverse)
+devtools::load_all(".")
+```
+
+## Meta-Features Plot
+
+```{r, fig.width=8, fig.align='center'}
+
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
+
+# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
+# To find the combination of features that had the best score
+best_meta <- topn_best(topn_list = topn.list) 
+
+# Now we can plot this set of features
+meta_plot(topn_best_list = best_meta)
+
+```
+
+## Top 'N' Plot
+```{r, fig.width=8, fig.align='center'}
+
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
+
+# Get top N plot
+topn_plot(topn_list = topn.list)
+
+```
+
+## Permutation Plot
+```{r, fig.width=8, fig.align='center'}
+
+# Load pre-computed permutation results
+data(perm.res)
+
+# Plot the permutation results
+permutation_plot(permutation_results = perm.res)
+
+```
+
+
+

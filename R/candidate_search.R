@@ -10,7 +10,6 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param ranks a vector of sample rankings use to perform Wilcoxon rank sum testing. Default is \code{NULL}. If NULL, samples are assumed to be ordered by increasing rankings.
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param search_start an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)
 #' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
@@ -52,7 +51,6 @@ candidate_search <- function(
   alternative = "less", 
   metric = "stat",
   weights = NULL,
-  ranks = NULL,  
   target_match = "positive",          
   search_start = NULL,
   search_method = "both",
@@ -96,6 +94,12 @@ candidate_search <- function(
     ES <- ES[,names(input_score)]
   }
   
+  # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
+  if(any(rowSums(exprs(ES)) == 0) || any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
+    warning("Provided dataset has features that are either all 0 or 1. These features will be removed from the computation.\n")
+    ES <- ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
+  }
+  
   # Make sure matrix is not empty after removing uninformative features
   if(nrow(exprs(ES)) == 0){
     stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
@@ -108,23 +112,22 @@ candidate_search <- function(
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       
+      # Sort input_score from highest to lowest values
+      input_score <- sort(input_score, decreasing=T)
+      
       # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(input_score)]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
       
-      # if ranks is NULL, re-order the samples by input_score sorted from highest to lowest values
-      if(is.null(ranks)){
-        ES <- ES[,names(sort(input_score, decreasing=T))]
-      }else{
-        # Check if ranks are a ranked list
-        if(any(!sort(ranks)==1:ncol(ES))){
-          stop("The provided ranks object must be a ranked list.")
-        }
-      }
+      # Sort input_score from highest to lowest values
+      input_score <- sort(input_score, decreasing=T)
+      
+      # Re-order the samples by input_score sorted from highest to lowest values
+      ES <- ES[,names(input_score)]
     }
     
     # Compute mutually exclusive method for binary features in ES 
@@ -150,6 +153,7 @@ candidate_search <- function(
   # Select the appropriate method to compute scores based on skewdness of a given binary matrix
   mat <- exprs(ES)
     
+  # Compute the row-wise scoring
   s <- switch(
     method,
     ks = ks_gene_score_mat(
@@ -160,18 +164,18 @@ candidate_search <- function(
     wilcox = wilcox_genescore_mat(
       mat = mat,
       alternative = alternative,
-      ranks = ranks
+      ranks = NULL
     ),
     revealer = revealer_genescore_mat(
       mat = mat,                                   
-      target = input_score,      
+      input_score = input_score,      
       seed_names = NULL,
       target_match = target_match,
       assoc_metric = "IC"
     ),
     custom = custom_genescore_mat(
       mat = mat,
-      target = input_score,
+      input_score = input_score,
       custom_function = custom_function,
       custom_parameters = custom_parameters
     )
@@ -318,7 +322,6 @@ candidate_search <- function(
                                                         alternative = alternative,
                                                         metric = metric,
                                                         weights = weights,       
-                                                        ranks = ranks,
                                                         target_match = target_match)    
       # Update globlal features, scores 
       global.best.s.features <- backward_search.results[[1]]
@@ -354,18 +357,18 @@ candidate_search <- function(
       wilcox = wilcox_genescore_mat(
         mat = meta.mat,
         alternative = alternative,
-        ranks = ranks
+        ranks = NULL
       ),
       revealer = revealer_genescore_mat(
         mat = meta.mat,                                   
-        target = input_score,      
+        input_score = input_score,      
         seed_names = NULL,
         target_match = target_match,
         assoc_metric = "IC"
       ),
       custom = custom_genescore_mat(
         mat = meta.mat,
-        target = input_score,
+        input_score = input_score,
         custom_function = custom_function,
         custom_parameters = custom_parameters
       )
@@ -445,7 +448,7 @@ candidate_search <- function(
     #Assign the name of the best meta-feature score to be the starting feature that gave that score
     names(global.best.s) <- start.feature 
     
-    return(list("ES" = ES.best, "Score"= global.best.s))
+    return(list("ESet" = ES.best, "Score" = global.best.s, "input_score" = input_score))
     
   } else{
     
@@ -469,7 +472,6 @@ forward_backward_check <- function
   alternative,
   metric,                  # a character string specifying which metric to use for stepwise search criteria. One of either 'pval' or 'stat' may be used, corresponding to the  p-value or statistic. Uses value passed in the candidate_search() function
   weights,
-  ranks,
   target_match
 ){ 
   
@@ -509,18 +511,18 @@ forward_backward_check <- function
         wilcox = wilcox_genescore_mat(
           mat = u.mat,
           alternative = alternative,
-          ranks = ranks
+          ranks = NULL
         ),
         revealer = revealer_genescore_mat(
           mat = u.mat,                                   
-          target = input_score,      
+          input_score = input_score,      
           seed_names = NULL,
           target_match = target_match,
           assoc_metric = "IC"
         ),
         custom = custom_genescore_mat(
           mat = u.mat,
-          target = input_score,
+          input_score = input_score,
           custom_function = custom_function,
           custom_parameters = custom_parameters
         )

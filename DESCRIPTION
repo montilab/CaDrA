@@ -9,7 +9,7 @@ Authors@R:
       person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 
       person(given="Katia", family="Bulekova", role=c("aut"), email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146"))
      )
-Description: Performs a stepwise heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
+Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
 Depends: R (>= 3.1.1)
 Imports: 
     Biobase,
@@ -34,5 +34,11 @@ Packaged: 2017-07-10 18:44:45 UTC; vkartha
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 Suggests: 
+    devtools,
+    tidyverse,
+    rmarkdown,
+    knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
+BugReports: https://github.com/montilab/CaDrA/issues

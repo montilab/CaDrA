@@ -95,7 +95,7 @@ revealer_genescore <- function
   cmi <- suppressWarnings(cond_assoc(x=x, y=y, z=z, metric=assoc_metric))
 
   # Only return score value for revealer
-  return(data.frame(score=cmi))
+  return(c(score=cmi))
   
 }
 

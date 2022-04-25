@@ -5,23 +5,25 @@
 \alias{topn.list}
 \title{Top-N result list for simulated binary genomic data}
 \format{
-A list object returned by \code{topn.eval}
+A list object returned by \code{topn_eval}
 containing the ExpressionSet objects (and corresponding meta-feature scores)
 for each search run when starting with each of the top 7 ranked features.
 Returned ExpressionSet columns (i.e. samples) are ranked by the user-defined ranking variable.  
-See \code{\link[CaDrA]{topn.eval}} for more information.
+See \code{\link[CaDrA]{topn_eval}} for more information.
 }
 \usage{
 data(topn.list)
 }
 \description{
-The resulting list object returned by topn.eval() when run
+The resulting list object returned by topn_eval() when run
 on the \code{sim.ES} simulated dataset. All default parameters were used
-when running topn.eval() except for max.size which was set to 10 
+when running topn_eval() except for max.size which was set to 10 
 to account for the presence of 10 left-skewed (i.e. true positive or TP) 
 features in the sim.ES dataset.
 }
 \examples{
+
+# Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
 
 # To fetch each search result (Expression Set and score of the corresponding meta-feature)
@@ -35,14 +37,15 @@ topn.list[[1]]$ESet
 topn.list[[2]]$ESet
 
 # Or we can find the result that had the best score over the top N (N=7) runs
-best.meta <- topn.best(topn.list)
+best_meta <- topn_best(topn.list)
 
-# You can now visualize this result using the meta.plot() function 
-meta.plot(best.meta$ESet)
+# You can now visualize this result using the meta_plot() function 
+meta_plot(best_meta)
 
 # Or you can visualize the overlap of features across the top N (N=7) returned meta-features
-# We do this by passing the topn.list object to the topn.plot() function
-topn.plot(topn.list)
+# We do this by passing the topn.list object to the topn_plot() function
+topn_plot(topn.list)
+
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

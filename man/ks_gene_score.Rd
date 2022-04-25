@@ -12,7 +12,8 @@ ks_gene_score(
   alternative = "less",
   do_pval = TRUE,
   absolute = FALSE,
-  exact = NULL
+  exact = NULL,
+  plot_dat = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ ks_gene_score(
 \item{absolute}{takes max - min score rather than the maximum deviation from null}
 
 \item{exact}{compute exact p-value}
+
+\item{plot_dat}{return dataframe of x and y axis data for ES plot}
 }
 \value{
 a data frame with two columns: \code{score} and \code{p_value}

@@ -1,0 +1,86 @@
+url: https://github.com/montilab/CaDrA/
+
+development:
+  mode: auto
+
+template:
+  params:
+    bootswatch: cosmo
+
+authors:
+  Reina Chau:
+    href: https://github.com/RC-88
+  Stefano Monti:
+    href: https://github.com/tetomonti
+  Katia Bulekova:
+    href: https://github.com/katgit
+  Vinay Kartha:
+    href: https://github.com/vkartha
+
+news:
+  one_page: false
+  
+reference:
+- title: Workflow Methods
+  desc: ~
+  contents:
+  - '`cadra_search`'
+  - '`candidate_search`'
+  - '`topn_eval`'
+  - '`topn_best`'
+  - '`ks_gene_score_mat`'
+  - '`wilcox_genescore_mat`'
+  - '`revealer_genescore_mat`'
+  - '`custom_genescore_mat`'
+  - '`ks_gene_score`'
+  - '`wilcox_genescore`'
+  - '`revealer_genescore`'
+  - '`generate_permutations`'
+  - '`prefilter_data`'
+  - '`kde2d_wrap`'
+  - '`ks_genescore_mat`'
+  - '`ks_genescore_wrap`'
+  - '`ks_test_double_wrap`'
+
+- title: Plot Methods
+  desc: ~
+  contents:
+  - '`meta_plot`'
+  - '`topn_plot`'
+  - '`permutation_plot`'
+  - '`plot_ESet`'
+  - '`ks_plot_wrap`'
+
+- title: Data Objects
+  desc: ~
+  contents:
+  - '`sim.ES`'
+  - '`topn.list`'
+  - '`perm.res`'
+  - '`CCLE_MUT_SCNA`'
+  - '`CTNBB1_reporter`'
+  
+navbar:
+  title: "CaDrA"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Docs"
+      menu:
+      - text: "Installation"
+        href: articles/docs/installation.html
+      - text: "Basic Usage"
+        href: articles/docs/basic.html
+      - text: "Visualize Results"
+        href: articles/docs/visualize.html
+      - text: "Data Objects"
+        href: articles/docs/data.html
+    - text: "Reference"
+      href: reference/index.html
+  right:
+    - text: "Change Log"
+      href: news/index.html
+    - icon: fa-github
+      href: https://github.com/montilab/CaDrA
+
+

@@ -39,6 +39,16 @@ wilcox_genescore_mat <- function
   # Set up verbose option
   options(verbose=FALSE)
   
+  ## Make sure mat variable is a matrix
+  mat <- as.matrix(mat)
+  
+  # If mat has only one column, it must be converted to a row-wise matrix form as it is needed for backward_forward_search() computation
+  # mat must have rownames to track features and columns to track samples
+  # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
+  if(ncol(mat) == 1){
+    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+  }
+  
   # Check if the matrix has only binary 0 or 1 values 
   if(length(mat) == 0 || !is.matrix(mat) || any(!mat %in% c(0,1)) || any(is.na(mat)))
     stop("mat variable must be a matrix of binary values (no empty values).\n")
@@ -103,16 +113,12 @@ wilcox_genescore_mat <- function
   }
   
   #Compute the wilcox rank sum statitic and p-value per row in the matrix
-  wilcox <- 1:nrow(mat) %>% 
-    purrr::map_dfr(
-      function(r){
-        #r=1;
-        feature = mat[r,]; x = ranks[which(feature==1)]; y = ranks[which(feature==0)]    
-        wilcox_genescore(x = x, y = y, alternative=alternative) 
-      }
-    )
+  wilcox <- apply(X=mat, MARGIN=1, function(x, r=ranks){
+    wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], alternative=alternative) 
+  })
   
-  colnames(wilcox) <- c("score", "p_value")
+  # Convert list to data.frame
+  wilcox <- data.frame(score=wilcox[1,], p_value=wilcox[2,])
   rownames(wilcox) <- rownames(mat)
   
   return(wilcox)

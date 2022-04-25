@@ -9,6 +9,7 @@
 #' @param do_pval compute asymptotic p-value
 #' @param absolute takes max - min score rather than the maximum deviation from null
 #' @param exact compute exact p-value
+#' @param plot_dat return dataframe of x and y axis data for ES plot
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export
@@ -22,7 +23,8 @@ ks_gene_score <- function
   alternative = "less",  
   do_pval = TRUE, 
   absolute = FALSE, 
-  exact = NULL
+  exact = NULL,
+  plot_dat = FALSE
 )
 {
   
@@ -77,12 +79,30 @@ ks_gene_score <- function
     
     score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]
     
+    if (plot_dat) {
+      x.axis <- Y;
+      y.axis <- z;
+      if(Y[1] > 0) {
+        x.axis <- c(0, x.axis);
+        y.axis <- c(0, y.axis);
+      }
+      if ( max(Y) < n.x ) {
+        x.axis <- c(x.axis,n.x)
+        y.axis <- c(y.axis,0)
+      }
+    }
+    
+  }
+  
+  if(plot_dat){
+    d <- data.frame("x"=x.axis, "y"=y.axis)
+    return(d)
   }
   
   # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
   PVAL <- suppressWarnings(ks.test(x=1:n.x, y=y, alternative=alternative, exact=exact)$p.value)
   
-  return(data.frame(score=score, p_value=PVAL))
+  return(c(score=score, p_value=PVAL))
   
 }
 

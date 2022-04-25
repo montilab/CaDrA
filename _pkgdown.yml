@@ -59,6 +59,8 @@ reference:
   - '`perm.res`'
   - '`CCLE_MUT_SCNA`'
   - '`CTNBB1_reporter`'
+  - '`BRCA_GISTIC_MUT_SIG`'
+  - '`TAZYAP_BRCA_ACTIVITY`'
   
 navbar:
   title: "CaDrA"

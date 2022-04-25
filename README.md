@@ -48,6 +48,8 @@ library(CaDrA)
 
 ### Test run code on simulated data
 
+The simulated data (sim.ES) represents a binary matrix of genomic features that was used to search for top N features that associated with a molecular phenotype of interest. The matrix comprises of 1000 features (rows) and represented by 1/0 vectors indicating the presence/absence of the feature in the sample (column). The simulated data includes 10 left-skewed (i.e. True Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN) features. 
+
 ``` r
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)

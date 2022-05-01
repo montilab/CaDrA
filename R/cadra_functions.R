@@ -65,9 +65,11 @@ ks_test_double_wrap <- function(n_x, y, alt="less") {
   } else {
     alt_int <- 1L
   }
-  y <- as.numeric(y)
-  n_x <- as.integer(n_x)
-  res <- .Call(ks_test_d_wrap_,  n_x, y, alt_int)
+  
+  # If input is an empty vector
+  if( n_x != length(y) | length(y) < 1) return (NULL)
+  
+  res <- .Call(ks_test_d_wrap_,  as.integer(n_x), as.numeric(y), alt_int)
   res
   
 }
@@ -112,8 +114,11 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
   } else {
     alt_int <- 1L
   }
+  
+  # Ensure the right type of input
   y <- as.integer(y)
   n_x <- as.integer(n_x)
+  if(length(weight) > 1) weight <- as.numeric(weight)
   res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
   res
   
@@ -136,6 +141,9 @@ ks_genescore_mat <- function(mat, alt="less", weight) {
   } else {
     alt_int <- 1L
   }
+  # Ensure the right type of input
+  mat  <- apply( mat , 1, as.numeric)
+  weight <- if( length(weight) > 1 ) as.numeric(weight)
   res <- .Call(ks_genescore_mat_, mat, weight, alt_int)
   res
   

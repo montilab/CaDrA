@@ -142,9 +142,9 @@ ks_genescore_mat <- function(mat, alt="less", weight) {
     alt_int <- 1L
   }
   # Ensure the right type of input
-  mat  <- apply( mat , 1, as.numeric)
+  mat.num <- matrix(as.numeric(mat), ncol=ncol(mat), nrow=nrow(mat))
   weight <- if( length(weight) > 1 ) as.numeric(weight)
-  res <- .Call(ks_genescore_mat_, mat, weight, alt_int)
+  res <- .Call(ks_genescore_mat_, mat.num, weight, alt_int)
   res
   
 }

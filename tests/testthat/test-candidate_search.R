@@ -29,6 +29,7 @@ test_that("cadra_search returns expected result ",{
     search_start = NULL, search_method = "both", 
     max_size = 7, best_score_only = FALSE
   )
+  
   testthat::expect_type(ks, "list")
   testthat::expect_length(ks, 3)
   testthat::expect_snapshot(ks)

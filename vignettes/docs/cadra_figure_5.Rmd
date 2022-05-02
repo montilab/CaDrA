@@ -1,8 +1,8 @@
 ---
-title: "Reproduce CaDrA Figure"
+title: "Reproduce CaDrA Figures"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Reproduce CaDrA Figure}
+  %\VignetteIndexEntry{Reproduce CaDrA Figures}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

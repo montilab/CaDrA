@@ -66,7 +66,7 @@ ks_topn_l <- CaDrA::topn_eval(
   method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
   weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
   alternative = "less",        # one-sided p-value
-  metric = "pval",             # Use p-value to score features
+  metric = "stat",             # Use p-value to score features
   top_N = 7,                   # Evaluate top 7 starting points for the search
   max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
@@ -93,7 +93,7 @@ wilcox_topn_l <- CaDrA::topn_eval(
   input_score = input_score,
   method = "wilcox",           # Use Wilcoxon Rank-Sum scoring function
   alternative = "less",        # one-sided p-value
-  metric = "pval",             # Use p-value to score features
+  metric = "stat",             # Use p-value to score features
   top_N = 7,                   # Evaluate top 7 starting points for the search
   max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
@@ -160,7 +160,7 @@ custom_topn_l <- CaDrA::topn_eval(
   input_score = input_score,
   custom_function = customized_genescore_mat,       # Use customized function
   custom_parameters = list(alternative = "less"),   # Additional parameters to pass to custom_function (i.e. other than ES and input_score)
-  metric = "pval",                                  # Use pval to score features
+  metric = "stat",                                  # Use pval to score features
   top_N = 7,                                        # Evaluate top 7 starting points for the search
   max_size = 10,                                    # Set max_size = 10 to account for 10 left-skewed features in sim.ES
   do_plot = FALSE,                                  # We will plot it AFTER finding the best hits

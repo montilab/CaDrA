@@ -84,14 +84,6 @@ revealer_genescore <- function
   z <- z[ind]
   
   # Compute CMI and % explained with or without the provided z
-  median_target <- median(x)
-  
-  if (target_match == "negative") {
-    target_locs <- seq(1, length(x))[x <= median_target]
-  } else {
-    target_locs <- seq(1, length(x))[x > median_target]
-  }
-  
   cmi <- suppressWarnings(cond_assoc(x=x, y=y, z=z, metric=assoc_metric))
 
   # Only return score value for revealer

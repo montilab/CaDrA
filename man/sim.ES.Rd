@@ -3,23 +3,19 @@
 \docType{data}
 \name{sim.ES}
 \alias{sim.ES}
-\title{Simulated binary genomic data}
+\title{Simulated Genomic Data}
 \format{
 An object of class \code{ExpressionSet} from \code{Biobase} package
-containing a matrix of 1000 rows (features) and 200 columns (samples) 
-see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
+containing a matrix of 1000 rows (features) and 200 columns (samples). 
+See \href{http://bit.ly/2rjy29l}{ExpressionSet documentation} for more details.
 }
 \usage{
 data(sim.ES)
 }
 \description{
-Simulated matrix representing a dataset of genomic features
-used as input to CaDrA for performing a stepwise search
-Matrix rows comprise 1000 features represented by 1/0 vectors 
-indicating the presence/absence of the feature in the sample (column)
-Features include 10 left-skewed (i.e. True Positive or TP) 
-and 990 uniformly-distributed (i.e. True Null or TN) 
-features
+A simulated ExpressionSet that comprises of 1000 genomic features (rows) and 200 sample profiles (columns). 
+Each row feature is represented by a vector of binary number (1/0) indicating the presence/absence of the feature in the samples. 
+This simulated data includes 10 left-skewed (i.e. True Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN) features.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

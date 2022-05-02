@@ -69,10 +69,12 @@ navbar:
       href: index.html
     - text: "Docs"
       menu:
-      - text: "Installation"
-        href: articles/docs/installation.html
-      - text: "YAP/TAZ Activity on Human Breast Carcinomas"
-        href: articles/docs/yaptaz_example.html
+      - text: "Scoring Functions"
+        href: articles/docs/scoring_functions.html
+      - text: "Permutation-Based Testing"
+        href: articles/docs/permutation_based_testing.html
+      - text: "Reproduce CaDrA Figures"
+        href: articles/docs/cadra_figure_5.html
     - text: "Reference"
       href: reference/index.html
   right:

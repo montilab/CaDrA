@@ -3,9 +3,11 @@
 \docType{data}
 \name{TAZYAP_BRCA_ACTIVITY}
 \alias{TAZYAP_BRCA_ACTIVITY}
-\title{YAP/TAZ activity}
+\title{YAP/TAZ Activity in Cancer}
 \format{
-consists of a vector of continuous scores of YAP/TAZ activity across 951 samples
+consists of a vector of continuous scores of YAP/TAZ activity across 951 profiles. 
+The mutation and copy number associated with this sample cohort can be found 
+in \code{BRCA_GISTIC_MUT_SIG} ExpressionSet.
 }
 \usage{
 data(TAZYAP_BRCA_ACTIVITY)

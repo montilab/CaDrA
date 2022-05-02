@@ -3,19 +3,17 @@
 \docType{data}
 \name{BRCA_GISTIC_MUT_SIG}
 \alias{BRCA_GISTIC_MUT_SIG}
-\title{Genomic Data from the TCGA BRCA}
+\title{Genomic Data from TCGA BRCA}
 \format{
 An object of class \code{ExpressionSet} from \code{Biobase} package
-containing a matrix of 16873 rows (features) and 963 columns (samples) 
+containing a matrix of 16,873 rows (features) and 963 columns (samples) 
 see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
 }
 \usage{
 data(BRCA_GISTIC_MUT_SIG)
 }
 \description{
-Binary matrix of mutation and SCNA features comprises of 16873 features where 1/0 vectors 
-indicating the presence/absence of the feature in the samples. There
-are 963 samples in this cohort study.
+An ExpressionSet object consists of 16,873 genomic features across 963 samples.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

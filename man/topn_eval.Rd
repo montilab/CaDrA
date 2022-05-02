@@ -17,7 +17,7 @@ topn_eval(
   top_N = 1,
   search_method = "both",
   max_size = 7,
-  best_score_only = TRUE,
+  best_score_only = FALSE,
   do_plot = TRUE,
   verbose = FALSE
 )
@@ -78,8 +78,8 @@ names(input_score) <- colnames(sim.ES)
 # Define additional parameters and run the function
 topn_eval <- topn_eval(
   ES = sim.ES, input_score = input_score, method = "ks",
-  alternative = "less", metric = "pval", top_N = 3, search_method = "both", 
-  max_size = 7, best_score_only = FALSE
+  alternative = "less", metric = "pval", top_N = 3, 
+  search_method = "both", max_size = 7, best_score_only = FALSE
 )
 
 }

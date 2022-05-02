@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -32,10 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/installation.html">Installation</a>
+      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/yaptaz_example.html">YAP/TAZ Activity on Human Breast Carcinomas</a>
+      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+    </li>
+    <li>
+      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -90,11 +93,11 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ES</dt>
-<dd><p>an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.</p></dd>
+<dd><p>an expression set of binary features (required). It must be a <code>BioBase ExpressionSet</code> object. The rownames of the expression set must contain unique features which are used in the search.</p></dd>
 <dt>input_score</dt>
-<dd><p>a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.</p></dd>
+<dd><p>a vector of continuous scores of a functional response of interest (required). The <code>input_score</code> must have names or labels that matches the colnames of the expression matrix.</p></dd>
 <dt>method</dt>
-<dd><p>a character string specifies a method to compute the score for each feature (<code>"ks"</code> or <code>"wilcox"</code> or <code>"revealer"</code> (conditional mutual information from REVEALER) or <code>"custom"</code> (a customized method)). Default is <code>ks</code>.</p></dd>
+<dd><p>a character string specifies a the scoring function that is used in the search. There are 4 options: (<code>"ks"</code> or <code>"wilcox"</code> or <code>"revealer"</code> (conditional mutual information from REVEALER) or <code>"custom"</code> (a customized scoring method)). Default is <code>ks</code>.</p></dd>
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies the customized function here. Default is <code>NULL</code>.</p></dd>
 <dt>custom_parameters</dt>
@@ -102,15 +105,15 @@
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>). Default is <code>less</code> for left-skewed significance testing.</p></dd>
 <dt>metric</dt>
-<dd><p>a character string specifies a metric to search for best features. <code>"pval"</code> or <code>"stat"</code> may be used, corresponding to p-value or score statistic. Default is <code>pval</code>. Note: <code>Revealer</code> method only return score statistics values.</p></dd>
+<dd><p>a character string specifies a metric to search for best features. <code>"pval"</code> or <code>"stat"</code> may be used which corresponding to p-value or score statistic. Default is <code>pval</code>. Note: <code>Revealer</code> method only utilized score statistics values (no p-value).</p></dd>
 <dt>weights</dt>
-<dd><p>a vector of weights use to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+<dd><p>if method is <code>ks</code>, specifies a vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 <dt>target_match</dt>
-<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>) from REVEALER. Use <code>"positive"</code> to match the higher values of the target, <code>"negative"</code> to match the lower values. Default is <code>positive</code>.</p></dd>
+<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>) apply for REVEALER method only. Use <code>"positive"</code> to match the higher values of the target, <code>"negative"</code> to match the lower values. Default is <code>positive</code>.</p></dd>
 <dt>search_start</dt>
-<dd><p>an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is <code>NULL</code>. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N &lt; nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)</p></dd>
+<dd><p>an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is <code>NULL</code>. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N &lt; nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)</p></dd>
 <dt>search_method</dt>
-<dd><p>a character string specifies a method to filter out the best candidates (<code>"forward"</code> or <code>"both"</code>). Default is <code>both</code> (backward and forward).</p></dd>
+<dd><p>a character string specifies an algorithm to filter out the best features (<code>"forward"</code> or <code>"both"</code>). Default is <code>both</code> (i.e. backward and forward).</p></dd>
 <dt>max_size</dt>
 <dd><p>an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is <code>7</code>.</p></dd>
 <dt>best_score_only</dt>
@@ -120,7 +123,7 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>best_score_only</code> is set to <code>TRUE</code>, this function returns a list object with the score corresponding to the union of the search meta-feature. If <code>best_score_only</code> is set to <code>FALSE</code>, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.</p>
+    <p>If <code>best_score_only</code> is set to <code>TRUE</code>, this function returns a list object with the score corresponding to the union of the search meta-feature. If <code>best_score_only</code> is set to <code>FALSE</code>, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned.</p>
     </div>
 
     <div id="ref-examples">

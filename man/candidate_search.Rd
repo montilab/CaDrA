@@ -22,11 +22,11 @@ candidate_search(
 )
 }
 \arguments{
-\item{ES}{an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.}
+\item{ES}{an expression set of binary features (required). It must be a \code{BioBase ExpressionSet} object. The rownames of the expression set must contain unique features which are used in the search.}
 
-\item{input_score}{a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.}
+\item{input_score}{a vector of continuous scores of a functional response of interest (required). The \code{input_score} must have names or labels that matches the colnames of the expression matrix.}
 
-\item{method}{a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.}
+\item{method}{a character string specifies a the scoring function that is used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized scoring method)). Default is \code{ks}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.}
 
@@ -34,15 +34,15 @@ candidate_search(
 
 \item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.}
+\item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).}
 
-\item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weights}{if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) apply for REVEALER method only. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
-\item{search_start}{an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)}
+\item{search_start}{an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)}
 
-\item{search_method}{a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).}
+\item{search_method}{a character string specifies an algorithm to filter out the best features (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e. backward and forward).}
 
 \item{max_size}{an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.}
 
@@ -51,7 +51,7 @@ candidate_search(
 \item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned.
+If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned.
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.

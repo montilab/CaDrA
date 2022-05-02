@@ -1,40 +1,44 @@
 
-#' Candidate heuristic search plot
+#' Candidate Drivers Search Plot
 #' 
-#' Plot the candidate search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable on the top. 
+#' By utilizing the top N results obtained from \code{topn_eval()}, we can find the best meta-features among the top N searches using \code{topn_best()}. \code{meta_plot()} is then used to produce graphics including the top meta-features that associated with a molecular phenotype of interest, the enrichment scores of the meta-features matrix, and 
+#' lastly, it includes an optional density diagram of the distribution of \code{input_score} variable on the top. 
 #' @param topn_best_list a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.
-#' @return A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
+#' @param input_score_label a label that references to the \code{input_score} variable used to compute the top N best features. Default is \code{NULL}.
+#' 
+#' @return A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
 #' @examples
 #' 
 #' # Load pre-computed Top-N list generated for sim.ES dataset
 #' data(topn.list)
 #' 
-#' # Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
-#' # To find the combination of features that had the best score
+#' # With the results obtained from top-N evaluation,
+#' # We can find the combination of features that gives the best score in top N searches
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Now we can plot this set of features
-#' # If a continuous input_score variable was used for the sample-ranking, we can visualize it together
 #' meta_plot(topn_best_list=topn_best_meta)
 #' 
 #' @export
 #' @import ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw
-meta_plot <- function(topn_best_list){
+meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # Get ESet and input_score for top N best features
   ESet =  topn_best_list[["ESet"]]                    
   var_score = topn_best_list[["input_score"]]
-  var_name = "input_score"
-  
-  # Plot y axis label
-  y_lab <- var_name
-  
-  # Plot x axis label
-  x_lab <- paste("Samples (n = ", ncol(ESet),")", sep="")
   
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
-  if(!is.null(var_score)){
+  if(length(var_score) > 0){
+    
+    # Get the input score label
+    var_name = ifelse(is.null(input_score_label), "input_score", input_score_label)
+    
+    # Plot y axis label
+    y_lab <- var_name
+    
+    # Plot x axis label
+    x_lab <- paste("Samples (n = ", ncol(ESet),")", sep="")
     
     # Make dataframe of metric and sample information, with rows arranged in specific order of measure used for search
     # Here we assume that var_score provided is ordered in the order that the stepwise search was run for the dataset
@@ -63,7 +67,11 @@ meta_plot <- function(topn_best_list){
   # Start working with the feature set for plots
   # We are going to fetch the logical OR summary for the set of feature
   # Along with the corresponding ES running score statistic for the OR summary
-  mat <- exprs(ESet)
+  if(length(var_score) > 0){
+    mat <- exprs(ESet)[,names(var_score)]
+  }else{
+    mat <- exprs(ESet)
+  }
   
   # Add on the OR function of all the returned entries
   or <- ifelse(colSums(mat)==0, 0, 1)

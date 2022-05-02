@@ -38,8 +38,8 @@
 #' # Define additional parameters and run the function
 #' topn_eval <- topn_eval(
 #'   ES = sim.ES, input_score = input_score, method = "ks",
-#'   alternative = "less", metric = "pval", top_N = 3, search_method = "both", 
-#'   max_size = 7, best_score_only = FALSE
+#'   alternative = "less", metric = "pval", top_N = 3, 
+#'   search_method = "both", max_size = 7, best_score_only = FALSE
 #' )
 #' 
 #' @export
@@ -57,7 +57,7 @@ topn_eval <- function(
   top_N = 1,
   search_method = "both", 
   max_size = 7,
-  best_score_only = TRUE,
+  best_score_only = FALSE,
   do_plot = TRUE,
   verbose = FALSE
 ){
@@ -73,7 +73,7 @@ topn_eval <- function(
   
   verbose("Evaluating search over top features: ", 1:top_N, "\n\n")
   
-  # Performs candidate search over top top_N indices
+  # Performs candidate search over top N indices
   topn_l <- sapply(1:top_N, function(x){ 
     
     candidate_search(
@@ -109,7 +109,7 @@ topn_eval <- function(
     # Working with scores for each top N run
     s <- unlist(scores_l)
     
-    #Fetch the best score from the iterations
+    # Fetch the best score from the iterations
     # This ASSUMES you're using metric = "pval"
     # NEEDS UPDATING TO ACCOMODATE STATISTIC 
     best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most significant 

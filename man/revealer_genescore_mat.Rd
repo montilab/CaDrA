@@ -16,13 +16,13 @@ revealer_genescore_mat(
 \arguments{
 \item{mat}{a matrix of binary features (required)}
 
-\item{input_score}{a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix.}
+\item{input_score}{a vector of continuous scores of a response of interest (required). \code{input_score} must have labels or names that associated with the colnames of the feature matrix.}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match higher values of \code{input_score}, \code{"negative"} to match lower values of \code{input_score}. Default is \code{positive}.}
 
-\item{seed_names}{one or more features(s) that associated with the activation of a given targeted profile}
+\item{seed_names}{one or more features that are associated with the activation of a response of interest (i.e. \code{input_score})}
 
-\item{assoc_metric}{an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.}
+\item{assoc_metric}{an association metric: \code{"IC"} for information coefficient or \code{"COR"} for correlation. Default is \code{IC}.}
 
 \item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }

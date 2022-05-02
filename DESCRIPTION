@@ -1,8 +1,8 @@
 Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
-Version: 1.4.1
-Date: 2021-10-09
+Version: 2.0.0
+Date: 2022-04-25
 Authors@R: 
     c(person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
       person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu"), 
@@ -30,7 +30,7 @@ Imports:
 LazyData: true
 License: MIT + file LICENSE
 URL: https://github.com/montilab/CaDrA/
-Packaged: 2017-07-10 18:44:45 UTC; vkartha
+Packaged: 2017-07-10 18:44:45 UTC; 
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 Suggests: 

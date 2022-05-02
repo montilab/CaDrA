@@ -1,20 +1,17 @@
-#' Binary Genomic Data
+#' Genomic Data from CCLE SCNA
 #'
-#' An actual feature matrix comprises of 17723 features where 1/0 vectors 
-#' indicating the presence/absence of the feature in the samples. There
-#' are 82 samples in this study.
+#' An ExpressionSet object consists of 17,723 genomic features across 82 samples.
 #'
 #' @docType data
 #'
 #' @usage data(CCLE_MUT_SCNA)
 #'
 #' @format An object of class \code{ExpressionSet} from \code{Biobase} package
-#' containing a matrix of 17723 rows (features) and 82 columns (samples) 
-#' see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
+#' containing a matrix of 17,723 rows (features) and 82 columns (samples). 
+#' See (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation}) for more details.
 #'
-#' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
-#' Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
-#' candidate driver analyses using binary genomic features. 
-#' (\href{https://www.biorxiv.org/content/early/2017/11/23/221846}{bioRxiv})
+#' @references Kim, J., Botvinnik, O., Abudayyeh, O. et al. 
+#' Characterizing genomic alterations in cancer by complementary functional associations. 
+#' Nat Biotechnol 34, 539–546 (2016). \href{https://doi.org/10.1038/nbt.3527}{https://doi.org/10.1038/nbt.3527}
 #'
 "CCLE_MUT_SCNA"

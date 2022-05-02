@@ -3,23 +3,23 @@
 \docType{data}
 \name{topn.list}
 \alias{topn.list}
-\title{Top-N result list for simulated binary genomic data}
+\title{Top-N Results for Simulated Data (\code{sim.ES})}
 \format{
-A list object returned by \code{topn_eval}
-containing the ExpressionSet objects (and corresponding meta-feature scores)
-for each search run when starting with each of the top 7 ranked features.
-Returned ExpressionSet columns (i.e. samples) are ranked by the user-defined ranking variable.  
+A list of objects returned from \code{topn_eval()} function
+containing ESet, corresponding best scores, and input_score of the top_N feature searches.
 See \code{\link[CaDrA]{topn_eval}} for more information.
 }
 \usage{
 data(topn.list)
 }
 \description{
-The resulting list object returned by topn_eval() when run
-on the \code{sim.ES} simulated dataset. All default parameters were used
-when running topn_eval() except for max.size which was set to 10 
-to account for the presence of 10 left-skewed (i.e. true positive or TP) 
-features in the sim.ES dataset.
+A list of lists returned from topn_eval() using simulated dataset (\code{ES = sim.ES}),  
+\code{input_score = ncol(sim.ES):1}, \code{top_N = 7}, \code{method = "ks"},
+and \code{max_size = 10} as inputs to the function.
+\code{Note:} \code{max_size} is set to 10 as we would like to account for the presence of 10 left-skewed 
+(i.e. true positive or TP) features in the \code{sim.ES} dataset.
+Over top_N = 7 feature searches, a list of ESet, along with its corresponding best score, 
+and input_score are returned from each search.
 }
 \examples{
 

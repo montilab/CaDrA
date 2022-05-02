@@ -1,9 +1,9 @@
 
 #' Permutation Best Scores Plot
 #' 
-#' Plot the Empirical Null Distribution of Permutation Best Scores 
+#' Plot the Empirical Null Distribution of Permutation Best Scores of \code{n_perm}
 #' 
-#' @param permutation_results a list of objects returned from the cadra_search() using the simulated dataset (sim.ES) and random generated input_score = rnorm(n = ncol(sim.ES)) with setting seed(123). KS method and pval metric were used to filter out the best features.
+#' @param permutation_results a list of objects returned from the cadra_search() using the simulated dataset (\code{sim.ES}) and random generated \code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123). 
 #' 
 #' @return a density plot
 #' @examples
@@ -20,8 +20,8 @@
 permutation_plot <- function(permutation_results){
   
   ## Extract values from the the permutation results
-  top_N <- permutation_results[["top_N"]]
-  search_start <- permutation_results[["search_start"]]
+  top_N <- permutation_results[["key"]][["top_N"]]
+  search_start <- permutation_results[["key"]][["search_start"]]
   perm_best_scores <- permutation_results[["perm_best_scores"]]
   perm_pval <- permutation_results[["perm_pval"]]
   obs_best_score <- permutation_results[["obs_best_score"]]

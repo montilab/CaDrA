@@ -2,22 +2,22 @@
 #' Candidate Search
 #' 
 #' Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
-#' @param ES an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.   
-#' @param input_score a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.
-#' @param method a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.
+#' @param ES an expression set of binary features (required). It must be a \code{BioBase ExpressionSet} object. The rownames of the expression set must contain unique features which are used in the search.   
+#' @param input_score a vector of continuous scores of a functional response of interest (required). The \code{input_score} must have names or labels that matches the colnames of the expression matrix.
+#' @param method a character string specifies a the scoring function that is used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized scoring method)). Default is \code{ks}.
 #' @param custom_function if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used, corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only return score statistics values.
-#' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
-#' @param search_start an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)
-#' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
+#' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).
+#' @param weights if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.   
+#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) apply for REVEALER method only. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
+#' @param search_start an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)
+#' @param search_method a character string specifies an algorithm to filter out the best features (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e. backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
 #' @param best_score_only a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
-#' @return If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing both the ES object pertaining to the returned meta-feature as well as the corresponding score is returned. 
+#' @return If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned. 
 #' @examples
 #' 
 #' # Load R library
@@ -133,6 +133,16 @@ candidate_search <- function(
     # Compute mutually exclusive method for binary features in ES 
     if(method == "revealer"){
       verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
+      
+      if(target_match == "positive"){
+        # Sort input_score from highest to lowest values
+        input_score <- sort(input_score, decreasing=T)        
+      }else{
+        # Sort input_score from LOWEST to HIGHEST values
+        input_score <- sort(input_score, decreasing=F)        
+      }
+      
+      ES <- ES[,names(input_score)]
     }
     
     # Compute row-wise directional scores using user's customized function for binary features in ES
@@ -148,7 +158,7 @@ candidate_search <- function(
   
   # Define scores based on specified metric of interest
   if(!metric %in% c('stat', 'pval'))
-    stop("Please specify metric parameter as either 'stat' or 'pval' to use for candidate_search().\n")  
+    stop("Please specify a metric parameter as either 'stat' or 'pval' for candidate_search().\n")
   
   # Select the appropriate method to compute scores based on skewdness of a given binary matrix
   mat <- exprs(ES)
@@ -199,9 +209,9 @@ candidate_search <- function(
   s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
   
   # compute the scores according to the provided metric 
-  score <- ifelse(rep(metric,nrow(ES)) %in% "pval", sign(s.stat)*s.pval, s.stat)
+  score <- ifelse(rep(metric, nrow(ES)) %in% "pval", sign(s.stat)*s.pval, s.stat)
   
-  verbose("Using ", metric, " as measure of improvement measure...\n\n")
+  verbose("Using ", metric, " as measure of improvement measure...\n")
   
   ###### FEATURE PRE-RANKING #####
   ##################################
@@ -210,17 +220,23 @@ candidate_search <- function(
   # This comes in handy when doing the top-N evaluation of the top N 'best' features
   score.rank <- if(metric != "pval") order(score) else order(-sign(score), score)
   
-  verbose("Ranking ES features by metric..\n")
+  verbose("Ranking ES features by metric...\n")
   
+  # Re-order the ES
   ES <- ES[score.rank,]
   
+  # Re-order the computed scores
   score <- score[score.rank]
   
+  ###### INITIALIZE VARIABLES ###########
+  #######################################
+  
+  # Check if defined-seeds are given
   if(is.null(search_start)){ 
     
     verbose("Starting with feature having best ranking...\n")
     best.s.index <- 1  
-    
+
   } else {
     
     if(is.numeric(search_start)){ 
@@ -245,12 +261,8 @@ candidate_search <- function(
     
   } # end else (!is.null)
   
-  ###### INITIALIZE VARIABLES ###########
-  #######################################
-  
   # Print the featureData for this starting point feature so that we are aware
   # Here we assume the ES's fData is included as rownames
-  #start.feature <- as.character(fData(ES)[best.s.index,1])
   start.feature <- rownames(ES)[best.s.index]
   best.feature <- start.feature
   best.s <- score[best.s.index]
@@ -292,7 +304,7 @@ candidate_search <- function(
     verbose("Global best score: ", global.best.s, "\n")
     verbose("Previous score: ", best.s, "\n")
     
-    # Update scores and feature set since since entry into the loop means there is an improvement (iteration > 0)
+    # Update scores and feature set since entry into the loop means there is an improvement (iteration > 0)
     global.best.s <- best.s
     global.best.s.features <- c(global.best.s.features, best.feature)
     
@@ -301,11 +313,13 @@ candidate_search <- function(
     if(i != 0){
       
       verbose("Found feature that improves score!\n")
+      
       # Update the new best meta feature (from meta mat)
       best.meta <- meta.mat[hit.best.s.index,]  
+      
       #Add that index to the group of indices to be excluded for subsequent checks
       #Here we go off the rownames in the original matrix to find which index to exclude from the ES in subsequent iterations
-      best.s.index <- c(best.s.index,which(rownames(ES)==best.feature))
+      best.s.index <- c(best.s.index, which(rownames(ES) == best.feature))
       
     } 
     
@@ -326,17 +340,19 @@ candidate_search <- function(
       # Update globlal features, scores 
       global.best.s.features <- backward_search.results[[1]]
       global.best.s <- backward_search.results[[2]]
+      
       # Update best.meta based on feature set
-      best.meta <- as.numeric(ifelse(colSums(exprs(ES)[global.best.s.features,])==0,0,1))
+      best.meta <- as.numeric(ifelse(colSums(exprs(ES)[global.best.s.features,]) == 0, 0, 1))
       
     }
     
-    #Take the OR function between that feature and all other features, to see which gives the best  score
-    #Keep in mind, the number of rows in meta.mat keeps reducing by one each time we find a hit that improves the  score
+    # Take the OR function between that feature and all other features to see which gives the best score
+    # Keep in mind, the number of rows in meta.mat keeps reducing by one each time we find a hit that improves the score
     verbose("Forming meta-feature matrix with all other features in dataset..\n")
+    
     # Here "*1" is used to convert the boolean back to integer 1's and 0's
-    # Notice we remove anything in best.s.index from the original matrix first, to form the meta matrix.
-    meta.mat <- sweep(exprs(ES)[-best.s.index,],2,best.meta,`|`)*1
+    # Notice we remove anything in best.s.index from the original matrix first to form the meta matrix.
+    meta.mat <- base::sweep(exprs(ES)[-best.s.index,], 2, best.meta, `|`)*1
     
     # Check if there are any features that are all 1's generated on taking the union
     # We cannot compute statistics for such features and they thus need to be filtered out
@@ -360,9 +376,9 @@ candidate_search <- function(
         ranks = NULL
       ),
       revealer = revealer_genescore_mat(
-        mat = meta.mat,                                   
+        mat = exprs(ES),                                   
         input_score = input_score,      
-        seed_names = NULL,
+        seed_names = global.best.s.features,
         target_match = target_match,
         assoc_metric = "IC"
       ),
@@ -393,13 +409,13 @@ candidate_search <- function(
     
     # Take signed pval or stat depending on user-defined metric
     # This will be the same length as nrow(meta.mat)
-    scores <- ifelse(rep(metric,nrow(meta.mat)) %in% "pval", sign(s.stat)*s.pval, s.stat)
+    scores <- ifelse(rep(metric, nrow(meta.mat)) %in% "pval", sign(s.stat)*s.pval, s.stat)
     
-    #Find index of feature that gives lowest s score when combined with chosen starting feature
-    if(metric!="pval"){
+    #Find index of feature that gives lowest scores when combined with chosen starting feature
+    if(metric != "pval"){
       hit.best.s.index <- which.max(scores) #This is the index within the meta matrix
     } else { #If signed pvalues
-      hit.best.s.index <- order(-sign(scores),scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
+      hit.best.s.index <- order(-sign(scores), scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
     }
     
     best.s <- scores[hit.best.s.index] #This is the best score from the meta matrix
@@ -408,8 +424,9 @@ candidate_search <- function(
     # We go from index to rowname space here in the meta matrix
     # We can do this because rownames are preserved between the original and meta features on using sweep()
     best.feature <- rownames(meta.mat)[hit.best.s.index]
+    
     verbose("Feature that produced best score in combination with previous meta-feature: ", best.feature, "\n")
-    verbose("Score: ",best.s,"\n")
+    verbose("Score: ", best.s, "\n")
     
     # If no improvement (exiting loop)
     if(ifelse(metric == "pval", sign(best.s) < 0 | (abs(best.s) >= abs(global.best.s)), best.s <= global.best.s)){
@@ -423,13 +440,14 @@ candidate_search <- function(
   
   verbose("\n\n")
   verbose("\n\nFinished!\n\n")
-  verbose("Number of iterations covered: ",i,"\n")
-  verbose("Best  score attained over iterations: ",global.best.s,"\n")
-  if(length(global.best.s.features)==1){
-    warning("No meta-feature that improves the enrichment was found ..\n") 
+  verbose("Number of iterations covered: ", i, "\n")
+  verbose("Best  score attained over iterations: ", global.best.s, "\n")
+  
+  if(length(global.best.s.features) == 1){
+    verbose("No meta-feature that improves the enrichment was found ...\n") 
   }
   
-  verbose("Features returned in ES: ",global.best.s.features,"\n")
+  verbose("Features returned in ES: ", global.best.s.features, "\n")
   verbose("\n\n")
   
   if(best_score_only == FALSE){
@@ -438,6 +456,7 @@ candidate_search <- function(
     #This can be obtained using the list of indices that were progressively excluded (if at all) in the step-wise procedure
     #If returning only those features that led to the best global score
     ES.best <- ES[global.best.s.features,]
+    
     #Here, give the returned ES an annotation based on the starting feature that gave these best results
     annotation(ES.best) <- start.feature
     colnames(ES.best) <- colnames(ES)
@@ -492,7 +511,7 @@ forward_backward_check <- function
     #n=1;
     f.names[[n]] <- glob.f[-n]
     
-    #Take leave-one-out union of features from matrix
+    # Take leave-one-out union of features from matrix
     # This will result in a single vector to compute the scores on
     u <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
     
@@ -555,7 +574,7 @@ forward_backward_check <- function
   if(metric != "pval"){
     f.best.index <- which.max(f.scores) #This is the index within the meta matrix
   } else { #If signed pvalues
-    f.best.index <- order(-sign(f.scores),f.scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
+    f.best.index <- order(-sign(f.scores), f.scores)[1] #Top p-value ordered by sign and numerical value; #This is the index within the meta matrix
   }  
   
   f.best.score <- f.scores[f.best.index]

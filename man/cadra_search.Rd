@@ -24,16 +24,15 @@ cadra_search(
   obs_best_score = NULL,
   plot = TRUE,
   ncores = 1,
-  cache_path = NULL,
-  return_perm_pval = TRUE
+  cache_path = NULL
 )
 }
 \arguments{
 \item{ES}{an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used to search for best features.}
 
-\item{input_score}{a vector of continuous values for a target profile (required). The \code{input_score} object must have names or labels that match the colnames of the expression matrix.}
+\item{input_score}{a vector of continuous values of a response of interest (required). The \code{input_score} object must have names or labels that match the colnames of the expression matrix.}
 
-\item{method}{a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.}
+\item{method}{a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized scoring method)). Default is \code{ks}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.}
 
@@ -41,17 +40,17 @@ cadra_search(
 
 \item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
+\item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).}
 
-\item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weights}{if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
+\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) apply for REVEALER method only. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
-\item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{NULL}.}
+\item{top_N}{an integer specifies the number of features to start the search over. Starting from the top to 'N' features. Default is \code{NULL}.}
 
-\item{search_start}{an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)}
+\item{search_start}{an integer specifies an index within the expression set object of which feature to start the search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)}
 
-\item{search_method}{a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).}
+\item{search_method}{a character string specifies an algorithm to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e., backward and forward).}
 
 \item{max_size}{an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.}
 
@@ -61,21 +60,19 @@ cadra_search(
 
 \item{smooth}{a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
-\item{obs_best_score}{a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we compute the observed score given the \code{input_score} and \code{ES} variables.}
+\item{obs_best_score}{a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we will compute the observed best score based on the given \code{input_score} and \code{ES} variables.}
 
 \item{plot}{a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is \code{TRUE}.}
 
 \item{ncores}{an integer specifies the number of cores to perform parallelization for permutation testing. Default is \code{1}.}
 
-\item{cache_path}{a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.}
-
-\item{return_perm_pval}{a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{TRUE}.}
+\item{cache_path}{a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'top_N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.}
 }
 \value{
-If \code{return_perm_pval} is set to \code{TRUE}, it will return a permutation p-value.
+a list of key parameters that were used to cache the permutation test, permutation best scores for n_perm, a permutation p-value, and observed best score
 }
 \description{
-Performs a permutation-based testing using results from \code{candidate_search()} function.
+Performs a permutation-based testing on sample permutation of observed input scores using candidate_search() as the main iterative function for each run.
 }
 \examples{
 
@@ -99,7 +96,7 @@ names(input_score) <- colnames(sim.ES)
 #  alternative = "less", metric = "pval", top_N = NULL, 
 #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
 #  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
-#  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
+#  ncores = 1, cache_path = NULL
 #)
 
 }

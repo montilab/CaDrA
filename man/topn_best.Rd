@@ -2,7 +2,7 @@
 % Please edit documentation in R/topn_best.R
 \name{topn_best}
 \alias{topn_best}
-\title{Top 'N' best}
+\title{Top 'N' best meta-features}
 \usage{
 topn_best(topn_list)
 }
@@ -13,7 +13,7 @@ topn_best(topn_list)
 A list containing the (local) best meta-feature ESet, as well as its corresponding search score and input scores
 }
 \description{
-Takes the resulting list of meta-features returned from topn_eval() function and fetches the meta-feature with best (local) score
+Takes the resulting list of meta-features returned from topn_eval() function and fetches the meta-features with best (local) score
 }
 \examples{
 

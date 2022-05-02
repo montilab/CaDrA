@@ -1,31 +1,30 @@
 
 #' CaDrA Search
 #' 
-#' Performs a permutation-based testing using results from \code{candidate_search()} function.
+#' Performs a permutation-based testing on sample permutation of observed input scores using candidate_search() as the main iterative function for each run.
 #'
 #' @param ES an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used to search for best features.   
-#' @param input_score a vector of continuous values for a target profile (required). The \code{input_score} object must have names or labels that match the colnames of the expression matrix.
-#' @param method a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.
+#' @param input_score a vector of continuous values of a response of interest (required). The \code{input_score} object must have names or labels that match the colnames of the expression matrix.
+#' @param method a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized scoring method)). Default is \code{ks}.
 #' @param custom_function if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
-#' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
-#' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{NULL}.
-#' @param search_start an integer specifies an index within the expression set object of which feature to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)
-#' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
+#' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).
+#' @param weights if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.   
+#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) apply for REVEALER method only. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
+#' @param top_N an integer specifies the number of features to start the search over. Starting from the top to 'N' features. Default is \code{NULL}.
+#' @param search_start an integer specifies an index within the expression set object of which feature to start the search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)
+#' @param search_method a character string specifies an algorithm to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e., backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
 #' @param n_perm an integer specifies the number of permutations to perform. Default is \code{1000}.
 #' @param seed a seed set for permutation. Default is \code{123}.
 #' @param smooth a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is \code{TRUE}.
-#' @param obs_best_score a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we compute the observed score given the \code{input_score} and \code{ES} variables.
+#' @param obs_best_score a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we will compute the observed best score based on the given \code{input_score} and \code{ES} variables.
 #' @param plot a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is \code{TRUE}.
 #' @param ncores an integer specifies the number of cores to perform parallelization for permutation testing. Default is \code{1}.
-#' @param cache_path a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.
-#' @param return_perm_pval a logical value indicates whether or not to return the permutation-based p-value computed by the function. Default is \code{TRUE}.
+#' @param cache_path a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'top_N' exist, we recycle these values instead of re-computing them to save time. Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache} for future loading.
 #' 
-#' @return If \code{return_perm_pval} is set to \code{TRUE}, it will return a permutation p-value.
+#' @return a list of key parameters that were used to cache the permutation test, permutation best scores for n_perm, a permutation p-value, and observed best score
 #' @examples
 #' 
 #' # Load R library
@@ -48,7 +47,7 @@
 #' #  alternative = "less", metric = "pval", top_N = NULL, 
 #' #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
 #' #  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
-#' #  ncores = 1, cache_path = NULL, return_perm_pval = TRUE
+#' #  ncores = 1, cache_path = NULL
 #' #)
 #' 
 #' @export
@@ -76,8 +75,7 @@ cadra_search <- function(
   obs_best_score = NULL,
   plot = TRUE,
   ncores = 1,
-  cache_path = NULL,
-  return_perm_pval = TRUE
+  cache_path = NULL
 ){
   
   # Check if the ES is provided and is a BioBase ExpressionSet object
@@ -161,7 +159,7 @@ cadra_search <- function(
     stop("Please specify metric parameter as either 'stat' or 'pval' to use for candidate_search().\n")  
   
   # Select the appropriate method to compute scores based on skewdness of a given binary matrix
-  mat <- exprs(ES)
+  mat <- as.numeric(exprs(ES))
   
   # Compute the row-wise scoring
   s <- switch(
@@ -255,10 +253,10 @@ cadra_search <- function(
       registerDoParallel(cores = ncores)
       parallel = TRUE
       progress = "none"
-      cat("Running tests in parallel..\n")
+      cat("Running tests in parallel...\n")
     } 
     
-    cat("Using ", ncores, " core(s)..\n")
+    cat("Using ", ncores, " core(s)...\n")
     
     # Generate matrix of permutated input_score  
     perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
@@ -269,9 +267,9 @@ cadra_search <- function(
     cat("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     
     if(!is.null(top_N)){ # Run top N evaluation if N is specified
-      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); topn_eval(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))
+      perm_best_scores <- unlist(plyr::alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); topn_eval(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, top_N=top_N, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))
     } else { # Run basic candidate search otherwise
-      perm_best_scores <- unlist(alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))  
+      perm_best_scores <- unlist(plyr::alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, target_match=target_match, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE) },.parallel=parallel,.progress=progress))  
     }
     
     #Save computed scores to cache 
@@ -397,7 +395,14 @@ cadra_search <- function(
     
   }
   
-  if(return_perm_pval){ return(list(top_N=top_N, search_start=search_start, perm_best_scores=perm_best_scores, perm_pval=perm_pval, obs_best_score=obs_best_score)) }
+  return(
+    list(
+      key=key,
+      perm_best_scores=perm_best_scores, 
+      perm_pval=perm_pval, 
+      obs_best_score=obs_best_score
+    )
+  ) 
   
 }
 

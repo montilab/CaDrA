@@ -97,7 +97,7 @@ wilcox_genescore_mat <- function
   
   # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2)
-    warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+    verbose("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
   # If no alternative is specified, we use "less" as default.
   if(length(alternative) == 0 || nchar(alternative) == 0){

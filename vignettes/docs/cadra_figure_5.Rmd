@@ -1,0 +1,94 @@
+---
+title: "Reproduce CaDrA Figure"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproduce CaDrA Figure}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, messages=FALSE, warnings=FALSE}
+knitr::opts_chunk$set(message=FALSE, comment="#>", fig.width=8, fig.height=8, fig.align="center")
+library(Biobase)
+devtools::load_all(".")
+```
+
+## CaDrA Query of BRCA YAP/TAZ Activity
+
+Here, we reproduce the results of Figure 5 of [[Kartha et al., 2019]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full) (the section titled "_CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer_").
+
+# Load packages
+
+```r
+library(CaDrA)
+library(Biobase)
+```
+
+## Load & Format Data Inputs
+
+```{r load.data}
+
+## Read in BRCA GISTIC+Mutation ESet object
+data(BRCA_GISTIC_MUT_SIG)
+eset_mut_scna <- BRCA_GISTIC_MUT_SIG
+
+## Read in input score
+data(TAZYAP_BRCA_ACTIVITY)
+input_scores <- TAZYAP_BRCA_ACTIVITY
+
+## Samples to keep based on the overlap between the two inputs
+overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+eset_mut_scna <- eset_mut_scna[,overlap]
+input_scores <- input_scores[overlap]
+
+## Binarize ES to only have 0's and 1's
+exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+
+## Pre-filter ESet based on occurrence frequency
+eset_mut_scna_flt <- CaDrA::prefilter_data(
+  ES = eset_mut_scna,
+  max.cutoff = 0.6, # max frequency (60%)
+  min.cutoff = 0.03 # min frequency (3%)
+) 
+
+```
+
+## Run CaDrA
+
+```{r cadra}
+
+topn_res <- CaDrA::topn_eval(
+  ES = eset_mut_scna_flt,
+  input_score = input_scores,
+  method = "ks",               # use Kolmogorow-Smirnow Scoring function 
+  metric = "pval",             # use the KS p-value to score features
+  top_N = 7,                   # Evaluate top 7 starting points for the search
+  do_plot = FALSE,             # We will plot it AFTER finding the best hits
+  best_score_only = FALSE      # best_score_only = FALSE will return ESet, its corresponding
+                               # best score, and input_score for over 7 feature searches
+)
+
+```
+
+## Visualize Best Results
+
+```{r visualize.best}
+
+## Fetch the ESet and feature set corresponding to best score over the top_N searches
+topn_best_meta <- CaDrA::topn_best(topn_res)
+
+# Visualize best results using the function meta_plot
+CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
+
+```
+
+## Summarize top_N Results
+
+```{r summarize}
+
+# Evaluate results across top_N seed features you started from
+CaDrA::topn_plot(topn_res) 
+
+```
+
+

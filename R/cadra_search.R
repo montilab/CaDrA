@@ -159,7 +159,7 @@ cadra_search <- function(
     stop("Please specify metric parameter as either 'stat' or 'pval' to use for candidate_search().\n")  
   
   # Select the appropriate method to compute scores based on skewdness of a given binary matrix
-  mat <- as.numeric(exprs(ES))
+  mat <- exprs(ES)
   
   # Compute the row-wise scoring
   s <- switch(

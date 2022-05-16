@@ -6,7 +6,7 @@ articles:
   installation: docs/installation.html
   permutation_based_testing: docs/permutation_based_testing.html
   scoring_functions: docs/scoring_functions.html
-last_built: 2022-05-02T17:13Z
+last_built: 2022-05-16T16:37Z
 urls:
   reference: https://github.com/montilab/CaDrA/reference
   article: https://github.com/montilab/CaDrA/articles

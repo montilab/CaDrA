@@ -76,7 +76,7 @@ topn_plot <- function(topn_list){
     
   } else{
     
-    warning("Cannot plot overlap matrix for N=1. Please use a larger N value for top N evaluation visualization..\n\n")
+    verbose("Cannot plot overlap matrix for N=1. Please use a larger N value for top N evaluation visualization..\n\n")
     
   }
   

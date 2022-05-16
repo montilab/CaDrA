@@ -127,27 +127,48 @@
 <li>A vector of continuous scores (or <code>input_score</code>) represents a functional response of interest (such as protein expression, pathway activity, etc.)</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load pre-simulated dataset</span>
-<span class="co"># See ?sim.ES for more information</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>
-<span class="va">ES</span> <span class="op">=</span> <span class="va">sim.ES</span>
+<code class="sourceCode R"><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span>
+<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span>
 
-<span class="co"># Generate a vector of sample-specific scores representing a target profile of interest</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>                             <span class="co"># set seed</span>
-<span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span>     <span class="co"># generate random scores</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>     <span class="co"># label input_score with names similar to colnames of sim.ES</span></code></pre></div>
+<span class="co">## Read in input score</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span>
+<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span>
+
+<span class="co">## Samples to keep based on the overlap between the two inputs</span>
+<span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_scores</span><span class="op">)</span>, <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html" class="external-link">sampleNames</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">)</span>
+<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">eset_mut_scna</span><span class="op">[</span>,<span class="va">overlap</span><span class="op">]</span>
+<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">input_scores</span><span class="op">[</span><span class="va">overlap</span><span class="op">]</span>
+
+<span class="co">## Binarize ES to only have 0's and 1's</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>
+
+<span class="co">## Pre-filter ESet based on occurrence frequency</span>
+<span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span>
+  ES <span class="op">=</span> <span class="va">eset_mut_scna</span>,
+  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, <span class="co"># max frequency (60%)</span>
+  min.cutoff <span class="op">=</span> <span class="fl">0.03</span> <span class="co"># min frequency (3%)</span>
+<span class="op">)</span> </code></pre></div>
+<pre><code>Pre-filtering features ..
+
+Removing features having &lt;  3 and &gt;  60  % occurence in sample set..
+133  features retained out of  16873  supplied features in dataset</code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Define required variables</span>
+<span class="va">ES</span> <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>
+<span class="va">input_score</span> <span class="op">=</span> <span class="va">input_scores</span></code></pre></div>
 <div class="section level3">
 <h3 id="kolmogorov-smirnov-scoring-method">1. Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
 </h3>
 <p>See <code><a href="../../reference/ks_genescore_mat.html">?ks_genescore_mat</a></code> for more details</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ks_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
   ES <span class="op">=</span> <span class="va">ES</span>,
   input_score <span class="op">=</span> <span class="va">input_score</span>,
   method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># Use Kolmogorow-Smirnow Scoring function </span>
   weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, it will be used to perform a weighted-KS test</span>
   alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span>
-  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span>
+  metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use p-value to score features</span>
   top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span>
   max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span>
   do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span>
@@ -166,13 +187,13 @@
 <h3 id="wilcoxon-rank-sum-scoring-method">2. Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
 </h3>
 <p>See <code><a href="../../reference/wilcox_genescore_mat.html">?wilcox_genescore_mat</a></code> for more details</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wilcox_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
   ES <span class="op">=</span> <span class="va">ES</span>,
   input_score <span class="op">=</span> <span class="va">input_score</span>,
   method <span class="op">=</span> <span class="st">"wilcox"</span>,           <span class="co"># Use Wilcoxon Rank-Sum scoring function</span>
   alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span>
-  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span>
+  metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use p-value to score features</span>
   top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span>
   max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span>
   do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span>
@@ -191,12 +212,11 @@
 <h3 id="conditional-mutual-information-scoring-method">3. Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
 </h3>
 <p>See <code><a href="../../reference/revealer_genescore_mat.html">?revealer_genescore_mat</a></code> for more details</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
   ES <span class="op">=</span> <span class="va">ES</span>,
   input_score <span class="op">=</span> <span class="va">input_score</span>,
   method <span class="op">=</span> <span class="st">"revealer"</span>,         <span class="co"># Use REVEALER's CMI scoring function</span>
-  target_match <span class="op">=</span> <span class="st">"positive"</span>,   <span class="co"># A direction of target matching. "positive" for higher values</span>
   metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use score statistics to score features</span>
   top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span>
   max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span>
@@ -216,7 +236,7 @@
 <h3 id="custom-defined-scoring-method">4. Custom-Defined scoring method<a class="anchor" aria-label="anchor" href="#custom-defined-scoring-method"></a>
 </h3>
 <p>See <code><a href="../../reference/custom_genescore_mat.html">?custom_genescore_mat</a></code> for more details</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># A customized function using ks-test function</span>
 <span class="va">customized_genescore_mat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mat</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">)</span><span class="op">{</span>
   <span class="va">result</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op"><a href="../../reference/pipe.html">%&gt;%</a></span> 
@@ -235,7 +255,7 @@
   input_score <span class="op">=</span> <span class="va">input_score</span>,
   custom_function <span class="op">=</span> <span class="va">customized_genescore_mat</span>,       <span class="co"># Use customized function</span>
   custom_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>alternative <span class="op">=</span> <span class="st">"less"</span><span class="op">)</span>,   <span class="co"># Additional parameters to pass to custom_function (i.e. other than ES and input_score)</span>
-  metric <span class="op">=</span> <span class="st">"pval"</span>,                                  <span class="co"># Use pval to score features</span>
+  metric <span class="op">=</span> <span class="st">"stat"</span>,                                  <span class="co"># Use pval to score features</span>
   top_N <span class="op">=</span> <span class="fl">7</span>,                                        <span class="co"># Evaluate top 7 starting points for the search</span>
   max_size <span class="op">=</span> <span class="fl">10</span>,                                    <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span>
   do_plot <span class="op">=</span> <span class="cn">FALSE</span>,                                  <span class="co"># We will plot it AFTER finding the best hits</span>

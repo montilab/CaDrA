@@ -63,7 +63,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Random permutation matrix generator</h1>
-    <small class="dont-index">Source: <a href="https://github.com/montilab/CaDrA/blob/HEAD/R/cadra_search.R"><code>R/cadra_search.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/montilab/CaDrA/blob/HEAD/R/cadra.R"><code>R/cadra.R</code></a></small>
     <div class="hidden name"><code>generate_permutations.Rd</code></div>
     </div>
 
@@ -72,7 +72,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">generate_permutations</span><span class="op">(</span><span class="va">ord</span>, <span class="va">n_perms</span>, seed <span class="op">=</span> <span class="fl">123</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">generate_permutations</span><span class="op">(</span><span class="va">ord</span>, <span class="va">n_perms</span>, seed <span class="op">=</span> <span class="fl">123</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -83,6 +83,8 @@
 <dd><p>number of permutations to generate. This determines the number of rows in the permutation matrix</p></dd>
 <dt>seed</dt>
 <dd><p>seed which can be set for reproducibility of 'random' results. Default is 123</p></dd>
+<dt>verbose</dt>
+<dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

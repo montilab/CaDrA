@@ -81,7 +81,6 @@
   alternative <span class="op">=</span> <span class="st">"less"</span>,
   metric <span class="op">=</span> <span class="st">"pval"</span>,
   weights <span class="op">=</span> <span class="cn">NULL</span>,
-  target_match <span class="op">=</span> <span class="st">"positive"</span>,
   top_N <span class="op">=</span> <span class="fl">1</span>,
   search_method <span class="op">=</span> <span class="st">"both"</span>,
   max_size <span class="op">=</span> <span class="fl">7</span>,
@@ -109,8 +108,6 @@
 <dd><p>a character string specifies a metric to use for candidate search criteria. <code>"pval"</code> or <code>"stat"</code> may be used, corresponding to the score p-value or statistic. Default is <code>pval</code>.</p></dd>
 <dt>weights</dt>
 <dd><p>a vector of weights use to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
-<dt>target_match</dt>
-<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>) from REVEALER. Use <code>"positive"</code> to match the higher values of the target, <code>"negative"</code> to match the lower values. Default is <code>positive</code>.</p></dd>
 <dt>top_N</dt>
 <dd><p>an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is <code>1</code>.</p></dd>
 <dt>search_method</dt>

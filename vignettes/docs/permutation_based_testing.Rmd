@@ -58,8 +58,11 @@ ks_candidate <- CaDrA::candidate_search(
                                # best score, and input_score
 )
 
+# Extract the best meta-features result
+topn_best_meta <- topn_best(topn_list=ks_candidate)
+
 # Visualize best meta-features result
-meta_plot(topn_best_list = ks_candidate)
+meta_plot(topn_best_list = topn_best_meta)
 
 ```
 
@@ -67,7 +70,7 @@ meta_plot(topn_best_list = ks_candidate)
 
 ```{r ks.permutation}
 
-ks_perm_res <- CaDrA::cadra_search(
+ks_perm_res <- CaDrA::CaDrA(
   ES = sim.ES, 
   input_score = input_score, 
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
@@ -82,7 +85,7 @@ ks_perm_res <- CaDrA::cadra_search(
   ncores = 8                   # number of cores to perform parallelization for permutation testing
 )
 
-# Visualize permutation result
+# Visualize permutation results
 permutation_plot(ks_perm_res)
 
 ```

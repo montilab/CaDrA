@@ -20,7 +20,7 @@
 #' meta_plot(topn_best_list=topn_best_meta)
 #' 
 #' @export
-#' @import ggplot2 reshape2
+#' @import Biobase ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw
 meta_plot <- function(topn_best_list, input_score_label=NULL){
   

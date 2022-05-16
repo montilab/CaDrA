@@ -54,8 +54,11 @@ RUN R -e "install.packages('future', dependencies=TRUE, repos='http://cran.rstud
 RUN R -e "install.packages('cachem', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('ipc', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-# Install K2taxonomer and its dependencies
+# Install CaDrA and its dependencies
 RUN R -e "devtools::install_github('montilab/CaDrA', dependencies=TRUE)"
+
+# Install kableExtra and its dependencies
+RUN R -e "devtools::install_github('haozhu233/kableExtra', dependencies=TRUE)"
 
 # Install packages for xposome-api
 RUN R -e "install.packages('unix', dependencies=TRUE, repos='http://cran.rstudio.com/')"

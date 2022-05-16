@@ -5,16 +5,16 @@
 \alias{perm.res}
 \title{Permutation Results}
 \format{
-A list of objects returned from \code{cadra_search()}
+A list of objects returned from \code{CaDrA()}
 containing top_N value, search_start value, permutation best scores across n_perm, permutation p-value and observed best score. 
 The resulting list can be used to visualize the NULL permutation distribution by passing it to \code{\link[CaDrA]{permutation_plot}}
-See \code{\link[CaDrA]{cadra_search}} and \code{\link[CaDrA]{permutation_plot}} more details.
+See \code{\link[CaDrA]{CaDrA}} and \code{\link[CaDrA]{permutation_plot}} more details.
 }
 \usage{
 data(perm.res)
 }
 \description{
-A list of objects returned from \code{cadra_search()} when it runs
+A list of objects returned from \code{CaDrA()} when it runs
 on simulated dataset (\code{ES = sim.ES}) with \code{input_score = ncol(sim.ES):1} and \code{method = "ks"}.
 }
 \examples{

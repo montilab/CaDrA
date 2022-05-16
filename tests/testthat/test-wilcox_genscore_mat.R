@@ -1,6 +1,5 @@
 test_that("wilcox_genescore_mat generates results consistent with wilcox() function output ", {
   
-  
   x <- c(15, 20, 39, 42, 44)
   y <- (1:100)[-x]
   res.wilcox<- wilcox_genescore(x=x, y=y, alternative="less")

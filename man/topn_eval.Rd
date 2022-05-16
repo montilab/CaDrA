@@ -13,7 +13,6 @@ topn_eval(
   alternative = "less",
   metric = "pval",
   weights = NULL,
-  target_match = "positive",
   top_N = 1,
   search_method = "both",
   max_size = 7,
@@ -38,8 +37,6 @@ topn_eval(
 \item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
 
 \item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
-
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
 
 \item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.}
 

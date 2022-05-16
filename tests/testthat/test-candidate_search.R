@@ -3,7 +3,6 @@ test_that("cadra_search receives correct input arguments ", {
   # Pass a numeric vector to the cadra_search and expect that it returns an error
   expect_error(cadra_search(1:10))
 
-  
 })
 
 
@@ -34,7 +33,6 @@ test_that("cadra_search returns expected result ",{
   testthat::expect_length(ks, 3)
   testthat::expect_snapshot(ks)
   
-  
   # Run candidate_search with wilcox method
   wilcox <- candidate_search(
     ES = sim.ES, input_score = input_score, method = "wilcox",
@@ -47,5 +45,6 @@ test_that("cadra_search returns expected result ",{
   testthat::expect_length(wilcox, 3)
   testthat::expect_snapshot(wilcox)
   
-  
 })
+
+

@@ -109,7 +109,7 @@ ks_gene_score_mat <- function
     warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
   } 
   
-  # Compute the ks statitic and p-value per row in the matrix
+  # Compute the ks statistic and p-value per row in the matrix
   ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
   
   # ks <- apply(X = mat, 1, FUN = function(x, alt=alternative, w=weights){

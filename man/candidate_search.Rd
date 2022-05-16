@@ -13,11 +13,12 @@ candidate_search(
   alternative = "less",
   metric = "stat",
   weights = NULL,
-  target_match = "positive",
   search_start = NULL,
+  top_N = 1,
   search_method = "both",
   max_size = 7,
   best_score_only = FALSE,
+  do_plot = TRUE,
   verbose = FALSE
 )
 }
@@ -38,9 +39,9 @@ candidate_search(
 
 \item{weights}{if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}) apply for REVEALER method only. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
-
 \item{search_start}{an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)}
+
+\item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.}
 
 \item{search_method}{a character string specifies an algorithm to filter out the best features (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e. backward and forward).}
 
@@ -48,10 +49,12 @@ candidate_search(
 
 \item{best_score_only}{a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.}
 
+\item{do_plot}{a logical value indicates whether or not to plot the resulting evaluation matrix. Default is \code{TRUE}.}
+
 \item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, this function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned.
+If \code{best_score_only} is set to \code{TRUE}, the function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned.
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
@@ -67,7 +70,8 @@ data(sim.ES)
 # set seed
 set.seed(123)
 
-# Provide a vector of continuous scores for a target profile with names to each score value 
+# Provide a vector of continuous scores for a target profile 
+# The scores must have labels or names that match the colnames of expression matrix
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
@@ -75,7 +79,7 @@ names(input_score) <- colnames(sim.ES)
 candidate_search_result <- candidate_search(
   ES = sim.ES, input_score = input_score, method = "ks", 
   alternative = "less", weights = NULL, metric = "pval", 
-  search_start = NULL, search_method = "both", 
+  search_start = NULL, top_N = 1, search_method = "both", 
   max_size = 7, best_score_only = FALSE
 )
 

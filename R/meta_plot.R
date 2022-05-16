@@ -27,9 +27,11 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Get ESet and input_score for top N best features
   ESet =  topn_best_list[["ESet"]]                    
   var_score = topn_best_list[["input_score"]]
-  
+
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
   if(length(var_score) > 0){
+    
+    var_score = var_score[match(colnames(ESet), names(var_score))]
     
     # Get the input score label
     var_name = ifelse(is.null(input_score_label), "input_score", input_score_label)
@@ -64,13 +66,12 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     
   }
   
-  # Start working with the feature set for plots
-  # We are going to fetch the logical OR summary for the set of feature
-  # Along with the corresponding ES running score statistic for the OR summary
-  if(length(var_score) > 0){
-    mat <- exprs(ESet)[,names(var_score)]
-  }else{
-    mat <- exprs(ESet)
+  ## Make sure mat variable is a matrix
+  mat <- as.matrix(exprs(ESet))
+  
+  # for cases when matrix only has one row
+  if(ncol(mat) == 1){
+    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list(rownames(ESet), rownames(mat))) 
   }
   
   # Add on the OR function of all the returned entries

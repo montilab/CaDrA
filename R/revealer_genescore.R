@@ -84,14 +84,6 @@ revealer_genescore <- function
   z <- z[ind]
   
   # Compute CMI and % explained with or without the provided z
-  median_target <- median(x)
-  
-  if (target_match == "negative") {
-    target_locs <- seq(1, length(x))[x <= median_target]
-  } else {
-    target_locs <- seq(1, length(x))[x > median_target]
-  }
-  
   cmi <- suppressWarnings(cond_assoc(x=x, y=y, z=z, metric=assoc_metric))
 
   # Only return score value for revealer
@@ -193,9 +185,8 @@ mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
   
   # Kernel-based prob. density
   
-  #kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
-  kde2d.xy <- kde2d_wrap( x = x, y = y, h = delta, n= n.grid, lims = c(range(x), range(y)))
-  
+  kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
+
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]
   dy <- kde2d.xy$y[2] - kde2d.xy$y[1]

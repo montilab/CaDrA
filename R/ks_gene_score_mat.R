@@ -94,7 +94,7 @@ ks_gene_score_mat <- function
   
   # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2)
-    warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+    verbose("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
   # If no alternative is specified, we use "less" as default.
   if(length(alternative) == 0 || nchar(alternative) == 0){
@@ -109,7 +109,7 @@ ks_gene_score_mat <- function
     warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
   } 
   
-  # Compute the ks statitic and p-value per row in the matrix
+  # Compute the ks statistic and p-value per row in the matrix
   ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
   
   # ks <- apply(X = mat, 1, FUN = function(x, alt=alternative, w=weights){

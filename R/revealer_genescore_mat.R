@@ -3,10 +3,10 @@
 #' 
 #' Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
 #' @param mat a matrix of binary features (required)
-#' @param input_score a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix. 
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
-#' @param seed_names one or more features(s) that associated with the activation of a given targeted profile
-#' @param assoc_metric an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.
+#' @param input_score a vector of continuous scores of a response of interest (required). \code{input_score} must have labels or names that associated with the colnames of the feature matrix. 
+#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match higher values of \code{input_score}, \code{"negative"} to match lower values of \code{input_score}. Default is \code{positive}. 
+#' @param seed_names one or more features that are associated with the activation of a response of interest (i.e. \code{input_score})
+#' @param assoc_metric an association metric: \code{"IC"} for information coefficient or \code{"COR"} for correlation. Default is \code{IC}.
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
 #' @return a data frame with one column: \code{score}
@@ -100,8 +100,6 @@ revealer_genescore_mat <- function
     if(any(!seed_names %in% rownames(mat))){
       stop(paste0("The provided seed_names, ", paste0(seed_names, collapse = ","), ", does not exist among the rownames of expression matrix.\n"))
     } 
-  }else{
-    seed_names <- "NULLSEED"   
   }
   
   # If target_match variable is not specified, use "positive" as default.
@@ -138,20 +136,20 @@ revealer_genescore_mat <- function
   
   # Make sure matrix is not empty after removing uninformative features
   if(nrow(mat) == 0){
-    stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
+    stop("After removing features that are either all 0s or 1s. There are no more features remained for downsteam computation.\n")
   }
   
   # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2){
-    warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+    verbose("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   }
   
   # Define seed from given seed_names
-  if (seed_names == "NULLSEED") {
+  if(length(seed_names) == 0){
     seed <- as.vector(rep(0, ncol(mat)))      
   } else {
     if (length(seed_names) > 1) {
-      seed <- apply(mat[seed_names,], MARGIN=2, FUN=max)
+      seed <- as.numeric(ifelse(colSums(mat[seed_names,]) == 0, 0, 1))
     } else {
       seed <- mat[seed_names,]
     }

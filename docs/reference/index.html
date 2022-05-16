@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -32,16 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/installation.html">Installation</a>
+      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/basic.html">Basic Usage</a>
+      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/visualize.html">Visualize Results</a>
-    </li>
-    <li>
-      <a href="../articles/docs/data.html">Data Objects</a>
+      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -73,7 +70,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="cadra_search.html">cadra_search()</a></code> </p>
+          <p><code><a href="CaDrA.html">CaDrA()</a></code> </p>
         </td>
         <td><p>CaDrA Search</p></td>
       </tr><tr><td>
@@ -87,7 +84,7 @@
       </tr><tr><td>
           <p><code><a href="topn_best.html">topn_best()</a></code> </p>
         </td>
-        <td><p>Top 'N' best</p></td>
+        <td><p>Top 'N' best meta-features</p></td>
       </tr><tr><td>
           <p><code><a href="ks_gene_score_mat.html">ks_gene_score_mat()</a></code> </p>
         </td>
@@ -124,22 +121,6 @@
           <p><code><a href="prefilter_data.html">prefilter_data()</a></code> </p>
         </td>
         <td><p>Pre-filter features</p></td>
-      </tr><tr><td>
-          <p><code><a href="kde2d_wrap.html">kde2d_wrap()</a></code> </p>
-        </td>
-        <td><p>kde2d_wrap_ wrapper</p></td>
-      </tr><tr><td>
-          <p><code><a href="ks_genescore_mat.html">ks_genescore_mat()</a></code> </p>
-        </td>
-        <td><p>Compute KS scores for each row of a given matrix</p></td>
-      </tr><tr><td>
-          <p><code><a href="ks_genescore_wrap.html">ks_genescore_wrap()</a></code> </p>
-        </td>
-        <td><p>ks.genescore wrapper</p></td>
-      </tr><tr><td>
-          <p><code><a href="ks_test_double_wrap.html">ks_test_double_wrap()</a></code> </p>
-        </td>
-        <td><p>ks_test_d_wrap_ wrapper</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="plot-methods">Plot Methods <a href="#plot-methods" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -147,7 +128,7 @@
       </tr></tbody><tbody><tr><td>
           <p><code><a href="meta_plot.html">meta_plot()</a></code> </p>
         </td>
-        <td><p>Candidate heuristic search plot</p></td>
+        <td><p>Candidate Drivers Search Plot</p></td>
       </tr><tr><td>
           <p><code><a href="topn_plot.html">topn_plot()</a></code> </p>
         </td>
@@ -156,14 +137,6 @@
           <p><code><a href="permutation_plot.html">permutation_plot()</a></code> </p>
         </td>
         <td><p>Permutation Best Scores Plot</p></td>
-      </tr><tr><td>
-          <p><code><a href="plot_ESet.html">plot_ESet()</a></code> </p>
-        </td>
-        <td><p>Enrichment Score (ES) plot</p></td>
-      </tr><tr><td>
-          <p><code><a href="ks_plot_wrap.html">ks_plot_wrap()</a></code> </p>
-        </td>
-        <td><p>ks_plot wrapper</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data-objects">Data Objects <a href="#data-objects" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -171,11 +144,11 @@
       </tr></tbody><tbody><tr><td>
           <p><code><a href="sim.ES.html">sim.ES</a></code> </p>
         </td>
-        <td><p>Simulated binary genomic data</p></td>
+        <td><p>Simulated Genomic Data</p></td>
       </tr><tr><td>
           <p><code><a href="topn.list.html">topn.list</a></code> </p>
         </td>
-        <td><p>Top-N result list for simulated binary genomic data</p></td>
+        <td><p>Top-N Results for Simulated Data (<code>sim.ES</code>)</p></td>
       </tr><tr><td>
           <p><code><a href="perm.res.html">perm.res</a></code> </p>
         </td>
@@ -183,11 +156,19 @@
       </tr><tr><td>
           <p><code><a href="CCLE_MUT_SCNA.html">CCLE_MUT_SCNA</a></code> </p>
         </td>
-        <td><p>Binary Genomic Data</p></td>
+        <td><p>Genomic Data from CCLE SCNA</p></td>
       </tr><tr><td>
           <p><code><a href="CTNBB1_reporter.html">CTNBB1_reporter</a></code> </p>
         </td>
-        <td><p>A Continuous Measures of a Targeted Profile</p></td>
+        <td><p>Transcriptional Activity of Beta-Catenin in Cancer</p></td>
+      </tr><tr><td>
+          <p><code><a href="BRCA_GISTIC_MUT_SIG.html">BRCA_GISTIC_MUT_SIG</a></code> </p>
+        </td>
+        <td><p>Genomic Data from TCGA BRCA</p></td>
+      </tr><tr><td>
+          <p><code><a href="TAZYAP_BRCA_ACTIVITY.html">TAZYAP_BRCA_ACTIVITY</a></code> </p>
+        </td>
+        <td><p>YAP/TAZ Activity in Cancer</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

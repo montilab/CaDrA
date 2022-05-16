@@ -10,7 +10,6 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.
 #' @param weights a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}) from REVEALER. Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
 #' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.
 #' @param search_method a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
@@ -38,8 +37,8 @@
 #' # Define additional parameters and run the function
 #' topn_eval <- topn_eval(
 #'   ES = sim.ES, input_score = input_score, method = "ks",
-#'   alternative = "less", metric = "pval", top_N = 3, search_method = "both", 
-#'   max_size = 7, best_score_only = FALSE
+#'   alternative = "less", metric = "pval", top_N = 3, 
+#'   search_method = "both", max_size = 7, best_score_only = FALSE
 #' )
 #' 
 #' @export
@@ -53,17 +52,16 @@ topn_eval <- function(
   alternative = "less", 
   metric = "pval", 
   weights = NULL,
-  target_match = "positive",
   top_N = 1,
   search_method = "both", 
   max_size = 7,
-  best_score_only = TRUE,
+  best_score_only = FALSE,
   do_plot = TRUE,
   verbose = FALSE
 ){
   
   # Set up verbose option
-  options(verbose = FALSE)
+  options(verbose = verbose)
   
   if(top_N > nrow(ES))
     stop("Please specify an top_N value that is less than the number of features in the ES.\n")
@@ -73,52 +71,26 @@ topn_eval <- function(
   
   verbose("Evaluating search over top features: ", 1:top_N, "\n\n")
   
-  # Performs candidate search over top top_N indices
-  topn_l <- sapply(1:top_N, function(x){ 
-    
-    candidate_search(
-      ES = ES, 
-      input_score = input_score, 
-      method = method, 
-      custom_function = custom_function,
-      custom_parameters = custom_parameters,
-      alternative = alternative, 
-      metric = metric, 
-      weights = weights,
-      target_match = target_match,
-      search_start = x,
-      search_method = search_method, 
-      max_size = max_size,
-      best_score_only = FALSE
-    ) 
-    
-  }, simplify = FALSE) 
+  # Performs candidate search over top N indices
+  topn_l <- candidate_search(
+    ES = ES, 
+    input_score = input_score, 
+    method = method, 
+    custom_function = custom_function,
+    custom_parameters = custom_parameters,
+    alternative = alternative, 
+    metric = metric, 
+    weights = weights,
+    top_N = top_N,
+    search_start = NULL,
+    search_method = search_method, 
+    max_size = max_size,
+    do_plot = do_plot,
+    best_score_only = best_score_only,
+    verbose = verbose
+  ) 
   
-  # do_plot
-  if(do_plot){
-    
-    topn_plot(topn_list = topn_l)  
-    
-  }
-  
-  # best_score_only
-  if(best_score_only == TRUE){
-    
-    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]][['Score']] })
-    
-    # Working with scores for each top N run
-    s <- unlist(scores_l)
-    
-    #Fetch the best score from the iterations
-    # This ASSUMES you're using metric = "pval"
-    # NEEDS UPDATING TO ACCOMODATE STATISTIC 
-    best_score <- s[order(s)][1] #Based on the p-values, the lowest value will be the most significant 
-    
-    return(best_score)
-    
-  }
-  
-  return(topn_l) #Default is to return the top N stepwise search results as a list of lists
+  return(topn_l)
   
 }
 

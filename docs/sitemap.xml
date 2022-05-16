@@ -10,13 +10,25 @@
     <loc>https://github.com/montilab/CaDrA/articles/docs/basic.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/articles/docs/cadra_figure_5.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/articles/docs/data.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/articles/docs/installation.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/articles/docs/permutation_based_testing.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/articles/docs/scoring_functions.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/articles/docs/visualize.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/articles/docs/yaptaz_example.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/articles/index.html</loc>
@@ -34,6 +46,9 @@
     <loc>https://github.com/montilab/CaDrA/news/news-1.4.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/reference/BRCA_GISTIC_MUT_SIG.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_CNA_AMP_DEL_REVEALER.html</loc>
   </url>
   <url>
@@ -47,6 +62,12 @@
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/CaDrA-package.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CaDrA.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/TAZYAP_BRCA_ACTIVITY.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/cadra_search.html</loc>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -32,16 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/installation.html">Installation</a>
+      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/basic.html">Basic Usage</a>
+      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/visualize.html">Visualize Results</a>
-    </li>
-    <li>
-      <a href="../articles/docs/data.html">Data Objects</a>
+      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -90,13 +87,13 @@
     <dl><dt>mat</dt>
 <dd><p>a matrix of binary features (required)</p></dd>
 <dt>input_score</dt>
-<dd><p>a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix.</p></dd>
+<dd><p>a vector of continuous scores of a response of interest (required). <code>input_score</code> must have labels or names that associated with the colnames of the feature matrix.</p></dd>
 <dt>target_match</dt>
-<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>). Use <code>"positive"</code> to match the higher values of the target, <code>"negative"</code> to match the lower values. Default is <code>positive</code>.</p></dd>
+<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>). Use <code>"positive"</code> to match higher values of <code>input_score</code>, <code>"negative"</code> to match lower values of <code>input_score</code>. Default is <code>positive</code>.</p></dd>
 <dt>seed_names</dt>
-<dd><p>one or more features(s) that associated with the activation of a given targeted profile</p></dd>
+<dd><p>one or more features that are associated with the activation of a response of interest (i.e. <code>input_score</code>)</p></dd>
 <dt>assoc_metric</dt>
-<dd><p>an association metric: <code>"IC"</code> information coefficient or <code>"COR"</code> correlation. Default is <code>IC</code>.</p></dd>
+<dd><p>an association metric: <code>"IC"</code> for information coefficient or <code>"COR"</code> for correlation. Default is <code>IC</code>.</p></dd>
 <dt>verbose</dt>
 <dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 </dl></div>

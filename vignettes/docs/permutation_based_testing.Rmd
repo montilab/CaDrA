@@ -1,0 +1,94 @@
+---
+title: "Permutation-Based Testing"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Permutation-Based Testing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, messages=FALSE, warnings=FALSE}
+knitr::opts_chunk$set(comment="", cache=FALSE, fig.width=8, fig.height=8, fig.align="center")
+library(Biobase)
+devtools::load_all(".")
+```
+
+**CaDrA** employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, **custom-defined** scoring function). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, **CaDrA** can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.
+
+# Load packages
+
+```r
+library(CaDrA)
+library(Biobase)
+```
+
+# Load required datasets
+
+1. A `binary features matrix` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The `binary features matrix` must be an object of class **ExpressionSet** from **Biobase** package) 
+2. A vector of continuous scores (or `input_score`) represents a functional response of interest (such as protein expression, pathway activity, etc.)
+
+```{r load.data}
+
+# Load pre-simulated dataset 
+# See ?sim.ES for more information
+data(sim.ES)
+
+# Generate a vector of sample-specific scores representing a functional response of interest
+set.seed(123)                             # set seed
+input_score = rnorm(n = ncol(sim.ES))     # generate random scores
+names(input_score) = colnames(sim.ES)     # label input_score with names similar to colnames of sim.ES
+
+```
+
+# Find a subset of features that maximally associated with a given outcome of interest
+
+Here we are using **Kolmogorow-Smirnow** scoring method to search for best features
+
+```{r ks.method}
+
+ks_candidate <- CaDrA::candidate_search(
+  ES = sim.ES,
+  input_score = input_score,
+  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  alternative = "less",        # one-sided p-value
+  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
+  metric = "pval",             # Use p-value to score features
+  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  best_score_only = FALSE      # If best_score_only = FALSE, it will return ESet, its corresponding
+                               # best score, and input_score
+)
+
+# Extract the best meta-features result
+topn_best_meta <- topn_best(topn_list=ks_candidate)
+
+# Visualize best meta-features result
+meta_plot(topn_best_list = topn_best_meta)
+
+```
+
+# Permutation-Based Testing
+
+```{r ks.permutation}
+
+ks_perm_res <- CaDrA::CaDrA(
+  ES = sim.ES, 
+  input_score = input_score, 
+  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  alternative = "less",        # one-sided p-value
+  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
+  metric = "pval",             # Use p-value to score features
+  search_method = "both",      # forward/backward search
+  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  n_perm = 1000,               # number of permutations
+  seed = 123,                  # random generated seed
+  plot = FALSE,                # we will plot later
+  ncores = 8                   # number of cores to perform parallelization for permutation testing
+)
+
+# Visualize permutation results
+permutation_plot(ks_perm_res)
+
+```
+
+
+

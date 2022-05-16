@@ -15,7 +15,7 @@ custom_genescore_mat(
 \arguments{
 \item{mat}{a matrix of binary features (required). \code{NOTE:} The provided \code{mat} along with \code{input_score} and \code{custom_parameters} will be passed as arguments to custom_function() which is later used to compute row-wise scoring for each row of a given binary feature.}
 
-\item{input_score}{a vector of continuous values for a targeted profile (required). \code{input_score} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{input_score} will be passed as one of the arguments to custom_function().}
+\item{input_score}{a vector of continuous values for a response of interest (required). \code{input_score} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{input_score} will be passed as one of the arguments to custom_function().}
 
 \item{custom_function}{a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). \code{NOTE:} This function must return a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}.}
 
@@ -27,7 +27,7 @@ custom_genescore_mat(
 a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}
 }
 \description{
-Compute row-wise scoring for each row of a given binary feature matrix
+Compute row-wise scoring for each row of a given binary feature matrix using a custom-defined function
 }
 \examples{
 

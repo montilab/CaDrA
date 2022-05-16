@@ -317,34 +317,34 @@ static
 /* Two-sided two-sample */
 static double pSmirnov2x(double x, int m, int n)
 {
-    double md, nd, q, *u, w;
-    int i, j;
-
-    if(m > n) {
-        i = n; n = m; m = i;
+  double md, nd, q, *u, w;
+  int i, j;
+  
+  if(m > n) {
+    i = n; n = m; m = i;
+  }
+  md = (double) m;
+  nd = (double) n;
+  q = (0.5 + floor(x * md * nd - 1e-7)) / (md * nd);
+  u = (double *) R_alloc(n + 1, sizeof(double));
+  
+  for(j = 0; j <= n; j++) {
+    u[j] = ((j / nd) > q) ? 0 : 1;
+  }
+  for(i = 1; i <= m; i++) {
+    w = (double)(i) / ((double)(i + n));
+    if((i / md) > q)
+      u[0] = 0;
+    else
+      u[0] = w * u[0];
+    for(j = 1; j <= n; j++) {
+      if(fabs(i / md - j / nd) > q)
+        u[j] = 0;
+      else
+        u[j] = w * u[j] + u[j - 1];
     }
-    md = (double) m;
-    nd = (double) n;
-    q = (0.5 + floor(x * md * nd - 1e-7)) / (md * nd);
-    u = (double *) R_alloc(n + 1, sizeof(double));
-
-    for(j = 0; j <= n; j++) {
-        u[j] = ((j / nd) > q) ? 0 : 1;
-    }
-    for(i = 1; i <= m; i++) {
-        w = (double)(i) / ((double)(i + n));
-        if((i / md) > q)
-            u[0] = 0;
-        else
-            u[0] = w * u[0];
-        for(j = 1; j <= n; j++) {
-            if(fabs(i / md - j / nd) > q)
-                u[j] = 0;
-            else
-                u[j] = w * u[j] + u[j - 1];
-        }
-    }
-    return u[n];
+  }
+  return u[n];
 }
 
 
@@ -370,15 +370,15 @@ static
     int exact;
     int ties=0;
     double statistic;
-
+    
     
     w = (double*) malloc( (n_x + n_y) * sizeof(double) );
     order = (int*) malloc( (n_x + n_y) * sizeof(int) );
     z = (double*) malloc( (n_x + n_y) * sizeof(double) );
     
     exact = (n_x * n_y < 10000) ? 1:0;
-
-
+    
+    
     for (i = 0; i < n_x; i++) {
       w[i] = i + 1.0;
       order[i] = i + 1;
@@ -411,7 +411,7 @@ static
     minz =  1.0 * n_x + n_y;
     maxz = -999999.;
     maxabsz=-1;
-
+    
     for (i = 0; i < n_x + n_y -1; i++){
       if ( w[i] != w[i+1] ) {
         minz = (z[i] < minz) ? z[i] : minz;
@@ -426,8 +426,8 @@ static
     free(w);
     free(order);
     free(z);
-   
-
+    
+    
     
     /* compute statistic */             
     switch(alt){
@@ -443,29 +443,29 @@ static
     default:
       statistic = -minz;
     }
-
-
-
+    
+    
+    
     /* for exact & two-sided and no ties case use pSmirnov2x */
     if (exact == 1 && alt == 0 && ties == 0){
-       result = 1.0 - pSmirnov2x( statistic, n_x, n_y);
-       result = ( result > 1.0) ? 1.0: result;
-       result = ( result < 0.0) ? 0.0: result;
-       return(result);
+      result = 1.0 - pSmirnov2x( statistic, n_x, n_y);
+      result = ( result > 1.0) ? 1.0: result;
+      result = ( result < 0.0) ? 0.0: result;
+      return(result);
     }
     
-                
+    
     if (alt == 0){
-
+      
       result = 1.0 - cadra_pkstwo(sqrt(1.0*N) * maxabsz, 1E-06);
-
-
+      
+      
     } else {
-
+      
       result = exp(-2.0 * N * statistic* statistic);
-
+      
     }
- 
+    
     result = ( result > 1.0) ? 1.0: result;
     result = ( result < 0.0) ? 0.0: result;
     return (result);
@@ -567,10 +567,10 @@ SEXP ks_test_d_wrap_(SEXP in_n_x, SEXP in_y, SEXP alternative)
   int n_x, n_y;
   SEXP ans;
   //double rans;
-
+  
   n_x = INTEGER(in_n_x)[0];
   n_y = LENGTH(in_y);
-
+  
   if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
   y = REAL(in_y);
   
@@ -581,16 +581,16 @@ SEXP ks_test_d_wrap_(SEXP in_n_x, SEXP in_y, SEXP alternative)
   {
     alt = 1;
   }
-
+  
   PROTECT(ans = allocVector(REALSXP, 1 ));
- 
+  
   REAL(ans)[0] = ks_test_double( n_x, n_y, y, alt);
-
+  
   UNPROTECT(1);
   return (ans);
-
-
-  }
+  
+  
+}
 
 // ---------------------------------------------- //
 //                                                //
@@ -640,8 +640,8 @@ static
         Pmis[i] = 1.;
         Phit[i] = 0.;
       }
-
-
+      
+      
       for (i = 0; i < n_y; i++){
         Pmis[ y[i] -1 ] = 0.0;
         Phit[ y[i] -1 ] = (weight[ y[i] -1 ] >0) ? weight[ y[i] -1 ]: -weight[ y[i] -1 ];
@@ -649,7 +649,7 @@ static
       for (i = 1; i < n_x; i++) {
         Pmis[i] += Pmis[i-1];
         Phit[i] += Phit[i-1];
-
+        
       }
       for (i = 0; i < n_x; i++){
         
@@ -658,7 +658,7 @@ static
         }
       }
       res.score = zmax;
- 
+      
       free(Pmis);
       free(Phit);
       
@@ -741,8 +741,8 @@ static
         Pmis[i] = 1.;
         Phit[i] = 0.;
       }
-
-
+      
+      
       for (i = 0; i < n_y; i++){
         Pmis[ y[i] -1 ] = 0.0;
         Phit[ y[i] -1 ] = (weight[ y[i] -1 ] >0) ? weight[ y[i] -1 ]: -weight[ y[i] -1 ];
@@ -750,15 +750,15 @@ static
       for (i = 1; i < n_x; i++) {
         Pmis[i] += Pmis[i-1];
         Phit[i] += Phit[i-1];
-
+        
       }
       for (i = 0; i < n_x; i++){
         
         axisx[i] = i * 1.0;
         axisy[i] = Phit[i]/Phit[n_x -1] - Pmis[i]/(n_x - n_y);
-
+        
       }
- 
+      
       free(Pmis);
       free(Phit);
       
@@ -775,32 +775,32 @@ static
       for (i = 0; i < y2_N; i++) D[i] = 0;
       for (i = 0; i < n_y; i++) D[ y_match[i] ] = i + 1;
       for (i = 1; i < y2_N; i++) if (D[i] == 0) D[i] = D[i-1];
-
+      
       if ( y2[0] > 0  ){
         axisx[0] = 0;
         axisy[0] = 0;
-
+        
         for (i = 0; i < y2_N; i++) {
-	
+          
           axisx[i+1] = y2[i];
           axisy[i+1] = D[i] * hit - y2[i]*mis;
-        
+          
         }
         if (y2[y2_N -1] < n_x) {
-            axisx[y2_N+1] = n_x;
-            axisy[y2_N+1] = 0;
+          axisx[y2_N+1] = n_x;
+          axisy[y2_N+1] = 0;
         }
-
+        
       } else {
         for (i = 0; i < y2_N; i++) {
-	
+          
           axisx[i] = y2[i];
           axisy[i] = D[i] * hit - y2[i]*mis;
-        
+          
         }
         if (y2[y2_N -1] < n_x) {
-            axisx[y2_N] = n_x;
-            axisy[y2_N] = 0;
+          axisx[y2_N] = n_x;
+          axisy[y2_N] = 0;
         }
       }
       
@@ -822,26 +822,26 @@ SEXP ks_plot_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   int *y;
   double *w;
   double *ax, *ay;
- 
+  
   int alt;
   int n_x, n_y, n_w;
   SEXP ans;
   SEXP nms, rnms;
-
+  
   SEXP axisx;
   SEXP axisy;
   int i;
-
-
-
+  
+  
+  
   n_x = INTEGER(in_n_x)[0];
   n_y = LENGTH(in_y);
   n_w = LENGTH(in_w);
-
+  
   if (LENGTH(in_w)) {
-     w = REAL(in_w);
+    w = REAL(in_w);
   } else {
-     w=NULL;
+    w=NULL;
   }
   if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
   y = INTEGER(in_y);
@@ -853,49 +853,49 @@ SEXP ks_plot_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   {
     alt = 1;
   }
-
+  
   ax = (double*) malloc( n_x * sizeof(double) );
   ay = (double*) malloc( n_x * sizeof(double) );
-
+  
   for (i = 0; i < n_x; i++){
-     ax[i] = NA_REAL;
-     ay[i] = NA_REAL;
+    ax[i] = NA_REAL;
+    ay[i] = NA_REAL;
   }
-
+  
   ks_plot( n_x, n_y, y, n_w, w, alt, ax, ay);
-
-
+  
+  
   PROTECT(axisx = allocVector(REALSXP,n_x));
   PROTECT(axisy = allocVector(REALSXP,n_x));
-
+  
   for (i = 0; i < n_x; i++){
-      REAL(axisx)[i] = ax[i];
-      REAL(axisy)[i] = ay[i];
+    REAL(axisx)[i] = ax[i];
+    REAL(axisy)[i] = ay[i];
   }
-
+  
   free(ax);
   free(ay);
-
+  
   ans = PROTECT(allocVector(VECSXP, 2)),
-  nms = PROTECT(allocVector(STRSXP, 2)),
-  rnms = PROTECT(allocVector(INTSXP, 2)); 
-
+    nms = PROTECT(allocVector(STRSXP, 2)),
+    rnms = PROTECT(allocVector(INTSXP, 2)); 
+  
   SET_STRING_ELT(nms, 0, mkChar("X"));
   SET_STRING_ELT(nms, 1, mkChar("Y"));
-
+  
   SET_VECTOR_ELT(ans, 0, axisx);
   SET_VECTOR_ELT(ans, 1, axisy);
-
+  
   INTEGER(rnms)[0] = NA_INTEGER;
   INTEGER(rnms)[1] = -n_x;
-
+  
   setAttrib(ans, R_ClassSymbol, ScalarString(mkChar("data.frame")));
   setAttrib(ans, R_RowNamesSymbol, rnms);
   setAttrib(ans, R_NamesSymbol, nms);
-
+  
   UNPROTECT(5);
   return (ans);
-
+  
 }
 
 
@@ -913,18 +913,18 @@ SEXP ks_genescore_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   int n_x, n_y, n_w;
   double *rans;
   SEXP ans;
-
-
+  
+  
   n_x = INTEGER(in_n_x)[0];
   n_y = LENGTH(in_y);
   n_w = LENGTH(in_w);
-
+  
   if (LENGTH(in_w)) {
     w = REAL(in_w);
   } else {
     w=NULL;
   }
-
+  
   if ( n_y < 1 || n_x < 1 ) return(R_NilValue);
   y = INTEGER(in_y);
   
@@ -935,18 +935,18 @@ SEXP ks_genescore_wrap_(SEXP in_n_x, SEXP in_y, SEXP in_w, SEXP alternative)
   {
     alt = 1;
   }
-
+  
   PROTECT(ans = allocVector(REALSXP, 2 ));
   rans = REAL(ans);
-
+  
   ks = ks_genscore( n_x, n_y, y, n_w, w, alt);
   rans[0] = ks.score;
   rans[1] = ks.pvalue;
-
+  
   UNPROTECT(1);
   return (ans);
-
-
+  
+  
 }
 
 
@@ -1004,7 +1004,7 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
   }else{
     weight=NULL;
   }
-
+  
   
   yarray = (int*) malloc( ncol * sizeof(int) );
   PROTECT(ans = allocMatrix(REALSXP, 2, nrow ));
@@ -1028,5 +1028,3 @@ SEXP ks_genescore_mat_(SEXP mat, SEXP w, SEXP alternative)
   UNPROTECT(1);
   return (ans);
 }
-
-

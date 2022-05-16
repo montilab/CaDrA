@@ -2,11 +2,11 @@ pandoc: 2.11.4
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
-  basic: docs/basic.html
-  data: docs/data.html
+  cadra_figure_5: docs/cadra_figure_5.html
   installation: docs/installation.html
-  visualize: docs/visualize.html
-last_built: 2022-04-21T22:09Z
+  permutation_based_testing: docs/permutation_based_testing.html
+  scoring_functions: docs/scoring_functions.html
+last_built: 2022-05-16T16:37Z
 urls:
   reference: https://github.com/montilab/CaDrA/reference
   article: https://github.com/montilab/CaDrA/articles

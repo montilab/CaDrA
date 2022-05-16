@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -50,16 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/docs/installation.html">Installation</a>
+      <a href="articles/docs/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="articles/docs/basic.html">Basic Usage</a>
+      <a href="articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="articles/docs/visualize.html">Visualize Results</a>
-    </li>
-    <li>
-      <a href="articles/docs/data.html">Data Objects</a>
+      <a href="articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul>
 </li>
@@ -95,7 +92,7 @@
 <!-- badges: start -->
 
 <p>Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures</p>
-<p>CaDrA is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) and a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.), Based on this input, CaDrA implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (Kolmogorov-Smirnov, Conditional Mutual Information, Wilcoxon, custom-defined scoring function), making it useful to find complementary omics features likely driving the input molecular phenotype.</p>
+<p>CaDrA is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) and a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). Based on this input, CaDrA implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (Kolmogorov-Smirnov, Conditional Mutual Information, Wilcoxon, custom-defined scoring function), making it useful to find complementary omics features likely driving the input molecular phenotype.</p>
 <p>For more information, please see the associated manuscript <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Kartha et al. (2019)</a></p>
 <div class="section level2">
 <h2 id="1-installation">(1) Installation<a class="anchor" aria-label="anchor" href="#1-installation"></a>
@@ -103,76 +100,85 @@
 <p>You can install the development version of CaDrA from GitHub (<strong>Recommended</strong>)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"montilab/CaDrA"</span><span class="op">)</span></code></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"montilab/CaDrA"</span>, ref<span class="op">=</span><span class="st">"dev"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="2-quickstart">(2) Quickstart<a class="anchor" aria-label="anchor" href="#2-quickstart"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></code></pre></div>
-<div class="section level3">
-<h3 id="test-run-code-on-simulated-data">Test run code on simulated data<a class="anchor" aria-label="anchor" href="#test-run-code-on-simulated-data"></a>
-</h3>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="cadra-query-of-brca-yaptaz-activity">CaDrA Query of BRCA YAP/TAZ Activity<a class="anchor" aria-label="anchor" href="#cadra-query-of-brca-yaptaz-activity"></a>
+</h2>
+<p>Here, we reproduce the results of Figure 5 of <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">[Kartha et al., 2019]</a> (the section titled “<em>CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer</em>”).</p>
+</div>
+<div class="section level2">
+<h2 id="load--format-data-inputs">Load &amp; Format Data Inputs<a class="anchor" aria-label="anchor" href="#load--format-data-inputs"></a>
+</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span>
+<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span>
 
-<span class="co"># Plot the results from a top-N evaluation by passing the resulting ESet from a specific run</span>
-<span class="co"># To find the combination of features that had the best score</span>
-<span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list <span class="op">=</span> <span class="va">topn.list</span><span class="op">)</span> 
+<span class="co">## Read in input score</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span>
+<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span>
 
-<span class="co"># Now we can plot this set of features</span>
-<span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">best_meta</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Get top N plot</span>
-<span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span>topn_list <span class="op">=</span> <span class="va">topn.list</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Generating top N overlap heatmap..</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;"></p>
+<span class="co">## Samples to keep based on the overlap between the two inputs</span>
+<span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_scores</span><span class="op">)</span>, <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html" class="external-link">sampleNames</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">)</span>
+<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">eset_mut_scna</span><span class="op">[</span>,<span class="va">overlap</span><span class="op">]</span>
+<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">input_scores</span><span class="op">[</span><span class="va">overlap</span><span class="op">]</span>
+
+<span class="co">## Binarize ES to only have 0's and 1's</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>
+
+<span class="co">## Pre-filter ESet based on occurrence frequency</span>
+<span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span>
+  ES <span class="op">=</span> <span class="va">eset_mut_scna</span>,
+  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, <span class="co"># max frequency (60%)</span>
+  min.cutoff <span class="op">=</span> <span class="fl">0.03</span> <span class="co"># min frequency (3%)</span>
+<span class="op">)</span> </code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pre-filtering features ..</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Removing features having &lt;  3 and &gt;  60  % occurence in sample set..</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 133  features retained out of  16873  supplied features in dataset</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="running-on-actual-data">Running on actual data<a class="anchor" aria-label="anchor" href="#running-on-actual-data"></a>
-</h3>
-<p>In the example below, the <code>CCLE_MUT_SCNA</code> expression set object has 17723 rows (features) and 82 columns (samples). The other variable is called <code>CTNBB1_reporter</code> which contains continuous measures of a targeted profile. The <strong>CTNBB1_reporter</strong> is what dictates how CaDrA will search for grouped meta-features.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load binary feature data object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CCLE_MUT_SCNA</span><span class="op">)</span>
-
-<span class="co"># Load a targeted profile object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">CTNBB1_reporter</span><span class="op">)</span>
-
-<span class="co"># Number of top starting seed features to test and evaluate over  </span>
-<span class="va">top_N</span> <span class="op">&lt;-</span> <span class="fl">7</span>
-
-<span class="co"># Metric used for candidate search</span>
-<span class="co"># Either ks or wilcox or revealer or custom function is supported</span>
-<span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"ks"</span>
-
-<span class="va">topn_l</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
-  ES <span class="op">=</span> <span class="va">CCLE_MUT_SCNA</span>, 
-  input_score <span class="op">=</span>  <span class="va">CTNBB1_reporter</span>,
-  method <span class="op">=</span> <span class="va">method</span>,
-  alternative <span class="op">=</span> <span class="st">"less"</span>,
-  metric <span class="op">=</span> <span class="st">"pval"</span>,
-  top_N <span class="op">=</span> <span class="va">top_N</span>,
-  search_method <span class="op">=</span> <span class="st">"both"</span>,
-  max_size <span class="op">=</span> <span class="fl">7</span>,
+<div class="section level2">
+<h2 id="run-cadra">Run CaDrA<a class="anchor" aria-label="anchor" href="#run-cadra"></a>
+</h2>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
+  ES <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,
+  input_score <span class="op">=</span> <span class="va">input_scores</span>,
+  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># use Kolmogorow-Smirnow Scoring function </span>
+  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># use the KS p-value to score features</span>
+  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span>
   do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span>
-  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Set best_score_only = FALSE will return both the eset and best scores</span>
-<span class="op">)</span>
-
-<span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span>
-<span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_l</span><span class="op">)</span>
-
-<span class="co"># Visualize best meta-features result</span>
-<span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span><span class="op">)</span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># You can also evaluate how robust the results are depending on which seed feature you started with</span>
-<span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_l</span><span class="op">)</span> </code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Generating top N overlap heatmap..</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-5-2.png" style="display: block; margin: auto;"></p>
+  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># best_score_only = FALSE will return ESet, its corresponding</span>
+                               <span class="co"># best score, and input_score for over 7 feature searches</span>
+<span class="op">)</span></code></pre></div>
 </div>
+<div class="section level2">
+<h2 id="visualize-best-results">Visualize Best Results<a class="anchor" aria-label="anchor" href="#visualize-best-results"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Fetch the ESet and feature set corresponding to best score over the top_N searches</span>
+<span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span>
+
+<span class="co"># Visualize best results using the function meta_plot</span>
+<span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span>, input_score_label <span class="op">=</span> <span class="st">"YAP/TAZ Activity"</span><span class="op">)</span></code></pre></div>
+<p><img src="README_files/figure-gfm/visualize.best-1.png" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="summarize-top_n-results">Summarize top_N Results<a class="anchor" aria-label="anchor" href="#summarize-top_n-results"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Evaluate results across top_N seed features you started from</span>
+<span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span> </code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Generating top N overlap heatmap..</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;"></p>
 </div>
 </div>
   </div>
@@ -190,7 +196,7 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>

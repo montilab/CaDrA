@@ -37,7 +37,7 @@ You can install the development version of CaDrA from GitHub
 
 ``` r
 library(devtools)
-devtools::install_github("montilab/CaDrA", ref="dev")
+devtools::install_github("montilab/CaDrA")
 ```
 
 ## (2) Quickstart

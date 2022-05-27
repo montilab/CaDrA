@@ -1,5 +1,5 @@
 
-#' Shiny UI module 
+#' Shiny UI modules 
 #' 
 #' @param id A unique namespace identifier
 #' @return Shiny ui elements
@@ -227,7 +227,7 @@ CaDrA_UI <- function(id){
   
 }
 
-#' Shiny Server module 
+#' Shiny Server modules 
 #' 
 #' @param id A unique namespace identifier
 #' @return Shiny ui elements

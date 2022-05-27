@@ -13,3 +13,5 @@
 ^_pkgdown\.yml$
 ^\.github$
 ^\.nfs00000000511ba62300000119$
+^Dockerfile$
+^shiny-server.sh$

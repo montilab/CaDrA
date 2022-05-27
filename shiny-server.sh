@@ -11,4 +11,4 @@ then
 fi
 
 # start shiny server
-exec Rscript /srv/shiny-server/run_shiny_server.R 2>&1
+exec Rscript /srv/shiny-server/run_cadra_server.R 2>&1

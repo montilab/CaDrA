@@ -43,7 +43,12 @@ RUN R -e "install.packages('misc3d', dependencies=TRUE, repos='http://cran.rstud
 RUN R -e "install.packages('ppcor', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 # Install additional packages for shiny applications
+RUN R -e "install.packages('rmarkdown', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('knitr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('kableExtra', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('shinyBS', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('shinyjs', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('shinytheme', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('shinycssloaders', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('DT', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('plotly', dependencies=TRUE, repos='http://cran.rstudio.com/')"
@@ -54,13 +59,7 @@ RUN R -e "install.packages('future', dependencies=TRUE, repos='http://cran.rstud
 RUN R -e "install.packages('cachem', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('ipc', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-# Install CaDrA and its dependencies
-RUN R -e "devtools::install_github('montilab/CaDrA', dependencies=TRUE)"
-
-# Install kableExtra and its dependencies
-RUN R -e "devtools::install_github('haozhu233/kableExtra', dependencies=TRUE)"
-
-# Install packages for xposome-api
+# Install packages for plumber-api tp docker images
 RUN R -e "install.packages('unix', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('plumber', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 

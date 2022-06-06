@@ -171,7 +171,7 @@ CaDrA_UI <- function(id){
           style = "padding: 5px 10px 10px 10px;",
           icon = icon(name = "question", lib = "font-awesome"),
           
-          HTML(markdown::markdownToHTML('README.md', fragment.only=T))
+          htmltools::includeMarkdown('README.md')
           
         ),
         

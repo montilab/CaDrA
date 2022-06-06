@@ -97,20 +97,38 @@
 
     
     
-<p><strong>CaDrA</strong> employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (<strong>Kolmogorov-Smirnov</strong>, <strong>Conditional Mutual Information</strong>, <strong>Wilcoxon</strong>, <strong>custom-defined</strong> scoring function). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, <strong>CaDrA</strong> can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.</p>
+<p><strong>CaDrA</strong> employs a forward/backward search algorithm to
+look for a subset of features whose union is maximally associated with
+an outcome of interest, based on one of the four scoring functions
+(<strong>Kolmogorov-Smirnov</strong>, <strong>Conditional Mutual
+Information</strong>, <strong>Wilcoxon</strong>,
+<strong>custom-defined</strong> scoring function). To find out whether
+the set of features associated with the observed input scores
+(i.e. pathway activity, drug sensitivity, etc.) would happen by chance,
+<strong>CaDrA</strong> can perform a rigorous statistical significance
+testing based on the sample permutation to determine if there is an
+abnormality in the given response of interest while exploiting aspects
+of feature complementary and sample heterogeneity.</p>
 <div class="section level2">
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-required-datasets">Load required datasets<a class="anchor" aria-label="anchor" href="#load-required-datasets"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>A <code>binary features matrix</code> (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The <code>binary features matrix</code> must be an object of class <strong>ExpressionSet</strong> from <strong>Biobase</strong> package)</li>
-<li>A vector of continuous scores (or <code>input_score</code>) represents a functional response of interest (such as protein expression, pathway activity, etc.)</li>
+<li>A <code>binary features matrix</code> (such as somatic mutations,
+copy number alterations, chromosomal translocations, etc.) The 1/0
+vectors indicating the presence/absence of ‘omics’ features in the
+samples. The <code>binary features matrix</code> must be an object of
+class <strong>ExpressionSet</strong> from <strong>Biobase</strong>
+package)</li>
+<li>A vector of continuous scores (or <code>input_score</code>)
+represents a functional response of interest (such as protein
+expression, pathway activity, etc.)</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load pre-simulated dataset </span>
@@ -123,9 +141,11 @@
 <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span>     <span class="co"># label input_score with names similar to colnames of sim.ES</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest">Find a subset of features that maximally associated with a given outcome of interest<a class="anchor" aria-label="anchor" href="#find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest"></a>
+<h2 id="find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest">Find a subset of features that maximally associated with a given
+outcome of interest<a class="anchor" aria-label="anchor" href="#find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest"></a>
 </h2>
-<p>Here we are using <strong>Kolmogorow-Smirnow</strong> scoring method to search for best features</p>
+<p>Here we are using <strong>Kolmogorow-Smirnow</strong> scoring method
+to search for best features</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ks_candidate</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span>
   ES <span class="op">=</span> <span class="va">sim.ES</span>,
@@ -164,17 +184,23 @@
   plot <span class="op">=</span> <span class="cn">FALSE</span>,                <span class="co"># we will plot later</span>
   ncores <span class="op">=</span> <span class="fl">8</span>                   <span class="co"># number of cores to perform parallelization for permutation testing</span>
 <span class="op">)</span></code></pre></div>
-<pre><code>Setting cache root path as:  /usr4/bf527/rchau88/.cache/R/R.cache 
-Found  1000  cached permutation-based scores for the specified dataset and search parameters..
-Loading permutation scores from cache..
+<pre><code>Setting cache root path as:  C:\Users\SNU3-SU\AppData\Local\R\cache\R\R.cache 
+No permutation scores for the specified dataset and search parameters were found in cache path...
+BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING</code></pre>
+<pre><code>Running tests in parallel...</code></pre>
+<pre><code>Using  8  core(s)...</code></pre>
+<pre><code>Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'
+
+Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</code></pre>
+<pre><code>Saving to cache ..
 FINISHED
-Time elapsed:  0  mins 
+Time elapsed:  1.58  mins 
 
 Computing observed best score ..
 
 Number of permutation-based scores being considered:  1000 
 Permutation p-value:  0.8791209 </code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Visualize permutation results</span>
 <span class="fu"><a href="../../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">ks_perm_res</span><span class="op">)</span></code></pre></div>
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
@@ -194,12 +220,12 @@ Permutation p-value:  0.8791209 </code></pre>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+<p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

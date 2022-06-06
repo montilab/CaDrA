@@ -1,10 +1,38 @@
 
+# function to hover columns in data table
+create_hover_txt <- function(table){
+  
+  column_names <- colnames(table)
+  
+  th_tr <- lapply(1:length(column_names), function(l){ 
+    title = column_names[l]
+    name = ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
+    th <- sprintf('<th title = "%s">%s</th>\n', title, name) 
+  }) %>% purrr::flatten_chr() %>% paste0(., collapse = "")
+  
+  th_tr <- paste0('<th title=""></th>\n', th_tr) %>% HTML()
+  
+  sketch = htmltools::withTags(
+    tags$table(
+      class = 'display',
+      tags$thead(
+        th_tr
+      )
+    )
+  )
+  
+  return(sketch)
+  
+}
+
+
 #' Shiny UI modules 
 #' 
 #' @param id A unique namespace identifier
 #' @return Shiny ui elements
 #'
 #' @import shiny
+#' @importFrom markdown markdownToHTML
 #' 
 #' @export 
 CaDrA_UI <- function(id){
@@ -12,25 +40,31 @@ CaDrA_UI <- function(id){
   ns <- NS(id)
   
   fluidRow(
-    style = "padding: 5px 10px 50px 10px;",
+    style = "padding: 5px 10px 10px 10px;",
     
     column(
       width = 4, 
-      style = "border: 1px solid gray; border-radius: 3px; background: lightgrey; padding: 5px 10px 10px 10px;",
+      style = "border: 1px solid gray; border-radius: 3px; background: lightgrey; padding: 5px 10px 10px 10px; min-height: 850px;",
       
       h2("CaDrA Options", style="text-align: center;"),
       br(),
       
       tagList(
-        fileInput(inputId = ns("ES_file"), label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), width = "100%"),
-        radioButtons(inputId = ns("ES_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-        helpText("Note: The binary feature file must contain unique features (rownames) which are used to search for best features"),
+        selectInput(inputId = ns("dataset"), label="Choose a dataset:", choices=c("Oncogenic YAP/TAZ Activity in Human Breast Cancer"="BRCA_GISTIC_MUT_SIG", "Transcriptional Activation of B-catenin in Cancer"="CCLE_MUT_SCNA", "Simulated Data"="sim.Data", "Import Data"), selected="BRCA_GISTIC_MUT_SIG", width = "100%"),
         
-        br(),
-        
-        fileInput(inputId = ns("input_score_file"), label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), width = "100%"),
-        radioButtons(inputId = ns("input_score_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-        helpText("Note: The input score file must have names or labels that match the colnames of the binary feature file\n"),
+        conditionalPanel(
+          condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
+          
+          fileInput(inputId = ns("ES_file"), label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), width = "100%"),
+          radioButtons(inputId = ns("ES_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
+          helpText("Note: The binary feature file must contain unique features (rownames) which are used to search for best features"),
+          
+          br(),
+          
+          fileInput(inputId = ns("input_score_file"), label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), width = "100%"),
+          radioButtons(inputId = ns("input_score_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
+          helpText("Note: The input score file must have names or labels that match the colnames of the binary feature file\n")
+        ),
         
         br(),
         
@@ -56,7 +90,7 @@ CaDrA_UI <- function(id){
           ),
           column(
             width = 6,
-            radioButtons(inputId = ns("search_method"), label = strong(span(style="color:red;", "*"), "Search method:"), choices=c("forward"="forward", "forward and backward"="both"), selected = "forward", inline = FALSE)
+            radioButtons(inputId = ns("search_method"), label = strong(span(style="color:red;", "*"), "Search method:"), choices=c("forward and backward"="both", "forward"="forward"), selected = "both", inline = FALSE)
           )
         ),
         numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Select a maximum size that a meta-feature can extend to do for a given search"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
@@ -72,51 +106,34 @@ CaDrA_UI <- function(id){
         checkboxInput(inputId = ns("permutation_test"), label = strong("Perform permutation testing?"), value = FALSE), 
         conditionalPanel(
           condition = sprintf("input['%s'] == true", ns("permutation_test")),
-          numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = 1000, step = 1, value = 10),
-          textInput(inputId = ns("seed"), label = strong(span(style="color:red;", "*"), "A seed set for random permutation"), value = 123),
-          numericInput(inputId = ns("ncores"), label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), min = 1, max = 10, step = 1, value = 1)
+          numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = Inf, step = 1, value = 100),
+          numericInput(inputId = ns("seed"), label = strong(span(style="color:red;", "*"), "A seed set for random permutation"), min = 1, max = Inf, step = 1, value = 123),
+          numericInput(inputId = ns("ncores"), label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), min = 1, max = Inf, step = 1, value = 1)
         ),
         
         br(),
         
         uiOutput(outputId = ns("error_message")),
         
-        actionButton(inputId = ns("run_cadra"), label = strong("RUN"))
+        actionButton(inputId = ns("run_cadra"), label = strong("RUN"), style="background: blue; color: white;"),
+        
+        br(), br(), br(), br(),
+        
+        HTML("<p style='text-align: center;'><span class='footer-info'>&copy; Monti Lab &diams; <script>document.write(new Date().getFullYear());</script> &diams; All Rights Reserved.</span></p>")
       )
     ),
     
     column(
       width = 8,
-      style = "padding: 5px 10px 10px 10px;",
-
+      style = "border: 1px solid gray; padding: 5px 10px 10px 10px; min-height: 850px;",
+      
       tabsetPanel(
         id = "tabs",
         
         tabPanel(
-          title = "Home", 
-          style = "padding: 5px 10px 10px 10px;",
-          
-          div(
-            h2("CaDrA"),
-            p('CaDrA is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of "omics" features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) and a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). Based on this input, CaDrA implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (Kolmogorov-Smirnov, Conditional Mutual Information, Wilcoxon, custom-defined scoring function), making it useful to find complementary omics features likely driving the input molecular phenotype.'),
-            p('For more information, please see the associated manuscript', a(target="_blank", href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full", 'Kartha et al. (2019)'))
-          ) 
-        ),
-        
-        tabPanel(
-          title = "Data Formats", 
-          style = "padding: 5px 10px 10px 10px;",
-          
-          h2("Datasets Required in CaDrA:"),
-          tags$ol(
-            tags$li("A binary features dataset (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of 'omics' features in the samples. The binary features matrix must be an object of class ExpressionSet from Biobase package)"),
-            tags$li("A vector of continuous scores (or input_score) represents a functional response of interest (such as protein expression, pathway activity, etc.)")
-          )
-        ),
-        
-        tabPanel(
           title = "Run CaDrA", 
           style = "padding: 5px 10px 10px 10px;",
+          icon = icon(name = "running", lib = "font-awesome"),
           
           div(
             uiOutput(outputId = ns("instructions"))
@@ -147,42 +164,21 @@ CaDrA_UI <- function(id){
             plotOutput(outputId = ns("permutation_plot"))
           )
           
-        ),
+        ),        
         
         tabPanel(
-          title = "Documentation", 
+          title = "Help", 
           style = "padding: 5px 10px 10px 10px;",
+          icon = icon(name = "question", lib = "font-awesome"),
           
-          h2("Installation"),
-          p("You can install the development version of CaDrA from GitHub (Recommended)"), 
-          
-          tags$pre(
-            tags$code(
-            style="text-align: left; padding: 10px 10px 10px 10px;",
-              "
-              library(devtools)
-              devtools::install_github('montilab/CaDrA', ref='dev')
-              "
-            )
-          ),
-          
-          h2("Quickstart"),
-          
-          tags$pre(
-            tags$code(
-            style="text-align: left; padding: 10px 10px 10px 10px;",
-              "
-              library(CaDrA)
-              library(Biobase)
-              "
-            )
-          )
+          HTML(markdown::markdownToHTML('README.md', fragment.only=T))
           
         ),
         
         tabPanel(
           title = "Publication", 
           style = "padding: 5px 10px 10px 10px;",
+          icon = icon(name = "book", lib = "font-awesome"),
           
           h2("Citation"),
           p("Kartha VK, Kern JG, Sebastiani P, Zhang L, Varelas X, Monti S (2017) CaDrA: A computational framework for performing candidate driver analyses using binary genomic features.", a(href="https://www.biorxiv.org/content/early/2017/11/23/221846", "{bioRxiv}")),
@@ -207,18 +203,19 @@ CaDrA_UI <- function(id){
         ),
         
         tabPanel(
-          title = "Contract Us", 
+          title = "Contact Us", 
           style = "padding: 5px 10px 10px 10px;",
+          icon = icon(name = "envelope", lib = "font-awesome"),
           
           h2("Developers"),
           
-          p(a(href="mailto:vkartha@bu.edu", strong("Vinay Kartha")), em(". Author.")),
-          
-          p(a(href="mailto:smonti@bu.edu", strong("Stefano Monti")), em(". Author.")),
-          
           p(a(href="mailto:rchau88@bu.edu", strong("Reina Chau")), em(". Author, maintainer.")),
           
-          p(a(href="mailto:ktrn@bu.edu", strong("Katia Bulekova")), em(". Author"))
+          p(a(href="mailto:ktrn@bu.edu", strong("Katia Bulekova")), em(". Author")),
+          
+          p(a(href="mailto:vkartha@bu.edu", strong("Vinay Kartha")), em(". Author.")),
+          
+          p(a(href="mailto:smonti@bu.edu", strong("Stefano Monti")), em(". Author."))
           
         )
       )
@@ -230,9 +227,13 @@ CaDrA_UI <- function(id){
 #' Shiny Server modules 
 #' 
 #' @param id A unique namespace identifier
-#' @return Shiny ui elements
+#' @return Shiny server elements
 #'
-#' @import shiny dplyr readr tibble DT methods
+#' @import shiny methods htmltools
+#' @importFrom tibble column_to_rownames rownames_to_column
+#' @importFrom dplyr mutate_all
+#' @importFrom stats rnorm 
+#' @importFrom utils read.csv write.csv
 #' 
 #' @export 
 CaDrA_Server <- function(id){
@@ -240,7 +241,7 @@ CaDrA_Server <- function(id){
   moduleServer(
     id,
     function(input, output, session) {
-
+      
       # Create reative values
       candidate_search_result <- reactiveVal()
       permutation_result <- reactiveVal()  
@@ -258,14 +259,14 @@ CaDrA_Server <- function(id){
           tags$pre(
             tags$code(
               "
-                Select the 'CaDrA Options' on the right and Click 'RUN' button on the bottom
-                "
+              Select the 'CaDrA Options' on the right and Click 'RUN' button on the bottom
+              "
             )
           )
         )
         
       })
-
+      
       observeEvent(input$run_cadra, {
         
         candidate_search_result(NULL)
@@ -273,76 +274,122 @@ CaDrA_Server <- function(id){
         instructions_message(FALSE)
         error_message(NULL)
         
-        inputfile <- input$ES_file;
-        inputtype <- input$ES_file_type;
-        
-        if(is.null(inputfile)){
-          error_message("Please choose a file to import.")
-          return(NULL)
-        }
-        
-        csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-        rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-        
-        if(inputtype %in% ".csv" & length(csv_ext) > 0){
+        if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
-          # read in the Eset file
-          Eset <- readr::read_csv(inputfile$datapath) %>% column_to_rownames(var="Features") %>% mutate_all(as.integer)
+          ## Read in BRCA GISTIC+Mutation ESet object
+          eset_mut_scna <-  CaDrA::BRCA_GISTIC_MUT_SIG
           
-          # convert Eset to matrix
-          Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
+          ## Read in input score
+          input_scores <-  CaDrA::TAZYAP_BRCA_ACTIVITY
           
-          #create phenotypic data
-          pData <- data.frame(Samples = colnames(Eset), stringsAsFactors=TRUE)
-          rownames(pData) <- pData$Samples
-          phenoData <- new("AnnotatedDataFrame", data=pData)
+          ## Samples to keep based on the overlap between the two inputs
+          overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+          eset_mut_scna <- eset_mut_scna[,overlap]
+          input_scores <- input_scores[overlap]
           
-          #create feature data
-          fData <- data.frame(Features = rownames(Eset), stringsAsFactors = TRUE)
-          rownames(fData) <- fData$Features
-          featureData <- new("AnnotatedDataFrame", data=fData)
+          ## Binarize ES to only have 0's and 1's
+          exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
           
-          #create expression set
-          ES <- ExpressionSet(assayData=Eset, phenoData=phenoData, featureData=featureData)
+          ## Pre-filter ESet based on occurrence frequency
+          eset_mut_scna_flt <- CaDrA::prefilter_data(
+            ES = eset_mut_scna,
+            max.cutoff = 0.6, # max frequency (60%)
+            min.cutoff = 0.03 # min frequency (3%)
+          ) 
           
-        }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
+          ES <- eset_mut_scna_flt
+          input_score <- input_scores
           
-          ES <- readRDS(inputfile$datapath)
+        }else if(input$dataset == "CCLE_MUT_SCNA"){
           
-        }else{
+          ES <- CaDrA::CCLE_MUT_SCNA
+          input_score <- CaDrA::CTNBB1_reporter        
           
-          error_message("Incorrect file format. Please check your file again.")
-          return(NULL)
+        }else if(input$dataset == "sim.Data"){
           
-        }
-        
-        inputfile <- input$input_score_file;
-        inputtype <- input$input_score_file_type;
-        
-        if(is.null(inputfile)){
-          error_message("Please choose a file to import.")
-          return(NULL)
-        }
-        
-        csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-        rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-        
-        if(inputtype %in% ".csv" & length(csv_ext) > 0){
+          ES <- CaDrA::sim.ES
           
-          dat <- readr::read_csv(inputfile$datapath) %>% column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
-          input_score <- as.numeric(dat$Scores)
-          names(input_score) <- rownames(dat)
+          # set seed
+          set.seed(123)
           
-        }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
+          # Provide a vector of continuous scores for a target profile with names to each score value
+          input_score = rnorm(n = ncol(ES))
+          names(input_score) <- colnames(ES)
           
-          dat <- readRDS(inputfile$datapath) %>% column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
-          input_score <- as.numeric(dat$Scores)
-          names(input_score) <- rownames(dat)
+        }else if(input$dataset == "Import Data"){
           
-        }else{
+          inputfile <- input$ES_file;
+          inputtype <- input$ES_file_type;
           
-          error_message("Incorrect file format. Please check your file again.")
-          return(NULL)
+          if(is.null(inputfile)){
+            error_message("Please choose a file to import.")
+            return(NULL)
+          }
+          
+          csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          
+          if(inputtype %in% ".csv" & length(csv_ext) > 0){
+            
+            # read in the Eset file
+            Eset <- read.csv(inputfile$datapath, header=T) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.integer)
+            
+            # convert Eset to matrix
+            Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
+            
+            #create phenotypic data
+            pData <- data.frame(Samples = colnames(Eset), stringsAsFactors=TRUE)
+            rownames(pData) <- pData$Samples
+            phenoData <- new("AnnotatedDataFrame", data=pData)
+            
+            #create feature data
+            fData <- data.frame(Features = rownames(Eset), stringsAsFactors = TRUE)
+            rownames(fData) <- fData$Features
+            featureData <- new("AnnotatedDataFrame", data=fData)
+            
+            #create expression set
+            ES <- ExpressionSet(assayData=Eset, phenoData=phenoData, featureData=featureData)
+            
+          }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
+            
+            ES <- readRDS(inputfile$datapath)
+            
+          }else{
+            
+            error_message("Incorrect file format. Please check your file again.")
+            return(NULL)
+            
+          }
+          
+          inputfile <- input$input_score_file;
+          inputtype <- input$input_score_file_type;
+          
+          if(is.null(inputfile)){
+            error_message("Please choose a file to import.")
+            return(NULL)
+          }
+          
+          csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          
+          if(inputtype %in% ".csv" & length(csv_ext) > 0){
+            
+            dat <- read.csv(inputfile$datapath, header = T) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
+            input_score <- as.numeric(dat$Scores)
+            names(input_score) <- rownames(dat)
+            
+          }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
+            
+            dat <- readRDS(inputfile$datapath) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
+            input_score <- as.numeric(dat$Scores)
+            names(input_score) <- rownames(dat)
+            
+          }else{
+            
+            error_message("Incorrect file format. Please check your file again.")
+            return(NULL)
+            
+          }
           
         }
         
@@ -400,13 +447,13 @@ CaDrA_Server <- function(id){
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read_csv(inputfile$datapath) %>% column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
+              dat <- read.csv(inputfile$datapath, header=T) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
               weights <- as.numeric(dat$Weights)
               names(weights) <- rownames(dat)
               
             }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
               
-              dat <- readRDS(inputfile$datapath) %>% column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
+              dat <- readRDS(inputfile$datapath) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
               weights <- as.numeric(dat$Weights)
               names(weights) <- rownames(dat)
               
@@ -529,14 +576,14 @@ CaDrA_Server <- function(id){
             return(NULL)
           }
           
-          seed = as.numeric(seed)
+          seed = as.numeric(input$seed)
           
           if(is.na(top_N) || length(top_N)==0){
             error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
             return(NULL)
           }
           
-          ncores = as.numeric(ncores)
+          ncores = as.numeric(input$ncores)
           
           if(is.na(top_N) || length(top_N)==0){
             error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
@@ -570,10 +617,10 @@ CaDrA_Server <- function(id){
           
         }
         
-        error_message("Analysis is Completed! See 'Run CaDrA'")
+        error_message("")
         
       })
-
+      
       output$error_message <- renderUI({
         
         req(error_message())
@@ -586,7 +633,36 @@ CaDrA_Server <- function(id){
         
         req(candidate_search_result())
         
-        h2("Binary Meta-Feature")
+        dataset <- isolate({ input$dataset })
+        
+        if(dataset == "BRCA_GISTIC_MUT_SIG"){
+          
+          title <- "Dataset: Oncogenic YAP/TAZ Activity in Human Breast Cancer"
+          description <- "An ExpressionSet object consists of 16,873 genomic features across 963 samples."
+          
+        }else if(dataset == "CCLE_MUT_SCNA"){
+          
+          title <- "Dataset: Transcriptional Activation of B-catenin in Cancer"
+          description <- "An ExpressionSet object consists of 17,723 genomic features across 82 samples."
+          
+        }else if(dataset == "sim.Data"){
+          
+          title <- "Dataset: Simulated Data"
+          description <- "A simulated ExpressionSet that comprises of 1000 genomic features (rows) and 200 sample profiles (columns). Each row feature is represented by a vector of binary number (1/0) indicating the presence/absence of the feature in the samples. This simulated data includes 10 left-skewed (i.e. True Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN) features."
+          
+        }else if(dataset == "Import Data"){
+          
+          title <- "Dataset: Imported Data"
+          description <- ""
+          
+        }
+        
+        div(
+          h2(title),
+          br(),
+          p(description),
+          h2("Best Meta-Features Set")
+        )
         
       })
       
@@ -594,16 +670,23 @@ CaDrA_Server <- function(id){
         
         req(candidate_search_result())
         
-        Eset <- candidate_search_result()[[1]][["ESet"]]
+        ns <- session$ns
         
-        table <- exprs(Eset) %>% as.data.frame() %>% 
-          datatable(
+        topn_best_meta <- topn_best(topn_list=candidate_search_result())
+        
+        ES_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.)
+        
+        hover_columns <- create_hover_txt(table = ES_table)
+        
+        table <- ES_table %>% 
+          DT::datatable(
+            container = hover_columns,
             rownames = TRUE,
             extensions = 'Buttons',
             selection = "single",
             options = list(
               deferRender = FALSE,
-              paging = TRUE,
+              paging = FALSE,
               searching = TRUE,
               ordering = TRUE,
               pageLength = 20,
@@ -611,13 +694,80 @@ CaDrA_Server <- function(id){
               scrollY = 400,
               scrollCollapse = TRUE,
               dom = 'T<"clear">Blfrtip',
-              buttons=c('copy','csv','print')
+              buttons = list(
+                list(
+                  extend = "collection",
+                  text = 'Download All Results',
+                  action = DT::JS(
+                    sprintf(
+                      paste0(
+                        "function ( e, dt, node, config ) {",
+                        "Shiny.setInputValue('%s', true, {priority: 'event'});",
+                        "}"
+                      ), ns('Download_Eset')
+                    )
+                  )
+                )
+              )
             )
           )
         
         return(table)
         
       })
+      
+      observeEvent(input$Download_Eset, {
+        
+        ns <- session$ns
+        
+        shiny::showModal(
+          shiny::modalDialog(
+            title = "Download Best Meta-Features Set",
+            downloadButton(outputId = ns("downloadEsetCSV"), "Download Table as CSV file"),
+            br(), br(),
+            downloadButton(outputId = ns("downloadEsetRDS"), "Download Table as RDS file"),
+          )
+        )
+        
+      })
+      
+      ## Download CSV File ####
+      output$downloadEsetCSV <- downloadHandler(
+        
+        filename = function() {
+          paste0("CaDrA-Best-Meta-Features-Eset.csv")
+        },
+        
+        content = function(file) {
+          
+          topn_best_meta <- topn_best(topn_list=candidate_search_result())
+          
+          Eset_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.) %>% tibble::rownames_to_column(., var="Features")
+          
+          write.csv(Eset_table, file, row.names=F)
+          
+        }
+        
+      )
+      
+      ## Download RDS File ####
+      output$downloadEsetRDS <- downloadHandler(
+        
+        filename = function() {
+          paste0("CaDrA-Best-Meta-Features-Eset.rds")
+        },
+        
+        content = function(file) {
+          
+          topn_best_meta <- topn_best(topn_list=candidate_search_result())
+          
+          Eset_table <- topn_best_meta[["ESet"]]
+          
+          saveRDS(Eset_table, file)
+          
+        }
+        
+      )
       
       output$inputScoreData_title <- renderUI({
         
@@ -631,16 +781,25 @@ CaDrA_Server <- function(id){
         
         req(candidate_search_result())
         
-        Score <- candidate_search_result()[[1]][["input_score"]]
+        ns <- session$ns
         
-        table <- matrix(Score, nrow=1, ncol=length(Score), byrow=T, dimnames=list("input_score", names(Score))) %>% 
-          datatable(
+        topn_best_meta <- topn_best(topn_list=candidate_search_result())
+        
+        Scores <- topn_best_meta[["input_score"]] %>% signif(., digits = 4)
+        
+        score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=T, dimnames=list("input_score", names(Scores)))
+        
+        hover_columns <- create_hover_txt(table = score_table)
+        
+        table <- score_table %>% 
+          DT::datatable(
+            container = hover_columns,
             rownames = TRUE,
             extensions = 'Buttons',
             selection = "single",
             options = list(
               deferRender = FALSE,
-              paging = TRUE,
+              paging = FALSE,
               searching = TRUE,
               ordering = TRUE,
               pageLength = 20,
@@ -648,19 +807,98 @@ CaDrA_Server <- function(id){
               scrollY = 400,
               scrollCollapse = TRUE,
               dom = 'T<"clear">Blfrtip',
-              buttons=c('copy','csv','print')
+              buttons = list(
+                list(
+                  extend = "collection",
+                  text = 'Download All Results',
+                  action = DT::JS(
+                    sprintf(
+                      paste0(
+                        "function ( e, dt, node, config ) {",
+                        "Shiny.setInputValue('%s', true, {priority: 'event'});",
+                        "}"
+                      ), ns('Download_InputScore')
+                    )
+                  )
+                )
+              )
             )
           )
         
         return(table)
         
+      })  
+      
+      
+      observeEvent(input$Download_InputScore, {
+        
+        ns <- session$ns
+        
+        shiny::showModal(
+          shiny::modalDialog(
+            title = "Download Observed Input Scores",
+            downloadButton(outputId = ns("downloadScoreCSV"), "Download Table as CSV file"),
+            br(), br(),
+            downloadButton(outputId = ns("downloadScoreRDS"), "Download Table as RDS file"),
+          )
+        )
+        
       })
+      
+      ## Download CSV File ####
+      output$downloadScoreCSV <- downloadHandler(
+        
+        filename = function() {
+          paste0("CaDrA-Observed-Input-Scores.csv")
+        },
+        
+        content = function(file) {
+          
+          topn_best_meta <- topn_best(topn_list=candidate_search_result())
+          
+          Scores <- topn_best_meta[["input_score"]]
+          
+          score_table <- data.frame(
+            Samples = names(Scores),
+            Scores = Scores,
+            stringsAsFactors = F
+          )
+          
+          write.csv(score_table, file, row.names=F)
+          
+        }
+        
+      )
+      
+      ## Download RDS File ####
+      output$downloadScoreRDS <- downloadHandler(
+        
+        filename = function() {
+          paste0("CaDrA-Observed-Input-Scores.rds")
+        },
+        
+        content = function(file) {
+          
+          topn_best_meta <- topn_best(topn_list=candidate_search_result())
+          Scores <- topn_best_meta[["input_score"]]
+          
+          score_table <- data.frame(
+            Samples = names(Scores),
+            Scores = Scores,
+            stringsAsFactors = F
+          )
+          
+          saveRDS(score_table, file)
+          
+        }
+        
+      )
       
       output$meta_plot_title <- renderUI({
         
         req(candidate_search_result())
         
-        h2("Meta-Features Plot")
+        h2("Best Meta-Features Plot")
         
       })
       
@@ -686,7 +924,7 @@ CaDrA_Server <- function(id){
       output$topn_plot <- renderPlot({
         
         req(candidate_search_result())
-
+        
         topn_res <- candidate_search_result()
         CaDrA::topn_plot(topn_res)
         
@@ -703,7 +941,7 @@ CaDrA_Server <- function(id){
       output$permutation_plot <- renderPlot({
         
         req(permutation_result())
-
+        
         perm_res <- permutation_result()
         permutation_plot(perm_res)
         
@@ -727,12 +965,10 @@ CaDrA_App <- function() {
   
   ui <- fluidPage(
     
-    shinyjs::useShinyjs(),
-    
     titlePanel("CaDrA: Candidate Drivers Analysis"),
     
     helpText("Multi-Omic Search for Candidate Drivers of Functional Signatures"),
-
+    
     CaDrA_UI(id = "CaDrA")
     
   )

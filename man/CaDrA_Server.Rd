@@ -2,7 +2,7 @@
 % Please edit documentation in R/app.R
 \name{CaDrA_Server}
 \alias{CaDrA_Server}
-\title{Shiny Server module}
+\title{Shiny Server modules}
 \usage{
 CaDrA_Server(id)
 }
@@ -10,8 +10,8 @@ CaDrA_Server(id)
 \item{id}{A unique namespace identifier}
 }
 \value{
-Shiny ui elements
+Shiny server elements
 }
 \description{
-Shiny Server module
+Shiny Server modules
 }

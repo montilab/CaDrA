@@ -2,7 +2,7 @@
 % Please edit documentation in R/app.R
 \name{CaDrA_UI}
 \alias{CaDrA_UI}
-\title{Shiny UI module}
+\title{Shiny UI modules}
 \usage{
 CaDrA_UI(id)
 }
@@ -13,5 +13,5 @@ CaDrA_UI(id)
 Shiny ui elements
 }
 \description{
-Shiny UI module
+Shiny UI modules
 }

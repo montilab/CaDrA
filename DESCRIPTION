@@ -4,21 +4,20 @@ Title: Candidate Driver Analysis
 Version: 2.0.0
 Date: 2022-04-25
 Authors@R: 
-    c(person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
-      person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu"), 
-      person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 
-      person(given="Katia", family="Bulekova", role=c("aut"), email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146"))
+    c(person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 
+      person(given="Katia", family="Bulekova", role=c("aut"), email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146")),
+      person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
+      person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu")
      )
 Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
 Depends: R (>= 3.1.1)
 Imports: 
     shiny,
-    shinyjs,
+    htmltools,
+    markdown,
     dplyr,
-    readr,
     tibble,
     methods,
-    shinydashboard,
     DT,
     Biobase,
     doParallel,

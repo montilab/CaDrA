@@ -1,4 +1,4 @@
-#' Genomic Data from TCGA BRCA
+#' Genomic Data from TCGA BRCA that associated with YAP/TAZ Activity
 #'
 #' An ExpressionSet object consists of 16,873 genomic features across 963 samples.
 #'

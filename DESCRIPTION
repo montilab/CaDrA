@@ -13,10 +13,10 @@ Description: Performs both stepwise and backward heuristic search for candidate 
 Depends: R (>= 3.1.1)
 Imports: 
     shiny,
+    shinyjs,
     htmltools,
     dplyr,
     tibble,
-    methods,
     DT,
     Biobase,
     doParallel,
@@ -30,6 +30,7 @@ Imports:
     magrittr,
     purrr,
     stats,
+    methods,
     MASS,
     misc3d,
     ppcor

@@ -38,6 +38,7 @@ RUN R -e "install.packages('reshape2', dependencies=TRUE, repos='http://cran.rst
 RUN R -e "install.packages('magrittr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('purrr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('stats', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('methods', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('MASS', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('misc3d', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('ppcor', dependencies=TRUE, repos='http://cran.rstudio.com/')"

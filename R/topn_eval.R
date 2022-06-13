@@ -42,7 +42,7 @@
 #' )
 #' 
 #' @export
-#' @import Biobase gplots
+#' @import gplots Biobase
 topn_eval <- function(
   ES,
   input_score,

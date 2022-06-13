@@ -44,6 +44,7 @@
 #' )
 #' 
 #' @export
+#' @import Biobase
 candidate_search <- function(
   ES, 
   input_score, 

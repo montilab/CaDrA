@@ -32,7 +32,8 @@ create_hover_txt <- function(table){
 #' @return Shiny ui elements
 #'
 #' @import shiny
-#' @importFrom markdown markdownToHTML
+#' @importFrom htmltools includeMarkdown
+#' @importFrom shinyjs hide show hidden useShinyjs
 #' 
 #' @export 
 CaDrA_UI <- function(id){
@@ -50,20 +51,40 @@ CaDrA_UI <- function(id){
       br(),
       
       tagList(
-        selectInput(inputId = ns("dataset"), label="Choose a dataset:", choices=c("Oncogenic YAP/TAZ Activity in Human Breast Cancer"="BRCA_GISTIC_MUT_SIG", "Transcriptional Activation of B-catenin in Cancer"="CCLE_MUT_SCNA", "Simulated Data"="sim.Data", "Import Data"), selected="BRCA_GISTIC_MUT_SIG", width = "100%"),
+        selectInput(inputId = ns("dataset"), label="Choose a feature set:", choices=c("Human Breast Cancer Mutation Signatures (BRCA_GISTIC_MUT_SIG)"="BRCA_GISTIC_MUT_SIG", "Somatic Copy Number Alteration in Cancers (CCLE_MUT_SCNA)"="CCLE_MUT_SCNA", "Simulated Data (sim.Data)"="sim.Data", "Import Data"), selected="BRCA_GISTIC_MUT_SIG", width = "100%"),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
+          condition = sprintf("input['%s'] == 'BRCA_GISTIC_MUT_SIG'", ns("dataset")),
+          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Oncogenic YAP/TAZ Activity in Human Breast Cancer"="TAZYAP_BRCA_ACTIVITY", "Import Data"), selected="TAZYAP_BRCA_ACTIVITY", width = "100%")
+        ),
+        
+        conditionalPanel(
+          condition = sprintf("input['%s'] == 'CCLE_MUT_SCNA'", ns("dataset")),
+          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Transcriptional Activation of B-catenin in Cancers"="CTNBB1_reporter", "Import Data"), selected="CTNBB1_reporter", width = "100%")
+        ),
+        
+        conditionalPanel(
+          condition = sprintf("input['%s'] == 'sim.Data'", ns("dataset")),
+          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Random simulated scores from rnorm(n=ncol(sim.Data), mean=0, sd=1) with seed=123"="sim.Scores", "Import Data"), selected="sim.Scores", width = "100%")
+        ),
           
+        conditionalPanel(
+          condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
           fileInput(inputId = ns("ES_file"), label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), width = "100%"),
           radioButtons(inputId = ns("ES_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-          helpText("Note: The binary feature file must contain unique features (rownames) which are used to search for best features"),
-          
-          br(),
-          
+          helpText("Note: If file is in csv format, the binary feature set must be a data frame including a 'Features' column name that contains unique names or labels to search for best features. Otherwise, Feature Set must be an object of class ExpressionSet from BioBase package.")
+        ),
+        
+        numericInput(inputId = ns("min_cutoff"), label="Minimum Samples Cutoff:", value=5, min=5, max=Inf, step=1, width="100%"),
+        helpText("The 'Minimum Samples Cutoff' means each feature in 'Feature Set' must have at least 5 or more samples with presence of 'omic feature' across all samples (i.e., any feature occurs in less than 5 samples will be removed)."),
+        numericInput(inputId = ns("max_cutoff"), label="Maxinum Percent Cutoff:", value=0.6, min=0, max=1, step=0.1, width="100%"),
+        helpText("The 'Maximum Percent Cutoff' means each feature in 'Feature Set' must have at least 60% or less of the samples with presence of 'omic feature' across all samples (i.e., any feature occurs in > 60% of the samples will be removed)."),
+        
+        conditionalPanel(
+          condition = sprintf("input['%s'] == 'Import Data' | (input['%s'] == 'BRCA_GISTIC_MUT_SIG' & input['%s'] == 'Import Data') | (input['%s'] == 'CCLE_MUT_SCNA' & input['%s'] == 'Import Data') | (input['%s'] == 'sim.Data' & input['%s'] == 'Import Data')", ns("dataset"), ns("dataset"), ns("scores"), ns("dataset"), ns("scores"), ns("dataset"), ns("scores")),
           fileInput(inputId = ns("input_score_file"), label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), width = "100%"),
           radioButtons(inputId = ns("input_score_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-          helpText("Note: The input score file must have names or labels that match the colnames of the binary feature file\n")
+          helpText("Note: The input score file must be a data frame with two columns (Samples and Scores) and the Samples must match the colnames of the binary feature set\n")
         ),
         
         br(),
@@ -139,9 +160,20 @@ CaDrA_UI <- function(id){
             uiOutput(outputId = ns("instructions"))
           ),
           
+          shinyjs::hidden(
+            div(
+              id = ns("loading_icon"), class = "loading_div",
+              span(
+                div(class = "loader"),
+                br(),
+                p(class = "loading_text", "Loading...")
+              )
+            )
+          ),
+          
           div(
             uiOutput(outputId = ns("featureData_title")),
-            DT::dataTableOutput(outputId = ns("featureData"))
+            DT::dataTableOutput(outputId = ns("bestFeatureData"))
           ),
           
           div(
@@ -229,11 +261,13 @@ CaDrA_UI <- function(id){
 #' @param id A unique namespace identifier
 #' @return Shiny server elements
 #'
-#' @import shiny methods htmltools
+#' @import shiny htmltools Biobase
 #' @importFrom tibble column_to_rownames rownames_to_column
 #' @importFrom dplyr mutate_all
 #' @importFrom stats rnorm 
 #' @importFrom utils read.csv write.csv
+#' @importFrom shinyjs hide show hidden useShinyjs
+#' @importFrom methods new
 #' 
 #' @export 
 CaDrA_Server <- function(id){
@@ -243,6 +277,9 @@ CaDrA_Server <- function(id){
     function(input, output, session) {
       
       # Create reative values
+      feature_set_description <- reactiveVal()
+      feature_set_data <- reactiveVal()
+      input_score_data <- reactiveVal()
       candidate_search_result <- reactiveVal()
       permutation_result <- reactiveVal()  
       instructions_message <- reactiveVal(TRUE)
@@ -269,54 +306,72 @@ CaDrA_Server <- function(id){
       
       observeEvent(input$run_cadra, {
         
+        feature_set_description(NULL)
+        feature_set_data(NULL)
+        input_score_data(NULL)
         candidate_search_result(NULL)
         permutation_result(NULL) 
         instructions_message(FALSE)
         error_message(NULL)
+        
+        shinyjs::show(id="loading_icon")
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
           ## Read in BRCA GISTIC+Mutation ESet object
           eset_mut_scna <-  CaDrA::BRCA_GISTIC_MUT_SIG
           
-          ## Read in input score
-          input_scores <-  CaDrA::TAZYAP_BRCA_ACTIVITY
-          
-          ## Samples to keep based on the overlap between the two inputs
-          overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
-          eset_mut_scna <- eset_mut_scna[,overlap]
-          input_scores <- input_scores[overlap]
+          if(input$scores == "TAZYAP_BRCA_ACTIVITY"){
+            
+            ## Read in input score
+            input_score <-  CaDrA::TAZYAP_BRCA_ACTIVITY
+            
+            ## Samples to keep based on the overlap between the two inputs
+            overlap <- intersect(names(input_score), Biobase::sampleNames(eset_mut_scna))
+            eset_mut_scna <- eset_mut_scna[,overlap]
+            input_score <- input_score[overlap]
+            
+          }
           
           ## Binarize ES to only have 0's and 1's
-          exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+          exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
           
-          ## Pre-filter ESet based on occurrence frequency
-          eset_mut_scna_flt <- CaDrA::prefilter_data(
-            ES = eset_mut_scna,
-            max.cutoff = 0.6, # max frequency (60%)
-            min.cutoff = 0.03 # min frequency (3%)
-          ) 
+          ES <- eset_mut_scna
+            
+        }
+        
+        
+        if(input$dataset == "CCLE_MUT_SCNA"){
           
-          ES <- eset_mut_scna_flt
-          input_score <- input_scores
-          
-        }else if(input$dataset == "CCLE_MUT_SCNA"){
-          
+          ## Read in SCNA ESet object
           ES <- CaDrA::CCLE_MUT_SCNA
-          input_score <- CaDrA::CTNBB1_reporter        
           
-        }else if(input$dataset == "sim.Data"){
+          if(input$scores == "CTNBB1_reporter"){
+            ## Read in input score
+            input_score <- CaDrA::CTNBB1_reporter
+          }
+  
+        }
+        
+        if(input$dataset == "sim.Data"){
           
+          ## Read in simulated eset object
           ES <- CaDrA::sim.ES
           
-          # set seed
-          set.seed(123)
+          if(input$scores == "sim.Scores"){
+            
+            # set seed
+            set.seed(123)
+            
+            # Provide a vector of continuous scores for a target profile with names to each score value
+            input_score = rnorm(n = ncol(ES))
+            names(input_score) <- colnames(ES)
+            
+          }
           
-          # Provide a vector of continuous scores for a target profile with names to each score value
-          input_score = rnorm(n = ncol(ES))
-          names(input_score) <- colnames(ES)
-          
-        }else if(input$dataset == "Import Data"){
+        }
+        
+        if(input$dataset == "Import Data"){
           
           inputfile <- input$ES_file;
           inputtype <- input$ES_file_type;
@@ -340,15 +395,15 @@ CaDrA_Server <- function(id){
             #create phenotypic data
             pData <- data.frame(Samples = colnames(Eset), stringsAsFactors=TRUE)
             rownames(pData) <- pData$Samples
-            phenoData <- new("AnnotatedDataFrame", data=pData)
+            phenoData <- methods::new("AnnotatedDataFrame", data=pData)
             
             #create feature data
             fData <- data.frame(Features = rownames(Eset), stringsAsFactors = TRUE)
             rownames(fData) <- fData$Features
-            featureData <- new("AnnotatedDataFrame", data=fData)
+            featureData <-  methods::new("AnnotatedDataFrame", data=fData)
             
             #create expression set
-            ES <- ExpressionSet(assayData=Eset, phenoData=phenoData, featureData=featureData)
+            ES <- Biobase::ExpressionSet(assayData=Eset, phenoData=phenoData, featureData=featureData)
             
           }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
             
@@ -360,6 +415,10 @@ CaDrA_Server <- function(id){
             return(NULL)
             
           }
+          
+        }
+        
+        if(input$dataset == "Import Data" | (input$dataset == "BRCA_GISTIC_MUT_SIG" & input$scores == "Import Data") | (input$dataset == "CCLE_MUT_SCNA" & input$scores == "Import Data") | (input$dataset == "sim.Data" & input$scores == "Import Data")){
           
           inputfile <- input$input_score_file;
           inputtype <- input$input_score_file_type;
@@ -393,35 +452,99 @@ CaDrA_Server <- function(id){
           
         }
         
-        req(ES, input_score)
+        # Obtain the pre-filter parameters (min_cutoff)
+        min_cutoff <- as.integer(input$min_cutoff)
+        
+        #print(sprintf("minimum cutoff: %s", min_cutoff))
+        
+        if(is.na(min_cutoff) || length(min_cutoff)==0 || min_cutoff < 5){
+          
+          error_message("Please specify an integer value for Minimum Samples Cutoff >= 5\n")
+          return(NULL)
+          
+        }else{
+          
+          if(ncol(ES) < 5){
+            error_message(sprintf("The # of samples in Feature Set must be greater or equal to the Minimum Samples Cutoff = %s \n", min_cutoff))
+            return(NULL)
+          }
+          
+          percent_min_cutoff = round(min_cutoff/ncol(ES), 2)
+          
+        }
+        
+        # Obtain the pre-filter parameters (max_cutoff)
+        max_cutoff <- as.numeric(input$max_cutoff)
+        
+        #print(sprintf("maximum cutoff: %s", max_cutoff))
+        
+        if(is.na(max_cutoff) || length(max_cutoff)==0 || max_cutoff < 0 || max_cutoff > 1){
+          
+          error_message("Please specify a value for Maximum Percent Cutoff between 0 to 1\n")
+          return(NULL)
+          
+        }
+        
+        #print(sprintf("number of samples: %s", ncol(ES)))
+        #print(sprintf("percent minimum cutoff: %s", percent_min_cutoff))
+        #print(sprintf("percent maximum cutoff: %s", max_cutoff))
+        
+        ## keep a record of the number of features in original ES
+        n_orig_features <- nrow(ES)
+        
+        ## Pre-filter ESet based on occurrence frequency
+        ES <- CaDrA::prefilter_data(
+          ES = ES,
+          max.cutoff = max_cutoff,
+          min.cutoff = percent_min_cutoff 
+        ) 
+        
+        #print(sprintf("number of samples after filtered: %s", ncol(ES)))
+        
+        # Make sure matrix is not empty after removing uninformative features
+        if(nrow(exprs(ES)) == 0){
+          error_message("After removing features based on the specified occurrence parameters. There are no more features remained for downsteam computation.\n")
+          return(NULL)
+        }
         
         # Check if the ES is provided and is a BioBase ExpressionSet object
-        if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
+        if(length(ES) == 0 || class(ES)[1] != "ExpressionSet"){
           error_message("'ES' must be an ExpressionSet class argument (required).")
+          return(NULL)
+        }
         
         # Check if the dataset has only binary 0 or 1 values 
         if(!all(exprs(ES) %in% c(0,1))){
           error_message("The expression matrix (ES) must contain only binary values (0/1) with no NAs.\n")
+          return(NULL)
         }
         
         # Make sure the input ES has rownames for features tracking
-        if(is.null(rownames(ES)))
+        if(is.null(rownames(ES))){
           error_message("The ES object does not have rownames or featureData to track the features by. Please provide unique features or rownames for the expression matrix.\n")
+          return(NULL)
+        }
         
         # Check input_score is provided and are continuous values with no NAs
-        if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score)))
+        if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score))){
           error_message("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix.\n")
+          return(NULL)
+        }
         
         # Make sure the input_score has names or labels that are the same as the colnames of ES
-        if(is.null(names(input_score)))
+        if(is.null(names(input_score))){
           error_message("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
+          return(NULL)
+        }
         
         # Make sure the input_score has the same length as number of samples in ES
         if(length(input_score) != ncol(ES)){
           error_message("The input_score must have the same length as the number of columns in ES.\n")
+          return(NULL)
         }else{
           if(any(!names(input_score) %in% colnames(ES))){
             error_message("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
+            return(NULL)
           }
           # match colnames of expression matrix with names of provided input_score
           ES <- ES[,names(input_score)]
@@ -465,22 +588,33 @@ CaDrA_Server <- function(id){
             }
             
             # Check weights is provided and are continuous values with no NAs
-            if(length(weights) == 0 || any(!is.numeric(weights)) || any(is.na(weights)))
+            if(length(weights) == 0 || any(!is.numeric(weights)) || any(is.na(weights))){
               error_message("weights must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix.\n")
+              return(NULL)
+            }
             
             # Make sure the weights has names or labels that are the same as the colnames of ES
-            if(is.null(names(weights)))
+            if(is.null(names(weights))){
               error_message("The weights object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
+              return(NULL)
+            }
             
             # Make sure the weights has the same length as number of samples in ES
             if(length(weights) != ncol(ES)){
+              
               error_message("The weights must have the same length as the number of columns in ES.\n")
+              return(NULL)
+              
             }else{
+              
               if(any(!names(weights) %in% colnames(ES))){
                 error_message("The weights object must have names or labels that match the colnames of the expression matrix.\n")
+                return(NULL)
               }
+              
               # match colnames of expression matrix with names of provided weights
               weights <- weights[colnames(ES)]
+              
             }
             
           }else{
@@ -518,7 +652,6 @@ CaDrA_Server <- function(id){
             return(NULL)
           }
           
-          
         }else{
           
           search_start = input$search_start
@@ -545,25 +678,6 @@ CaDrA_Server <- function(id){
           }
           
         }
-        
-        candidate_search_result(
-          CaDrA::candidate_search(
-            ES = ES,
-            input_score = input_score,
-            method = method,  
-            custom_function = NULL,
-            custom_parameters = NULL,
-            alternative = alternative,        
-            metric = metric,             
-            weights = weights,   
-            search_start = search_start,
-            top_N = top_N,
-            max_size = max_size,               
-            best_score_only = FALSE,
-            do_plot = FALSE,
-            verbose = FALSE
-          )
-        ) 
         
         permutation = input$permutation_test
         
@@ -617,7 +731,32 @@ CaDrA_Server <- function(id){
           
         }
         
-        error_message("")
+        # Export the ES and input_score to reactive datase
+        feature_set_description(sprintf("After filtering features with Minimum Samples Cutoff = %s (or having < %s%% prevalence across all samples) and Maximum Percent Cutoff = %s (or having > %s%% prevalance across all samples), the Binary Feature Set retained %s genomic features out of %s supplied features across %s samples.", min_cutoff, percent_min_cutoff*100, max_cutoff, max_cutoff*100, format(nrow(ES), big.mark = ","), format(n_orig_features, big.mark = ","), format(ncol(ES), big.mark =",")))
+        feature_set_data(exprs(ES))
+        input_score_data(input_score)
+        
+        # Compute the candidate search algorithm
+        candidate_search_result(
+          CaDrA::candidate_search(
+            ES = ES,
+            input_score = input_score,
+            method = method,  
+            custom_function = NULL,
+            custom_parameters = NULL,
+            alternative = alternative,        
+            metric = metric,             
+            weights = weights,   
+            search_start = search_start,
+            top_N = top_N,
+            max_size = max_size,               
+            best_score_only = FALSE,
+            do_plot = FALSE,
+            verbose = FALSE
+          )
+        ) 
+        
+        error_message("NONE")
         
       })
       
@@ -625,48 +764,61 @@ CaDrA_Server <- function(id){
         
         req(error_message())
         
-        p(style="color: red; font-weight: bold;", error_message())
+        shinyjs::hide(id="loading_icon")
+        
+        if(error_message() != "NONE"){
+          p(style="color: red; font-weight: bold;", error_message())
+        }
         
       })
       
       output$featureData_title <- renderUI({
         
-        req(candidate_search_result())
+        req(feature_set_description())
+        
+        ns <- session$ns
+        
+        description <- feature_set_description()
         
         dataset <- isolate({ input$dataset })
         
         if(dataset == "BRCA_GISTIC_MUT_SIG"){
-          
-          title <- "Dataset: Oncogenic YAP/TAZ Activity in Human Breast Cancer"
-          description <- "An ExpressionSet object consists of 16,873 genomic features across 963 samples."
-          
+          title <- "Dataset: Human Breast Cancer Mutation Signatures (BRCA_GISTIC_MUT_SIG)"
         }else if(dataset == "CCLE_MUT_SCNA"){
-          
-          title <- "Dataset: Transcriptional Activation of B-catenin in Cancer"
-          description <- "An ExpressionSet object consists of 17,723 genomic features across 82 samples."
-          
+          title <- "Dataset: Somatic Copy Number Alteration in Cancers (CCLE_MUT_SCNA)"
         }else if(dataset == "sim.Data"){
-          
-          title <- "Dataset: Simulated Data"
-          description <- "A simulated ExpressionSet that comprises of 1000 genomic features (rows) and 200 sample profiles (columns). Each row feature is represented by a vector of binary number (1/0) indicating the presence/absence of the feature in the samples. This simulated data includes 10 left-skewed (i.e. True Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN) features."
-          
+          title <- "Dataset: Simulated Data (sim.Data)"
         }else if(dataset == "Import Data"){
-          
           title <- "Dataset: Imported Data"
-          description <- ""
-          
         }
         
         div(
           h2(title),
           br(),
           p(description),
-          h2("Best Meta-Features Set")
+          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features ESet"),
+          h2("Best Meta-Features ESet")
         )
         
       })
       
-      output$featureData <- DT::renderDataTable({
+      output$download_featureset <- downloadHandler(
+        
+        filename = function() {
+          paste0("CaDrA-Filtered-Features-Eset.csv")
+        },
+        
+        content = function(file) {
+          
+          Eset_table <- feature_set_data() %>% as.data.frame(.) %>% rownames_to_column(var="Features")
+          
+          write.csv(Eset_table, file, row.names=F)
+          
+        }
+        
+      )
+      
+      output$bestFeatureData <- DT::renderDataTable({
         
         req(candidate_search_result())
         
@@ -771,7 +923,7 @@ CaDrA_Server <- function(id){
       
       output$inputScoreData_title <- renderUI({
         
-        req(candidate_search_result())
+        req(input_score_data())
         
         h2("Observed Input Scores")
         
@@ -779,13 +931,11 @@ CaDrA_Server <- function(id){
       
       output$inputScoreData <- DT::renderDataTable({
         
-        req(candidate_search_result())
+        req(input_score_data())
         
         ns <- session$ns
         
-        topn_best_meta <- topn_best(topn_list=candidate_search_result())
-        
-        Scores <- topn_best_meta[["input_score"]] %>% signif(., digits = 4)
+        Scores <- input_score_data() %>% signif(., digits = 4)
         
         score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=T, dimnames=list("input_score", names(Scores)))
         
@@ -829,7 +979,6 @@ CaDrA_Server <- function(id){
         
       })  
       
-      
       observeEvent(input$Download_InputScore, {
         
         ns <- session$ns
@@ -854,9 +1003,7 @@ CaDrA_Server <- function(id){
         
         content = function(file) {
           
-          topn_best_meta <- topn_best(topn_list=candidate_search_result())
-          
-          Scores <- topn_best_meta[["input_score"]]
+          Scores <- input_score_data() %>% signif(., digits = 4)
           
           score_table <- data.frame(
             Samples = names(Scores),
@@ -879,8 +1026,7 @@ CaDrA_Server <- function(id){
         
         content = function(file) {
           
-          topn_best_meta <- topn_best(topn_list=candidate_search_result())
-          Scores <- topn_best_meta[["input_score"]]
+          Scores <- input_score_data() %>% signif(., digits = 4)
           
           score_table <- data.frame(
             Samples = names(Scores),
@@ -958,12 +1104,50 @@ CaDrA_Server <- function(id){
 #' 
 #' @return Shiny application 
 #'
-#' @import shiny
+#' @import shiny 
+#' @importFrom shinyjs hide show hidden useShinyjs
 #' 
 #' @export
 CaDrA_App <- function() {
   
   ui <- fluidPage(
+    
+    tags$head(
+      tags$style(
+        HTML(
+        "
+        .loading_div {
+          display: flex;
+          text-align: center;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 400px;
+        }
+        
+        .loading_text {
+          width: 120px;
+        }
+        
+        .loader {
+          border: 16px solid #f3f3f3;
+          border-top: 16px solid #3498db;
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        "
+        )
+      )
+    ),
+    
+    shinyjs::useShinyjs(),  # Set up shinyjs
     
     titlePanel("CaDrA: Candidate Drivers Analysis"),
     

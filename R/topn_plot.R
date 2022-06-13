@@ -51,9 +51,8 @@ topn_plot <- function(topn_list){
     
     colcode <- if (all(m == 1)) c("firebrick2", "white") else c("white", "firebrick2")
     
+    verbose("Generating top N overlap heatmap..\n\n")
     
-    
-    cat("Generating top N overlap heatmap..\n\n")
     heatmap.2(x = m,
               col=colcode,
               Colv=FALSE,

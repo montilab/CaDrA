@@ -16,6 +16,7 @@ verbose <- function(...){
 #' @param ES an expression set object containing binary features used for step-wise search
 #' @param max.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)
 #' @param min.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)
+#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #' @return An expression set object with only the filtered-in features given the filter thresholds specified
 #' @examples
 #' data(sim.ES)
@@ -34,18 +35,22 @@ verbose <- function(...){
 prefilter_data <- function(
   ES, 
   max.cutoff=0.6,
-  min.cutoff=0.03
+  min.cutoff=0.03,
+  verbose=FALSE
 ){
+  
+  options(verbose = verbose)
   
   # Compute the frequency of feature occurence across all samples  (i.e. fraction of samples having the feature)
   frac <- round(rowSums(exprs(ES))/ncol(ES),2)
   
-  cat("Pre-filtering features ..\n\n")
-  cat("Removing features having < ",min.cutoff*100, "and > ",max.cutoff*100, " % occurence in sample set..\n")
+  verbose("Pre-filtering features ..\n\n")
+  verbose("Removing features having < ",min.cutoff*100, "and > ",max.cutoff*100, " % occurence in sample set..\n")
   
   ES <- ES[ (frac >= min.cutoff) & (frac <= max.cutoff) , ]
   
-  cat(nrow(ES)," features retained out of ",length(frac)," supplied features in dataset\n\n")
+  verbose(nrow(ES)," features retained out of ",length(frac)," supplied features in dataset\n\n")
+  
   return(ES)
   
 }

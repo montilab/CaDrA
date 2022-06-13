@@ -4,7 +4,7 @@
 \alias{prefilter_data}
 \title{Pre-filter features}
 \usage{
-prefilter_data(ES, max.cutoff = 0.6, min.cutoff = 0.03)
+prefilter_data(ES, max.cutoff = 0.6, min.cutoff = 0.03, verbose = FALSE)
 }
 \arguments{
 \item{ES}{an expression set object containing binary features used for step-wise search}
@@ -12,6 +12,8 @@ prefilter_data(ES, max.cutoff = 0.6, min.cutoff = 0.03)
 \item{max.cutoff}{a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)}
 
 \item{min.cutoff}{a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)}
+
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 An expression set object with only the filtered-in features given the filter thresholds specified

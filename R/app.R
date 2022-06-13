@@ -55,17 +55,17 @@ CaDrA_UI <- function(id){
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'BRCA_GISTIC_MUT_SIG'", ns("dataset")),
-          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Oncogenic YAP/TAZ Activity in Human Breast Cancer"="TAZYAP_BRCA_ACTIVITY", "Import Data"), selected="TAZYAP_BRCA_ACTIVITY", width = "100%")
+          selectInput(inputId = ns("BRCA_GISTIC_MUT_SIG_scores"), label="Choose an input_score:", choices=c("Oncogenic YAP/TAZ Activity in Human Breast Cancer (TAZYAP_BRCA_ACTIVITY)"="TAZYAP_BRCA_ACTIVITY", "Import Data"), selected="TAZYAP_BRCA_ACTIVITY", width = "100%")
         ),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'CCLE_MUT_SCNA'", ns("dataset")),
-          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Transcriptional Activation of B-catenin in Cancers"="CTNBB1_reporter", "Import Data"), selected="CTNBB1_reporter", width = "100%")
+          selectInput(inputId = ns("CCLE_MUT_SCNA_scores"), label="Choose an input_score:", choices=c("Transcriptional Activation of B-catenin in Cancers (CTNBB1_reporter)"="CTNBB1_reporter", "Import Data"), selected="CTNBB1_reporter", width = "100%")
         ),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'sim.Data'", ns("dataset")),
-          selectInput(inputId = ns("scores"), label="Choose an input_score:", choices=c("Random simulated scores from rnorm(n=ncol(sim.Data), mean=0, sd=1) with seed=123"="sim.Scores", "Import Data"), selected="sim.Scores", width = "100%")
+          selectInput(inputId = ns("sim.Data.scores"), label="Choose an input_score:", choices=c("Random simulated scores from rnorm(n=ncol(sim.Data), mean=0, sd=1) with seed=123"="sim.Scores", "Import Data"), selected="sim.Scores", width = "100%")
         ),
           
         conditionalPanel(
@@ -81,7 +81,7 @@ CaDrA_UI <- function(id){
         helpText("The 'Maximum Percent Cutoff' means each feature in 'Feature Set' must have at least 60% or less of the samples with presence of 'omic feature' across all samples (i.e., any feature occurs in > 60% of the samples will be removed)."),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'Import Data' | (input['%s'] == 'BRCA_GISTIC_MUT_SIG' & input['%s'] == 'Import Data') | (input['%s'] == 'CCLE_MUT_SCNA' & input['%s'] == 'Import Data') | (input['%s'] == 'sim.Data' & input['%s'] == 'Import Data')", ns("dataset"), ns("dataset"), ns("scores"), ns("dataset"), ns("scores"), ns("dataset"), ns("scores")),
+          condition = sprintf("input['%s'] == 'Import Data' | (input['%s'] == 'BRCA_GISTIC_MUT_SIG' & input['%s'] == 'Import Data') | (input['%s'] == 'CCLE_MUT_SCNA' & input['%s'] == 'Import Data') | (input['%s'] == 'sim.Data' & input['%s'] == 'Import Data')", ns("dataset"), ns("dataset"), ns(paste0("BRCA_GISTIC_MUT_SIG_scores")), ns("dataset"), ns(paste0("CCLE_MUT_SCNA_scores")), ns("dataset"), ns(paste0("sim.Data.scores"))),
           fileInput(inputId = ns("input_score_file"), label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), width = "100%"),
           radioButtons(inputId = ns("input_score_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
           helpText("Note: The input score file must be a data frame with two columns (Samples and Scores) and the Samples must match the colnames of the binary feature set\n")
@@ -172,13 +172,17 @@ CaDrA_UI <- function(id){
           ),
           
           div(
-            uiOutput(outputId = ns("featureData_title")),
-            DT::dataTableOutput(outputId = ns("bestFeatureData"))
+            uiOutput(outputId = ns("featureData_title"))
           ),
           
           div(
             uiOutput(outputId = ns("inputScoreData_title")),
             DT::dataTableOutput(outputId = ns("inputScoreData"))
+          ),
+          
+          div(
+            uiOutput(outputId = ns("bestFeatureData_title")),
+            DT::dataTableOutput(outputId = ns("bestFeatureData"))
           ),
           
           div(
@@ -321,7 +325,9 @@ CaDrA_Server <- function(id){
           ## Read in BRCA GISTIC+Mutation ESet object
           eset_mut_scna <-  CaDrA::BRCA_GISTIC_MUT_SIG
           
-          if(input$scores == "TAZYAP_BRCA_ACTIVITY"){
+          #print(input$BRCA_GISTIC_MUT_SIG_scores)
+          
+          if(input$BRCA_GISTIC_MUT_SIG_scores == "TAZYAP_BRCA_ACTIVITY"){
             
             ## Read in input score
             input_score <-  CaDrA::TAZYAP_BRCA_ACTIVITY
@@ -340,13 +346,14 @@ CaDrA_Server <- function(id){
             
         }
         
-        
         if(input$dataset == "CCLE_MUT_SCNA"){
           
           ## Read in SCNA ESet object
           ES <- CaDrA::CCLE_MUT_SCNA
           
-          if(input$scores == "CTNBB1_reporter"){
+          #print(input$CCLE_MUT_SCNA_scores)
+          
+          if(input$CCLE_MUT_SCNA_scores == "CTNBB1_reporter"){
             ## Read in input score
             input_score <- CaDrA::CTNBB1_reporter
           }
@@ -358,7 +365,7 @@ CaDrA_Server <- function(id){
           ## Read in simulated eset object
           ES <- CaDrA::sim.ES
           
-          if(input$scores == "sim.Scores"){
+          if(input$sim.Data.scores == "sim.Scores"){
             
             # set seed
             set.seed(123)
@@ -418,7 +425,7 @@ CaDrA_Server <- function(id){
           
         }
         
-        if(input$dataset == "Import Data" | (input$dataset == "BRCA_GISTIC_MUT_SIG" & input$scores == "Import Data") | (input$dataset == "CCLE_MUT_SCNA" & input$scores == "Import Data") | (input$dataset == "sim.Data" & input$scores == "Import Data")){
+        if(input$dataset == "Import Data" | (input$dataset == "BRCA_GISTIC_MUT_SIG" & input$BRCA_GISTIC_MUT_SIG_scores == "Import Data") | (input$dataset == "CCLE_MUT_SCNA" & input$CCLE_MUT_SCNA_scores == "Import Data") | (input$dataset == "sim.Data" & input$sim.Data.scores == "Import Data")){
           
           inputfile <- input$input_score_file;
           inputtype <- input$input_score_file_type;
@@ -796,8 +803,7 @@ CaDrA_Server <- function(id){
           h2(title),
           br(),
           p(description),
-          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features ESet"),
-          h2("Best Meta-Features ESet")
+          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features ESet")
         )
         
       })
@@ -817,6 +823,14 @@ CaDrA_Server <- function(id){
         }
         
       )
+      
+      output$bestFeatureData_title <- renderUI({
+        
+        req(candidate_search_result())
+        
+        h2("Best Meta-Features ESet")
+      
+      })
       
       output$bestFeatureData <- DT::renderDataTable({
         
@@ -925,7 +939,45 @@ CaDrA_Server <- function(id){
         
         req(input_score_data())
         
-        h2("Observed Input Scores")
+        dataset <- isolate({ input$dataset })
+        
+        if(dataset == "BRCA_GISTIC_MUT_SIG"){
+          
+          scores <- isolate({ input$BRCA_GISTIC_MUT_SIG_scores })
+          
+          if(scores == "TAZYAP_BRCA_ACTIVITY"){
+            title <- "Oncogenic YAP/TAZ Activity in Human Breast Cancer (TAZYAP_BRCA_ACTIVITY)"
+          }else{
+            title <- "Imported Data"
+          }
+          
+        }else if(dataset == "CCLE_MUT_SCNA"){
+
+          scores <- isolate({ input$CCLE_MUT_SCNA_scores })
+          
+          if(scores == "CTNBB1_reporter"){
+            title <- "Transcriptional Activation of B-catenin in Cancers (CTNBB1_reporter)"
+          }else{
+            title <- "Imported Data"
+          }
+          
+        }else if(dataset == "sim.Data"){
+          
+          scores <- isolate({ input$sim.Data.scores })
+          
+          if(scores == "sim.Scores"){
+            title <- "Random simulated scores from rnorm(n=ncol(sim.Data), mean=0, sd=1) with seed=123"
+          }else{
+            title <- "Imported Data"
+          }
+          
+        }else if(dataset == "Import Data"){
+
+          title <- "Imported Data"
+          
+        }
+        
+        h2("Observed Input Scores:", title)
         
       })
       

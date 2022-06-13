@@ -75,7 +75,7 @@ CaDrA_UI <- function(id){
           helpText("Note: If file is in csv format, the binary feature set must be a data frame including a 'Features' column name that contains unique names or labels to search for best features. Otherwise, Feature Set must be an object of class ExpressionSet from BioBase package.")
         ),
         
-        numericInput(inputId = ns("min_cutoff"), label="Minimum Samples Cutoff:", value=5, min=5, max=Inf, step=1, width="100%"),
+        numericInput(inputId = ns("min_cutoff"), label="Minimum Samples Cutoff:", value=30, min=5, max=Inf, step=1, width="100%"),
         helpText("The 'Minimum Samples Cutoff' means each feature in 'Feature Set' must have at least 5 or more samples with presence of 'omic feature' across all samples (i.e., any feature occurs in less than 5 samples will be removed)."),
         numericInput(inputId = ns("max_cutoff"), label="Maxinum Percent Cutoff:", value=0.6, min=0, max=1, step=0.1, width="100%"),
         helpText("The 'Maximum Percent Cutoff' means each feature in 'Feature Set' must have at least 60% or less of the samples with presence of 'omic feature' across all samples (i.e., any feature occurs in > 60% of the samples will be removed)."),

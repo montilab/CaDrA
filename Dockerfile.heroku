@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /srv/shiny-server/
 
  # Copy configuration files to Docker image
-COPY shiny-server.sh /usr/bin/shiny-server.sh
+COPY shiny-server-heroku.sh /usr/bin/shiny-server.sh
 
 # Allow permission
 RUN ["chmod", "+rwx", "/srv/shiny-server/"]

@@ -48,10 +48,11 @@ CaDrA_UI <- function(id){
       style = "border: 1px solid gray; border-radius: 3px; background: lightgrey; padding: 5px 10px 10px 10px; min-height: 850px;",
       
       h2("CaDrA Options", style="text-align: center;"),
+      
       br(),
       
       tagList(
-        selectInput(inputId = ns("dataset"), label="Choose a feature set:", choices=c("Human Breast Cancer Mutation Signatures (BRCA_GISTIC_MUT_SIG)"="BRCA_GISTIC_MUT_SIG", "Somatic Copy Number Alteration in Cancers (CCLE_MUT_SCNA)"="CCLE_MUT_SCNA", "Simulated Data (sim.Data)"="sim.Data", "Import Data"), selected="BRCA_GISTIC_MUT_SIG", width = "100%"),
+        selectInput(inputId = ns("dataset"), label="Choose a BINARY feature set:", choices=c("Human Breast Cancer Mutation Signatures (BRCA_GISTIC_MUT_SIG)"="BRCA_GISTIC_MUT_SIG", "Somatic Copy Number Alteration in Cancers (CCLE_MUT_SCNA)"="CCLE_MUT_SCNA", "Simulated Data (sim.Data)"="sim.Data", "Import Data"), selected="BRCA_GISTIC_MUT_SIG", width = "100%"),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'BRCA_GISTIC_MUT_SIG'", ns("dataset")),
@@ -70,26 +71,58 @@ CaDrA_UI <- function(id){
           
         conditionalPanel(
           condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
-          fileInput(inputId = ns("ES_file"), label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), width = "100%"),
-          radioButtons(inputId = ns("ES_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-          helpText("Note: If file is in csv format, the binary feature set must be a data frame including a 'Features' column name that contains unique names or labels to search for best features. Otherwise, Feature Set must be an object of class ExpressionSet from BioBase package.")
+          fileInput(
+            inputId = ns("ES_file"), 
+            label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), 
+            width = "100%"
+          ),
+          radioButtons(
+            inputId = ns("ES_file_type"), 
+            label = HTML("File type", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"NOTE: If file is in csv format, the \'BINARY feature set\' must be a data frame including a \'Features\' column name that contains unique names or labels to search for best features. Otherwise, Feature Set must be an object of class ExpressionSet from BioBase package.\">?</a>')), 
+            choices=c(".csv", ".rds"), 
+            selected = ".csv", 
+            inline = TRUE
+          )
         ),
-        
-        numericInput(inputId = ns("min_cutoff"), label="Minimum Samples Cutoff:", value=30, min=5, max=Inf, step=1, width="100%"),
-        helpText("The 'Minimum Samples Cutoff' means each feature in 'Feature Set' must have at least 5 or more samples with presence of 'omic feature' across all samples (i.e., any feature occurs in less than 5 samples will be removed)."),
-        numericInput(inputId = ns("max_cutoff"), label="Maxinum Percent Cutoff:", value=0.6, min=0, max=1, step=0.1, width="100%"),
-        helpText("The 'Maximum Percent Cutoff' means each feature in 'Feature Set' must have at least 60% or less of the samples with presence of 'omic feature' across all samples (i.e., any feature occurs in > 60% of the samples will be removed)."),
-        
+
         conditionalPanel(
           condition = sprintf("input['%s'] == 'Import Data' | (input['%s'] == 'BRCA_GISTIC_MUT_SIG' & input['%s'] == 'Import Data') | (input['%s'] == 'CCLE_MUT_SCNA' & input['%s'] == 'Import Data') | (input['%s'] == 'sim.Data' & input['%s'] == 'Import Data')", ns("dataset"), ns("dataset"), ns(paste0("BRCA_GISTIC_MUT_SIG_scores")), ns("dataset"), ns(paste0("CCLE_MUT_SCNA_scores")), ns("dataset"), ns(paste0("sim.Data.scores"))),
-          fileInput(inputId = ns("input_score_file"), label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), width = "100%"),
-          radioButtons(inputId = ns("input_score_file_type"), label = "File type:", choices=c(".csv", ".rds"), selected = ".csv", inline = TRUE),
-          helpText("Note: The input score file must be a data frame with two columns (Samples and Scores) and the Samples must match the colnames of the binary feature set\n")
+          fileInput(
+            inputId = ns("input_score_file"), 
+            label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), 
+            width = "100%"
+          ),
+          radioButtons(
+            inputId = ns("input_score_file_type"), 
+            label = HTML("File type", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"NOTE: The input score file must be a data frame with two columns (Samples and Scores) and the Samples must match the colnames of the binary feature set.\">?</a>')), 
+            choices=c(".csv", ".rds"), 
+            selected = ".csv", 
+            inline = TRUE
+          )
         ),
         
-        br(),
+        numericInput(
+          inputId = ns("min_cutoff"), 
+          label=HTML("Minimum Samples Frequency", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 5 samples will be automatically removed).\">?</a>')), 
+          value=30,
+          min=5, 
+          max=Inf, 
+          step=1,
+          width="100%"
+        ),
+        
+        numericInput(
+          inputId = ns("max_cutoff"), 
+          label=HTML("Maximum Percent Cutoff", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>')), 
+          value=0.6, 
+          min=0, 
+          max=1, 
+          step=0.1, 
+          width="100%"
+        ),
         
         radioButtons(inputId = ns("method"), label = strong(span(style="color:red;", "*"), "Scoring method:"), choices = c("ks", "wilcox", "revealer", "custom"), selected = "ks", inline = TRUE),
+        
         conditionalPanel(
           condition = sprintf("input['%s'] == 'ks'", ns("method")),
           checkboxInput(inputId = ns("weighted_ks"), label = "Compute the weighted ks?", value = FALSE), 
@@ -100,10 +133,12 @@ CaDrA_UI <- function(id){
             helpText("Note: Weights must have names or labels that match the names of the input score file"),
           )
         ),
+        
         conditionalPanel(
           condition = sprintf("input['%s'] == 'ks' | input['%s'] == 'wilcox'", ns("method"), ns("method")),
           selectInput(inputId = ns("alternative"), label = strong(span(style="color:red;", "*"), "Alternative:"), choices = c("less", "two.sided", "greater"), selected = "less", width = "100%"),
         ),
+        
         fluidRow(
           column(
             width = 6,
@@ -114,17 +149,23 @@ CaDrA_UI <- function(id){
             radioButtons(inputId = ns("search_method"), label = strong(span(style="color:red;", "*"), "Search method:"), choices=c("forward and backward"="both", "forward"="forward"), selected = "both", inline = FALSE)
           )
         ),
+        
         numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Select a maximum size that a meta-feature can extend to do for a given search"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
+        
         radioButtons(inputId = ns("initial_seed"), label = strong(span(style="color:red;", "*"), "How to start the search?"), choices = c("Top N seeds"="top_N_seeds", "Known seeds"="search_start_seeds"), selected = "top_N_seeds", inline = TRUE),
+        
         conditionalPanel(
           condition = sprintf("input['%s'] == 'top_N_seeds'", ns("initial_seed")),
           numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Select a number to evaluate over the top N features"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
         ),
+        
         conditionalPanel(
           condition = sprintf("input['%s'] == 'search_start_seeds'", ns("initial_seed")),
           textAreaInput(inputId = ns("search_start"), label = strong(span(style = "color:red;", "*"), "Enter a list of integers/character strings (separated by commas) which specifies an index or feature name within the expression set object to start the search with"), value="", width="100%")
         ),
+        
         checkboxInput(inputId = ns("permutation_test"), label = strong("Perform permutation testing?"), value = FALSE), 
+        
         conditionalPanel(
           condition = sprintf("input['%s'] == true", ns("permutation_test")),
           numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = Inf, step = 1, value = 100),
@@ -137,6 +178,7 @@ CaDrA_UI <- function(id){
         uiOutput(outputId = ns("error_message")),
         
         actionButton(inputId = ns("run_cadra"), label = strong("RUN"), style="background: blue; color: white;"),
+        actionButton(inputId = ns("stop_cadra"), label = strong("STOP"), style="background: blue; color: white;"),
         
         br(), br(), br(), br(),
         
@@ -281,6 +323,7 @@ CaDrA_Server <- function(id){
     function(input, output, session) {
       
       # Create reative values
+      stop_process <- reactiveVal(FALSE)
       feature_set_description <- reactiveVal()
       feature_set_data <- reactiveVal()
       input_score_data <- reactiveVal()
@@ -308,8 +351,37 @@ CaDrA_Server <- function(id){
         
       })
       
+      observeEvent(input$dataset, {
+        
+        if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
+          updateNumericInput(session, inputId = "min_cutoff", value = 30)
+        }else if(input$dataset == "CCLE_MUT_SCNA"){
+          updateNumericInput(session, inputId = "min_cutoff", value = 5)
+        }else if(input$dataset == "sim.Data"){
+          updateNumericInput(session, inputId = "min_cutoff", value = 5)
+        }else if(input$dataset == "Import Data"){
+          updateNumericInput(session, inputId = "min_cutoff", value = 5)
+        }
+        
+      })
+      
+      observeEvent(input$stop_cadra, {
+        
+        shiny::invalidateLater(300, session)
+        stop_process(TRUE)
+        error_message("Your process has been interrupted")
+        
+      })
+        
       observeEvent(input$run_cadra, {
         
+        shiny::invalidateLater(300, session)
+        
+        if(stop_process()){         
+          return(NULL); 
+        }
+        
+        stop_process(FALSE)
         feature_set_description(NULL)
         feature_set_data(NULL)
         input_score_data(NULL)
@@ -319,6 +391,8 @@ CaDrA_Server <- function(id){
         error_message(NULL)
         
         shinyjs::show(id="loading_icon")
+        
+        #shinyjs::disable("run_cadra")
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
@@ -763,6 +837,8 @@ CaDrA_Server <- function(id){
           )
         ) 
         
+        #shinyjs::enable("run_cadra")
+        
         error_message("NONE")
         
       })
@@ -1168,6 +1244,10 @@ CaDrA_App <- function() {
       tags$style(
         HTML(
         "
+        .tooltip-txt {
+         color: red;
+        }
+        
         .loading_div {
           display: flex;
           text-align: center;

@@ -131,19 +131,19 @@ CaDrA <- function(
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
       # Ranking the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
     }
     
     # Compute mutually exclusive method for binary features in ES
     if(method == "revealer"){
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
       verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
     }
     
@@ -245,6 +245,10 @@ CaDrA <- function(
     cat("BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n")
     
     ##############################################################################################
+    
+    #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
+    options(verbose = verbose)   
+    
     # Sets up the parallel backend which will be utilized by Plyr.
     parallel = FALSE
     progress = "text"
@@ -257,12 +261,9 @@ CaDrA <- function(
     } 
     
     cat("Using ", ncores, " core(s)...\n")
-    
-    #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
-    options(verbose = FALSE)    
-    
+
     # Generate matrix of permutated input_score  
-    perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
+    perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed, verbose = FALSE)
     
     verbose("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     perm_best_scores <- unlist(plyr::alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, top_N=top_N, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, do_plot = FALSE, verbose = FALSE) }, .parallel=parallel, .progress=progress))
@@ -286,21 +287,23 @@ CaDrA <- function(
     
     cat("Computing observed best score ..\n\n")
     
-    obs_best_score <- candidate_search(ES = ES,
-                                       input_score = input_score, 
-                                       method = method,
-                                       custom_function = custom_function,
-                                       custom_parameters = custom_parameters,
-                                       alternative = alternative,
-                                       metric = metric,
-                                       weights = weights,
-                                       top_N = top_N,
-                                       search_start = search_start,
-                                       search_method = search_method,
-                                       max_size = max_size,
-                                       best_score_only = TRUE,
-                                       do_plot = FALSE,
-                                       verbose = FALSE) %>% unlist()
+    obs_best_score <- candidate_search(
+      ES = ES,
+      input_score = input_score, 
+      method = method,
+      custom_function = custom_function,
+      custom_parameters = custom_parameters,
+      alternative = alternative,
+      metric = metric,
+      weights = weights,
+      top_N = top_N,
+      search_start = search_start,
+      search_method = search_method,
+      max_size = max_size,
+      best_score_only = TRUE,
+      do_plot = FALSE,
+      verbose = FALSE
+    ) %>% unlist()
     
   } else{
     
@@ -395,32 +398,53 @@ CaDrA <- function(
 #' @param seed seed which can be set for reproducibility of 'random' results. Default is 123
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #' @return A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
+#' 
+#' @examples
+#' 
+#' # Load pre-computed input score
+#' data(TAZYAP_BRCA_ACTIVITY)
+#' input_score = TAZYAP_BRCA_ACTIVITY
+#' 
+#' # Set seed
+#' seed = 123
+#' 
+#' # number of permutations
+#' n_perm = 1000
+#'  
+#' # Define additional parameters and start the function
+#' perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
+#'   
 #' @export
 generate_permutations <- function(
-  ord,        #These are the sample orderings to be permuted
-  n_perms,    #Number of permutations to produce
-  seed = 123,    #Seed which can be set for reproducibility of results
+  ord,                  # These are the sample orderings to be permuted
+  n_perms,              # Number of permutations to produce
+  seed = 123,           # Seed which can be set for reproducibility of results
   verbose = FALSE
 ){
   
   options(verbose = verbose)
   
   m  <- length(ord)
-  perm <- matrix(NA, nrow=n_perms, ncol=length(ord) )
+  
+  perm <- matrix(NA, nrow=n_perms, ncol=length(ord))
+  
   if ( !is.null(seed) ){
     set.seed(seed)
     verbose("Seed set: ", seed,"\n")
   }
-  verbose("Generating ",n_perms," permuted sample ranks..\n")
-  for ( i in (1:n_perms) ) {
-    perm[i,] <- sample(ord,m)
+  
+  verbose("Generating ", n_perms," permuted sample observed input scores...\n")
+  
+  for (i in seq_len(n_perms) ) {
+    perm[i,] <- sample(ord, m)
   }
   
   verbose("Are all generated permutations unique?..\n")
+  
   verbose(nrow(perm)==nrow(unique.matrix(perm)))
   
-  if(nrow(perm)!=nrow(unique.matrix(perm)))
-    stop("Not enough unique sample permutations for the permutation number specified.. Please provide a reasonabl nperm value ..\n")
+  if(nrow(perm) != nrow(unique.matrix(perm)))
+    stop("Not enough unique sample permutations for the permutation number specified.. Please provide a reasonable nperm value ..\n")
   
   return(perm) 
   

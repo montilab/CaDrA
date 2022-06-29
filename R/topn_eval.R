@@ -69,7 +69,7 @@ topn_eval <- function(
   if(top_N > 10)
     warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
   
-  verbose("Evaluating search over top features: ", 1:top_N, "\n\n")
+  verbose("Evaluating search over top features: ", seq_along(top_N), "\n\n")
   
   # Performs candidate search over top N indices
   topn_l <- candidate_search(

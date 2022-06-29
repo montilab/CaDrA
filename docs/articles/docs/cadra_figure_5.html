@@ -84,7 +84,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="cadra_figure_5_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Reproduce CaDrA Figures</h1>
@@ -100,81 +100,73 @@
 <div class="section level3">
 <h3 id="cadra-query-of-brca-yaptaz-activity">CaDrA Query of BRCA YAP/TAZ Activity<a class="anchor" aria-label="anchor" href="#cadra-query-of-brca-yaptaz-activity"></a>
 </h3>
-<p>Here, we reproduce the results of Figure 5 of <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">[Kartha
-et al., 2019]</a> (the section titled “<em>CaDrA Reveals Novel Drivers
-of Oncogenic YAP/TAZ Activity in Human Breast Cancer</em>”).</p>
+<p>Here, we reproduce the results of Figure 5 of <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">[Kartha et al., 2019]</a> (the section titled “<em>CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer</em>”).</p>
 </div>
 <div class="section level2">
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="load-format-data-inputs">Load &amp; Format Data Inputs<a class="anchor" aria-label="anchor" href="#load-format-data-inputs"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span>
-<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span>
-
-<span class="co">## Read in input score</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span>
-<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span>
-
-<span class="co">## Samples to keep based on the overlap between the two inputs</span>
-<span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_scores</span><span class="op">)</span>, <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html" class="external-link">sampleNames</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">)</span>
-<span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">eset_mut_scna</span><span class="op">[</span>,<span class="va">overlap</span><span class="op">]</span>
-<span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">input_scores</span><span class="op">[</span><span class="va">overlap</span><span class="op">]</span>
-
-<span class="co">## Binarize ES to only have 0's and 1's</span>
-<span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>
-
-<span class="co">## Pre-filter ESet based on occurrence frequency</span>
-<span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span>
-  ES <span class="op">=</span> <span class="va">eset_mut_scna</span>,
-  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, <span class="co"># max frequency (60%)</span>
-  min.cutoff <span class="op">=</span> <span class="fl">0.03</span> <span class="co"># min frequency (3%)</span>
-<span class="op">)</span> </code></pre></div>
-<pre><code><span class="co">#&gt; Pre-filtering features ..</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Removing features having &lt;  3 and &gt;  60  % occurence in sample set..</span>
-<span class="co">#&gt; 133  features retained out of  16873  supplied features in dataset</span></code></pre>
+<code class="sourceCode R"><span><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span></span>
+<span><span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span></span>
+<span></span>
+<span><span class="co">## Read in input score</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span></span>
+<span><span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span></span>
+<span></span>
+<span><span class="co">## Samples to keep based on the overlap between the two inputs</span></span>
+<span><span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_scores</span><span class="op">)</span>, <span class="fu">Biobase</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureNames.html" class="external-link">sampleNames</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">eset_mut_scna</span><span class="op">[</span>,<span class="va">overlap</span><span class="op">]</span></span>
+<span><span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">input_scores</span><span class="op">[</span><span class="va">overlap</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">## Binarize ES to only have 0's and 1's</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<span></span>
+<span><span class="co">## Pre-filter ESet based on occurrence frequency</span></span>
+<span><span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span></span>
+<span>  ES <span class="op">=</span> <span class="va">eset_mut_scna</span>,</span>
+<span>  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, <span class="co"># max frequency (60%)</span></span>
+<span>  min.cutoff <span class="op">=</span> <span class="fl">0.03</span> <span class="co"># min frequency (3%)</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="run-cadra">Run CaDrA<a class="anchor" aria-label="anchor" href="#run-cadra"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span>
-  ES <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,
-  input_score <span class="op">=</span> <span class="va">input_scores</span>,
-  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># use Kolmogorow-Smirnow Scoring function </span>
-  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># use the KS p-value to score features</span>
-  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span>
-  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span>
-  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># best_score_only = FALSE will return ESet, its corresponding</span>
-                               <span class="co"># best score, and input_score for over 7 feature searches</span>
-<span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
+<span>  ES <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,</span>
+<span>  input_score <span class="op">=</span> <span class="va">input_scores</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># use Kolmogorow-Smirnow Scoring function </span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># use the KS p-value to score features</span></span>
+<span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
+<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># best_score_only = FALSE will return ESet, its corresponding</span></span>
+<span>                               <span class="co"># best score, and input_score for over 7 feature searches</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualize-best-results">Visualize Best Results<a class="anchor" aria-label="anchor" href="#visualize-best-results"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Fetch the ESet and feature set corresponding to best score over the top_N searches</span>
-<span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span>
-
-<span class="co"># Visualize best results using the function meta_plot</span>
-<span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span>, input_score_label <span class="op">=</span> <span class="st">"YAP/TAZ Activity"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Fetch the ESet and feature set corresponding to best score over the top_N searches</span></span>
+<span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Visualize best results using the function meta_plot</span></span>
+<span><span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span>, input_score_label <span class="op">=</span> <span class="st">"YAP/TAZ Activity"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cadra_figure_5_files/figure-html/visualize.best-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="summarize-top_n-results">Summarize top_N Results<a class="anchor" aria-label="anchor" href="#summarize-top_n-results"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Evaluate results across top_N seed features you started from</span>
-<span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span> </code></pre></div>
-<pre><code><span class="co">#&gt; Generating top N overlap heatmap..</span></code></pre>
-<p><img src="cadra_figure_5_files/figure-html/summarize-1.png" width="768" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Evaluate results across top_N seed features you started from</span></span>
+<span><span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../../reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span> </span></code></pre></div>
 </div>
 </div>
   </div>
@@ -196,7 +188,7 @@ of Oncogenic YAP/TAZ Activity in Human Breast Cancer</em>”).</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

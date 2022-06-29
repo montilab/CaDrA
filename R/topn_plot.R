@@ -3,6 +3,7 @@
 #' 
 #' Plots a heatmap representation of overlapping features given a list of top N features obtained from \code{candidate_search()} results
 #' @param topn_list a list of lists where each list entry is returned from the \code{candidate_search()} for a given starting index. This is computed within and can be returned by the \code{topn_eval()} function.
+#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #' 
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
 #' @examples
@@ -16,11 +17,17 @@
 #' @export
 #' @import gplots
 #' @importFrom graphics legend
-topn_plot <- function(topn_list){
+topn_plot <- function(
+  topn_list, 
+  verbose = FALSE
+){
+  
+  # Set up verbose option
+  options(verbose = verbose)
   
   # Get eset and best scores for top n features
-  eset_l <- lapply(1:length(topn_list), function(l){ topn_list[[l]][['ESet']] })
-  scores_l <- lapply(1:length(topn_list), function(l){ topn_list[[l]][['Score']] })
+  eset_l <- lapply(seq_along(topn_list), function(l){ topn_list[[l]][['ESet']] })
+  scores_l <- lapply(seq_along(topn_list), function(l){ topn_list[[l]][['Score']] })
   
   f_list <- lapply(eset_l, featureNames)  #Get the list of feature names from each ESet
   
@@ -46,32 +53,37 @@ topn_plot <- function(topn_list){
     # Note that this means the HIGHER the transformed score, the more significant
     s.log <- -log(s) 
     
-    colnames(m) <- paste(colnames(m), " [",seq(1,ncol(m)),"] ", round(s.log,3), sep="")
-    m <- m[,order(s.log,decreasing = T)] #We order matrix columns in increasing order of search p-value (i.e. decreasing negative-log p-value)
+    colnames(m) <- paste(colnames(m), " [", seq(1, ncol(m)), "] ", round(s.log,3), sep="")
+    
+    m <- m[, order(s.log, decreasing = TRUE)] #We order matrix columns in increasing order of search p-value (i.e. decreasing negative-log p-value)
     
     colcode <- if (all(m == 1)) c("firebrick2", "white") else c("white", "firebrick2")
     
     verbose("Generating top N overlap heatmap..\n\n")
     
-    heatmap.2(x = m,
-              col=colcode,
-              Colv=FALSE,
-              dendrogram="none",
-              margins=c(10,10),
-              cexRow=0.7,
-              cexCol=0.7,
-              cex.main=0.8,
-              key=F,
-              trace="none",
-              sepwidth=c(0.1,0.1),
-              sepcolor="grey90",
-              colsep=1:ncol(m),
-              rowsep=1:nrow(m))
+    heatmap.2(
+      x = m,
+      col = colcode,
+      Colv = FALSE,
+      dendrogram = "none",
+      margins = c(10,10),
+      cexRow = 0.7,
+      cexCol = 0.7,
+      cex.main = 0.8,
+      key = FALSE,
+      trace = "none",
+      sepwidth = c(0.1,0.1),
+      sepcolor = "grey90",
+      colsep = seq_along(ncol(m)),
+      rowsep = seq_along(nrow(m))
+    )
     
-    legend("topleft",
-           legend=c("Present","Absent"),
-           fill=c("firebrick2","white"),
-           bty="n")
+    legend(
+      "topleft",
+      legend=c("Present","Absent"),
+      fill=c("firebrick2","white"),
+      bty="n"
+    )
     
   } else{
     

@@ -4,6 +4,9 @@
     <loc>https://github.com/montilab/CaDrA/404.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/LICENSE-text.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/articles/docs/basic.html</loc>
   </url>
   <url>
@@ -37,9 +40,6 @@
     <loc>https://github.com/montilab/CaDrA/index.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/LICENSE-text.html</loc>
-  </url>
-  <url>
     <loc>https://github.com/montilab/CaDrA/news/index.html</loc>
   </url>
   <url>
@@ -47,6 +47,18 @@
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/BRCA_GISTIC_MUT_SIG.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_CNA_AMP_DEL_REVEALER.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_SCNA.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_reporter.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_transcriptional_reporter.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/CaDrA-package.html</loc>
@@ -58,31 +70,22 @@
     <loc>https://github.com/montilab/CaDrA/reference/CaDrA_App.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/cadra_search.html</loc>
-  </url>
-  <url>
     <loc>https://github.com/montilab/CaDrA/reference/CaDrA_Server.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/CaDrA_UI.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/reference/TAZYAP_BRCA_ACTIVITY.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/cadra_search.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/reference/candidate_search.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_CNA_AMP_DEL_REVEALER.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_SCNA.html</loc>
-  </url>
-  <url>
     <loc>https://github.com/montilab/CaDrA/reference/compute_score.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_reporter.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_transcriptional_reporter.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/custom_genescore_mat.html</loc>
@@ -100,16 +103,16 @@
     <loc>https://github.com/montilab/CaDrA/reference/ks.genescore.mat.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/ks_genescore_mat.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/ks_genescore_wrap.html</loc>
-  </url>
-  <url>
     <loc>https://github.com/montilab/CaDrA/reference/ks_gene_score.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/ks_gene_score_mat.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/ks_genescore_mat.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/ks_genescore_wrap.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/ks_plot_wrap.html</loc>
@@ -155,9 +158,6 @@
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/stepwise.search.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/TAZYAP_BRCA_ACTIVITY.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/topn.best.html</loc>

@@ -9,16 +9,16 @@ Authors@R:
       person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
       person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu")
      )
-Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
-Depends: R (>= 3.1.1)
+Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on a binary multi-omics dataset. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given vector of continuous scores (e.g. sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.), based on the union occurence (i.e. logical OR) of the events.
+Depends: R (>= 4.0.0)
 Imports: 
+    Biobase,
     shiny,
     shinyjs,
     htmltools,
     dplyr,
     tibble,
     DT,
-    Biobase,
     doParallel,
     plyr,
     ggplot2,
@@ -33,7 +33,9 @@ Imports:
     methods,
     MASS,
     misc3d,
-    ppcor
+    ppcor,
+    graphics,
+    utils
 LazyData: true
 License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
@@ -46,5 +48,6 @@ Suggests:
     knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+biocViews: Microarray, RNASeq, GeneExpression, Software, FeatureExtraction
 VignetteBuilder: knitr
 BugReports: https://github.com/montilab/CaDrA/issues

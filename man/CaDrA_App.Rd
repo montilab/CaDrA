@@ -12,3 +12,13 @@ Shiny application
 \description{
 Run both Shiny UI and Server Modules
 }
+\examples{
+
+# Load R library
+library(shiny)
+
+# Launch and deploy Shiny app
+app <- CaDrA::CaDrA_App()
+# shiny::runApp(app, host='0.0.0.0', port=3838)
+ 
+}

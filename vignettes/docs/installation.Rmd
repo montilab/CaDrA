@@ -9,7 +9,6 @@ vignette: >
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
 knitr::opts_chunk$set(comment="", cache=FALSE, fig.align="center")
-library(tidyverse)
 devtools::load_all(".")
 ```
 

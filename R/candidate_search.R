@@ -117,7 +117,7 @@ candidate_search <- function(
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -128,7 +128,7 @@ candidate_search <- function(
       verbose("Using Wilcoxon method for features scoring.\n")
       
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -137,7 +137,7 @@ candidate_search <- function(
     # Compute mutually exclusive method for binary features in ES 
     if(method == "revealer"){
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -217,7 +217,7 @@ candidate_search <- function(
   
   # Re-order ES in decreasing order of user-defined score (stat or pval)
   # This comes in handy when doing the top-N evaluation of the top N 'best' features
-  score.rank <- if(metric != "pval") order(score, decreasing=T) else order(-sign(score), score)
+  score.rank <- if(metric != "pval") order(score, decreasing=TRUE) else order(-sign(score), score)
   
   verbose("Ranking ES features by metric...\n")
   
@@ -247,7 +247,7 @@ candidate_search <- function(
       warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
     
     # Start the search with top N features based on their sorted indexes
-    search_feature_index <- 1:top_N
+    search_feature_index <- seq_along(top_N)
     
     verbose("Evaluating search over top ", length(search_feature_index), " features\n\n")
     
@@ -301,7 +301,7 @@ candidate_search <- function(
   }
   
   # Performs the search over the feature indices
-  topn_l <- lapply(1:length(search_feature_index), function(x){ 
+  topn_l <- lapply(seq_along(search_feature_index), function(x){ 
     # x=1;
     # Evaluate over top N features using their indexes
     best.s.index <- search_feature_index[x]
@@ -363,16 +363,19 @@ candidate_search <- function(
       # Perform a backward check on the list of existing features and update global scores/feature lists accordingly  
       if(length(global.best.s.features) > 3 & back_search == TRUE){
         
-        backward_search.results <- forward_backward_check(ES = ES,
-                                                          input_score = input_score,
-                                                          glob.f = global.best.s.features, # Global feature set so far
-                                                          glob.f.s = global.best.s,        # score corresponding to this global feature set
-                                                          method = method, 
-                                                          custom_function = custom_function,
-                                                          custom_parameters = custom_parameters,
-                                                          alternative = alternative,
-                                                          metric = metric,
-                                                          weights = weights)    
+        backward_search.results <- forward_backward_check(
+          ES = ES,
+          input_score = input_score,
+          glob.f = global.best.s.features, # Global feature set so far
+          glob.f.s = global.best.s,        # score corresponding to this global feature set
+          method = method, 
+          custom_function = custom_function,
+          custom_parameters = custom_parameters,
+          alternative = alternative,
+          metric = metric,
+          weights = weights
+        )  
+        
         # Update globlal features, scores 
         global.best.s.features <- backward_search.results[[1]]
         global.best.s <- backward_search.results[[2]]
@@ -513,7 +516,7 @@ candidate_search <- function(
   # best_score_only
   if(best_score_only == TRUE){
     
-    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]][['Score']] })
+    scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['Score']] })
     
     # Working with scores for each top N run
     s <- unlist(scores_l)
@@ -522,9 +525,9 @@ candidate_search <- function(
     # This ASSUMES you're using metric = "pval"
     # NEEDS UPDATING TO ACCOMODATE STATISTIC 
     if(metric == "pval"){
-      best_score <- s[order(s, decreasing = F)][1] #Based on the p-values, the lowest value will be the most significant 
+      best_score <- s[order(s, decreasing = FALSE)][1] #Based on the p-values, the lowest value will be the most significant 
     }else{
-      best_score <- s[order(s, decreasing = T)][1]
+      best_score <- s[order(s, decreasing = TRUE)][1]
     }
     
     return(best_score)
@@ -564,7 +567,7 @@ forward_backward_check <- function
   
   # We want to see if leaving anyone feature out improves the overall meta-feature  score
   # Here we only consider previous features in the meta-feature to remove (i.e. not the last one which was just added)
-  for(n in 1:(length(glob.f)-1)){
+  for(n in seq_along(length(glob.f)-1)){
     #n=1;
     f.names[[n]] <- glob.f[-n]
     
@@ -574,7 +577,7 @@ forward_backward_check <- function
     
     # Compute scores for this meta feature
     # Here we suprress warnings just to avoid messages warning-related single vector score computation (nrow(mat) < 2)
-    u.mat <- matrix(t(matrix(u)), nrow=1, byrow=T, dimnames=list(c("sum"), colnames(ES)))
+    u.mat <- matrix(t(matrix(u)), nrow=1, byrow=TRUE, dimnames=list(c("sum"), colnames(ES)))
 
     s <- suppressWarnings(
       switch(

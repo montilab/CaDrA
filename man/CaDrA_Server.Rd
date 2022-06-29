@@ -15,3 +15,25 @@ Shiny server elements
 \description{
 Shiny Server modules
 }
+\examples{
+
+# Load R library
+library(shiny)
+
+# Create ui and server for Shiny app
+id <- "myapp"
+
+ui <- fluidPage(
+   CaDrA::CaDrA_UI(id = id)
+)
+
+server <- function(input, output, session) {
+   CaDrA::CaDrA_Server(id = id)
+}
+
+app <-  shinyApp(ui=ui, server=server)
+
+# Launch and deploy Shiny app
+# shiny::runApp(app, host='0.0.0.0', port=3838)
+ 
+}

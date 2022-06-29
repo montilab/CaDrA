@@ -17,7 +17,7 @@
 topn_best <- function(topn_list){
   
   # get best score list
-  scores_l <- lapply(1:length(topn_list), function(l){ topn_list[[l]][['Score']] })
+  scores_l <- lapply(seq_along(topn_list), function(l){ topn_list[[l]][['Score']] })
   
   # Working with scores for each top N run
   scores <- unlist(scores_l)

@@ -8,6 +8,35 @@
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
+#' 
+#' @examples 
+#'
+#' # load R library
+#' library(purrr)
+#' library(Biobase)
+#' 
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
+#' 
+#' # Extract the expression matrix
+#' mat = exprs(sim.ES)
+#' 
+#' # Provide a vector of continuous scores for a target profile
+#' input_score = rnorm(n = ncol(sim.ES))
+#' names(input_score) <- colnames(sim.ES)
+#' 
+#' cmi <- seq_along(nrow(mat)) %>% 
+#' purrr::map_dbl(
+#'  function(r){
+#'    revealer_genescore(
+#'      x=input_score, y=mat[r,], z=NULL, assoc_metric="IC", target_match="positive"
+#'    ) 
+#'  }
+#' )
+#'   
 #' @export
 #' @importFrom MASS kde2d bcv
 #' @importFrom misc3d kde3d
@@ -74,9 +103,9 @@ revealer_genescore <- function
   
   # reordering x by target_match direction
   if (target_match == "negative") {
-    ind <- order(x, decreasing=F)
+    ind <- order(x, decreasing=FALSE)
   } else {
-    ind <- order(x, decreasing=T)
+    ind <- order(x, decreasing=TRUE)
   }
   
   x <- x[ind]

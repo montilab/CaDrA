@@ -72,39 +72,94 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wilcox_genescore</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  mu <span class="op">=</span> <span class="fl">0</span>,
-  alternative <span class="op">=</span> <span class="st">"less"</span>,
-  paired <span class="op">=</span> <span class="cn">FALSE</span>,
-  exact <span class="op">=</span> <span class="cn">FALSE</span>,
-  correct <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wilcox_genescore</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  mu <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,</span>
+<span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  exact <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  correct <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>an integer ranked values for group 1</p></dd>
+
+
 <dt>y</dt>
 <dd><p>an integer ranked values for group 2</p></dd>
+
+
 <dt>mu</dt>
 <dd><p>a number uses as an optional parameter to form a null hypothesis. Default is <code>0</code>.</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>alternative hypothesis for p-value calculation (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>). Default is <code>less</code> for left-skewed significance testing.</p></dd>
+
+
 <dt>paired</dt>
 <dd><p>whether to perform paired test. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>exact</dt>
 <dd><p>whether to compute exact p-value. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>correct</dt>
 <dd><p>whether to consider continuity correction for p-value. Default is <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a data frame with two columns: <code>score</code> and <code>p_value</code></p>
+    
+
+<p>a data frame with two columns: <code>score</code> and <code>p_value</code></p>
+
+
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load R library</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed expression set</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set seed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Provide a vector of continuous scores for a target profile </span></span></span>
+<span class="r-in"><span><span class="co"># The scores must have labels or names that match the colnames of expression matrix</span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Sort input_score from highest to lowest values</span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">input_score</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract the expression matrix</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Re-order the samples by input_score sorted from highest to lowest values</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define ranks of input_score</span></span></span>
+<span class="r-in"><span><span class="va">ranks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define alternative</span></span></span>
+<span class="r-in"><span><span class="va">alternative</span> <span class="op">&lt;-</span> <span class="st">"less"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Compute the wilcox rank sum statitic and p-value per row in the matrix</span></span></span>
+<span class="r-in"><span><span class="va">wilcox</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">mat</span>, MARGIN<span class="op">=</span><span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">r</span><span class="op">=</span><span class="va">ranks</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span> <span class="fu">wilcox_genescore</span><span class="op">(</span>x<span class="op">=</span><span class="va">r</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">x</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>, y<span class="op">=</span><span class="va">r</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">x</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -117,7 +172,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -63,6 +63,8 @@ prefilter_data <- function(
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param alt alternative hypothesis for p-value calculation
 #' @useDynLib CaDrA ks_test_d_wrap_
+#' 
+#' @return need a return value here
 ks_test_double_wrap <- function(n_x, y, alt="less") {
   
   if(length(alt) > 0){
@@ -87,6 +89,8 @@ ks_test_double_wrap <- function(n_x, y, alt="less") {
 #' @param weight a vector of weights 
 #' @param alt alternative hypothesis for p-value calculation
 #' @useDynLib CaDrA ks_plot_wrap_
+#' 
+#' @return need a return value here
 ks_plot_wrap <- function(n_x, y, weight, alt="less") {
   
   if(length(alt) > 0){
@@ -112,6 +116,8 @@ ks_plot_wrap <- function(n_x, y, weight, alt="less") {
 #' @param weight a vector of weights 
 #' @param alt alternative hypothesis for p-value calculation
 #' @useDynLib CaDrA ks_genescore_wrap_
+#' 
+#' @return need a return value here
 ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
   
   if(length(alt) > 0){
@@ -138,14 +144,18 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
 #' @param alt an integer value specifying the alternative hypothesis
 #' @param weight a vector of weights to use if performing a weighted-KS test
 #' @useDynLib CaDrA ks_genescore_mat_
+#' 
+#' @return Two lists: score and p-value
 ks_genescore_mat <- function(mat, alt="less", weight) {
   
   if(!is.matrix(mat)) stop("Input argument to ks_genescore_mat function is not a matrix")
+  
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
   } else {
     alt_int <- 1L
   }
+  
   # Ensure the right type of input
   mat.num <- matrix(as.numeric(mat), ncol=ncol(mat), nrow=nrow(mat))
   weight <- if( length(weight) > 1 ) as.numeric(weight)

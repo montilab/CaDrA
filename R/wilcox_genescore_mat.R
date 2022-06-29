@@ -46,7 +46,7 @@ wilcox_genescore_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary 0 or 1 values 
@@ -75,7 +75,7 @@ wilcox_genescore_mat <- function
       # match colnames of expression matrix with names of provided ranks values
       # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
       if(nrow(mat) == 1){
-        mat <- matrix(t(mat[,names(ranks)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat)))
+        mat <- matrix(t(mat[,names(ranks)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat)))
       }else{
         mat <- mat[,names(ranks)]
       }

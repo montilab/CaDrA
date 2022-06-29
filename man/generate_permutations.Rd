@@ -21,3 +21,19 @@ A row matrix of permuted values (i.e. ranks) where each row is a single permutat
 \description{
 Produces a random permutation rank matrix given a vector of values
 }
+\examples{
+
+# Load pre-computed input score
+data(TAZYAP_BRCA_ACTIVITY)
+input_score = TAZYAP_BRCA_ACTIVITY
+
+# Set seed
+seed = 123
+
+# number of permutations
+n_perm = 1000
+ 
+# Define additional parameters and start the function
+perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
+  
+}

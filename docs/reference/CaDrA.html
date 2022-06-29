@@ -72,76 +72,117 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">CaDrA</span><span class="op">(</span>
-  <span class="va">ES</span>,
-  <span class="va">input_score</span>,
-  method <span class="op">=</span> <span class="st">"ks"</span>,
-  custom_function <span class="op">=</span> <span class="cn">NULL</span>,
-  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,
-  alternative <span class="op">=</span> <span class="st">"less"</span>,
-  metric <span class="op">=</span> <span class="st">"pval"</span>,
-  weights <span class="op">=</span> <span class="cn">NULL</span>,
-  top_N <span class="op">=</span> <span class="fl">1</span>,
-  search_start <span class="op">=</span> <span class="cn">NULL</span>,
-  search_method <span class="op">=</span> <span class="st">"both"</span>,
-  max_size <span class="op">=</span> <span class="fl">7</span>,
-  n_perm <span class="op">=</span> <span class="fl">1000</span>,
-  seed <span class="op">=</span> <span class="fl">123</span>,
-  smooth <span class="op">=</span> <span class="cn">TRUE</span>,
-  obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,
-  plot <span class="op">=</span> <span class="cn">TRUE</span>,
-  ncores <span class="op">=</span> <span class="fl">1</span>,
-  cache_path <span class="op">=</span> <span class="cn">NULL</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CaDrA</span><span class="op">(</span></span>
+<span>  <span class="va">ES</span>,</span>
+<span>  <span class="va">input_score</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"ks"</span>,</span>
+<span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,</span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  search_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">123</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cache_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ES</dt>
 <dd><p>an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used to search for best features.</p></dd>
+
+
 <dt>input_score</dt>
 <dd><p>a vector of continuous values of a response of interest (required). The <code>input_score</code> object must have names or labels that match the colnames of the expression matrix.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>a character string specifies a method to compute the score for each feature (<code>"ks"</code> or <code>"wilcox"</code> or <code>"revealer"</code> (conditional mutual information from REVEALER) or <code>"custom"</code> (a customized scoring method)). Default is <code>ks</code>.</p></dd>
+
+
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies the customized function here. Default is <code>NULL</code>.</p></dd>
+
+
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of arguments to be passed to the custom_function(). Default is <code>NULL</code>.</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>). Default is <code>less</code> for left-skewed significance testing.</p></dd>
+
+
 <dt>metric</dt>
 <dd><p>a character string specifies a metric to search for best features. <code>"pval"</code> or <code>"stat"</code> may be used which corresponding to p-value or score statistic. Default is <code>pval</code>. Note: <code>Revealer</code> method only utilized score statistics values (no p-value).</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>if method is <code>ks</code>, specifies a vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+
+
 <dt>top_N</dt>
 <dd><p>if <code>search_start</code> is NULL, then <code>top_N</code> can be used here. top_N can be an integer specifies the number of features to start the search over. Starting from the top to 'N' features. Default is <code>NULL</code>.</p></dd>
+
+
 <dt>search_start</dt>
 <dd><p>if <code>top_N</code> is NULL, then <code>search_start</code> can be used here. <code>search_start</code> can be an integer specifies an index within the expression set object of which feature to start the search with. Default is <code>NULL</code>. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N &lt; nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid rowname in ES)</p></dd>
+
+
 <dt>search_method</dt>
 <dd><p>a character string specifies an algorithm to filter out the best candidates (<code>"forward"</code> or <code>"both"</code>). Default is <code>both</code> (i.e., backward and forward).</p></dd>
+
+
 <dt>max_size</dt>
 <dd><p>an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is <code>7</code>.</p></dd>
+
+
 <dt>n_perm</dt>
 <dd><p>an integer specifies the number of permutations to perform. Default is <code>1000</code>.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>a seed set for permutation. Default is <code>123</code>.</p></dd>
+
+
 <dt>smooth</dt>
 <dd><p>a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is <code>TRUE</code>.</p></dd>
+
+
 <dt>obs_best_score</dt>
 <dd><p>a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is <code>NULL</code>. If set to NULL, we will compute the observed best score based on the given <code>input_score</code> and <code>ES</code> variables.</p></dd>
+
+
 <dt>plot</dt>
 <dd><p>a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is <code>TRUE</code>.</p></dd>
+
+
 <dt>ncores</dt>
 <dd><p>an integer specifies the number of cores to perform parallelization for permutation testing. Default is <code>1</code>.</p></dd>
+
+
 <dt>cache_path</dt>
 <dd><p>a full path uses to cache permutation-based score distributions. If the permutation for a given ES and its dependent search variables such as 'top_N' exist, we recycle these values instead of re-computing them to save time. Default is <code>NULL</code>. If NULL, the cache path is set to <code>~/.Rcache</code> for future loading.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list of key parameters that were used to cache the permutation test, permutation best scores for n_perm, a permutation p-value, and observed best score</p>
+    
+
+<p>a list of key parameters that were used to cache the permutation test, permutation best scores for n_perm, a permutation p-value, and observed best score</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -150,18 +191,23 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load R library</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'Biobase' was built under R version 4.1.1</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load R library</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocGenerics</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'BiocGenerics' was built under R version 4.1.1</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘BiocGenerics’ was built under R version 4.0.5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: parallel</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'BiocGenerics'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from 'package:stats':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘BiocGenerics’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:parallel’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     parLapplyLB, parRapply, parSapply, parSapplyLB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, mad, sd, var, xtabs</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from 'package:base':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, append,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
@@ -174,27 +220,27 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Vignettes contain introductory material; view with</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'browseVignettes()'. To cite Bioconductor, see</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed expression set</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># set seed</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span></span>
-<span class="r-in"><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Define additional parameters and start the function</span></span>
-<span class="r-in"><span class="co"># Not run as this would take some time to run</span></span>
-<span class="r-in"><span class="co"># candidate_search_result &lt;- cadra_search(</span></span>
-<span class="r-in"><span class="co">#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,</span></span>
-<span class="r-in"><span class="co">#  alternative = "less", metric = "pval", top_N = 1, </span></span>
-<span class="r-in"><span class="co">#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, </span></span>
-<span class="r-in"><span class="co">#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, </span></span>
-<span class="r-in"><span class="co">#  ncores = 1, cache_path = NULL</span></span>
-<span class="r-in"><span class="co">#)</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed expression set</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set seed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define additional parameters and start the function</span></span></span>
+<span class="r-in"><span><span class="co"># Not run as this would take some time to run</span></span></span>
+<span class="r-in"><span><span class="co"># candidate_search_result &lt;- cadra_search(</span></span></span>
+<span class="r-in"><span><span class="co">#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,</span></span></span>
+<span class="r-in"><span><span class="co">#  alternative = "less", metric = "pval", top_N = 1, </span></span></span>
+<span class="r-in"><span><span class="co">#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, </span></span></span>
+<span class="r-in"><span><span class="co">#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, </span></span></span>
+<span class="r-in"><span><span class="co">#  ncores = 1, cache_path = NULL</span></span></span>
+<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -209,7 +255,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

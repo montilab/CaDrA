@@ -74,35 +74,40 @@ lastly, it includes an optional density diagram of the distribution of <code>inp
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">meta_plot</span><span class="op">(</span><span class="va">topn_best_list</span>, input_score_label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">meta_plot</span><span class="op">(</span><span class="va">topn_best_list</span>, input_score_label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_best_list</dt>
 <dd><p>a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.</p></dd>
+
+
 <dt>input_score_label</dt>
 <dd><p>a label that references to the <code>input_score</code> variable used to compute the top N best features. Default is <code>NULL</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)</p>
+    
+
+<p>A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># With the results obtained from top-N evaluation,</span></span>
-<span class="r-in"><span class="co"># We can find the combination of features that gives the best score in top N searches</span></span>
-<span class="r-in"><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Now we can plot this set of features</span></span>
-<span class="r-in"><span class="fu">meta_plot</span><span class="op">(</span>topn_best_list<span class="op">=</span><span class="va">topn_best_meta</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With the results obtained from top-N evaluation,</span></span></span>
+<span class="r-in"><span><span class="co"># We can find the combination of features that gives the best score in top N searches</span></span></span>
+<span class="r-in"><span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we can plot this set of features</span></span></span>
+<span class="r-in"><span><span class="fu">meta_plot</span><span class="op">(</span>topn_best_list<span class="op">=</span><span class="va">topn_best_meta</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="meta_plot-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -117,7 +122,7 @@ lastly, it includes an optional density diagram of the distribution of <code>inp
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

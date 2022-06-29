@@ -4,7 +4,7 @@ create_hover_txt <- function(table){
   
   column_names <- colnames(table)
   
-  th_tr <- lapply(1:length(column_names), function(l){ 
+  th_tr <- lapply(seq_along(column_names), function(l){ 
     title = column_names[l]
     name = ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
     th <- sprintf('<th title = "%s">%s</th>\n', title, name) 
@@ -25,12 +25,32 @@ create_hover_txt <- function(table){
   
 }
 
-
 #' Shiny UI modules 
 #' 
 #' @param id A unique namespace identifier
 #' @return Shiny ui elements
 #'
+#' @examples
+#' 
+#' # Load R library
+#' library(shiny)
+#'
+#' # Create ui and server for Shiny app
+#' id <- "myapp"
+#' 
+#' ui <- fluidPage(
+#'    CaDrA::CaDrA_UI(id = id)
+#' )
+#' 
+#' server <- function(input, output, session) {
+#'    CaDrA::CaDrA_Server(id = id)
+#' }
+#' 
+#' app <-  shinyApp(ui=ui, server=server)
+#' 
+#' # Launch Shiny app
+#' # shiny::runApp(app, host='0.0.0.0', port=3838)
+#' 
 #' @import shiny
 #' @importFrom htmltools includeMarkdown
 #' @importFrom shinyjs hide show hidden useShinyjs
@@ -307,6 +327,27 @@ CaDrA_UI <- function(id){
 #' @param id A unique namespace identifier
 #' @return Shiny server elements
 #'
+#' @examples
+#' 
+#' # Load R library
+#' library(shiny)
+#'
+#' # Create ui and server for Shiny app
+#' id <- "myapp"
+#' 
+#' ui <- fluidPage(
+#'    CaDrA::CaDrA_UI(id = id)
+#' )
+#' 
+#' server <- function(input, output, session) {
+#'    CaDrA::CaDrA_Server(id = id)
+#' }
+#' 
+#' app <-  shinyApp(ui=ui, server=server)
+#' 
+#' # Launch and deploy Shiny app
+#' # shiny::runApp(app, host='0.0.0.0', port=3838)
+#'  
 #' @import shiny htmltools Biobase
 #' @importFrom tibble column_to_rownames rownames_to_column
 #' @importFrom dplyr mutate_all
@@ -468,7 +509,7 @@ CaDrA_Server <- function(id){
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
             # read in the Eset file
-            Eset <- read.csv(inputfile$datapath, header=T) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.integer)
+            Eset <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.integer)
             
             # convert Eset to matrix
             Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
@@ -514,7 +555,7 @@ CaDrA_Server <- function(id){
           
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
-            dat <- read.csv(inputfile$datapath, header = T) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
+            dat <- read.csv(inputfile$datapath, header = TRUE) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
             input_score <- as.numeric(dat$Scores)
             names(input_score) <- rownames(dat)
             
@@ -651,7 +692,7 @@ CaDrA_Server <- function(id){
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read.csv(inputfile$datapath, header=T) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
+              dat <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
               weights <- as.numeric(dat$Weights)
               names(weights) <- rownames(dat)
               
@@ -894,7 +935,7 @@ CaDrA_Server <- function(id){
           
           Eset_table <- feature_set_data() %>% as.data.frame(.) %>% rownames_to_column(var="Features")
           
-          write.csv(Eset_table, file, row.names=F)
+          write.csv(Eset_table, file, row.names=FALSE)
           
         }
         
@@ -986,7 +1027,7 @@ CaDrA_Server <- function(id){
           
           Eset_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.) %>% tibble::rownames_to_column(., var="Features")
           
-          write.csv(Eset_table, file, row.names=F)
+          write.csv(Eset_table, file, row.names=FALSE)
           
         }
         
@@ -1065,7 +1106,7 @@ CaDrA_Server <- function(id){
         
         Scores <- input_score_data() %>% signif(., digits = 4)
         
-        score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=T, dimnames=list("input_score", names(Scores)))
+        score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=TRUE, dimnames=list("input_score", names(Scores)))
         
         hover_columns <- create_hover_txt(table = score_table)
         
@@ -1136,10 +1177,10 @@ CaDrA_Server <- function(id){
           score_table <- data.frame(
             Samples = names(Scores),
             Scores = Scores,
-            stringsAsFactors = F
+            stringsAsFactors = FALSE
           )
           
-          write.csv(score_table, file, row.names=F)
+          write.csv(score_table, file, row.names=FALSE)
           
         }
         
@@ -1159,7 +1200,7 @@ CaDrA_Server <- function(id){
           score_table <- data.frame(
             Samples = names(Scores),
             Scores = Scores,
-            stringsAsFactors = F
+            stringsAsFactors = FALSE
           )
           
           saveRDS(score_table, file)
@@ -1232,6 +1273,15 @@ CaDrA_Server <- function(id){
 #' 
 #' @return Shiny application 
 #'
+#' @examples
+#' 
+#' # Load R library
+#' library(shiny)
+#'
+#' # Launch and deploy Shiny app
+#' app <- CaDrA::CaDrA_App()
+#' # shiny::runApp(app, host='0.0.0.0', port=3838)
+#'  
 #' @import shiny 
 #' @importFrom shinyjs hide show hidden useShinyjs
 #' 

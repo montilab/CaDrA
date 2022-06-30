@@ -878,6 +878,8 @@ CaDrA_Server <- function(id){
         
         req(error_message())
         
+        ns <- session$ns
+        
         ## Update connectivity option ####
         session$sendCustomMessage("ToggleOperation", ns("loading_icon"))
         

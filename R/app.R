@@ -34,6 +34,7 @@ create_hover_txt <- function(table){
 #' 
 #' # Load R library
 #' library(shiny)
+#' library(CaDrA)
 #'
 #' # Create ui and server for Shiny app
 #' id <- "myapp"
@@ -48,12 +49,11 @@ create_hover_txt <- function(table){
 #' 
 #' app <-  shinyApp(ui=ui, server=server)
 #' 
-#' # Launch Shiny app
+#' # Launch Shiny app (NOT RUN)
 #' # shiny::runApp(app, host='0.0.0.0', port=3838)
 #' 
 #' @import shiny
 #' @importFrom htmltools includeMarkdown
-#' @importFrom shinyjs hide show hidden useShinyjs
 #' 
 #' @export 
 CaDrA_UI <- function(id){
@@ -222,14 +222,12 @@ CaDrA_UI <- function(id){
             uiOutput(outputId = ns("instructions"))
           ),
           
-          shinyjs::hidden(
-            div(
-              id = ns("loading_icon"), class = "loading_div",
-              span(
-                div(class = "loader"),
-                br(),
-                p(class = "loading_text", "Loading...")
-              )
+          div(
+            id = ns("loading_icon"), class = "loading_div", style="display: none;",
+            span(
+              div(class = "loader"),
+              br(),
+              p(class = "loading_text", "Loading...")
             )
           ),
           
@@ -331,7 +329,8 @@ CaDrA_UI <- function(id){
 #' 
 #' # Load R library
 #' library(shiny)
-#'
+#' library(CaDrA)
+#' 
 #' # Create ui and server for Shiny app
 #' id <- "myapp"
 #' 
@@ -345,7 +344,7 @@ CaDrA_UI <- function(id){
 #' 
 #' app <-  shinyApp(ui=ui, server=server)
 #' 
-#' # Launch and deploy Shiny app
+#' # Launch and deploy Shiny app (NOT RUN)
 #' # shiny::runApp(app, host='0.0.0.0', port=3838)
 #'  
 #' @import shiny htmltools Biobase
@@ -353,7 +352,6 @@ CaDrA_UI <- function(id){
 #' @importFrom dplyr mutate_all
 #' @importFrom stats rnorm 
 #' @importFrom utils read.csv write.csv
-#' @importFrom shinyjs hide show hidden useShinyjs
 #' @importFrom methods new
 #' 
 #' @export 
@@ -416,6 +414,8 @@ CaDrA_Server <- function(id){
         
       observeEvent(input$run_cadra, {
         
+        ns <- session$ns
+        
         shiny::invalidateLater(300, session)
         
         if(stop_process()){         
@@ -431,22 +431,21 @@ CaDrA_Server <- function(id){
         instructions_message(FALSE)
         error_message(NULL)
         
-        shinyjs::show(id="loading_icon")
-        
-        #shinyjs::disable("run_cadra")
+        ## Update connectivity option ####
+        session$sendCustomMessage("ToggleOperation", ns("loading_icon"))
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
           ## Read in BRCA GISTIC+Mutation ESet object
-          eset_mut_scna <-  CaDrA::BRCA_GISTIC_MUT_SIG
-          
+          eset_mut_scna <- CaDrA::BRCA_GISTIC_MUT_SIG
+            
           #print(input$BRCA_GISTIC_MUT_SIG_scores)
           
           if(input$BRCA_GISTIC_MUT_SIG_scores == "TAZYAP_BRCA_ACTIVITY"){
             
             ## Read in input score
-            input_score <-  CaDrA::TAZYAP_BRCA_ACTIVITY
-            
+            input_score <- CaDrA::TAZYAP_BRCA_ACTIVITY
+              
             ## Samples to keep based on the overlap between the two inputs
             overlap <- intersect(names(input_score), Biobase::sampleNames(eset_mut_scna))
             eset_mut_scna <- eset_mut_scna[,overlap]
@@ -465,7 +464,7 @@ CaDrA_Server <- function(id){
           
           ## Read in SCNA ESet object
           ES <- CaDrA::CCLE_MUT_SCNA
-          
+            
           #print(input$CCLE_MUT_SCNA_scores)
           
           if(input$CCLE_MUT_SCNA_scores == "CTNBB1_reporter"){
@@ -479,16 +478,9 @@ CaDrA_Server <- function(id){
           
           ## Read in simulated eset object
           ES <- CaDrA::sim.ES
-          
+            
           if(input$sim.Data.scores == "sim.Scores"){
-            
-            # set seed
-            set.seed(123)
-            
-            # Provide a vector of continuous scores for a target profile with names to each score value
-            input_score = rnorm(n = ncol(ES))
-            names(input_score) <- colnames(ES)
-            
+            input_score = CaDrA::sim.Scores
           }
           
         }
@@ -878,8 +870,6 @@ CaDrA_Server <- function(id){
           )
         ) 
         
-        #shinyjs::enable("run_cadra")
-        
         error_message("NONE")
         
       })
@@ -888,7 +878,8 @@ CaDrA_Server <- function(id){
         
         req(error_message())
         
-        shinyjs::hide(id="loading_icon")
+        ## Update connectivity option ####
+        session$sendCustomMessage("ToggleOperation", ns("loading_icon"))
         
         if(error_message() != "NONE"){
           p(style="color: red; font-weight: bold;", error_message())
@@ -1277,13 +1268,15 @@ CaDrA_Server <- function(id){
 #' 
 #' # Load R library
 #' library(shiny)
+#' library(CaDrA)
 #'
-#' # Launch and deploy Shiny app
+#' # Create a Shiny app
 #' app <- CaDrA::CaDrA_App()
+#' 
+#' # Launch and deploy Shiny app (NOT RUN)
 #' # shiny::runApp(app, host='0.0.0.0', port=3838)
 #'  
 #' @import shiny 
-#' @importFrom shinyjs hide show hidden useShinyjs
 #' 
 #' @export
 CaDrA_App <- function() {
@@ -1295,7 +1288,7 @@ CaDrA_App <- function() {
         HTML(
         "
         .tooltip-txt {
-         color: red;
+          color: red;
         }
         
         .loading_div {
@@ -1326,10 +1319,24 @@ CaDrA_App <- function() {
         }
         "
         )
+      ),
+      
+      tags$script(
+        HTML(
+          paste0(
+            "Shiny.addCustomMessageHandler('ToggleOperation', function(id) {",
+              "var x = document.getElementById(id);",
+              "if (x.style.display === 'none') {",
+                "x.style.display = 'flex';",
+              "} else {",
+                "x.style.display = 'none';",
+              "}",
+            "})"
+          )
+        )
       )
+      
     ),
-    
-    shinyjs::useShinyjs(),  # Set up shinyjs
     
     titlePanel("CaDrA: Candidate Drivers Analysis"),
     

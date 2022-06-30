@@ -7,6 +7,9 @@
     <loc>https://github.com/montilab/CaDrA/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>https://github.com/montilab/CaDrA/articles/cadra_figure_5.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/montilab/CaDrA/articles/docs/basic.html</loc>
   </url>
   <url>
@@ -32,6 +35,12 @@
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/articles/permutation_based_testing.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/articles/scoring_functions.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/authors.html</loc>
@@ -155,6 +164,9 @@
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/sim.ES.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/montilab/CaDrA/reference/sim.Scores.html</loc>
   </url>
   <url>
     <loc>https://github.com/montilab/CaDrA/reference/stepwise.search.html</loc>

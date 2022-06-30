@@ -19,6 +19,6 @@ A vector of continuous scores represents oncogenic YAP/TAZ activity in human bre
 Kartha VK, Kern JG, Sebastiani P, Zhang L,
 Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
 candidate driver analyses using binary genomic features. 
-(\href{https://www.biorxiv.org/content/early/2017/11/23/221846}{bioRxiv})
+(\href{https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full}{Frontiers in Genetics})
 }
 \keyword{datasets}

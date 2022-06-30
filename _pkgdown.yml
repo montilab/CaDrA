@@ -61,6 +61,7 @@ reference:
   desc: ~
   contents:
   - '`sim.ES`'
+  - '`sim.Scores`'
   - '`topn.list`'
   - '`perm.res`'
   - '`CCLE_MUT_SCNA`'

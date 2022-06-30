@@ -19,6 +19,7 @@ Shiny UI modules
 
 # Load R library
 library(shiny)
+library(CaDrA)
 
 # Create ui and server for Shiny app
 id <- "myapp"
@@ -33,7 +34,7 @@ server <- function(input, output, session) {
 
 app <-  shinyApp(ui=ui, server=server)
 
-# Launch Shiny app
+# Launch Shiny app (NOT RUN)
 # shiny::runApp(app, host='0.0.0.0', port=3838)
 
 }

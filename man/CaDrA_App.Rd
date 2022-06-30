@@ -16,9 +16,12 @@ Run both Shiny UI and Server Modules
 
 # Load R library
 library(shiny)
+library(CaDrA)
 
-# Launch and deploy Shiny app
+# Create a Shiny app
 app <- CaDrA::CaDrA_App()
+
+# Launch and deploy Shiny app (NOT RUN)
 # shiny::runApp(app, host='0.0.0.0', port=3838)
  
 }

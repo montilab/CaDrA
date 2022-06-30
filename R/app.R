@@ -34,7 +34,6 @@ create_hover_txt <- function(table){
 #' 
 #' # Load R library
 #' library(shiny)
-#' library(CaDrA)
 #'
 #' # Create ui and server for Shiny app
 #' id <- "myapp"
@@ -329,7 +328,6 @@ CaDrA_UI <- function(id){
 #' 
 #' # Load R library
 #' library(shiny)
-#' library(CaDrA)
 #' 
 #' # Create ui and server for Shiny app
 #' id <- "myapp"
@@ -1275,7 +1273,6 @@ CaDrA_Server <- function(id){
 #' 
 #' # Load R library
 #' library(shiny)
-#' library(CaDrA)
 #'
 #' # Create a Shiny app
 #' app <- CaDrA::CaDrA_App()

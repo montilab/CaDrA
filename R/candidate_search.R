@@ -247,7 +247,7 @@ candidate_search <- function(
       warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
     
     # Start the search with top N features based on their sorted indexes
-    search_feature_index <- seq_along(top_N)
+    search_feature_index <- seq_len(top_N)
     
     verbose("Evaluating search over top ", length(search_feature_index), " features\n\n")
     
@@ -567,7 +567,7 @@ forward_backward_check <- function
   
   # We want to see if leaving anyone feature out improves the overall meta-feature  score
   # Here we only consider previous features in the meta-feature to remove (i.e. not the last one which was just added)
-  for(n in seq_along(length(glob.f)-1)){
+  for(n in seq_len(length(glob.f)-1)){
     #n=1;
     f.names[[n]] <- glob.f[-n]
     

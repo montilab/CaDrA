@@ -63,6 +63,13 @@ topn_eval <- function(
   # Set up verbose option
   options(verbose = verbose)
   
+  # Check if top_N is given and is numeric
+  top_N = as.numeric(top_N) 
+  
+  if(is.na(top_N) || length(top_N)==0){
+    stop("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+  }
+  
   if(top_N > nrow(ES))
     stop("Please specify an top_N value that is less than the number of features in the ES.\n")
   

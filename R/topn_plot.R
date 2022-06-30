@@ -74,8 +74,8 @@ topn_plot <- function(
       trace = "none",
       sepwidth = c(0.1,0.1),
       sepcolor = "grey90",
-      colsep = seq_along(ncol(m)),
-      rowsep = seq_along(nrow(m))
+      colsep = seq_len(ncol(m)),
+      rowsep = seq_len(nrow(m))
     )
     
     legend(

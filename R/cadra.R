@@ -424,10 +424,13 @@ generate_permutations <- function(
   
   options(verbose = verbose)
   
+  # Get number of samples
   m  <- length(ord)
   
+  # Create permutation matrix
   perm <- matrix(NA, nrow=n_perms, ncol=length(ord))
   
+  # Define random generated seed
   if ( !is.null(seed) ){
     set.seed(seed)
     verbose("Seed set: ", seed,"\n")
@@ -435,6 +438,7 @@ generate_permutations <- function(
   
   verbose("Generating ", n_perms," permuted sample observed input scores...\n")
   
+  # Sample the input scores
   for (i in seq_len(n_perms) ) {
     perm[i,] <- sample(ord, m)
   }
@@ -444,7 +448,7 @@ generate_permutations <- function(
   verbose(nrow(perm)==nrow(unique.matrix(perm)))
   
   if(nrow(perm) != nrow(unique.matrix(perm)))
-    stop("Not enough unique sample permutations for the permutation number specified.. Please provide a reasonable nperm value ..\n")
+    stop("Not enough unique sample permutations for the permutation number specified. Please provide a reasonable nperm value...\n")
   
   return(perm) 
   

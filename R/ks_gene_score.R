@@ -88,7 +88,7 @@ ks_gene_score <- function
     
     score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]
     
-    x.axis <- seq_along(n.x)
+    x.axis <- seq_len(n.x)
     y.axis <- z
     
   }
@@ -106,7 +106,7 @@ ks_gene_score <- function
     # ..positions are needed
     #
     Y <- sort(c(y-1,y)); Y <- Y[diff(Y)!=0]; y.match <- match(y,Y); #if ( any(is.na(y.match)) ) browser()
-    D <- rep( 0, length(Y) ); D[y.match] <- seq_along(n.y)
+    D <- rep( 0, length(Y) ); D[y.match] <- seq_len(n.y)
     zero <- which(D==0)[-1]; D[zero] <- D[zero-1]
     
     z <- D*hit - Y*mis
@@ -134,7 +134,7 @@ ks_gene_score <- function
   }
   
   # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
-  PVAL <- suppressWarnings(ks.test(x=seq_along(n.x), y=y, alternative=alternative, exact=exact)$p.value)
+  PVAL <- suppressWarnings(ks.test(x=seq_len(n.x), y=y, alternative=alternative, exact=exact)$p.value)
   
   return(c(score=score, p_value=PVAL))
   

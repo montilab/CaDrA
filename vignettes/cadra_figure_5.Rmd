@@ -13,11 +13,11 @@ library(Biobase)
 devtools::load_all(".")
 ```
 
-## CaDrA Query of BRCA YAP/TAZ Activity
+# CaDrA Query of BRCA YAP/TAZ Activity
 
 Here, we reproduce the results of Figure 5 of [[Kartha et al., 2019]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full) (the section titled "_CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer_").
 
-# Load packages
+## Load packages
 
 ```r
 library(CaDrA)
@@ -61,6 +61,7 @@ topn_res <- CaDrA::topn_eval(
   ES = eset_mut_scna_flt,
   input_score = input_scores,
   method = "ks",               # use Kolmogorow-Smirnow Scoring function 
+  alternative = "less",        # 
   metric = "pval",             # use the KS p-value to score features
   top_N = 7,                   # Evaluate top 7 starting points for the search
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
@@ -87,7 +88,7 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 ```{r summarize}
 
 # Evaluate results across top_N seed features you started from
-CaDrA::topn_plot(topn_res) 
+CaDrA::topn_plot(topn_list = topn_res) 
 
 ```
 

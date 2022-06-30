@@ -87,7 +87,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""
   
-  mat[nrow(mat),]<-2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
+  mat[nrow(mat),] <- 2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
   
   m <- ExpressionSet(assayData = mat, featureData = AnnotatedDataFrame(data.frame("Name"=rownames(mat), row.names = rownames(mat))))
   
@@ -167,7 +167,7 @@ stacked_gtable_max <- function(...){
   gtl <- list(...)
   
   stopifnot(
-    all(vapply(gtl, is.gtable, is.logical(1)))
+    all(lapply(gtl, is.gtable) %>% unlist())
   )
   
   bind2 <- function(x, y){

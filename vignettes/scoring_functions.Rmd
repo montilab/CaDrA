@@ -191,12 +191,3 @@ meta_plot(topn_best_list = custom_topn_best_meta)
 
 ```
 
-
-# SessionInfo
-```{r}
-sessioninfo::session_info()%>%
-  details::details(
-    summary = 'Current session info',
-    open    = TRUE
-  )
-```

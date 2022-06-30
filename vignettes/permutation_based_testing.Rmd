@@ -91,13 +91,4 @@ permutation_plot(ks_perm_res)
 ```
 
 
-# SessionInfo
-```{r}
-sessioninfo::session_info()%>%
-  details::details(
-    summary = 'Current session info',
-    open    = TRUE
-  )
-```
-
 

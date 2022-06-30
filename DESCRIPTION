@@ -35,9 +35,7 @@ Imports:
     misc3d,
     ppcor,
     graphics,
-    utils,
-    details,
-    sessioninfo
+    utils
 LazyData: false
 License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/

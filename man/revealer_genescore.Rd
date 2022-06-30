@@ -48,7 +48,7 @@ mat = exprs(sim.ES)
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
-cmi <- seq_along(nrow(mat)) \%>\% 
+cmi <- seq_len(nrow(mat)) \%>\% 
 purrr::map_dbl(
  function(r){
    revealer_genescore(

@@ -406,9 +406,14 @@ CaDrA_Server <- function(id){
       
       observeEvent(input$stop_cadra, {
         
+        ns <- session$ns
+        
         shiny::invalidateLater(300, session)
         stop_process(TRUE)
         error_message("Your process has been interrupted")
+        
+        ## Update loading icon ####
+        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
         
       })
         
@@ -432,7 +437,7 @@ CaDrA_Server <- function(id){
         error_message(NULL)
         
         ## Update connectivity option ####
-        session$sendCustomMessage("ToggleOperation", ns("loading_icon"))
+        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="yes"))
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
@@ -880,8 +885,8 @@ CaDrA_Server <- function(id){
         
         ns <- session$ns
         
-        ## Update connectivity option ####
-        session$sendCustomMessage("ToggleOperation", ns("loading_icon"))
+        ## Update loading icon ####
+        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
         
         if(error_message() != "NONE"){
           p(style="color: red; font-weight: bold;", error_message())
@@ -1326,9 +1331,9 @@ CaDrA_App <- function() {
       tags$script(
         HTML(
           paste0(
-            "Shiny.addCustomMessageHandler('ToggleOperation', function(id) {",
-              "var x = document.getElementById(id);",
-              "if (x.style.display === 'none') {",
+            "Shiny.addCustomMessageHandler('ToggleOperation', function(message) {",
+              "var x = document.getElementById(message.id);",
+              "if (message.display === 'yes') {",
                 "x.style.display = 'flex';",
               "} else {",
                 "x.style.display = 'none';",

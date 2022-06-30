@@ -92,3 +92,12 @@ CaDrA::topn_plot(topn_res)
 ```
 
 
+# SessionInfo
+```{r}
+sessioninfo::session_info()%>%
+  details::details(
+    summary = 'Current session info',
+    open    = TRUE
+  )
+```
+

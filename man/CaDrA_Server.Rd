@@ -19,7 +19,6 @@ Shiny Server modules
 
 # Load R library
 library(shiny)
-library(CaDrA)
 
 # Create ui and server for Shiny app
 id <- "myapp"

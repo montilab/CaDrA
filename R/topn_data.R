@@ -17,7 +17,7 @@
 #' See \code{\link[CaDrA]{topn_eval}} for more information.
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
-#' Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
+#' Varelas X, Monti S (2019) CaDrA: A computational framework for performing 
 #' candidate driver analyses using binary genomic features. 
 #' (\href{https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full}{Frontiers in Genetics})
 #'

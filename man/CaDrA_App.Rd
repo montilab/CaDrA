@@ -16,7 +16,6 @@ Run both Shiny UI and Server Modules
 
 # Load R library
 library(shiny)
-library(CaDrA)
 
 # Create a Shiny app
 app <- CaDrA::CaDrA_App()

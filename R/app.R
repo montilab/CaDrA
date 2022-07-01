@@ -844,7 +844,7 @@ CaDrA_Server <- function(id){
           
         }else{
           
-          search_start = strsplit(as.character(input$search_start), ",", fixed=T) %>% unlist() %>% trimws()
+          search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
           top_N = NULL
           
           if(is.character(search_start)){

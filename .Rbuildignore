@@ -4,7 +4,7 @@
 ^\.git$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^vignettes$
+^vignettes
 ^README\.Rmd$
 ^README_files$
 ^NEWS\.Rmd$

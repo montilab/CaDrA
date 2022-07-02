@@ -21,6 +21,7 @@ Imports:
     Biobase,
     shiny,
     htmltools,
+    markdown,
     dplyr,
     tibble,
     DT,

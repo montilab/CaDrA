@@ -1,6 +1,6 @@
 ---
 title: "Scoring Functions"
-output: BiocStyle::html_document
+output: html_document
 vignette: >
   %\VignetteIndexEntry{Scoring Functions}
   %\VignetteEngine{knitr::rmarkdown}

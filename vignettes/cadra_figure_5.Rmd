@@ -1,6 +1,6 @@
 ---
 title: "Reproduce CaDrA Figures"
-output: BiocStyle::html_document
+output: html_document
 vignette: >
   %\VignetteIndexEntry{Reproduce CaDrA Figures}
   %\VignetteEngine{knitr::rmarkdown}

@@ -50,13 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul>
 </li>
@@ -102,7 +102,7 @@
 <li>Kolmogorov-Smirnov Method (<code>ks</code>)</li>
 <li>Conditional Mutual Information Method (<code>revealer</code>)</li>
 <li>Wilcoxon Rank-Sum Method (<code>wilcox</code>)</li>
-<li>Custom-Defined Scoring Function (<code>custom</code>)</li>
+<li>Custom - User Provided Scoring Function (<code>custom</code>)</li>
 </ol>
 <p><strong>Important Note:</strong></p>
 <ul>
@@ -153,9 +153,10 @@
 <span><span class="co"># Define required variables</span></span>
 <span><span class="va">ES</span> <span class="op">=</span> <span class="va">eset_mut_scna_flt</span></span>
 <span><span class="va">input_score</span> <span class="op">=</span> <span class="va">input_scores</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="kolmogorov-smirnov-scoring-method">1. Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
-</h3>
+</div>
+<div class="section level2">
+<h2 id="kolmogorov-smirnov-scoring-method">Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
+</h2>
 <p>See <code><a href="../reference/ks_genescore_mat.html">?ks_genescore_mat</a></code> for more details</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ks_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
@@ -164,12 +165,12 @@
 <span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># Use Kolmogorow-Smirnow Scoring function </span></span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, it will be used to perform a weighted-KS test</span></span>
 <span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use p-value to score features</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
-<span>                               <span class="co"># best score, and input_score for over 7 feature searches</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet,</span></span>
+<span>                               <span class="co"># its corresponding best score and input_score</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span></span>
@@ -179,9 +180,9 @@
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">ks_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/ks.method-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level3">
-<h3 id="wilcoxon-rank-sum-scoring-method">2. Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
-</h3>
+<div class="section level2">
+<h2 id="wilcoxon-rank-sum-scoring-method">Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
+</h2>
 <p>See <code><a href="../reference/wilcox_genescore_mat.html">?wilcox_genescore_mat</a></code> for more details</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wilcox_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
@@ -189,12 +190,12 @@
 <span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"wilcox"</span>,           <span class="co"># Use Wilcoxon Rank-Sum scoring function</span></span>
 <span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use p-value to score features</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
-<span>                               <span class="co"># best score, and input_score for over 7 feature searches</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, </span></span>
+<span>                               <span class="co"># its corresponding best score and input_score</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span></span>
@@ -204,21 +205,23 @@
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">wilcox_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/wilcox.method-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level3">
-<h3 id="conditional-mutual-information-scoring-method">3. Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
-</h3>
+<div class="section level2">
+<h2 id="conditional-mutual-information-scoring-method">Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
+</h2>
 <p>See <code><a href="../reference/revealer_genescore_mat.html">?revealer_genescore_mat</a></code> for more details</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
-<span>  ES <span class="op">=</span> <span class="va">ES</span>,</span>
-<span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"revealer"</span>,         <span class="co"># Use REVEALER's CMI scoring function</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"stat"</span>,             <span class="co"># Use score statistics to score features</span></span>
-<span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
-<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
-<span>                               <span class="co"># best score, and input_score for over 7 feature searches</span></span>
+<code class="sourceCode R"><span><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
+<span>  <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
+<span>    ES <span class="op">=</span> <span class="va">ES</span>,</span>
+<span>    input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"revealer"</span>,         <span class="co"># Use REVEALER's CMI scoring function</span></span>
+<span>    metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use score statistics to score features</span></span>
+<span>    top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
+<span>    max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
+<span>    do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
+<span>    best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, </span></span>
+<span>                                 <span class="co"># its corresponding best score and input_score</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span></span>
@@ -228,9 +231,9 @@
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">revealer_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/revealer.method-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level3">
-<h3 id="custom-defined-scoring-method">4. Custom-Defined scoring method<a class="anchor" aria-label="anchor" href="#custom-defined-scoring-method"></a>
-</h3>
+<div class="section level2">
+<h2 id="custom---user-provided-scoring-method">Custom - user provided scoring method<a class="anchor" aria-label="anchor" href="#custom---user-provided-scoring-method"></a>
+</h2>
 <p>See <code><a href="../reference/custom_genescore_mat.html">?custom_genescore_mat</a></code> for more details</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A customized function using ks-test function</span></span>
@@ -251,12 +254,12 @@
 <span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="va">customized_genescore_mat</span>,       <span class="co"># Use customized function</span></span>
 <span>  custom_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>alternative <span class="op">=</span> <span class="st">"less"</span><span class="op">)</span>,   <span class="co"># Additional parameters to pass to custom_function (i.e. other than ES and input_score)</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"stat"</span>,                                  <span class="co"># Use pval to score features</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,                                  <span class="co"># Use pval to score features</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">7</span>,                                        <span class="co"># Evaluate top 7 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,                                    <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,                                  <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>                           <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
-<span>                                                    <span class="co"># best score, and input_score for over 7 feature searches</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>                           <span class="co"># If best_score_only = FALSE, it will return ESet,</span></span>
+<span>                                                    <span class="co"># its corresponding best score and input_score</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the ESet and feature that corresponded to the best score over the top N search</span></span>
@@ -265,7 +268,6 @@
 <span><span class="co"># Visualize best meta-features result</span></span>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">custom_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/custom.method-1.png" width="768" style="display: block; margin: auto;"></p>
-</div>
 </div>
   </div>
 

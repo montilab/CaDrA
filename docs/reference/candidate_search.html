@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -126,7 +126,7 @@
 
 
 <dt>search_start</dt>
-<dd><p>an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is <code>NULL</code>. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N &lt; nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)</p></dd>
+<dd><p>a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>top_N</dt>

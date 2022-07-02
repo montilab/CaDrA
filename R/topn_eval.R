@@ -42,7 +42,7 @@
 #' )
 #' 
 #' @export
-#' @import gplots Biobase
+#' @import Biobase methods
 topn_eval <- function(
   ES,
   input_score,
@@ -63,15 +63,27 @@ topn_eval <- function(
   # Set up verbose option
   options(verbose = verbose)
   
+  # Check if the ES is provided and is a BioBase ExpressionSet object
+  if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
+    stop("'ES' must be an ExpressionSet class argument (required).")
+  
+  # Check if the dataset has only binary 0 or 1 values 
+  if(!all(exprs(ES) %in% c(0,1))){
+    stop("The expression matrix (ES) must contain only binary values with no NAs.\n")
+  }
+
   # Check if top_N is given and is numeric
-  top_N = as.numeric(top_N) 
+  top_N = as.integer(top_N) 
   
   if(is.na(top_N) || length(top_N)==0){
-    stop("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+    stop("Please specify a INTEGER top_N value to evaluate over top N features.\n")
   }
   
+  if(top_N <= 0)
+    stop("Please specify a top_N value greater than 0.\n")
+  
   if(top_N > nrow(ES))
-    stop("Please specify an top_N value that is less than the number of features in the ES.\n")
+    stop("Please specify a top_N value that is less than the number of features in the ES.\n")
   
   if(top_N > 10)
     warning("top_N value specified is greater than 10. This may result in a longer search time.\n")

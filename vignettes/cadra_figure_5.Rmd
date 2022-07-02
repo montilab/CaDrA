@@ -83,11 +83,11 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 
 ```
 
-## Summarize top_N Results
+## Summarize Top N Results
 
 ```{r summarize}
 
-# Evaluate results across top_N seed features you started from
+# Evaluate results across top_N features you started from
 CaDrA::topn_plot(topn_list = topn_res) 
 
 ```

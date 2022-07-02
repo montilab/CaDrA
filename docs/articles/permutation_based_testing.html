@@ -50,13 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul>
 </li>
@@ -137,19 +137,23 @@
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
 <span>                               <span class="co"># best score, and input_score</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Extract the best meta-features result</span></span>
-<span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">ks_candidate</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Visualize best meta-features result</span></span>
-<span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span><span class="op">)</span></span></code></pre></div>
-<p><img src="permutation_based_testing_files/figure-html/ks.method-1.png" width="768" style="display: block; margin: auto;"></p>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="permutation-based-testing">Permutation-Based Testing<a class="anchor" aria-label="anchor" href="#permutation-based-testing"></a>
+<h2 id="visualize-best-meta-features-result">Visualize best meta-features result<a class="anchor" aria-label="anchor" href="#visualize-best-meta-features-result"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extract the best meta-features result</span></span>
+<span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">ks_candidate</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Meta-feature plot</span></span>
+<span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span><span class="op">)</span></span></code></pre></div>
+<p><img src="permutation_based_testing_files/figure-html/ks.meta.plot-1.png" width="768" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="permutation-based-testing">Permutation-based testing<a class="anchor" aria-label="anchor" href="#permutation-based-testing"></a>
+</h2>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ks_perm_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/CaDrA.html">CaDrA</a></span><span class="op">(</span></span>
 <span>  ES <span class="op">=</span> <span class="va">sim.ES</span>, </span>
 <span>  input_score <span class="op">=</span> <span class="va">input_score</span>, </span>
@@ -160,7 +164,6 @@
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># forward/backward search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># number of permutations</span></span>
-<span>  seed <span class="op">=</span> <span class="fl">123</span>,                  <span class="co"># random generated seed</span></span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,                <span class="co"># we will plot later</span></span>
 <span>  ncores <span class="op">=</span> <span class="fl">8</span>                   <span class="co"># number of cores to perform parallelization for permutation testing</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -173,12 +176,16 @@ Time elapsed:  0  mins
 Computing observed best score ..
 
 Number of permutation-based scores being considered:  1000 
-Permutation p-value:  0.8731269 </code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+Permutation p-value:  0.8821179 </code></pre>
+</div>
+<div class="section level2">
+<h2 id="visualize-permutation-result">Visualize permutation result<a class="anchor" aria-label="anchor" href="#visualize-permutation-result"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Visualize permutation results</span></span>
 <span><span class="fu"><a href="../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">ks_perm_res</span><span class="op">)</span></span></code></pre></div>
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="permutation_based_testing_files/figure-html/ks.permutation-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="permutation_based_testing_files/figure-html/ks.permutation.plot-1.png" width="768" style="display: block; margin: auto;"></p>
 </div>
   </div>
 

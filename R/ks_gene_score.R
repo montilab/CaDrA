@@ -134,7 +134,7 @@ ks_gene_score <- function
   }
   
   # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
-  PVAL <- suppressWarnings(ks.test(x=seq_len(n.x), y=y, alternative=alternative, exact=exact)$p.value)
+  PVAL <- ks.test(x=seq_len(n.x), y=y, alternative=alternative, exact=exact)$p.value
   
   return(c(score=score, p_value=PVAL))
   

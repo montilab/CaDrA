@@ -74,6 +74,68 @@ CaDrA_UI <- function(id){
   fluidRow(
     style = "padding: 5px 10px 10px 10px;",
     
+    tags$style(
+      HTML(
+        "
+        .side-bar-options {
+          border: 1px solid gray; 
+          border-radius: 3px; 
+          background: lightgrey; 
+          padding: 5px 10px 10px 10px; 
+          min-height: 850px;
+        }
+        
+        .tooltip-txt {
+          color: red;
+          font-weight: bold;
+          width: 70px;
+        }
+        
+        .loading_div {
+          display: flex;
+          text-align: center;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 400px;
+        }
+        
+        .loading_text {
+          width: 120px;
+        }
+        
+        .loader {
+          border: 16px solid #f3f3f3;
+          border-top: 16px solid #3498db;
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        "
+      )
+    ),
+    
+    tags$script(
+      HTML(
+        paste0(
+          "Shiny.addCustomMessageHandler('ToggleOperation', function(message) {",
+          "var x = document.getElementById(message.id);",
+            "if (message.display === 'yes') {",
+              "x.style.display = 'flex';",
+            "} else {",
+              "x.style.display = 'none';",
+            "}",
+          "})"
+        )
+      )
+    ),
+    
     column(
       width = 4, 
       class = "side-bar-options",
@@ -156,9 +218,11 @@ CaDrA_UI <- function(id){
           )
         ),
         
+        uiOutput(outputId = ns("min_cutoff_tooltip")),
+        
         numericInput(
           inputId = ns("min_cutoff"), 
-          label = HTML("Minimum Samples Frequency", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 30 samples will be automatically removed). Minimum Samples Frequency must be >= 5.\">?</a>')), 
+          label = NULL,
           value = 30,
           min = 5, 
           max = Inf, 
@@ -166,9 +230,11 @@ CaDrA_UI <- function(id){
           width = "100%"
         ),
         
+        uiOutput(outputId = ns("max_cutoff_tooltip")),
+        
         numericInput(
           inputId = ns("max_cutoff"), 
-          label = HTML("Maximum Percent Cutoff", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>')), 
+          label = NULL,
           value = 60, 
           min = 0, 
           max = 100, 
@@ -233,7 +299,6 @@ CaDrA_UI <- function(id){
         conditionalPanel(
           condition = sprintf("input['%s'] == true", ns("permutation_test")),
           numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = Inf, step = 1, value = 100),
-          numericInput(inputId = ns("seed"), label = strong(span(style="color:red;", "*"), "A seed set for random permutation"), min = 1, max = Inf, step = 1, value = 123),
           numericInput(inputId = ns("ncores"), label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), min = 1, max = Inf, step = 1, value = 1)
         ),
         
@@ -394,7 +459,7 @@ CaDrA_UI <- function(id){
 #' @importFrom tibble column_to_rownames rownames_to_column
 #' @importFrom dplyr mutate_all
 #' @importFrom stats rnorm 
-#' @importFrom utils read.csv write.csv
+#' @importFrom utils read.csv write.csv data
 #' @importFrom methods new
 #' 
 #' @export 
@@ -433,40 +498,28 @@ CaDrA_Server <- function(id){
         
       })
       
+      output$min_cutoff_tooltip <- renderUI({
+        
+        if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
+          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+        }else{
+          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+        }
+        
+      })
+      
+      output$max_cutoff_tooltip <- renderUI({
+        
+        HTML(paste0('<strong>Maximum Percent Cutoff</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>'))
+        
+      })
+      
       observeEvent(input$dataset, {
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          
-          updateNumericInput(
-            session, 
-            inputId = "min_cutoff", 
-            value = 30
-          )
-          
-        }else if(input$dataset == "CCLE_MUT_SCNA"){
-          
-          updateNumericInput(
-            session, 
-            inputId = "min_cutoff", 
-            value = 5
-          )
-          
-        }else if(input$dataset == "sim.ES"){
-          
-          updateNumericInput(
-            session, 
-            inputId = "min_cutoff", 
-            value = 5
-          )
-          
-        }else if(input$dataset == "Import Data"){
-          
-          updateNumericInput(
-            session, 
-            inputId = "min_cutoff", 
-            value = 5
-          )
-          
+          updateNumericInput(session, inputId = "min_cutoff", value = 30)
+        }else {
+          updateNumericInput(session, inputId = "min_cutoff", value = 5)
         }
         
       })
@@ -479,7 +532,7 @@ CaDrA_Server <- function(id){
         stop_process(TRUE)
         error_message("Your process has been interrupted")
         
-        ## Update loading icon ####
+        ## Whether to display loading icon ####
         session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
         
       })
@@ -509,14 +562,14 @@ CaDrA_Server <- function(id){
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
           ## Read in BRCA GISTIC+Mutation ESet object
-          eset_mut_scna <- CaDrA::BRCA_GISTIC_MUT_SIG
-            
-          #print(input$BRCA_GISTIC_MUT_SIG_scores)
+          utils::data("BRCA_GISTIC_MUT_SIG", envir = environment())
+          eset_mut_scna <- get("BRCA_GISTIC_MUT_SIG", envir = environment())
           
           if(input$BRCA_GISTIC_MUT_SIG_scores == "TAZYAP_BRCA_ACTIVITY"){
             
             ## Read in input score
-            input_score <- CaDrA::TAZYAP_BRCA_ACTIVITY
+            utils::data("TAZYAP_BRCA_ACTIVITY", envir = environment())
+            input_score <- get("TAZYAP_BRCA_ACTIVITY", envir = environment())
               
             ## Samples to keep based on the overlap between the two inputs
             overlap <- intersect(names(input_score), Biobase::sampleNames(eset_mut_scna))
@@ -535,13 +588,12 @@ CaDrA_Server <- function(id){
         if(input$dataset == "CCLE_MUT_SCNA"){
           
           ## Read in SCNA ESet object
-          ES <- CaDrA::CCLE_MUT_SCNA
+          utils::data("CCLE_MUT_SCNA", envir = environment())
+          ES <- get("CCLE_MUT_SCNA", envir = environment())
             
-          #print(input$CCLE_MUT_SCNA_scores)
-          
           if(input$CCLE_MUT_SCNA_scores == "CTNBB1_reporter"){
-            ## Read in input score
-            input_score <- CaDrA::CTNBB1_reporter
+            utils::data("CTNBB1_reporter", envir = environment())
+            input_score <- get("CTNBB1_reporter", envir = environment())
           }
   
         }
@@ -549,10 +601,12 @@ CaDrA_Server <- function(id){
         if(input$dataset == "sim.ES"){
           
           ## Read in simulated eset object
-          ES <- CaDrA::sim.ES
+          utils::data("sim.ES", envir = environment())
+          ES <- get("sim.ES", envir = environment())
             
           if(input$sim.ES_scores == "sim.Scores"){
-            input_score = CaDrA::sim.Scores
+            utils::data("sim.Scores", envir = environment())
+            input_score = get("sim.Scores", envir = environment())
           }
           
         }
@@ -698,7 +752,7 @@ CaDrA_Server <- function(id){
         }
         
         # Check if the ES is provided and is a BioBase ExpressionSet object
-        if(length(ES) == 0 || class(ES)[1] != "ExpressionSet"){
+        if(length(ES) == 0 || !is(ES, "ExpressionSet")){
           error_message("'ES' must be an ExpressionSet class argument (required).")
           return(NULL)
         }
@@ -835,10 +889,10 @@ CaDrA_Server <- function(id){
         if(initial_seed == "top_N_seeds"){
           
           search_start = NULL
-          top_N = as.numeric(input$top_N)
+          top_N = as.integer(input$top_N)
           
           if(is.na(top_N) || length(top_N)==0){
-            error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+            error_message("Please specify an INTEGER top_N value to evaluate over top N features.\n")
             return(NULL)
           }
           
@@ -847,14 +901,9 @@ CaDrA_Server <- function(id){
           search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
           top_N = NULL
           
-          if(is.character(search_start)){
-            # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
-            verbose("Starting with specified feature names...\n")
-            
-            if(!(search_start %in% rownames(ES))){ #provided feature name not in rownames
-              error_message("Provided starting feature(s) does not exist among ES's rownames.\n\n")
-              return(NULL)
-            }
+          if(!(search_start %in% rownames(ES))){ 
+            error_message("Provided starting feature(s) does not exist among ES's rownames.\n\n")
+            return(NULL)
           }
           
         }
@@ -863,24 +912,17 @@ CaDrA_Server <- function(id){
         
         if(permutation == TRUE){
           
-          n_perm = as.numeric(input$n_perm)
+          n_perm = as.integer(input$n_perm)
           
-          if(is.na(top_N) || length(top_N)==0){
-            error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+          if(is.na(n_perm) || length(n_perm)==0){
+            error_message("Please specify an INTEGER number of permutations to perform for permutation testings.\n")
             return(NULL)
           }
           
-          seed = as.numeric(input$seed)
+          ncores = as.integer(input$ncores)
           
-          if(is.na(top_N) || length(top_N)==0){
-            error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
-            return(NULL)
-          }
-          
-          ncores = as.numeric(input$ncores)
-          
-          if(is.na(top_N) || length(top_N)==0){
-            error_message("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+          if(is.na(ncores) || length(ncores)==0){
+            error_message("Please specify the number of cores to perform parallelization for permutation testings.\n")
             return(NULL)
           }
           
@@ -899,7 +941,6 @@ CaDrA_Server <- function(id){
               search_method = search_method,      
               max_size = max_size,               
               n_perm = n_perm,               
-              seed = seed,                  
               smooth = TRUE,
               obs_best_score = NULL,
               plot = FALSE, 
@@ -912,7 +953,7 @@ CaDrA_Server <- function(id){
         }
         
         # Export the ES and input_score to reactive datase
-        feature_set_description(sprintf("After filtering features with Minimum Samples Cutoff = %s (or having < %s%% prevalence across all samples) and Maximum Percent Cutoff = %s (or having > %s%% prevalance across all samples), the Binary Feature Set retained %s genomic features out of %s supplied features across %s samples.", min_cutoff, percent_min_cutoff*100, max_cutoff, max_cutoff*100, format(nrow(ES), big.mark = ","), format(n_orig_features, big.mark = ","), format(ncol(ES), big.mark =",")))
+        feature_set_description(sprintf("After filtering features with Minimum Samples Frequency = %s (or having < %s%% prevalence across all samples) and Maximum Percent Cutoff = %s (or having > %s%% prevalance across all samples), the Binary Feature Set retained %s genomic features out of %s supplied features across %s samples.", min_cutoff, percent_min_cutoff*100, max_cutoff*100, max_cutoff*100, format(nrow(ES), big.mark = ","), format(n_orig_features, big.mark = ","), format(ncol(ES), big.mark =",")))
         feature_set_data(exprs(ES))
         input_score_data(input_score)
         
@@ -979,7 +1020,7 @@ CaDrA_Server <- function(id){
           h2(title),
           br(),
           p(description),
-          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features ESet")
+          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features Set")
         )
         
       })
@@ -1349,69 +1390,6 @@ CaDrA_Server <- function(id){
 CaDrA_App <- function() {
   
   ui <- fluidPage(
-    
-    tags$head(
-      tags$style(
-        HTML(
-        "
-        .side-bar-options {
-          border: 1px solid gray; 
-          border-radius: 3px; 
-          background: lightgrey; 
-          padding: 5px 10px 10px 10px; 
-          min-height: 850px;
-        }
-        
-        .tooltip-txt {
-          color: red;
-        }
-        
-        .loading_div {
-          display: flex;
-          text-align: center;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 400px;
-        }
-        
-        .loading_text {
-          width: 120px;
-        }
-        
-        .loader {
-          border: 16px solid #f3f3f3;
-          border-top: 16px solid #3498db;
-          border-radius: 50%;
-          width: 120px;
-          height: 120px;
-          animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        "
-        )
-      ),
-      
-      tags$script(
-        HTML(
-          paste0(
-            "Shiny.addCustomMessageHandler('ToggleOperation', function(message) {",
-              "var x = document.getElementById(message.id);",
-              "if (message.display === 'yes') {",
-                "x.style.display = 'flex';",
-              "} else {",
-                "x.style.display = 'none';",
-              "}",
-            "})"
-          )
-        )
-      )
-      
-    ),
     
     titlePanel("CaDrA: Candidate Drivers Analysis"),
     

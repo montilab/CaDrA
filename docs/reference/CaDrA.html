@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -86,7 +86,6 @@
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,</span>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">123</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -148,10 +147,6 @@
 
 <dt>n_perm</dt>
 <dd><p>an integer specifies the number of permutations to perform. Default is <code>1000</code>.</p></dd>
-
-
-<dt>seed</dt>
-<dd><p>a seed set for permutation. Default is <code>123</code>.</p></dd>
 
 
 <dt>smooth</dt>
@@ -224,7 +219,7 @@
 <span class="r-in"><span><span class="co"># Load pre-computed expression set</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set seed</span></span></span>
+<span class="r-in"><span><span class="co"># Set seed</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span></span></span>
@@ -237,7 +232,7 @@
 <span class="r-in"><span><span class="co">#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,</span></span></span>
 <span class="r-in"><span><span class="co">#  alternative = "less", metric = "pval", top_N = 1, </span></span></span>
 <span class="r-in"><span><span class="co">#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, </span></span></span>
-<span class="r-in"><span><span class="co">#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, </span></span></span>
+<span class="r-in"><span><span class="co">#  plot = TRUE, smooth = TRUE, obs_best_score = NULL, </span></span></span>
 <span class="r-in"><span><span class="co">#  ncores = 1, cache_path = NULL</span></span></span>
 <span class="r-in"><span><span class="co">#)</span></span></span>
 <span class="r-in"><span></span></span>

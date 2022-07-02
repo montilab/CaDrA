@@ -106,7 +106,7 @@ ks_gene_score_mat <- function
     stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
   }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
     alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
+    warning(paste0("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n"))
   } 
   
   # Compute the ks statistic and p-value per row in the matrix

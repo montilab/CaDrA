@@ -18,7 +18,6 @@ CaDrA(
   search_method = "both",
   max_size = 7,
   n_perm = 1000,
-  seed = 123,
   smooth = TRUE,
   obs_best_score = NULL,
   plot = TRUE,
@@ -54,8 +53,6 @@ CaDrA(
 
 \item{n_perm}{an integer specifies the number of permutations to perform. Default is \code{1000}.}
 
-\item{seed}{a seed set for permutation. Default is \code{123}.}
-
 \item{smooth}{a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
 \item{obs_best_score}{a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we will compute the observed best score based on the given \code{input_score} and \code{ES} variables.}
@@ -82,7 +79,7 @@ library(Biobase)
 # Load pre-computed expression set
 data(sim.ES)
 
-# set seed
+# Set seed
 set.seed(123)
 
 # Provide a vector of continuous scores for a target profile with names to each score value 
@@ -95,7 +92,7 @@ names(input_score) <- colnames(sim.ES)
 #  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
 #  alternative = "less", metric = "pval", top_N = 1, 
 #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
-#  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
+#  plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
 #  ncores = 1, cache_path = NULL
 #)
 

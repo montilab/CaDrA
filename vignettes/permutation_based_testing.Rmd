@@ -58,15 +58,21 @@ ks_candidate <- CaDrA::candidate_search(
                                # best score, and input_score
 )
 
+```
+
+# Visualize best meta-features result
+
+```{r ks.meta.plot}
+
 # Extract the best meta-features result
 topn_best_meta <- topn_best(topn_list=ks_candidate)
 
-# Visualize best meta-features result
+# Meta-feature plot
 meta_plot(topn_best_list = topn_best_meta)
 
 ```
 
-# Permutation-Based Testing
+# Permutation-based testing
 
 ```{r ks.permutation}
 
@@ -80,10 +86,14 @@ ks_perm_res <- CaDrA::CaDrA(
   search_method = "both",      # forward/backward search
   max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
   n_perm = 1000,               # number of permutations
-  seed = 123,                  # random generated seed
   plot = FALSE,                # we will plot later
   ncores = 8                   # number of cores to perform parallelization for permutation testing
 )
+```
+
+# Visualize permutation result
+
+```{r ks.permutation.plot}
 
 # Visualize permutation results
 permutation_plot(ks_perm_res)

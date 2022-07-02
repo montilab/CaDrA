@@ -61,12 +61,12 @@ eset_mut_scna <- eset_mut_scna[,overlap]
 input_scores <- input_scores[overlap]
 
 ## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
 
 ## Pre-filter ESet based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
   ES = eset_mut_scna,
-  max.cutoff = 0.6, # max frequency (60%)
+  max.cutoff = 0.6,  # max frequency (60%)
   min.cutoff = 0.03 # min frequency (3%)
 ) 
 

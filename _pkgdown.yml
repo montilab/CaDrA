@@ -77,11 +77,11 @@ navbar:
     - text: "Docs"
       menu:
       - text: "Scoring Functions"
-        href: articles/docs/scoring_functions.html
+        href: articles/scoring_functions.html
       - text: "Permutation-Based Testing"
-        href: articles/docs/permutation_based_testing.html
+        href: articles/permutation_based_testing.html
       - text: "Reproduce CaDrA Figures"
-        href: articles/docs/cadra_figure_5.html
+        href: articles/cadra_figure_5.html
     - text: "Reference"
       href: reference/index.html
   right:

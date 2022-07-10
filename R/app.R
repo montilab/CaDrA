@@ -63,7 +63,7 @@ score_choices <- list(
 #' # Launch Shiny app (NOT RUN)
 #' # shiny::runApp(app, host='0.0.0.0', port=3838)
 #' 
-#' @import shiny
+#' @import shiny markdown
 #' @importFrom htmltools includeMarkdown
 #' 
 #' @export 

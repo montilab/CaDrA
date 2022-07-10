@@ -3,7 +3,7 @@
 \docType{data}
 \name{BRCA_GISTIC_MUT_SIG}
 \alias{BRCA_GISTIC_MUT_SIG}
-\title{Genomic Data from TCGA BRCA}
+\title{Genomic Data from TCGA BRCA that associated with YAP/TAZ Activity}
 \format{
 An object of class \code{ExpressionSet} from \code{Biobase} package
 containing a matrix of 16,873 rows (features) and 963 columns (samples) 
@@ -17,8 +17,8 @@ An ExpressionSet object consists of 16,873 genomic features across 963 samples.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,
-Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
+Varelas X, Monti S (2019) CaDrA: A computational framework for performing 
 candidate driver analyses using binary genomic features. 
-(\href{https://www.biorxiv.org/content/early/2017/11/23/221846}{bioRxiv})
+(\href{https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full}{Frontiers in Genetics})
 }
 \keyword{datasets}

@@ -4,15 +4,27 @@ Title: Candidate Driver Analysis
 Version: 2.0.0
 Date: 2022-04-25
 Authors@R: 
-    c(person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
-      person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu"), 
-      person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 
-      person(given="Katia", family="Bulekova", role=c("aut"), email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146"))
+    c(person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 
+      person(given="Katia", family="Bulekova", role=c("aut"), email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146")),
+      person(given="Vinay", family="Kartha", role=c("aut"), email="vkartha@bu.edu"), 
+      person(given="Stefano", family="Monti", role=c("aut"), email="smonti@bu.edu")
      )
-Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on ranked multi-omic data. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given sample ranking variable (e.g. defined by pathway activity or drug sensitivity estimates), based on the union occurence (i.e. logical OR) of the events.
-Depends: R (>= 3.1.1)
+Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on a binary multi-omics dataset. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given vector of continuous scores (e.g. sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.), based on the union occurence (i.e. logical OR) of the events.
+Depends: R (>= 4.0.0)
+LazyData: false
+License: GPL-3 + file LICENSE
+URL: https://github.com/montilab/CaDrA/
+Packaged: 2017-07-10 18:44:45 UTC; 
+Encoding: UTF-8
+RoxygenNote: 7.2.0
 Imports: 
     Biobase,
+    shiny,
+    htmltools,
+    markdown,
+    dplyr,
+    tibble,
+    DT,
     doParallel,
     plyr,
     ggplot2,
@@ -24,21 +36,18 @@ Imports:
     magrittr,
     purrr,
     stats,
+    methods,
     MASS,
     misc3d,
-    ppcor
-LazyData: true
-License: GPL-3 + file LICENSE
-URL: https://github.com/montilab/CaDrA/
-Packaged: 2017-07-10 18:44:45 UTC; 
-Encoding: UTF-8
-RoxygenNote: 7.1.2
+    ppcor,
+    graphics,
+    utils
 Suggests: 
     devtools,
-    tidyverse,
     rmarkdown,
     knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+biocViews: Microarray, RNASeq, GeneExpression, Software, FeatureExtraction
 VignetteBuilder: knitr
 BugReports: https://github.com/montilab/CaDrA/issues

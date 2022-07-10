@@ -71,7 +71,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # for cases when matrix only has one row
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list(rownames(ESet), rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
   }
   
   # Add on the OR function of all the returned entries
@@ -87,7 +87,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""
   
-  mat[nrow(mat),]<-2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
+  mat[nrow(mat),] <- 2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
   
   m <- ExpressionSet(assayData = mat, featureData = AnnotatedDataFrame(data.frame("Name"=rownames(mat), row.names = rownames(mat))))
   
@@ -165,10 +165,15 @@ setup_tab_heights <- function(plot_tab, dims) {
 stacked_gtable_max <- function(...){
   
   gtl <- list(...)
-  stopifnot(all(sapply(gtl, is.gtable)))
-  bind2 <- function (x, y) 
-  {
+  
+  stopifnot(
+    all(lapply(gtl, is.gtable) %>% unlist())
+  )
+  
+  bind2 <- function(x, y){
+    
     stopifnot(ncol(x) == ncol(y))
+    
     if (nrow(x) == 0) 
       return(y)
     if (nrow(y) == 0) 
@@ -186,6 +191,7 @@ stacked_gtable_max <- function(...){
     x$widths <- grid::unit.pmax(x$widths, y$widths)
     x$grobs <- append(x$grobs, y$grobs)
     x
+    
   }
   
   Reduce(bind2, gtl)
@@ -197,6 +203,43 @@ stacked_gtable_max <- function(...){
 #' Plot the ES running sum statistic, including the max score (KS) using x and y-axis data returned by ks.genescore() when plot.dat is set to TRUE for a given dataset
 #' @param d a data frame object with columns 'x' and 'y' containing the necessary data for an ES plot (returned by ks.genescore() when plot.dat is set to TRUE for a given dataset)
 #' @return A plot graphic of the Enrichment Score (ES) for a given distribution
+#' 
+#' @examples 
+#' 
+#' # Load R library
+#' library(Biobase)
+#' 
+#' # Load pre-computed Top-N list generated for sim.ES dataset
+#' data(topn.list)
+#' 
+#' # With the results obtained from top-N evaluation,
+#' # We can find the combination of features that gives the best score in top N searches
+#' topn_best_meta <- topn_best(topn_list=topn.list) 
+#' 
+#' # Extract the meta-feature set
+#' ESet =  topn_best_meta[["ESet"]]                    
+#' 
+#' # Make sure mat variable is a matrix
+#' mat <- as.matrix(exprs(ESet))
+#' 
+#' # For cases when matrix only has one row
+#' if(ncol(mat) == 1){
+#'   mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+#' }
+#' 
+#' # Add on the OR function of all the returned entries
+#' or <- ifelse(colSums(mat)==0, 0, 1)
+#' mat <- rbind(mat, or)
+#' 
+#' # Get x and y axis data for ES plot of 
+#' # cumulative function of individual features (i.e. the OR function)
+#' ES_dat <- ks_gene_score(
+#'    n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+#' )
+#' 
+#' # plot for ES scores
+#' ES_plot <- plot_ESet(d = ES_dat)
+#' 
 #' @export
 #' @import ggplot2
 plot_ESet <- function(
@@ -206,6 +249,7 @@ plot_ESet <- function(
   # Katia: adding ".data" to avoid a warning during check:
   # no visible binding for global variable 
   g <- ggplot(data = d, aes(x=.data$x, y=.data$y))
+  
   g <- g +
     #geom_line(size=1.25,colour="blueviolet")+
     geom_line(size=1.25, colour="darkgoldenrod1") +

@@ -1,30 +1,30 @@
-
+#' 
 #' Kolmogorov-Smirnov Scoring Method
-#'
+#' 
 #' Compute directional KS scores for each row of a given binary matrix
 #' 
 #' @param mat a matrix of binary features to compute row-wise scores based on the \code{Kolmogorov-Smirnov} test.
 #' @param weights a vector of weights to perform a \code{weighted-KS} test. Default is \code{NULL}. If not NULL, weights must include labels or names that associated with the colnames of the feature matrix.
-#' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing. 
-#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
-#'
+#' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
+#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.
+#' 
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
 #' 
-#' # Load R library
+#' #' Load R library
 #' library(Biobase)
 #' 
-#' # Load pre-computed expression set
+#' #' Load pre-computed expression set
 #' data(sim.ES)
 #' 
-#' # Define additional parameters and start the function
+#' #' Define additional parameters and start the function
 #' ks_gene_score_mat_result <- ks_gene_score_mat(
-#'   mat = exprs(sim.ES), 
+#'   mat = exprs(sim.ES),
 #'   weights = NULL,
 #'   alternative = "less"
 #' )
 #' 
-#' @export 
+#' @export
 #' @importFrom purrr map_dfr
 ks_gene_score_mat <- function
 (
@@ -36,7 +36,7 @@ ks_gene_score_mat <- function
 {
   
   # Set up verbose option
-  options(verbose=FALSE)
+  options(verbose = verbose)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
@@ -45,7 +45,7 @@ ks_gene_score_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary 0 or 1 values 
@@ -74,7 +74,7 @@ ks_gene_score_mat <- function
       # match colnames of expression matrix with names of provided weights values
       # iif nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
       if(nrow(mat) == 1){
-        mat <- matrix(t(mat[,names(weights)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
+        mat <- matrix(t(mat[,names(weights)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat))) 
       }else{
         mat <- mat[,names(weights)]
       }
@@ -106,7 +106,7 @@ ks_gene_score_mat <- function
     stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
   }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
     alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
+    warning(paste0("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n"))
   } 
   
   # Compute the ks statistic and p-value per row in the matrix

@@ -16,7 +16,6 @@
 #' @param search_method a character string specifies an algorithm to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e., backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
 #' @param n_perm an integer specifies the number of permutations to perform. Default is \code{1000}.
-#' @param seed a seed set for permutation. Default is \code{123}.
 #' @param smooth a logical value indicates whether or not to smooth the p-value calculation to avoid p-value of 0. Default is \code{TRUE}.
 #' @param obs_best_score a numeric value corresponding to the observed (best) candidate search score to use for permutation based p-value computation. Default is \code{NULL}. If set to NULL, we will compute the observed best score based on the given \code{input_score} and \code{ES} variables.
 #' @param plot a logical value indicates whether or not to plot the empirical null distribution with the observed score and permutation p-value. Default is \code{TRUE}.
@@ -33,7 +32,7 @@
 #' # Load pre-computed expression set
 #' data(sim.ES)
 #' 
-#' # set seed
+#' # Set seed
 #' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile with names to each score value 
@@ -46,12 +45,12 @@
 #' #  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
 #' #  alternative = "less", metric = "pval", top_N = 1, 
 #' #  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
-#' #  seed = 123, plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
+#' #  plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
 #' #  ncores = 1, cache_path = NULL
 #' #)
 #' 
 #' @export
-#' @import Biobase R.cache doParallel ggplot2 plyr
+#' @import Biobase R.cache doParallel ggplot2 plyr methods
 #'
 #' @author Reina Chau
 #' 
@@ -69,7 +68,6 @@ CaDrA <- function(
   search_method = "both",
   max_size = 7,  
   n_perm = 1000,
-  seed = 123,
   smooth = TRUE,
   obs_best_score = NULL,
   plot = TRUE,
@@ -82,7 +80,7 @@ CaDrA <- function(
   options(verbose = verbose)
   
   # Check if the ES is provided and is a BioBase ExpressionSet object
-  if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
+  if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")
   
   # Check if the dataset has only binary 0 or 1 values 
@@ -131,19 +129,19 @@ CaDrA <- function(
     if(method == "ks"){
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
     }
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
     if(method == "wilcox"){
       verbose("Using Wilcoxon method for features scoring.\n")
       # Ranking the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
     }
     
     # Compute mutually exclusive method for binary features in ES
     if(method == "revealer"){
-      ES <- ES[,names(sort(input_score, decreasing=T))]
+      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
       verbose("Using Revealer's Mutually Exclusive method for features scoring.\n")
     }
     
@@ -214,8 +212,8 @@ CaDrA <- function(
     cat("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
   
-  # We use the ES, top N (or search_start), score metric, scoring method and seed for random permutation as the key for each cached result  
-  key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, top_N=top_N, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, seed=seed)
+  # We use the ES, top N (or search_start), score metric, scoring method as the key for each cached result  
+  key <- list(ES=ES, input_score=input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, top_N=top_N, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE)
   
   verbose("Using the following as the key for saving/loading cached permutation values:\n")
   verbose(key)
@@ -245,6 +243,10 @@ CaDrA <- function(
     cat("BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n")
     
     ##############################################################################################
+    
+    #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
+    options(verbose = verbose)   
+    
     # Sets up the parallel backend which will be utilized by Plyr.
     parallel = FALSE
     progress = "text"
@@ -257,12 +259,9 @@ CaDrA <- function(
     } 
     
     cat("Using ", ncores, " core(s)...\n")
-    
-    #Set verbose to FALSE (override parameter specification) since we don't want to print any diagnostic statements
-    options(verbose = FALSE)    
-    
+
     # Generate matrix of permutated input_score  
-    perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, seed=seed)
+    perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, verbose = FALSE)
     
     verbose("Computing permutation-based scores for N = ", n_perm, "...\n\n")
     perm_best_scores <- unlist(plyr::alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, top_N=top_N, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, do_plot = FALSE, verbose = FALSE) }, .parallel=parallel, .progress=progress))
@@ -286,21 +285,23 @@ CaDrA <- function(
     
     cat("Computing observed best score ..\n\n")
     
-    obs_best_score <- candidate_search(ES = ES,
-                                       input_score = input_score, 
-                                       method = method,
-                                       custom_function = custom_function,
-                                       custom_parameters = custom_parameters,
-                                       alternative = alternative,
-                                       metric = metric,
-                                       weights = weights,
-                                       top_N = top_N,
-                                       search_start = search_start,
-                                       search_method = search_method,
-                                       max_size = max_size,
-                                       best_score_only = TRUE,
-                                       do_plot = FALSE,
-                                       verbose = FALSE) %>% unlist()
+    obs_best_score <- candidate_search(
+      ES = ES,
+      input_score = input_score, 
+      method = method,
+      custom_function = custom_function,
+      custom_parameters = custom_parameters,
+      alternative = alternative,
+      metric = metric,
+      weights = weights,
+      top_N = top_N,
+      search_start = search_start,
+      search_method = search_method,
+      max_size = max_size,
+      best_score_only = TRUE,
+      do_plot = FALSE,
+      verbose = FALSE
+    ) %>% unlist()
     
   } else{
     
@@ -392,35 +393,52 @@ CaDrA <- function(
 #' Produces a random permutation rank matrix given a vector of values
 #' @param ord vector to be permuted. This determines the number of columns in the permutation matrix
 #' @param n_perms number of permutations to generate. This determines the number of rows in the permutation matrix
-#' @param seed seed which can be set for reproducibility of 'random' results. Default is 123
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #' @return A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
+#' 
+#' @examples
+#' 
+#' # Load pre-computed input score
+#' data(TAZYAP_BRCA_ACTIVITY)
+#' input_score = TAZYAP_BRCA_ACTIVITY
+#' 
+#' # Set seed
+#' set.seed(123)
+#' 
+#' # Define number of permutations
+#' n_perm = 1000
+#'  
+#' # Define additional parameters and start the function
+#' perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm)
+#'   
 #' @export
 generate_permutations <- function(
-  ord,        #These are the sample orderings to be permuted
-  n_perms,    #Number of permutations to produce
-  seed = 123,    #Seed which can be set for reproducibility of results
+  ord,                  # These are the sample orderings to be permuted
+  n_perms,              # Number of permutations to produce
   verbose = FALSE
 ){
   
   options(verbose = verbose)
   
+  # Get number of samples
   m  <- length(ord)
-  perm <- matrix(NA, nrow=n_perms, ncol=length(ord) )
-  if ( !is.null(seed) ){
-    set.seed(seed)
-    verbose("Seed set: ", seed,"\n")
-  }
-  verbose("Generating ",n_perms," permuted sample ranks..\n")
-  for ( i in (1:n_perms) ) {
-    perm[i,] <- sample(ord,m)
+  
+  # Create permutation matrix
+  perm <- matrix(NA, nrow=n_perms, ncol=length(ord))
+  
+  verbose("Generating ", n_perms," permuted sample observed input scores...\n")
+  
+  # Sample the input scores
+  for (i in seq_len(n_perms) ) {
+    perm[i,] <- sample(ord, m)
   }
   
   verbose("Are all generated permutations unique?..\n")
+  
   verbose(nrow(perm)==nrow(unique.matrix(perm)))
   
-  if(nrow(perm)!=nrow(unique.matrix(perm)))
-    stop("Not enough unique sample permutations for the permutation number specified.. Please provide a reasonabl nperm value ..\n")
+  if(nrow(perm) != nrow(unique.matrix(perm)))
+    stop("Not enough unique sample permutations for the permutation number specified. Please provide a reasonable nperm value...\n")
   
   return(perm) 
   

@@ -33,13 +33,13 @@ on simulated dataset (ES = sim.ES) with input_score = ncol(sim.ES):1 and method 
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -74,7 +74,7 @@ on simulated dataset (<code>ES = sim.ES</code>) with <code>input_score = ncol(si
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -89,20 +89,20 @@ See <code><a href="CaDrA.html">CaDrA</a></code> and <code><a href="permutation_p
     <p>Kartha VK, Kern JG, Sebastiani P, Zhang L,
 Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
 candidate driver analyses using binary genomic features. 
-(<a href="https://www.biorxiv.org/content/early/2017/11/23/221846" class="external-link">bioRxiv</a>)</p>
+(<a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Frontiers in Genetics</a>)</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load the pre-computed permutation results</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Plot the NULL permutation distribution against the observed best score</span></span>
-<span class="r-in"><span class="fu"><a href="permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load the pre-computed permutation results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot the NULL permutation distribution against the observed best score</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">perm.res</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span>
 <span class="r-plt img"><img src="perm.res-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -113,11 +113,11 @@ candidate driver analyses using binary genomic features.
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -37,6 +37,11 @@ reference:
   - '`revealer_genescore`'
   - '`generate_permutations`'
   - '`prefilter_data`'
+  - '`ks_genescore_mat`'
+  - '`ks_genescore_wrap`'
+  - '`ks_plot_wrap`'
+  - '`ks_test_double_wrap`'
+  - '`plot_ESet`'
 
 - title: Plot Methods
   desc: ~
@@ -45,10 +50,18 @@ reference:
   - '`topn_plot`'
   - '`permutation_plot`'
 
+- title: Shiny Modules
+  desc: ~
+  contents:
+  - '`CaDrA_UI`'
+  - '`CaDrA_Server`'
+  - '`CaDrA_App`'
+
 - title: Data Objects
   desc: ~
   contents:
   - '`sim.ES`'
+  - '`sim.Scores`'
   - '`topn.list`'
   - '`perm.res`'
   - '`CCLE_MUT_SCNA`'
@@ -64,11 +77,11 @@ navbar:
     - text: "Docs"
       menu:
       - text: "Scoring Functions"
-        href: articles/docs/scoring_functions.html
+        href: articles/scoring_functions.html
       - text: "Permutation-Based Testing"
-        href: articles/docs/permutation_based_testing.html
+        href: articles/permutation_based_testing.html
       - text: "Reproduce CaDrA Figures"
-        href: articles/docs/cadra_figure_5.html
+        href: articles/cadra_figure_5.html
     - text: "Reference"
       href: reference/index.html
   right:

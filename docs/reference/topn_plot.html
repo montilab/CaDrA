@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -72,31 +72,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">topn_plot</span><span class="op">(</span><span class="va">topn_list</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topn_plot</span><span class="op">(</span><span class="va">topn_list</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_list</dt>
 <dd><p>a list of lists where each list entry is returned from the <code><a href="candidate_search.html">candidate_search()</a></code> for a given starting index. This is computed within and can be returned by the <code><a href="topn_eval.html">topn_eval()</a></code> function.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a heatmap of the top N evaluation for a given top N search evaluation</p>
+    
+
+<p>a heatmap of the top N evaluation for a given top N search evaluation</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get top N plot</span></span>
-<span class="r-in"><span class="fu">topn_plot</span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Generating top N overlap heatmap..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get top N plot</span></span></span>
+<span class="r-in"><span><span class="fu">topn_plot</span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="topn_plot-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -107,11 +112,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -72,28 +72,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">topn_best</span><span class="op">(</span><span class="va">topn_list</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topn_best</span><span class="op">(</span><span class="va">topn_list</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_list</dt>
 <dd><p>A nested list object that is returned by topn_eval() function when best_score_only is set to FALSE. This contains both the ESets as well as the scores and its input scores for each resulting meta-feature in the top 'N' search mode.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing the (local) best meta-feature ESet, as well as its corresponding search score and input scores</p>
+    
+
+<p>A list containing the (local) best meta-feature ESet, as well as its corresponding search score and input scores</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get the best meta-features list</span></span>
-<span class="r-in"><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">topn_best</span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get the best meta-features list</span></span></span>
+<span class="r-in"><span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">topn_best</span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -104,11 +107,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

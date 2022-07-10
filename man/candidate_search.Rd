@@ -39,7 +39,7 @@ candidate_search(
 
 \item{weights}{if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{search_start}{an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)}
+\item{search_start}{a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.}
 

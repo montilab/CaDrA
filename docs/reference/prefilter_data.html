@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -72,51 +72,47 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">prefilter_data</span><span class="op">(</span><span class="va">ES</span>, max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, min.cutoff <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">prefilter_data</span><span class="op">(</span><span class="va">ES</span>, max.cutoff <span class="op">=</span> <span class="fl">0.6</span>, min.cutoff <span class="op">=</span> <span class="fl">0.03</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ES</dt>
 <dd><p>an expression set object containing binary features used for step-wise search</p></dd>
+
+
 <dt>max.cutoff</dt>
 <dd><p>a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)</p></dd>
+
+
 <dt>min.cutoff</dt>
 <dd><p>a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An expression set object with only the filtered-in features given the filter thresholds specified</p>
+    
+
+<p>An expression set object with only the filtered-in features given the filter thresholds specified</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Filter out features having &lt; 3 and &gt; 60% prevalence across all samples (default)</span></span>
-<span class="r-in"><span class="va">sim.ES.filt1</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pre-filtering features ..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Removing features having &lt;  3 and &gt;  60  % occurence in sample set..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 883  features retained out of  1000  supplied features in dataset</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Change the min cut-off to 1% prevalence, instead of the default 3%</span></span>
-<span class="r-in"><span class="va">sim.ES.filt2</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span>,min.cutoff<span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pre-filtering features ..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Removing features having &lt;  1 and &gt;  60  % occurence in sample set..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1000  features retained out of  1000  supplied features in dataset</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Change the max cut-off to 65% prevalence, instead of the default 60%</span></span>
-<span class="r-in"><span class="va">sim.ES.filt3</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span>,max.cutoff<span class="op">=</span><span class="fl">0.65</span><span class="op">)</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pre-filtering features ..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Removing features having &lt;  3 and &gt;  65  % occurence in sample set..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 883  features retained out of  1000  supplied features in dataset</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Filter out features having &lt; 3 and &gt; 60% prevalence across all samples (default)</span></span></span>
+<span class="r-in"><span><span class="va">sim.ES.filt1</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Change the min cut-off to 1% prevalence, instead of the default 3%</span></span></span>
+<span class="r-in"><span><span class="va">sim.ES.filt2</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span>,min.cutoff<span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Change the max cut-off to 65% prevalence, instead of the default 60%</span></span></span>
+<span class="r-in"><span><span class="va">sim.ES.filt3</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span><span class="va">sim.ES</span>,max.cutoff<span class="op">=</span><span class="fl">0.65</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -127,11 +123,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

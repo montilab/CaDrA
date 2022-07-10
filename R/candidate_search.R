@@ -10,7 +10,7 @@
 #' @param alternative a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
 #' @param metric a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).
 #' @param weights if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.   
-#' @param search_start an integer specifies an index within the expression set object of which feature(s) to start the candidate search with. Default is \code{NULL}. If NULL, then the search starts with the top ranked feature. If an integer is specified (N, where N < nrow(ES)), the search starts with the Nth best feature. If a string is specified, the search starts with the feature with this name (must be a valid row name in ES)
+#' @param search_start a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.
 #' @param search_method a character string specifies an algorithm to filter out the best features (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e. backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.
@@ -44,6 +44,7 @@
 #' )
 #' 
 #' @export
+#' @import Biobase methods
 candidate_search <- function(
   ES, 
   input_score, 
@@ -66,7 +67,7 @@ candidate_search <- function(
   options(verbose = verbose)
   
   # Check if the ES is provided and is a BioBase ExpressionSet object
-  if(length(ES) == 0 || class(ES)[1] != "ExpressionSet") 
+  if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")
   
   # Check if the dataset has only binary 0 or 1 values 
@@ -116,7 +117,7 @@ candidate_search <- function(
       verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
       
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -127,7 +128,7 @@ candidate_search <- function(
       verbose("Using Wilcoxon method for features scoring.\n")
       
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -136,7 +137,7 @@ candidate_search <- function(
     # Compute mutually exclusive method for binary features in ES 
     if(method == "revealer"){
       # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=T)
+      input_score <- sort(input_score, decreasing=TRUE)
       
       # Re-order the samples by input_score sorted from highest to lowest values
       ES <- ES[,names(input_score)]
@@ -216,7 +217,7 @@ candidate_search <- function(
   
   # Re-order ES in decreasing order of user-defined score (stat or pval)
   # This comes in handy when doing the top-N evaluation of the top N 'best' features
-  score.rank <- if(metric != "pval") order(score, decreasing=T) else order(-sign(score), score)
+  score.rank <- if(metric != "pval") order(score, decreasing=TRUE) else order(-sign(score), score)
   
   verbose("Ranking ES features by metric...\n")
   
@@ -230,7 +231,7 @@ candidate_search <- function(
   #######################################
     
   # Check if top_N is given and is numeric
-  top_N = as.numeric(top_N)    
+  top_N = as.integer(top_N)    
   
   # Check if search_start is given
   if(is.null(search_start)){ 
@@ -239,6 +240,9 @@ candidate_search <- function(
       stop("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
     }
     
+    if(top_N <= 0)
+      stop("Please specify a top_N value greater than 0.\n")
+    
     if(top_N > nrow(ES))
       stop("Please specify a top_N value that is less than the number of features in the ES.\n")
     
@@ -246,37 +250,26 @@ candidate_search <- function(
       warning("top_N value specified is greater than 10. This may result in a longer search time.\n")
     
     # Start the search with top N features based on their sorted indexes
-    search_feature_index <- 1:top_N
+    search_feature_index <- seq_len(top_N)
     
     verbose("Evaluating search over top ", length(search_feature_index), " features\n\n")
     
   } else {
     
+    search_start = strsplit(as.character(search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
+    
     if(!is.na(top_N) && length(top_N) > 0){
       warning("Since start_search variable is given, evaluating over top_N value will be ignored.\n")
     }
     
-    if(is.numeric(search_start)){ 
-      # User-specified feature index (has to be an integer from 1:nrow(ES))
-      verbose("Starting with specified sorted feature indexes...\n")
-      
-      if(search_start > nrow(ES)) # Index out of range
-        stop("Invalid starting index specified... Please specify a valid starting index within the range of the existing ES...\n")
-      
-      # Start the search with given search_start values
-      search_feature_index <- search_start 
-    }
+    # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
+    verbose("Starting with specified feature names...\n")
     
-    if(is.character(search_start)){
-      # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
-      verbose("Starting with specified feature names...\n")
-      
-      if(!(search_start %in% rownames(ES))) #provided feature name not in rownames
-        stop("Provided starting feature does not exist among ES's rownames.\n\n")
-      
-      # Get the index of the search_start strings and start the search with the defined indexes
-      search_feature_index <- which(rownames(ES) == search_start) 
-    }
+    if(!(search_start %in% rownames(ES))) #provided feature name not in rownames
+      stop("Provided starting feature does not exist among ES's rownames.\n\n")
+    
+    # Get the index of the search_start strings and start the search with the defined indexes
+    search_feature_index <- which(rownames(ES) == search_start) 
     
   } # end else (!is.null)
   
@@ -288,7 +281,7 @@ candidate_search <- function(
   }
   
   ## Check the max_size variable ####
-  max_size = as.numeric(max_size)   
+  max_size = as.integer(max_size)   
   
   if(is.na(max_size) || length(max_size)==0){
     stop("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search.\n")
@@ -300,7 +293,7 @@ candidate_search <- function(
   }
   
   # Performs the search over the feature indices
-  topn_l <- lapply(1:length(search_feature_index), function(x){ 
+  topn_l <- lapply(seq_along(search_feature_index), function(x){ 
     # x=1;
     # Evaluate over top N features using their indexes
     best.s.index <- search_feature_index[x]
@@ -362,16 +355,19 @@ candidate_search <- function(
       # Perform a backward check on the list of existing features and update global scores/feature lists accordingly  
       if(length(global.best.s.features) > 3 & back_search == TRUE){
         
-        backward_search.results <- forward_backward_check(ES = ES,
-                                                          input_score = input_score,
-                                                          glob.f = global.best.s.features, # Global feature set so far
-                                                          glob.f.s = global.best.s,        # score corresponding to this global feature set
-                                                          method = method, 
-                                                          custom_function = custom_function,
-                                                          custom_parameters = custom_parameters,
-                                                          alternative = alternative,
-                                                          metric = metric,
-                                                          weights = weights)    
+        backward_search.results <- forward_backward_check(
+          ES = ES,
+          input_score = input_score,
+          glob.f = global.best.s.features, # Global feature set so far
+          glob.f.s = global.best.s,        # score corresponding to this global feature set
+          method = method, 
+          custom_function = custom_function,
+          custom_parameters = custom_parameters,
+          alternative = alternative,
+          metric = metric,
+          weights = weights
+        )  
+        
         # Update globlal features, scores 
         global.best.s.features <- backward_search.results[[1]]
         global.best.s <- backward_search.results[[2]]
@@ -512,7 +508,7 @@ candidate_search <- function(
   # best_score_only
   if(best_score_only == TRUE){
     
-    scores_l <- lapply(1:length(topn_l), function(l){ topn_l[[l]][['Score']] })
+    scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['Score']] })
     
     # Working with scores for each top N run
     s <- unlist(scores_l)
@@ -521,9 +517,9 @@ candidate_search <- function(
     # This ASSUMES you're using metric = "pval"
     # NEEDS UPDATING TO ACCOMODATE STATISTIC 
     if(metric == "pval"){
-      best_score <- s[order(s, decreasing = F)][1] #Based on the p-values, the lowest value will be the most significant 
+      best_score <- s[order(s, decreasing = FALSE)][1] #Based on the p-values, the lowest value will be the most significant 
     }else{
-      best_score <- s[order(s, decreasing = T)][1]
+      best_score <- s[order(s, decreasing = TRUE)][1]
     }
     
     return(best_score)
@@ -563,7 +559,7 @@ forward_backward_check <- function
   
   # We want to see if leaving anyone feature out improves the overall meta-feature  score
   # Here we only consider previous features in the meta-feature to remove (i.e. not the last one which was just added)
-  for(n in 1:(length(glob.f)-1)){
+  for(n in seq_len(length(glob.f)-1)){
     #n=1;
     f.names[[n]] <- glob.f[-n]
     
@@ -573,34 +569,32 @@ forward_backward_check <- function
     
     # Compute scores for this meta feature
     # Here we suprress warnings just to avoid messages warning-related single vector score computation (nrow(mat) < 2)
-    u.mat <- matrix(t(matrix(u)), nrow=1, byrow=T, dimnames=list(c("sum"), colnames(ES)))
+    u.mat <- matrix(t(matrix(u)), nrow=1, byrow=TRUE, dimnames=list(c("sum"), colnames(ES)))
 
-    s <- suppressWarnings(
-      switch(
-        method,
-        ks = ks_gene_score_mat(
-          mat = u.mat,
-          alternative = alternative, 
-          weights = weights
-        ),
-        wilcox = wilcox_genescore_mat(
-          mat = u.mat,
-          alternative = alternative,
-          ranks = NULL
-        ),
-        revealer = revealer_genescore_mat(
-          mat = u.mat,                                   
-          input_score = input_score,      
-          seed_names = NULL,
-          target_match = "positive",
-          assoc_metric = "IC"
-        ),
-        custom = custom_genescore_mat(
-          mat = u.mat,
-          input_score = input_score,
-          custom_function = custom_function,
-          custom_parameters = custom_parameters
-        )
+    s <- switch(
+      method,
+      ks = ks_gene_score_mat(
+        mat = u.mat,
+        alternative = alternative, 
+        weights = weights
+      ),
+      wilcox = wilcox_genescore_mat(
+        mat = u.mat,
+        alternative = alternative,
+        ranks = NULL
+      ),
+      revealer = revealer_genescore_mat(
+        mat = u.mat,                                   
+        input_score = input_score,      
+        seed_names = NULL,
+        target_match = "positive",
+        assoc_metric = "IC"
+      ),
+      custom = custom_genescore_mat(
+        mat = u.mat,
+        input_score = input_score,
+        custom_function = custom_function,
+        custom_parameters = custom_parameters
       )
     )
     

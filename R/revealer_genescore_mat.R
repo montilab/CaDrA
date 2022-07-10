@@ -44,7 +44,7 @@ revealer_genescore_mat <- function
 {
   
   # Setup verbose option definition
-  options(verbose=FALSE)
+  options(verbose = verbose)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
@@ -53,7 +53,7 @@ revealer_genescore_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary values and no empty values
@@ -89,7 +89,7 @@ revealer_genescore_mat <- function
     # match colnames of expression matrix with names of provided input_score values
     # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
     if(nrow(mat) == 1){
-      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
+      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat))) 
     }else{
       mat <- mat[,names(input_score)]
     }
@@ -112,7 +112,7 @@ revealer_genescore_mat <- function
     stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.")
   }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
     target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
-    warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
+    warning(paste0("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n"))
   }
   
   # If assoc_metric variable is not specified, use "IC" as default.
@@ -125,7 +125,7 @@ revealer_genescore_mat <- function
     stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.")
   }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
     assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
+    warning(paste0("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n"))
   }
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
@@ -158,7 +158,7 @@ revealer_genescore_mat <- function
   }
   
   # Compute MI and % explained with original seed(s)
-  cmi <- 1:nrow(mat) %>% 
+  cmi <- seq_len(nrow(mat)) %>% 
     purrr::map_dbl(
       function(r){
         revealer_genescore(x=input_score, y=mat[r,], z=seed, assoc_metric=assoc_metric, target_match=target_match) 

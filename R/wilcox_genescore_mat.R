@@ -46,7 +46,7 @@ wilcox_genescore_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary 0 or 1 values 
@@ -75,7 +75,7 @@ wilcox_genescore_mat <- function
       # match colnames of expression matrix with names of provided ranks values
       # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
       if(nrow(mat) == 1){
-        mat <- matrix(t(mat[,names(ranks)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat)))
+        mat <- matrix(t(mat[,names(ranks)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat)))
       }else{
         mat <- mat[,names(ranks)]
       }
@@ -109,7 +109,7 @@ wilcox_genescore_mat <- function
     stop(paste0(alternative, collapse=", "), " is not a valid alternative hypothesis. Alternative hypothesis must be 'two.sided', 'greater', or 'less'.\n")
   }else if(length(alternative) > 1 && any(alternative %in% c("two.sided", "greater", "less"))){
     alternative <- alternative[which(alternative %in% c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n")
+    warning(paste0("More than one alternative hypothesis were specified. Only the first valid alternative hypothesis, '", alternative, "', is used.\n"))
   }
   
   #Compute the wilcox rank sum statitic and p-value per row in the matrix

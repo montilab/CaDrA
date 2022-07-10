@@ -38,13 +38,13 @@ and input_score are returned from each search.'><!-- mathjax --><script src="htt
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -84,7 +84,7 @@ and input_score are returned from each search.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -96,20 +96,20 @@ See <code><a href="topn_eval.html">topn_eval</a></code> for more information.</p
     <div id="references">
     <h2>References</h2>
     <p>Kartha VK, Kern JG, Sebastiani P, Zhang L,
-Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
+Varelas X, Monti S (2019) CaDrA: A computational framework for performing 
 candidate driver analyses using binary genomic features. 
-(<a href="https://www.biorxiv.org/content/early/2017/11/23/221846" class="external-link">bioRxiv</a>)</p>
+(<a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Frontiers in Genetics</a>)</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># To fetch each search result (Expression Set and score of the corresponding meta-feature)</span></span>
-<span class="r-in"><span class="co"># For N=1 (result when the search is initiated with the top-scoring starting feature)</span></span>
-<span class="r-in"><span class="va">topn.list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed Top-N list generated for sim.ES dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To fetch each search result (Expression Set and score of the corresponding meta-feature)</span></span></span>
+<span class="r-in"><span><span class="co"># For N=1 (result when the search is initiated with the top-scoring starting feature)</span></span></span>
+<span class="r-in"><span><span class="va">topn.list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ESet</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ExpressionSet (storageMode: lockedEnvironment)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assayData: 10 features, 200 samples </span>
@@ -127,9 +127,9 @@ candidate driver analyses using binary genomic features.
 <span class="r-out co"><span class="r-pr">#&gt;</span>       TN_405 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3.338238e-15 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># To fetch just the ExpressionSet object</span></span>
-<span class="r-in"><span class="va">topn.list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ESet</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To fetch just the ExpressionSet object</span></span></span>
+<span class="r-in"><span><span class="va">topn.list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ESet</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ExpressionSet (storageMode: lockedEnvironment)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assayData: 10 features, 200 samples </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   element names: exprs </span>
@@ -141,9 +141,9 @@ candidate driver analyses using binary genomic features.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Annotation: TN_405 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># ExpressionSet for the search result when starting with the second-best feature</span></span>
-<span class="r-in"><span class="va">topn.list</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ESet</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># ExpressionSet for the search result when starting with the second-best feature</span></span></span>
+<span class="r-in"><span><span class="va">topn.list</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ESet</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ExpressionSet (storageMode: lockedEnvironment)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assayData: 10 features, 200 samples </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   element names: exprs </span>
@@ -155,21 +155,19 @@ candidate driver analyses using binary genomic features.
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Annotation: TP_8 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Or we can find the result that had the best score over the top N (N=7) runs</span></span>
-<span class="r-in"><span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># You can now visualize this result using the meta_plot() function </span></span>
-<span class="r-in"><span class="fu"><a href="meta_plot.html">meta_plot</a></span><span class="op">(</span><span class="va">best_meta</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Or we can find the result that had the best score over the top N (N=7) runs</span></span></span>
+<span class="r-in"><span><span class="va">best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># You can now visualize this result using the meta_plot() function </span></span></span>
+<span class="r-in"><span><span class="fu"><a href="meta_plot.html">meta_plot</a></span><span class="op">(</span><span class="va">best_meta</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="topn.list-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Or you can visualize the overlap of features across the top N (N=7) returned meta-features</span></span>
-<span class="r-in"><span class="co"># We do this by passing the topn.list object to the topn_plot() function</span></span>
-<span class="r-in"><span class="fu"><a href="topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Generating top N overlap heatmap..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Or you can visualize the overlap of features across the top N (N=7) returned meta-features</span></span></span>
+<span class="r-in"><span><span class="co"># We do this by passing the topn.list object to the topn_plot() function</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="topn.list-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -180,11 +178,11 @@ candidate driver analyses using binary genomic features.
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -17,4 +17,16 @@ The result of calling `rhs(lhs)`.
 \description{
 See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
+\examples{
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# filter mtcars with mpg > 20
+ESet <- sim.ES \%>\% exprs(.)
+
+}
 \keyword{internal}

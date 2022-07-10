@@ -36,7 +36,7 @@ library(Biobase)
  
 # Examples of a customized function using ks-test function
 customized_genescore_mat <- function(mat, input_score, alternative){
-  result <- 1:nrow(mat) \%>\% 
+  result <- seq_len(nrow(mat)) \%>\% 
     purrr::map_dfr(
       function(r){ 
         feature = mat[r,];

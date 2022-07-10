@@ -28,15 +28,15 @@ Compute directional KS scores for each row of a given binary matrix
 }
 \examples{
 
-# Load R library
+#' Load R library
 library(Biobase)
 
-# Load pre-computed expression set
+#' Load pre-computed expression set
 data(sim.ES)
 
-# Define additional parameters and start the function
+#' Define additional parameters and start the function
 ks_gene_score_mat_result <- ks_gene_score_mat(
-  mat = exprs(sim.ES), 
+  mat = exprs(sim.ES),
   weights = NULL,
   alternative = "less"
 )

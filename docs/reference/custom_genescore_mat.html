@@ -32,13 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/cadra_figure_5.html">Reproduce CaDrA Figures</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -72,71 +72,84 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">custom_genescore_mat</span><span class="op">(</span>
-  <span class="va">mat</span>,
-  <span class="va">input_score</span>,
-  <span class="va">custom_function</span>,
-  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">custom_genescore_mat</span><span class="op">(</span></span>
+<span>  <span class="va">mat</span>,</span>
+<span>  <span class="va">input_score</span>,</span>
+<span>  <span class="va">custom_function</span>,</span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mat</dt>
 <dd><p>a matrix of binary features (required). <code>NOTE:</code> The provided <code>mat</code> along with <code>input_score</code> and <code>custom_parameters</code> will be passed as arguments to custom_function() which is later used to compute row-wise scoring for each row of a given binary feature.</p></dd>
+
+
 <dt>input_score</dt>
 <dd><p>a vector of continuous values for a response of interest (required). <code>input_score</code> must include labels or names that associated with the colnames of the binary feature matrix. <code>NOTE:</code> <code>input_score</code> will be passed as one of the arguments to custom_function().</p></dd>
+
+
 <dt>custom_function</dt>
 <dd><p>a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). <code>NOTE:</code> This function must return a data frame with one or two columns: <code>score</code> or <code>p_value</code> or <code>both</code>.</p></dd>
+
+
 <dt>custom_parameters</dt>
 <dd><p>a list of additional arguments to be passed to the custom_function() (exluding <code>mat</code> and <code>input_score</code> parameters).</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a data frame with one or two columns: <code>score</code> or <code>p_value</code> or <code>both</code></p>
+    
+
+<p>a data frame with one or two columns: <code>score</code> or <code>p_value</code> or <code>both</code></p>
+
+
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load R library</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span></span>
-<span class="r-in"> </span>
-<span class="r-in"><span class="co"># Examples of a customized function using ks-test function</span></span>
-<span class="r-in"><span class="va">customized_genescore_mat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mat</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in">  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dfr</a></span><span class="op">(</span></span>
-<span class="r-in">      <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span>
-<span class="r-in">        <span class="va">feature</span> <span class="op">=</span> <span class="va">mat</span><span class="op">[</span><span class="va">r</span>,<span class="op">]</span>;</span>
-<span class="r-in">        <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">feature</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">feature</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span>
-<span class="r-in">        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span>
-<span class="r-in">        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>score<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">statistic</span>, p_value<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">   <span class="op">}</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed expression set</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># set seed</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Provide a vector of continuous scores for a target profile</span></span>
-<span class="r-in"><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Define additional parameters and start the function</span></span>
-<span class="r-in"><span class="va">custom_genescore_result</span> <span class="op">&lt;-</span> <span class="fu">custom_genescore_mat</span><span class="op">(</span></span>
-<span class="r-in">  mat <span class="op">=</span> <span class="va">mat</span>,</span>
-<span class="r-in">  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
-<span class="r-in">  custom_function <span class="op">=</span> <span class="va">customized_genescore_mat</span>, </span>
-<span class="r-in">  custom_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>alternative <span class="op">=</span> <span class="st">"less"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load R library</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span><span class="co"># Examples of a customized function using ks-test function</span></span></span>
+<span class="r-in"><span><span class="va">customized_genescore_mat</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mat</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span> </span></span>
+<span class="r-in"><span>    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dfr</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span></span>
+<span class="r-in"><span>        <span class="va">feature</span> <span class="op">=</span> <span class="va">mat</span><span class="op">[</span><span class="va">r</span>,<span class="op">]</span>;</span></span>
+<span class="r-in"><span>        <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">feature</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">feature</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span></span>
+<span class="r-in"><span>        <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>score<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">statistic</span>, p_value<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed expression set</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set seed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Provide a vector of continuous scores for a target profile</span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define additional parameters and start the function</span></span></span>
+<span class="r-in"><span><span class="va">custom_genescore_result</span> <span class="op">&lt;-</span> <span class="fu">custom_genescore_mat</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
+<span class="r-in"><span>  custom_function <span class="op">=</span> <span class="va">customized_genescore_mat</span>, </span></span>
+<span class="r-in"><span>  custom_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>alternative <span class="op">=</span> <span class="st">"less"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
 </code></pre></div>
     </div>
   </div>
@@ -147,11 +160,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

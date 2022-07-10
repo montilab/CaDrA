@@ -4,10 +4,12 @@
 \alias{topn_plot}
 \title{Top 'N' Plot}
 \usage{
-topn_plot(topn_list)
+topn_plot(topn_list, verbose = FALSE)
 }
 \arguments{
 \item{topn_list}{a list of lists where each list entry is returned from the \code{candidate_search()} for a given starting index. This is computed within and can be returned by the \code{topn_eval()} function.}
+
+\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 a heatmap of the top N evaluation for a given top N search evaluation

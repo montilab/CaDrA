@@ -1428,6 +1428,9 @@ CaDrA_App <- function() {
     
     CaDrA_Server(id = "CaDrA")
     
+    ## Reconnecting to new sessions after grey out
+    session$allowReconnect("force")
+    
   }
   
   shinyApp(ui=ui, server=server)

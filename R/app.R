@@ -27,12 +27,12 @@ create_hover_txt <- function(table){
 
 dataset_choices <- list(
   "TTGA BRCA Mutation Signatures (BRCA_GISTIC_MUT_SIG)" = "BRCA_GISTIC_MUT_SIG",
-  "CCLE SCNA Mutations in Cancers (CCLE_MUT_SCNA)" = "CCLE_MUT_SCNA", 
+  "CCLE SCNAs in Cancers (CCLE_MUT_SCNA)" = "CCLE_MUT_SCNA", 
   "Simulated Data (sim.ES)" = "sim.ES"
 )
 
 score_choices <- list(
-  "YAP/TAZ Activity in Human Breast Cancer (TAZYAP_BRCA_ACTIVITY)" = "TAZYAP_BRCA_ACTIVITY",
+  "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = "TAZYAP_BRCA_ACTIVITY",
   "Activation of B-catenin in Cancers (CTNBB1_reporter)" = "CTNBB1_reporter",
   "Random simulated input scores (sim.Scores)" = "sim.Scores"
 )
@@ -179,7 +179,7 @@ CaDrA_UI <- function(id){
           condition = sprintf("input['%s'] == '%s'", ns("dataset"), dataset_choices[3]),
           selectInput(
             inputId = ns(paste0(dataset_choices[3], "_scores")), 
-            label = "Choose an input_score:", 
+            label = HTML("Choose an input_score", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The random simulated input scores are generated from rnorm(n=ncol(sim.ES), mean=0, sd=1) with seed=123.\">?</a>')), 
             choices = c(score_choices[3], "Import Data"), 
             selected = score_choices[3], 
             width = "100%"
@@ -507,16 +507,16 @@ CaDrA_Server <- function(id){
       output$min_cutoff_tooltip <- renderUI({
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
         }else{
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
         }
         
       })
       
       output$max_cutoff_tooltip <- renderUI({
         
-        HTML(paste0('<strong>Maximum Percent Cutoff</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>'))
+        HTML(paste0('<strong>Maximum Percent Cutoff</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>'))
         
       })
       
@@ -1026,12 +1026,8 @@ CaDrA_Server <- function(id){
         
         dataset <- isolate({ input$dataset })
         
-        if(dataset == "BRCA_GISTIC_MUT_SIG"){
-          title <- "Dataset: TTGA BRCA Mutation Signatures (BRCA_GISTIC_MUT_SIG)"
-        }else if(dataset == "CCLE_MUT_SCNA"){
-          title <- "Dataset: CCLE Mutation in Cancers in Cancers (CCLE_MUT_SCNA)"
-        }else if(dataset == "sim.ES"){
-          title <- "Dataset: Simulated Data (sim.ES)"
+        if(dataset %in% c("BRCA_GISTIC_MUT_SIG", "CCLE_MUT_SCNA", "sim.ES")){
+          title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
         }else if(dataset == "Import Data"){
           title <- "Dataset: Imported Data"
         }
@@ -1179,39 +1175,17 @@ CaDrA_Server <- function(id){
         dataset <- isolate({ input$dataset })
         
         if(dataset == "BRCA_GISTIC_MUT_SIG"){
-          
           scores <- isolate({ input$BRCA_GISTIC_MUT_SIG_scores })
-          
-          if(scores == "TAZYAP_BRCA_ACTIVITY"){
-            title <- "YAP/TAZ Activity in BRCA (TAZYAP_BRCA_ACTIVITY)"
-          }else{
-            title <- "Imported Data"
-          }
-          
         }else if(dataset == "CCLE_MUT_SCNA"){
-
           scores <- isolate({ input$CCLE_MUT_SCNA_scores })
-          
-          if(scores == "CTNBB1_reporter"){
-            title <- "Activation of B-catenin in Cancers (CTNBB1_reporter)"
-          }else{
-            title <- "Imported Data"
-          }
-          
         }else if(dataset == "sim.ES"){
-          
           scores <- isolate({ input$sim.ES_scores })
-          
-          if(scores == "sim.Scores"){
-            title <- "Random simulated scores (sim.Scores)"
-          }else{
-            title <- "Imported Data"
-          }
-          
-        }else if(dataset == "Import Data"){
-
+        }
+        
+        if(scores %in% c("TAZYAP_BRCA_ACTIVITY", "CTNBB1_reporter", "sim.Scores")){
+          title <- names(score_choices[which(score_choices == scores)])
+        }else{
           title <- "Imported Data"
-          
         }
         
         h2("Observed Input Scores:", title)

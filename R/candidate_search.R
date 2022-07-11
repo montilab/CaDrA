@@ -236,13 +236,10 @@ candidate_search <- function(
   # Check if search_start is given
   if(is.null(search_start)){ 
     
-    if(is.na(top_N) || length(top_N)==0){
-      stop("Please specify a NUMERIC top_N value to evaluate over top N features.\n")
+    if(is.na(top_N) || length(top_N)==0 || top_N <= 0){
+      stop("Please specify a NUMERIC top_N value to evaluate over top N features (top_N must be >= 1).\n")
     }
-    
-    if(top_N <= 0)
-      stop("Please specify a top_N value greater than 0.\n")
-    
+
     if(top_N > nrow(ES))
       stop("Please specify a top_N value that is less than the number of features in the ES.\n")
     
@@ -265,11 +262,11 @@ candidate_search <- function(
     # User-specified feature name (has to be a character from rownames(1:nrow(ES)))
     verbose("Starting with specified feature names...\n")
     
-    if(!(search_start %in% rownames(ES))) #provided feature name not in rownames
+    if(length(search_start) == 0 || any(!search_start %in% rownames(ES))) #provided feature name not in rownames
       stop("Provided starting feature does not exist among ES's rownames.\n\n")
     
     # Get the index of the search_start strings and start the search with the defined indexes
-    search_feature_index <- which(rownames(ES) == search_start) 
+    search_feature_index <- which(rownames(ES) %in% search_start) 
     
   } # end else (!is.null)
   
@@ -283,8 +280,8 @@ candidate_search <- function(
   ## Check the max_size variable ####
   max_size = as.integer(max_size)   
   
-  if(is.na(max_size) || length(max_size)==0){
-    stop("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search.\n")
+  if(is.na(max_size) || length(max_size)==0 || max_size <= 0){
+    stop("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search (max_size must be >= 1).\n")
   }
   
   # Check the best_score_only variables

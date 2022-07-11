@@ -203,6 +203,20 @@ CaDrA <- function(
     }
   }
   
+  # check the number of permuation value
+  n_perm = as.integer(n_perm)
+  
+  if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
+    stop("Please specify an INTEGER number of permutations to perform for permutation testings (nperm must be >= 1).\n")
+  }
+  
+  # check the number of ncores value
+  ncores = as.integer(ncores)
+  
+  if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
+    stop("Please specify the number of cores to perform parallelization for permutation testings (ncores must be >= 1).\n")
+  }
+  
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
     cat("Using provided cache root path: ", cache_path, "\n")

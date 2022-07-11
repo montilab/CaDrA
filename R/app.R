@@ -282,7 +282,13 @@ CaDrA_UI <- function(id){
         
         numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Select a maximum size that a meta-feature can extend to do for a given search"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
         
-        radioButtons(inputId = ns("initial_seed"), label = strong(span(style="color:red;", "*"), "How to start the search?"), choices = c("Top N seeds"="top_N_seeds", "Known seeds"="search_start_seeds"), selected = "top_N_seeds", inline = TRUE),
+        radioButtons(
+          inputId = ns("initial_seed"), 
+          label = HTML("<span style=\"color:red;\">*</span>How to start the search", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"If Top N seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
+          choices = c("Top N seeds"="top_N_seeds", "Known seeds"="search_start_seeds"), 
+          selected = "top_N_seeds", 
+          inline = TRUE
+        ),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'top_N_seeds'", ns("initial_seed")),
@@ -699,13 +705,13 @@ CaDrA_Server <- function(id){
         
         if(is.na(min_cutoff) || length(min_cutoff)==0 || min_cutoff < 5){
           
-          error_message("Please specify an integer value for Minimum Samples Cutoff >= 5\n")
+          error_message("Please specify an integer value for Minimum Samples Frequency >= 5\n")
           return(NULL)
           
         }else{
           
           if(ncol(ES) < 5){
-            error_message(sprintf("The # of samples in Feature Set must be greater or equal to the Minimum Samples Cutoff = %s \n", min_cutoff))
+            error_message(sprintf("The number of samples in Feature Set must be >= provided Minimum Samples Frequency = %s \n", min_cutoff))
             return(NULL)
           }
           
@@ -718,9 +724,9 @@ CaDrA_Server <- function(id){
         
         #print(sprintf("maximum cutoff: %s", max_cutoff))
         
-        if(is.na(max_cutoff) || length(max_cutoff)==0 || max_cutoff < 0 || max_cutoff > 100){
+        if(is.na(max_cutoff) || length(max_cutoff)==0 || max_cutoff <= 0 || max_cutoff > 100){
           
-          error_message("Please specify a value for Maximum Percent Cutoff between 0 to 100\n")
+          error_message("Please specify a value for Maximum Percent Cutoff between 1 to 100\n")
           return(NULL)
           
         }else{
@@ -747,7 +753,7 @@ CaDrA_Server <- function(id){
         
         # Make sure matrix is not empty after removing uninformative features
         if(nrow(exprs(ES)) == 0){
-          error_message("After removing features based on the specified occurrence parameters. There are no more features remained for downsteam computation.\n")
+          error_message("After removing features based on the provided 'Minimum Samples Frequency' and 'Maximum Percent Cutoff' parameters. There are no more features remained for downsteam computation.\n")
           return(NULL)
         }
         
@@ -877,10 +883,10 @@ CaDrA_Server <- function(id){
         
         search_method = input$search_method;
         
-        max_size = as.numeric(input$max_size)
+        max_size = as.integer(input$max_size)
         
-        if(is.na(max_size) || length(max_size)==0){
-          error_message("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search.\n")
+        if(is.na(max_size) || length(max_size) == 0 || max_size <= 0){
+          error_message("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search (max_size must be >= 1).\n")
           return(NULL)
         }
         
@@ -891,17 +897,23 @@ CaDrA_Server <- function(id){
           search_start = NULL
           top_N = as.integer(input$top_N)
           
-          if(is.na(top_N) || length(top_N)==0){
-            error_message("Please specify an INTEGER top_N value to evaluate over top N features.\n")
+          if(is.na(top_N) || length(top_N) == 0 || top_N <= 0){
+            error_message("Please specify an INTEGER top_N value to evaluate over top N features (top_N must be >= 1).\n")
+            return(NULL)
+          }
+          
+          if(top_N > nrow(ES)){
+            error_message("Please specify a top_N value that is less than the number of features in the ES.\n")
             return(NULL)
           }
           
         }else{
           
-          search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
+          search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
+          search_start = search_start[search_start != ""]
           top_N = NULL
           
-          if(!(search_start %in% rownames(ES))){ 
+          if(length(search_start) == 0 || any(!search_start %in% rownames(ES))){ 
             error_message("Provided starting feature(s) does not exist among ES's rownames.\n\n")
             return(NULL)
           }
@@ -914,15 +926,15 @@ CaDrA_Server <- function(id){
           
           n_perm = as.integer(input$n_perm)
           
-          if(is.na(n_perm) || length(n_perm)==0){
-            error_message("Please specify an INTEGER number of permutations to perform for permutation testings.\n")
+          if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
+            error_message("Please specify an INTEGER number of permutations to perform for permutation testings (n_perm must be >= 1).\n")
             return(NULL)
           }
           
           ncores = as.integer(input$ncores)
           
-          if(is.na(ncores) || length(ncores)==0){
-            error_message("Please specify the number of cores to perform parallelization for permutation testings.\n")
+          if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
+            error_message("Please specify the number of cores to perform parallelization for permutation testings (ncores must be >= 1).\n")
             return(NULL)
           }
           
@@ -1332,12 +1344,14 @@ CaDrA_Server <- function(id){
         
         req(candidate_search_result())
         
+        print(length(candidate_search_result()))
+        
         if(length(candidate_search_result()) == 1){
           
           div(
             h2("Top N Overlapping Heatmap"),
             br(),
-            p(style="color: red; font-weight: bold;", "Cannot plot overlap matrix for N=1...")
+            h4(style="color: red; font-weight: bold;", "NOTE: Cannot plot overlap matrix with provided top N seed = 1 or the number of provided feature names = 1.")
           )
           
         }else{

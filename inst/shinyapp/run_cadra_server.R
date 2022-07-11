@@ -1,6 +1,6 @@
 
 library(devtools)
-load_all(".")
+load_all("/srv/shiny-server/")
 
 library(shiny)
 

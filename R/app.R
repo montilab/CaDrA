@@ -242,7 +242,7 @@ CaDrA_UI <- function(id){
           width = "100%"
         ),
         
-        radioButtons(inputId = ns("method"), label = strong(span(style="color:red;", "*"), "Scoring method:"), choices = c("ks", "wilcox", "revealer", "custom"), selected = "ks", inline = TRUE),
+        radioButtons(inputId = ns("method"), label = strong(span(style="color:red;", "*"), "Scoring method:"), choices = c("ks", "wilcox", "revealer"), selected = "ks", inline = TRUE),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'ks'", ns("method")),

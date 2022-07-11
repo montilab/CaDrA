@@ -633,7 +633,7 @@ CaDrA_Server <- function(id){
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
             # read in the Eset file
-            Eset <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.integer)
+            Eset <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
             
             # convert Eset to matrix
             Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
@@ -679,15 +679,15 @@ CaDrA_Server <- function(id){
           
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
-            dat <- read.csv(inputfile$datapath, header = TRUE) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
+            dat <- read.csv(inputfile$datapath, header = TRUE)
             input_score <- as.numeric(dat$Scores)
-            names(input_score) <- rownames(dat)
+            names(input_score) <- as.character(dat$Samples)
             
           }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
             
-            dat <- readRDS(inputfile$datapath) %>% tibble::column_to_rownames(var="Samples") %>% dplyr::mutate_all(as.numeric)
+            dat <- readRDS(inputfile$datapath) 
             input_score <- as.numeric(dat$Scores)
-            names(input_score) <- rownames(dat)
+            names(input_score) <- as.character(dat$Samples)
             
           }else{
             
@@ -792,6 +792,11 @@ CaDrA_Server <- function(id){
           error_message("The input_score must have the same length as the number of columns in ES.\n")
           return(NULL)
         }else{
+          
+          pos <- which(!names(input_score) %in% colnames(ES))
+          print(names(input_score)[pos])
+          print(colnames(ES)[pos])
+          
           if(any(!names(input_score) %in% colnames(ES))){
             error_message("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
             return(NULL)
@@ -820,15 +825,15 @@ CaDrA_Server <- function(id){
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
+              dat <- read.csv(inputfile$datapath, header=TRUE)
               weights <- as.numeric(dat$Weights)
-              names(weights) <- rownames(dat)
+              names(weights) <- as.character(dat$Samples)
               
             }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
               
-              dat <- readRDS(inputfile$datapath) %>% tibble::column_to_rownames(var="Samples") %>% mutate_all(as.numeric)
+              dat <- readRDS(inputfile$datapath)
               weights <- as.numeric(dat$Weights)
-              names(weights) <- rownames(dat)
+              names(weights) <- as.character(dat$Samples)
               
             }else{
               
@@ -1343,8 +1348,6 @@ CaDrA_Server <- function(id){
       output$topn_plot_title <- renderUI({
         
         req(candidate_search_result())
-        
-        print(length(candidate_search_result()))
         
         if(length(candidate_search_result()) == 1){
           

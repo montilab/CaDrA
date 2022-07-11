@@ -1332,7 +1332,19 @@ CaDrA_Server <- function(id){
         
         req(candidate_search_result())
         
-        h2("Top N Overlapping Heatmap")
+        if(length(candidate_search_result()) == 1){
+          
+          div(
+            h2("Top N Overlapping Heatmap"),
+            br(),
+            p(style="color: red; font-weight: bold;", "Cannot plot overlap matrix for N=1...")
+          )
+          
+        }else{
+          
+          h2("Top N Overlapping Heatmap")
+          
+        }
         
       })
       
@@ -1341,6 +1353,7 @@ CaDrA_Server <- function(id){
         req(candidate_search_result())
         
         topn_res <- candidate_search_result()
+        
         CaDrA::topn_plot(topn_res)
         
       })      
@@ -1361,8 +1374,6 @@ CaDrA_Server <- function(id){
         permutation_plot(perm_res)
         
       })
-      
-      candidate_search_result
       
     }
   )

@@ -633,7 +633,7 @@ CaDrA_Server <- function(id){
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
             # read in the Eset file
-            Eset <- read.csv(inputfile$datapath, header=TRUE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
+            Eset <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
             
             # convert Eset to matrix
             Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
@@ -679,7 +679,7 @@ CaDrA_Server <- function(id){
           
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
-            dat <- read.csv(inputfile$datapath, header = TRUE)
+            dat <- read.csv(inputfile$datapath, header = TRUE, check.names = FALSE)
             input_score <- as.numeric(dat$Scores)
             names(input_score) <- as.character(dat$Samples)
             
@@ -789,18 +789,21 @@ CaDrA_Server <- function(id){
         
         # Make sure the input_score has the same length as number of samples in ES
         if(length(input_score) != ncol(ES)){
+          
           error_message("The input_score must have the same length as the number of columns in ES.\n")
           return(NULL)
+          
         }else{
           
-          pos <- which(!names(input_score) %in% colnames(ES))
-          print(names(input_score)[pos])
-          print(colnames(ES)[pos])
+          # pos <- which(!names(input_score) %in% colnames(ES))
+          # print(names(input_score)[pos])
+          # print(colnames(ES)[pos])
           
           if(any(!names(input_score) %in% colnames(ES))){
             error_message("The input_score object must have names or labels that match the colnames of the expression matrix.\n")
             return(NULL)
           }
+          
           # match colnames of expression matrix with names of provided input_score
           ES <- ES[,names(input_score)]
         }
@@ -825,7 +828,7 @@ CaDrA_Server <- function(id){
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read.csv(inputfile$datapath, header=TRUE)
+              dat <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE)
               weights <- as.numeric(dat$Weights)
               names(weights) <- as.character(dat$Samples)
               

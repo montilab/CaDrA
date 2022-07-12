@@ -8,6 +8,42 @@
 #' @param paired whether to perform paired test. Default is \code{FALSE}.
 #' @param exact whether to compute exact p-value. Default is \code{FALSE}.
 #' @param correct whether to consider continuity correction for p-value. Default is \code{TRUE}.
+#' 
+#' @examples 
+#' 
+#' # Load R library
+#' library(Biobase)
+#
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
+#' 
+#' # Provide a vector of continuous scores for a target profile 
+#' # The scores must have labels or names that match the colnames of expression matrix
+#' input_score = rnorm(n = ncol(sim.ES))
+#' names(input_score) <- colnames(sim.ES)
+#' 
+#' # Sort input_score from highest to lowest values
+#' input_score <- sort(input_score, decreasing=TRUE)
+#' 
+#' # Extract the expression matrix
+#' mat <- exprs(sim.ES)
+#' 
+#' # Re-order the samples by input_score sorted from highest to lowest values
+#' mat <- mat[,names(input_score)]
+#' 
+#' # Define ranks of input_score
+#' ranks <- seq_along(input_score)
+#' 
+#' # Define alternative
+#' alternative <- "less"
+#' 
+#' # Compute the wilcox rank sum statitic and p-value per row in the matrix
+#' wilcox <- apply(X=mat, MARGIN=1, function(x, r=ranks){
+#'  wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], alternative=alternative) 
+#' })
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export

@@ -2,30 +2,32 @@
 % Please edit documentation in R/meta_plot.R
 \name{meta_plot}
 \alias{meta_plot}
-\title{Candidate heuristic search plot}
+\title{Candidate Drivers Search Plot}
 \usage{
-meta_plot(topn_best_list)
+meta_plot(topn_best_list, input_score_label = NULL)
 }
 \arguments{
 \item{topn_best_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.}
+
+\item{input_score_label}{a label that references to the \code{input_score} variable used to compute the top N best features. Default is \code{NULL}.}
 }
 \value{
-A plot graphic with the ranked metric plot (optional), a tile plot of the features within the provided ESet, and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
+A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
 }
 \description{
-Plot the candidate search results for a given CaDrA run. Plot will include an optional bar plot of the continuous ranking variable on the top.
+By utilizing the top N results obtained from \code{topn_eval()}, we can find the best meta-features among the top N searches using \code{topn_best()}. \code{meta_plot()} is then used to produce graphics including the top meta-features that associated with a molecular phenotype of interest, the enrichment scores of the meta-features matrix, and 
+lastly, it includes an optional density diagram of the distribution of \code{input_score} variable on the top.
 }
 \examples{
 
 # Load pre-computed Top-N list generated for sim.ES dataset
 data(topn.list)
 
-# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
-# To find the combination of features that had the best score
+# With the results obtained from top-N evaluation,
+# We can find the combination of features that gives the best score in top N searches
 topn_best_meta <- topn_best(topn_list=topn.list) 
 
 # Now we can plot this set of features
-# If a continuous input_score variable was used for the sample-ranking, we can visualize it together
 meta_plot(topn_best_list=topn_best_meta)
 
 }

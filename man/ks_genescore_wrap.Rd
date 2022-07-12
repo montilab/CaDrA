@@ -15,6 +15,9 @@ ks_genescore_wrap(n_x, y, weight, alt = "less")
 
 \item{alt}{alternative hypothesis for p-value calculation}
 }
+\value{
+need a return value here
+}
 \description{
 Compute directional Kolmogorov-Smirnov scores for each row of a given vector
 }

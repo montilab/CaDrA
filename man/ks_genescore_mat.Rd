@@ -13,6 +13,9 @@ ks_genescore_mat(mat, alt = "less", weight)
 
 \item{weight}{a vector of weights to use if performing a weighted-KS test}
 }
+\value{
+Two lists: score and p-value
+}
 \description{
 Compute directional Kolmogorov-Smirnov scores for each row of a given binary matrix
 }

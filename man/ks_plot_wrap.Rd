@@ -15,6 +15,9 @@ ks_plot_wrap(n_x, y, weight, alt = "less")
 
 \item{alt}{alternative hypothesis for p-value calculation}
 }
+\value{
+need a return value here
+}
 \description{
 Return a dataframe from ks_genescore function
 }

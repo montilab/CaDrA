@@ -3,24 +3,20 @@
 \docType{data}
 \name{CTNBB1_reporter}
 \alias{CTNBB1_reporter}
-\title{A Continuous Measures of a Targeted Profile}
+\title{Transcriptional Activity of Beta-Catenin in Cancer}
 \format{
-An object of class \code{ExpressionSet} from \code{Biobase} package
-containing a matrix of 1000 rows (features) and 200 columns (samples) 
-see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
+consists of a vector of continuous scores of B-catenin activity across 82 cancer cell lines
+who mutations and copy number profiles can be found in \code{CCLE_MUT_SCNA} ExpressionSet.
 }
 \usage{
 data(CTNBB1_reporter)
 }
 \description{
-An actual feature matrix comprises of 17723 features where 1/0 vectors 
-indicating the presence/absence of the feature in the samples. There
-are 82 samples in this study.
+A vector of continuous scores represents activation of B-catenin across multiple cancer cell lines
 }
 \references{
-Kartha VK, Kern JG, Sebastiani P, Zhang L,
-Varelas X, Monti S (2017) CaDrA: A computational framework for performing 
-candidate driver analyses using binary genomic features. 
-(\href{https://www.biorxiv.org/content/early/2017/11/23/221846}{bioRxiv})
+Kim, J., Botvinnik, O., Abudayyeh, O. et al. 
+Characterizing genomic alterations in cancer by complementary functional associations. 
+Nat Biotechnol 34, 539–546 (2016). \href{https://doi.org/10.1038/nbt.3527}{https://doi.org/10.1038/nbt.3527}
 }
 \keyword{datasets}

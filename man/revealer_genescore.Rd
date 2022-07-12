@@ -29,3 +29,32 @@ a data frame with two columns: \code{score} and \code{p_value}
 \description{
 Compute Conditional Mutual Information of x and y given z from \code{REVEALER}
 }
+\examples{
+
+# load R library
+library(purrr)
+library(Biobase)
+
+# Load pre-computed expression set
+data(sim.ES)
+
+# set seed
+set.seed(123)
+
+# Extract the expression matrix
+mat = exprs(sim.ES)
+
+# Provide a vector of continuous scores for a target profile
+input_score = rnorm(n = ncol(sim.ES))
+names(input_score) <- colnames(sim.ES)
+
+cmi <- seq_len(nrow(mat)) \%>\% 
+purrr::map_dbl(
+ function(r){
+   revealer_genescore(
+     x=input_score, y=mat[r,], z=NULL, assoc_metric="IC", target_match="positive"
+   ) 
+ }
+)
+  
+}

@@ -4,31 +4,30 @@
 # CaDrA
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions)
+<!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
 <!-- badges: end -->
 
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
 Functional Signatures
 
-CaDrA is an R package that supports a heuristic search framework aimed
-at identifying candidate drivers of a molecular phenotype of interest.
-The main function takes two inputs: i) a binary multi-omics dataset
-(where the rows are 1/0 vectors indicating the presence/absence of
-‘omics’ features such as somatic mutations, copy number alterations,
+**CaDrA** is an R package that supports a heuristic search framework
+aimed at identifying candidate drivers of a molecular phenotype of
+interest. The main function takes two inputs: i) a binary multi-omics
+dataset (where the rows are 1/0 vectors indicating the presence/absence
+of ‘omics’ features such as somatic mutations, copy number alterations,
 epigenetic marks, etc.); and ii) and a molecular phenotype represented
 as a vector of continuous scores (sample-specific scores representing a
 phenotypic readout of interest, such as protein expression, pathway
-activity, etc.), Based on this input, CaDrA implements a
+activity, etc.). Based on this input, **CaDrA** implements a
 forward/backward search algorithm to find the set of features that
 together is maximally associated with the observed input scores, based
-on one of several scoring functions (Kolmogorov-Smirnov, Conditional
-Mutual Information, Wilcoxon, custom-defined scoring function), making
-it useful to find complementary omics features likely driving the input
-molecular phenotype.
+on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional
+Mutual Information*, *Wilcoxon*, *custom-defined scoring function*),
+making it useful to find complementary omics features likely driving the
+input molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et
-al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
+al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
@@ -44,82 +43,82 @@ devtools::install_github("montilab/CaDrA", ref="dev")
 
 ``` r
 library(CaDrA)
+library(Biobase)
 ```
 
-### Test run code on simulated data
+## (3) CaDrA Query of BRCA YAP/TAZ Activity
+
+Here, we reproduce the results of Figure 5 of [\[Kartha et al.,
+2019\]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
+(the section titled “*CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ
+Activity in Human Breast Cancer*”).
+
+### (i) Load & Format Data Inputs
 
 ``` r
-# Load pre-computed Top-N list generated for sim.ES dataset
-data(topn.list)
+## Read in BRCA GISTIC+Mutation ESet object
+data(BRCA_GISTIC_MUT_SIG)
+eset_mut_scna <- BRCA_GISTIC_MUT_SIG
 
-# Plot the results from a top-N evaluation by passing the resulting ESet from a specific run
-# To find the combination of features that had the best score
-best_meta <- topn_best(topn_list = topn.list) 
+## Read in input score
+data(TAZYAP_BRCA_ACTIVITY)
+input_scores <- TAZYAP_BRCA_ACTIVITY
 
-# Now we can plot this set of features
-meta_plot(topn_best_list = best_meta)
+## Samples to keep based on the overlap between the two inputs
+overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+eset_mut_scna <- eset_mut_scna[,overlap]
+input_scores <- input_scores[overlap]
+
+## Binarize ES to only have 0's and 1's
+exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+
+## Pre-filter ESet based on occurrence frequency
+eset_mut_scna_flt <- CaDrA::prefilter_data(
+  ES = eset_mut_scna,
+  max.cutoff = 0.6, # max frequency (60%)
+  min.cutoff = 0.03 # min frequency (3%)
+) 
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+    #> Pre-filtering features ..
+    #> 
+    #> Removing features having <  3 and >  60  % occurence in sample set..
+    #> 133  features retained out of  16873  supplied features in dataset
+
+### (ii) Run CaDrA
 
 ``` r
-# Get top N plot
-topn_plot(topn_list = topn.list)
-```
-
-    #> Generating top N overlap heatmap..
-
-<img src="README_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
-
-### Running on actual data
-
-In the example below, the `CCLE_MUT_SCNA` expression set object has
-17723 rows (features) and 82 columns (samples). The other variable is
-called `CTNBB1_reporter` which contains continuous measures of a
-targeted profile. The **CTNBB1\_reporter** is what dictates how CaDrA
-will search for grouped meta-features.
-
-``` r
-# Load binary feature data object
-data(CCLE_MUT_SCNA)
-
-# Load a targeted profile object
-data(CTNBB1_reporter)
-
-# Number of top starting seed features to test and evaluate over  
-top_N <- 7
-
-# Metric used for candidate search
-# Either ks or wilcox or revealer or custom function is supported
-method <- "ks"
-
-topn_l <- topn_eval(
-  ES = CCLE_MUT_SCNA, 
-  input_score =  CTNBB1_reporter,
-  method = method,
-  alternative = "less",
-  metric = "pval",
-  top_N = top_N,
-  search_method = "both",
-  max_size = 7,
+topn_res <- CaDrA::topn_eval(
+  ES = eset_mut_scna_flt,
+  input_score = input_scores,
+  method = "ks",               # use Kolmogorow-Smirnow Scoring function 
+  metric = "pval",             # use the KS p-value to score features
+  top_N = 7,                   # Evaluate top 7 starting points for the search
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # Set best_score_only = FALSE will return both the eset and best scores
+  best_score_only = FALSE      # best_score_only = FALSE will return ESet, its corresponding
+                               # best scores, and observed input scores for top 7 features searches
 )
-
-# Now we can fetch the ESet and feature that corresponded to the best score over the top N search
-topn_best_meta <- topn_best(topn_l)
-
-# Visualize best meta-features result
-meta_plot(topn_best_list = topn_best_meta)
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+### (iii) Visualize Best Results
 
 ``` r
-# You can also evaluate how robust the results are depending on which seed feature you started with
-topn_plot(topn_l) 
+## Fetch the meta-features set corresponding to its best scores over top N features searches
+topn_best_meta <- CaDrA::topn_best(topn_res)
+
+# Visualize the best results with the meta-feature plot
+CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
+```
+
+<img src="README_files/figure-gfm/visualize.best-1.png" style="display: block; margin: auto;" />
+
+### (iv) Summarize Top N Results
+
+``` r
+# Evaluate results across top N seed features you started from
+CaDrA::topn_plot(topn_res) 
 ```
 
     #> Generating top N overlap heatmap..
 
-<img src="README_files/figure-gfm/unnamed-chunk-5-2.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;" />

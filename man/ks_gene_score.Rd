@@ -41,3 +41,38 @@ a data frame with two columns: \code{score} and \code{p_value}
 \description{
 Compute a Kolmogorov-Smirnov score for a given ranked list
 }
+\examples{
+
+# Load R library
+library(Biobase)
+
+# Load pre-computed Top-N list generated for sim.ES dataset
+data(topn.list)
+
+# With the results obtained from top-N evaluation,
+# We can find the combination of features that gives the best score in top N searches
+topn_best_meta <- topn_best(topn_list=topn.list) 
+
+# Extract the meta-feature set
+ESet =  topn_best_meta[["ESet"]]                    
+
+# Make sure mat variable is a matrix
+mat <- as.matrix(exprs(ESet))
+
+# For cases when matrix only has one row
+if(ncol(mat) == 1){
+  mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+}
+
+# Add on the OR function of all the returned entries
+or <- ifelse(colSums(mat)==0, 0, 1)
+
+mat <- rbind(mat, or)
+
+# Get x and y axis data for ES plot of 
+# cumulative function of individual features (i.e. the OR function)
+ES_dat <- ks_gene_score(
+   n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+)
+
+}

@@ -13,6 +13,9 @@ ks_test_double_wrap(n_x, y, alt = "less")
 
 \item{alt}{alternative hypothesis for p-value calculation}
 }
+\value{
+need a return value here
+}
 \description{
 Compute directional Kolmogorov-Smirnov scores
 }

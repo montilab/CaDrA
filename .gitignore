@@ -1,4 +1,8 @@
 
+
+# github actions
+.github
+
 # History files
 .Rhistory
 .Rapp.history
@@ -43,3 +47,6 @@
 # c++
 *.o
 *.so
+
+src-i386
+src-x64

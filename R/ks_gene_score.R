@@ -9,6 +9,40 @@
 #' @param absolute takes max - min score rather than the maximum deviation from null
 #' @param exact compute exact p-value
 #' @param plot_dat return dataframe of x and y axis data for ES plot
+#' 
+#' @examples
+#' 
+#' # Load R library
+#' library(Biobase)
+#' 
+#' # Load pre-computed Top-N list generated for sim.ES dataset
+#' data(topn.list)
+#' 
+#' # With the results obtained from top-N evaluation,
+#' # We can find the combination of features that gives the best score in top N searches
+#' topn_best_meta <- topn_best(topn_list=topn.list) 
+#' 
+#' # Extract the meta-feature set
+#' ESet =  topn_best_meta[["ESet"]]                    
+#' 
+#' # Make sure mat variable is a matrix
+#' mat <- as.matrix(exprs(ESet))
+#' 
+#' # For cases when matrix only has one row
+#' if(ncol(mat) == 1){
+#'   mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+#' }
+#' 
+#' # Add on the OR function of all the returned entries
+#' or <- ifelse(colSums(mat)==0, 0, 1)
+#' 
+#' mat <- rbind(mat, or)
+#' 
+#' # Get x and y axis data for ES plot of 
+#' # cumulative function of individual features (i.e. the OR function)
+#' ES_dat <- ks_gene_score(
+#'    n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+#' )
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export
@@ -51,7 +85,7 @@ ks_gene_score <- function
     
     score <- if (absolute) max(z)-min(z) else z[which.max(abs(z))]
     
-    x.axis <- 1:n.x
+    x.axis <- seq_len(n.x)
     y.axis <- z
   }
   # KS score
@@ -66,8 +100,8 @@ ks_gene_score <- function
     # to compute score, only the y positions and their immediate preceding
     # ..positions are needed
     #
-    Y <- sort(c(y-1,y)); Y <- Y[diff(Y)!=0]; y.match <- match(y,Y); if ( any(is.na(y.match)) ) browser()
-    D <- rep( 0, length(Y) ); D[y.match] <- (1:n.y)
+    Y <- sort(c(y-1,y)); Y <- Y[diff(Y)!=0]; y.match <- match(y,Y); #if ( any(is.na(y.match)) ) browser()
+    D <- rep( 0, length(Y) ); D[y.match] <- seq_len(n.y)
     zero <- which(D==0)[-1]; D[zero] <- D[zero-1]
     
     z <- D*hit - Y*mis
@@ -92,7 +126,7 @@ ks_gene_score <- function
     return(d)
   }
   # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
-  PVAL <- suppressWarnings(ks.test(x=1:n.x, y=y, alternative=alternative, exact=exact)$p.value)
+  PVAL <- ks.test(x=seq_len(n.x), y=y, alternative=alternative, exact=exact)$p.value
   
   return(c(score=score, p_value=PVAL))
 }

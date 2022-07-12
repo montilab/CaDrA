@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -32,16 +32,13 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/docs/installation.html">Installation</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="../articles/docs/basic.html">Basic Usage</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docs/visualize.html">Visualize Results</a>
-    </li>
-    <li>
-      <a href="../articles/docs/data.html">Data Objects</a>
+      <a href="../articles/cadra_figure_5.html">Reproduce CaDrA Figures</a>
     </li>
   </ul></li>
 <li>
@@ -75,90 +72,114 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">topn_eval</span><span class="op">(</span>
-  <span class="va">ES</span>,
-  <span class="va">input_score</span>,
-  method <span class="op">=</span> <span class="st">"ks"</span>,
-  custom_function <span class="op">=</span> <span class="cn">NULL</span>,
-  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,
-  alternative <span class="op">=</span> <span class="st">"less"</span>,
-  metric <span class="op">=</span> <span class="st">"pval"</span>,
-  weights <span class="op">=</span> <span class="cn">NULL</span>,
-  target_match <span class="op">=</span> <span class="st">"positive"</span>,
-  top_N <span class="op">=</span> <span class="fl">1</span>,
-  search_method <span class="op">=</span> <span class="st">"both"</span>,
-  max_size <span class="op">=</span> <span class="fl">7</span>,
-  best_score_only <span class="op">=</span> <span class="cn">TRUE</span>,
-  do_plot <span class="op">=</span> <span class="cn">TRUE</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topn_eval</span><span class="op">(</span></span>
+<span>  <span class="va">ES</span>,</span>
+<span>  <span class="va">input_score</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"ks"</span>,</span>
+<span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,</span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  do_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ES</dt>
 <dd><p>an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.</p></dd>
+
+
 <dt>input_score</dt>
 <dd><p>a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>a character string specifies a method to compute the score for each feature (<code>"ks"</code> or <code>"wilcox"</code> or <code>"revealer"</code> (conditional mutual information from REVEALER) or <code>"custom"</code> (a customized method)). Default is <code>ks</code>.</p></dd>
+
+
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies the customized function here. Default is <code>NULL</code>.</p></dd>
+
+
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of arguments to be passed to the custom_function(). Default is <code>NULL</code>.</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>). Default is <code>less</code> for left-skewed significance testing.</p></dd>
+
+
 <dt>metric</dt>
 <dd><p>a character string specifies a metric to use for candidate search criteria. <code>"pval"</code> or <code>"stat"</code> may be used, corresponding to the score p-value or statistic. Default is <code>pval</code>.</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>a vector of weights use to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
-<dt>target_match</dt>
-<dd><p>a direction of target matching (<code>"negative"</code> or <code>"positive"</code>) from REVEALER. Use <code>"positive"</code> to match the higher values of the target, <code>"negative"</code> to match the lower values. Default is <code>positive</code>.</p></dd>
+
+
 <dt>top_N</dt>
 <dd><p>an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is <code>1</code>.</p></dd>
+
+
 <dt>search_method</dt>
 <dd><p>a character string specifies a method to filter out the best candidates (<code>"forward"</code> or <code>"both"</code>). Default is <code>both</code> (backward and forward).</p></dd>
+
+
 <dt>max_size</dt>
 <dd><p>an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is <code>7</code>.</p></dd>
+
+
 <dt>best_score_only</dt>
 <dd><p>a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>do_plot</dt>
 <dd><p>a logical value indicates whether or not to plot the resulting evaluation matrix. Default is <code>TRUE</code>.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>a logical value indicates whether or not to print the diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>By default, this function will return a list of lists, where each list entry is one that is returned by the candidate search for a given starting index (See <code><a href="candidate_search.html">candidate_search()</a></code>). If <code>best_score_only</code> is set to <code>TRUE</code>, only the best score over the top N space is returned (useful for permutation-based testing)
+    
+
+<p>By default, this function will return a list of lists, where each list entry is one that is returned by the candidate search for a given starting index (See <code><a href="candidate_search.html">candidate_search()</a></code>). If <code>best_score_only</code> is set to <code>TRUE</code>, only the best score over the top N space is returned (useful for permutation-based testing)
 1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Load R library</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">Biobase</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Load pre-computed expression set</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># set seed</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span></span>
-<span class="r-in"><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Define additional parameters and run the function</span></span>
-<span class="r-in"><span class="va">topn_eval</span> <span class="op">&lt;-</span> <span class="fu">topn_eval</span><span class="op">(</span></span>
-<span class="r-in">  ES <span class="op">=</span> <span class="va">sim.ES</span>, input_score <span class="op">=</span> <span class="va">input_score</span>, method <span class="op">=</span> <span class="st">"ks"</span>,</span>
-<span class="r-in">  alternative <span class="op">=</span> <span class="st">"less"</span>, metric <span class="op">=</span> <span class="st">"pval"</span>, top_N <span class="op">=</span> <span class="fl">3</span>, search_method <span class="op">=</span> <span class="st">"both"</span>, </span>
-<span class="r-in">  max_size <span class="op">=</span> <span class="fl">7</span>, best_score_only <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Generating top N overlap heatmap..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load R library</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biobase" class="external-link">Biobase</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load pre-computed expression set</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># set seed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Provide a vector of continuous scores for a target profile with names to each score value </span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">sim.ES</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define additional parameters and run the function</span></span></span>
+<span class="r-in"><span><span class="va">topn_eval</span> <span class="op">&lt;-</span> <span class="fu">topn_eval</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  ES <span class="op">=</span> <span class="va">sim.ES</span>, input_score <span class="op">=</span> <span class="va">input_score</span>, method <span class="op">=</span> <span class="st">"ks"</span>,</span></span>
+<span class="r-in"><span>  alternative <span class="op">=</span> <span class="st">"less"</span>, metric <span class="op">=</span> <span class="st">"pval"</span>, top_N <span class="op">=</span> <span class="fl">3</span>, </span></span>
+<span class="r-in"><span>  search_method <span class="op">=</span> <span class="st">"both"</span>, max_size <span class="op">=</span> <span class="fl">7</span>, best_score_only <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="topn_eval-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -169,11 +190,11 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>, <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

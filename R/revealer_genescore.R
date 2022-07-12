@@ -8,6 +8,35 @@
 #' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
+#' 
+#' @examples 
+#'
+#' # load R library
+#' library(purrr)
+#' library(Biobase)
+#' 
+#' # Load pre-computed expression set
+#' data(sim.ES)
+#' 
+#' # set seed
+#' set.seed(123)
+#' 
+#' # Extract the expression matrix
+#' mat = exprs(sim.ES)
+#' 
+#' # Provide a vector of continuous scores for a target profile
+#' input_score = rnorm(n = ncol(sim.ES))
+#' names(input_score) <- colnames(sim.ES)
+#' 
+#' cmi <- seq_len(nrow(mat)) %>% 
+#' purrr::map_dbl(
+#'  function(r){
+#'    revealer_genescore(
+#'      x=input_score, y=mat[r,], z=NULL, assoc_metric="IC", target_match="positive"
+#'    ) 
+#'  }
+#' )
+#'   
 #' @export
 #' @importFrom MASS kde2d bcv
 #' @importFrom misc3d kde3d
@@ -56,7 +85,7 @@ revealer_genescore <- function
     stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.\n")
   }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
     target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
-    warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
+    warning(paste0("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n"))
   }
   
   # If assoc_metric variable is not specified, use "IC" as default.
@@ -69,14 +98,14 @@ revealer_genescore <- function
     stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.\n")
   }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
     assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
+    warning(paste0("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n"))
   }
   
   # reordering x by target_match direction
   if (target_match == "negative") {
-    ind <- order(x, decreasing=F)
+    ind <- order(x, decreasing=FALSE)
   } else {
-    ind <- order(x, decreasing=T)
+    ind <- order(x, decreasing=TRUE)
   }
   
   x <- x[ind]
@@ -84,15 +113,7 @@ revealer_genescore <- function
   z <- z[ind]
   
   # Compute CMI and % explained with or without the provided z
-  median_target <- median(x)
-  
-  if (target_match == "negative") {
-    target_locs <- seq(1, length(x))[x <= median_target]
-  } else {
-    target_locs <- seq(1, length(x))[x > median_target]
-  }
-  
-  cmi <- suppressWarnings(cond_assoc(x=x, y=y, z=z, metric=assoc_metric))
+  cmi <- cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
 
   # Only return score value for revealer
   return(c(score=cmi))
@@ -193,9 +214,8 @@ mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
   
   # Kernel-based prob. density
   
-  #kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
-  kde2d.xy <- kde2d_wrap( x = x, y = y, h = delta, n= n.grid, lims = c(range(x), range(y)))
-  
+  kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
+
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]
   dy <- kde2d.xy$y[2] - kde2d.xy$y[1]

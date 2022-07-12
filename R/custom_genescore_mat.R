@@ -1,9 +1,10 @@
 
 #' Customized Scoring Method
 #' 
-#' Compute row-wise scoring for each row of a given binary feature matrix
+#' Compute row-wise scoring for each row of a given binary feature matrix using a custom-defined function
+#' 
 #' @param mat a matrix of binary features (required). \code{NOTE:} The provided \code{mat} along with \code{input_score} and \code{custom_parameters} will be passed as arguments to custom_function() which is later used to compute row-wise scoring for each row of a given binary feature.
-#' @param input_score a vector of continuous values for a targeted profile (required). \code{input_score} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{input_score} will be passed as one of the arguments to custom_function().
+#' @param input_score a vector of continuous values for a response of interest (required). \code{input_score} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{input_score} will be passed as one of the arguments to custom_function().
 #' @param custom_function a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). \code{NOTE:} This function must return a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}.
 #' @param custom_parameters a list of additional arguments to be passed to the custom_function() (exluding \code{mat} and \code{input_score} parameters).
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
@@ -16,7 +17,7 @@
 #'  
 #' # Examples of a customized function using ks-test function
 #' customized_genescore_mat <- function(mat, input_score, alternative){
-#'   result <- 1:nrow(mat) %>% 
+#'   result <- seq_len(nrow(mat)) %>% 
 #'     purrr::map_dfr(
 #'       function(r){ 
 #'         feature = mat[r,];
@@ -59,7 +60,7 @@ custom_genescore_mat <- function
 {
   
   # Setup verbose option definition
-  options(verbose=FALSE)
+  options(verbose=verbose)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
@@ -68,7 +69,7 @@ custom_genescore_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary 0 or 1 values 
@@ -104,7 +105,7 @@ custom_genescore_mat <- function
     # match colnames of expression matrix with names of provided input_score values
     # iif nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
     if(nrow(mat) == 1){
-      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
+      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat))) 
     }else{
       mat <- mat[,names(input_score)]
     }
@@ -123,7 +124,7 @@ custom_genescore_mat <- function
   
   # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2)
-    warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+    verbose("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   
   # check if the custom_function is indeed a function
   if(!is.function(custom_function)){

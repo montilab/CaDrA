@@ -3,10 +3,10 @@
 #' 
 #' Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
 #' @param mat a matrix of binary features (required)
-#' @param input_score a vector of continuous values of a targeted profile (required). input_score must include labels or names that associated with the colnames of the feature matrix. 
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}. 
-#' @param seed_names one or more features(s) that associated with the activation of a given targeted profile
-#' @param assoc_metric an association metric: \code{"IC"} information coefficient or \code{"COR"} correlation. Default is \code{IC}.
+#' @param input_score a vector of continuous scores of a response of interest (required). \code{input_score} must have labels or names that associated with the colnames of the feature matrix. 
+#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match higher values of \code{input_score}, \code{"negative"} to match lower values of \code{input_score}. Default is \code{positive}. 
+#' @param seed_names one or more features that are associated with the activation of a response of interest (i.e. \code{input_score})
+#' @param assoc_metric an association metric: \code{"IC"} for information coefficient or \code{"COR"} for correlation. Default is \code{IC}.
 #' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
 #'
 #' @return a data frame with one column: \code{score}
@@ -44,7 +44,7 @@ revealer_genescore_mat <- function
 {
   
   # Setup verbose option definition
-  options(verbose=FALSE)
+  options(verbose = verbose)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
@@ -53,7 +53,7 @@ revealer_genescore_mat <- function
   # mat must have rownames to track features and columns to track samples
   # for n = 1 case, it is only in backward_forward_search(), thus we can assign a random labels to it
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=T, dimnames = list("my_label", rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list("my_label", rownames(mat))) 
   }
   
   # Check if the matrix has only binary values and no empty values
@@ -89,7 +89,7 @@ revealer_genescore_mat <- function
     # match colnames of expression matrix with names of provided input_score values
     # if nrow = 1, if it is, convert to matrix form as it is needed for backward_forward_search with one dimension matrix computation
     if(nrow(mat) == 1){
-      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=T, dimnames = list(rownames(mat), colnames(mat))) 
+      mat <- matrix(t(mat[,names(input_score)]), nrow=1, byrow=TRUE, dimnames = list(rownames(mat), colnames(mat))) 
     }else{
       mat <- mat[,names(input_score)]
     }
@@ -100,8 +100,6 @@ revealer_genescore_mat <- function
     if(any(!seed_names %in% rownames(mat))){
       stop(paste0("The provided seed_names, ", paste0(seed_names, collapse = ","), ", does not exist among the rownames of expression matrix.\n"))
     } 
-  }else{
-    seed_names <- "NULLSEED"   
   }
   
   # If target_match variable is not specified, use "positive" as default.
@@ -114,7 +112,7 @@ revealer_genescore_mat <- function
     stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.")
   }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
     target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
-    warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
+    warning(paste0("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n"))
   }
   
   # If assoc_metric variable is not specified, use "IC" as default.
@@ -127,7 +125,7 @@ revealer_genescore_mat <- function
     stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.")
   }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
     assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
+    warning(paste0("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n"))
   }
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)
@@ -138,20 +136,20 @@ revealer_genescore_mat <- function
   
   # Make sure matrix is not empty after removing uninformative features
   if(nrow(mat) == 0){
-    stop("After removing features that are either all 0 or 1. There are no more features remained for downsteam computation.\n")
+    stop("After removing features that are either all 0s or 1s. There are no more features remained for downsteam computation.\n")
   }
   
   # Give a warning if matrix has nrow < 2
   if(nrow(mat) < 2){
-    warning("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
+    verbose("You are computing a row-wise statistic over a matrix with nrow < 2.\n")
   }
   
   # Define seed from given seed_names
-  if (seed_names == "NULLSEED") {
+  if(length(seed_names) == 0){
     seed <- as.vector(rep(0, ncol(mat)))      
   } else {
     if (length(seed_names) > 1) {
-      seed <- apply(mat[seed_names,], MARGIN=2, FUN=max)
+      seed <- as.numeric(ifelse(colSums(mat[seed_names,]) == 0, 0, 1))
     } else {
       seed <- mat[seed_names,]
     }
@@ -160,7 +158,7 @@ revealer_genescore_mat <- function
   }
   
   # Compute MI and % explained with original seed(s)
-  cmi <- 1:nrow(mat) %>% 
+  cmi <- seq_len(nrow(mat)) %>% 
     purrr::map_dbl(
       function(r){
         revealer_genescore(x=input_score, y=mat[r,], z=seed, assoc_metric=assoc_metric, target_match=target_match) 

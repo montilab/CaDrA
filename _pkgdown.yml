@@ -24,7 +24,7 @@ reference:
 - title: Workflow Methods
   desc: ~
   contents:
-  - '`cadra_search`'
+  - '`CaDrA`'
   - '`candidate_search`'
   - '`topn_eval`'
   - '`topn_best`'
@@ -37,10 +37,11 @@ reference:
   - '`revealer_genescore`'
   - '`generate_permutations`'
   - '`prefilter_data`'
-  - '`kde2d_wrap`'
   - '`ks_genescore_mat`'
   - '`ks_genescore_wrap`'
+  - '`ks_plot_wrap`'
   - '`ks_test_double_wrap`'
+  - '`plot_ESet`'
 
 - title: Plot Methods
   desc: ~
@@ -48,17 +49,25 @@ reference:
   - '`meta_plot`'
   - '`topn_plot`'
   - '`permutation_plot`'
-  - '`plot_ESet`'
-  - '`ks_plot_wrap`'
+
+- title: Shiny Modules
+  desc: ~
+  contents:
+  - '`CaDrA_UI`'
+  - '`CaDrA_Server`'
+  - '`CaDrA_App`'
 
 - title: Data Objects
   desc: ~
   contents:
   - '`sim.ES`'
+  - '`sim.Scores`'
   - '`topn.list`'
   - '`perm.res`'
   - '`CCLE_MUT_SCNA`'
   - '`CTNBB1_reporter`'
+  - '`BRCA_GISTIC_MUT_SIG`'
+  - '`TAZYAP_BRCA_ACTIVITY`'
   
 navbar:
   title: "CaDrA"
@@ -67,14 +76,12 @@ navbar:
       href: index.html
     - text: "Docs"
       menu:
-      - text: "Installation"
-        href: articles/docs/installation.html
-      - text: "Basic Usage"
-        href: articles/docs/basic.html
-      - text: "Visualize Results"
-        href: articles/docs/visualize.html
-      - text: "Data Objects"
-        href: articles/docs/data.html
+      - text: "Scoring Functions"
+        href: articles/scoring_functions.html
+      - text: "Permutation-Based Testing"
+        href: articles/permutation_based_testing.html
+      - text: "Reproduce CaDrA Figures"
+        href: articles/cadra_figure_5.html
     - text: "Reference"
       href: reference/index.html
   right:

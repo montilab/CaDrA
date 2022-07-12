@@ -1,4 +1,3 @@
-
 #' Compute a Kolmogorov-Smirnov score for a given ranked list
 #'
 #' @param n.x length of a ranked list
@@ -27,7 +26,6 @@ ks_gene_score <- function
   plot_dat = FALSE
 )
 {
-  
   # efficient version of ks.score (should give same results as ks.test, when weights=NULL)
   #
   alternative <- match.arg(alternative, c("two.sided", "greater", "less"))
@@ -45,7 +43,6 @@ ks_gene_score <- function
   #
   if ( !is.null(weights) )
   {
-    
     weights <- abs(weights[y])^weight_p
     
     Pmis <- rep(1, n.x); Pmis[y] <- 0; Pmis <- cumsum(Pmis); Pmis <- Pmis/(n.x-n.y)
@@ -56,13 +53,11 @@ ks_gene_score <- function
     
     x.axis <- 1:n.x
     y.axis <- z
-    
   }
   # KS score
   #
   else
   {
-    
     y <- sort(y)
     n <- n.x * n.y/(n.x + n.y)
     hit <- 1/n.y
@@ -91,18 +86,13 @@ ks_gene_score <- function
         y.axis <- c(y.axis,0)
       }
     }
-    
   }
-  
   if(plot_dat){
     d <- data.frame("x"=x.axis, "y"=y.axis)
     return(d)
   }
-  
   # Here, choose suppressWarnings simply because you will generally have ties for binary data matrix
   PVAL <- suppressWarnings(ks.test(x=1:n.x, y=y, alternative=alternative, exact=exact)$p.value)
   
   return(c(score=score, p_value=PVAL))
-  
 }
-

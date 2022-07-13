@@ -246,7 +246,7 @@ CaDrA_UI <- function(id){
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'ks'", ns("method")),
-          checkboxInput(inputId = ns("weighted_ks"), label = "Compute the weighted ks?", value = FALSE), 
+          checkboxInput(inputId = ns("weighted_ks"), label = "Compute weighted ks?", value = FALSE), 
           conditionalPanel(
             condition = sprintf("input['%s'] == true", ns("weighted_ks")),
             fileInput(
@@ -280,19 +280,19 @@ CaDrA_UI <- function(id){
           )
         ),
         
-        numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Select a maximum size that a meta-feature can extend to do for a given search"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
+        numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Max possible number of features to be included in the meta-feature (search will stop after max is reached)"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
         
         radioButtons(
           inputId = ns("initial_seed"), 
-          label = HTML("<span style=\"color:red;\">*</span>How to start the search", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"If Top N seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
-          choices = c("Top N seeds"="top_N_seeds", "Known seeds"="search_start_seeds"), 
+          label = HTML("<span style=\"color:red;\">*</span> Search modality", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"\'Top N\` repeats the search starting from each of the top N `scoring features. \'Custom seeds\' repeats the search starting from each of the custom seeds. Warning: if number of seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
+          choices = c("Top N seeds"="top_N_seeds", "Custom seeds"="search_start_seeds"), 
           selected = "top_N_seeds", 
           inline = TRUE
         ),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'top_N_seeds'", ns("initial_seed")),
-          numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Select a number to evaluate over the top N features"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
+          numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Select N"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
         ),
         
         conditionalPanel(
@@ -507,19 +507,16 @@ CaDrA_Server <- function(id){
       output$min_cutoff_tooltip <- renderUI({
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Min Event Frequency (n)</strong>', 
+               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' (e.g., mutation events) a feature must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ≥ 5.\">?</a>')
         }else{
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Min Event Frequency (n)</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' (e.g., mutation events) a feature must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ≥ 5.\">?</a>')
         }
-        
       })
-      
       output$max_cutoff_tooltip <- renderUI({
         
-        HTML(paste0('<strong>Maximum Percent Cutoff</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Maximum Percent Cutoff\' means each feature in \'Feature Set\' must have at least 60% or less of the samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in > 60% of the samples will be removed).\">?</a>'))
-        
+        HTML(paste0('<strong>Max event frequency (%)</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Maximum number (as % of total) of \'occurrences\' (e.g., mutation events) a feature can have to be included in the \'Feature Set\`. Features with a higher percentage of events than the specified number will be removed.\n\nNOTE: \'Max event frequency\' must be ≤90.\">?</a>'))
       })
-      
       observeEvent(input$dataset, {
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
@@ -527,9 +524,7 @@ CaDrA_Server <- function(id){
         }else {
           updateNumericInput(session, inputId = "min_cutoff", value = 5)
         }
-        
       })
-      
       observeEvent(input$stop_cadra, {
         
         ns <- session$ns
@@ -540,9 +535,7 @@ CaDrA_Server <- function(id){
         
         ## Whether to display loading icon ####
         session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
-        
-      })
-        
+      }) 
       observeEvent(input$run_cadra, {
         
         ns <- session$ns
@@ -552,7 +545,6 @@ CaDrA_Server <- function(id){
         if(stop_process()){         
           return(NULL); 
         }
-        
         stop_process(FALSE)
         feature_set_description(NULL)
         feature_set_data(NULL)

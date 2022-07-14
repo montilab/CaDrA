@@ -268,7 +268,7 @@ CaDrA_UI <- function(id)
         ),
         conditionalPanel(
           condition = sprintf("input['%s'] == 'top_N_seeds'", ns("initial_seed")),
-          numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Select N"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
+          numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Top N value"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
         ),
         conditionalPanel(
           condition = sprintf("input['%s'] == 'search_start_seeds'", ns("initial_seed")),
@@ -450,7 +450,7 @@ CaDrA_Server <- function(id){
           tags$pre(
             tags$code(
               "
-              Select the 'CaDrA Options' on the right and Click 'RUN' button on the bottom
+              Select the 'CaDrA Options' on the left and Click 'RUN' at the bottom
               "
             )
           )

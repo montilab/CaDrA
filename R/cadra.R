@@ -194,11 +194,13 @@ CaDrA <- function(
   # Check if the returning result has one or two columns: score or p_value or both
   if(ncol(s) == 1){
     if(colnames(s) == "score" & metric == "pval"){
-      warning(paste0("metric = 'pval' is provided but the ", method, " method only return score values. Thus, using 'stat' as metric to search for best features."))
+      warning("metric = 'pval' is provided but the ", method, 
+              " method only return score values. Thus, using 'stat' as metric to search for best features.")
       metric <- "stat"
     }
     if(colnames(s) == "p_value" & metric == "stat"){
-      warning(paste0("metric provided is 'stat' but the ", method, "method only return p-values. Thus, using 'pval' as metric to search for best features."))
+      warning("metric provided is 'stat' but the ", method, 
+              "method only return p-values. Thus, using 'pval' as metric to search for best features.")
       metric <- "pval"
     }
   }

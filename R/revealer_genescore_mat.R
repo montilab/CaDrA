@@ -112,7 +112,7 @@ revealer_genescore_mat <- function
     stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.")
   }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
     target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
-    warning(paste0("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n"))
+    warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
   }
   
   # If assoc_metric variable is not specified, use "IC" as default.
@@ -125,7 +125,7 @@ revealer_genescore_mat <- function
     stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.")
   }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
     assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning(paste0("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n"))
+    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
   }
   
   # Check if the dataset has any all 0 or 1 features (these are to be removed since they are not informative)

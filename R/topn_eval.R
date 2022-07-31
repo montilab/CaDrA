@@ -73,7 +73,7 @@ topn_eval <- function(
   }
 
   # Check if top_N is given and is numeric
-  top_N = as.integer(top_N) 
+  top_N <- as.integer(top_N) 
   
   if(is.na(top_N) || length(top_N)==0){
     stop("Please specify a INTEGER top_N value to evaluate over top N features.\n")

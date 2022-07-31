@@ -30,7 +30,7 @@
 #' # Load pre-computed expression set
 #' data(sim.ES)
 #' 
-#' mat = exprs(sim.ES)
+#' mat <- exprs(sim.ES)
 #' 
 #' # set seed
 #' set.seed(123)
@@ -172,7 +172,7 @@ custom_genescore_mat <- function
   }
   
   ## create a list for the required binary data matrix and input_score variables
-  mat_list = list(mat = mat, input_score = input_score)
+  mat_list <- list(mat = mat, input_score = input_score)
   
   ## combine a mat and input_score variables with additional parameters provided in the custom_parameters list
   custom_parameters <- base::append(mat_list, custom_parameters)

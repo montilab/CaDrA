@@ -25,16 +25,16 @@
 meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # Get ESet and input_score for top N best features
-  ESet =  topn_best_list[["ESet"]]                    
-  var_score = topn_best_list[["input_score"]]
+  ESet <- topn_best_list[["ESet"]]                    
+  var_score <- topn_best_list[["input_score"]]
 
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
   if(length(var_score) > 0){
     
-    var_score = var_score[match(colnames(ESet), names(var_score))]
+    var_score <- var_score[match(colnames(ESet), names(var_score))]
     
     # Get the input score label
-    var_name = ifelse(is.null(input_score_label), "input_score", input_score_label)
+    var_name <- ifelse(is.null(input_score_label), "input_score", input_score_label)
     
     # Plot y axis label
     y_lab <- var_name
@@ -217,7 +217,7 @@ stacked_gtable_max <- function(...){
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Extract the meta-feature set
-#' ESet =  topn_best_meta[["ESet"]]                    
+#' ESet <-  topn_best_meta[["ESet"]]                    
 #' 
 #' # Make sure mat variable is a matrix
 #' mat <- as.matrix(exprs(ESet))

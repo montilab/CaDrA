@@ -22,10 +22,10 @@
 #' set.seed(123)
 #' 
 #' # Extract the expression matrix
-#' mat = exprs(sim.ES)
+#' mat <- exprs(sim.ES)
 #' 
 #' # Provide a vector of continuous scores for a target profile
-#' input_score = rnorm(n = ncol(sim.ES))
+#' input_score <- rnorm(n = ncol(sim.ES))
 #' names(input_score) <- colnames(sim.ES)
 #' 
 #' cmi <- seq_len(nrow(mat)) %>% 
@@ -53,7 +53,7 @@ revealer_genescore <- function
 {
   
   # Convert x, y, z as vector and numeric  
-  x = as.numeric(x); y = as.numeric(y); z = as.numeric(z); 
+  x <- as.numeric(x); y <- as.numeric(y); z <- as.numeric(z); 
   
   # Check if x is provided 
   if(length(x) == 0 || any(is.na(x)))

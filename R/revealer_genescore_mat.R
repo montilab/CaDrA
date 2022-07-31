@@ -22,7 +22,7 @@
 #' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile
-#' input_score = rnorm(n = ncol(sim.ES))
+#' input_score <- rnorm(n = ncol(sim.ES))
 #' names(input_score) <- colnames(sim.ES)
 #' 
 #' # Define additional parameters and start the function

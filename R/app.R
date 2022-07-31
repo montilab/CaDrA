@@ -5,14 +5,14 @@ create_hover_txt <- function(table){
   column_names <- colnames(table)
   
   th_tr <- lapply(seq_along(column_names), function(l){ 
-    title = column_names[l]
-    name = ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
+    title <- column_names[l]
+    name <- ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
     th <- sprintf('<th title = "%s">%s</th>\n', title, name) 
   }) %>% purrr::flatten_chr() %>% paste0(., collapse = "")
   
   th_tr <- paste0('<th title=""></th>\n', th_tr) %>% HTML()
   
-  sketch = htmltools::withTags(
+  sketch <- htmltools::withTags(
     tags$table(
       class = 'display',
       tags$thead(
@@ -612,7 +612,7 @@ CaDrA_Server <- function(id){
             
           if(input$sim.ES_scores == "sim.Scores"){
             utils::data("sim.Scores", envir = environment())
-            input_score = get("sim.Scores", envir = environment())
+            input_score <- get("sim.Scores", envir = environment())
           }
           
         }
@@ -715,7 +715,7 @@ CaDrA_Server <- function(id){
             return(NULL)
           }
           
-          percent_min_cutoff = round(min_cutoff/ncol(ES), 2)
+          percent_min_cutoff <- round(min_cutoff/ncol(ES), 2)
           
         }
         
@@ -809,7 +809,7 @@ CaDrA_Server <- function(id){
         }
         
         # Get method
-        method = input$method; 
+        method <- input$method; 
         
         if(method == "ks"){
           
@@ -887,23 +887,23 @@ CaDrA_Server <- function(id){
           alternative <- input$alternative
         }
         
-        metric = input$metric;
+        metric <- input$metric;
         
-        search_method = input$search_method;
+        search_method <- input$search_method;
         
-        max_size = as.integer(input$max_size)
+        max_size <- as.integer(input$max_size)
         
         if(is.na(max_size) || length(max_size) == 0 || max_size <= 0){
           error_message("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search (max_size must be >= 1).\n")
           return(NULL)
         }
         
-        initial_seed = input$initial_seed
+        initial_seed <- input$initial_seed
         
         if(initial_seed == "top_N_seeds"){
           
-          search_start = NULL
-          top_N = as.integer(input$top_N)
+          search_start <- NULL
+          top_N <- as.integer(input$top_N)
           
           if(is.na(top_N) || length(top_N) == 0 || top_N <= 0){
             error_message("Please specify an INTEGER top_N value to evaluate over top N features (top_N must be >= 1).\n")
@@ -917,9 +917,9 @@ CaDrA_Server <- function(id){
           
         }else{
           
-          search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
-          search_start = search_start[search_start != ""]
-          top_N = NULL
+          search_start <- strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
+          search_start <- search_start[search_start != ""]
+          top_N <- NULL
           
           if(length(search_start) == 0 || any(!search_start %in% rownames(ES))){ 
             error_message("Provided starting feature(s) does not exist among ES's rownames.\n\n")
@@ -928,18 +928,18 @@ CaDrA_Server <- function(id){
           
         }
         
-        permutation = input$permutation_test
+        permutation <- input$permutation_test
         
         if(permutation == TRUE){
           
-          n_perm = as.integer(input$n_perm)
+          n_perm <- as.integer(input$n_perm)
           
           if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
             error_message("Please specify an INTEGER number of permutations to perform for permutation testings (n_perm must be >= 1).\n")
             return(NULL)
           }
           
-          ncores = as.integer(input$ncores)
+          ncores <- as.integer(input$ncores)
           
           if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
             error_message("Please specify the number of cores to perform parallelization for permutation testings (ncores must be >= 1).\n")

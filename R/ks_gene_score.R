@@ -24,7 +24,7 @@
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Extract the meta-feature set
-#' ESet =  topn_best_meta[["ESet"]]                    
+#' ESet <-  topn_best_meta[["ESet"]]                    
 #' 
 #' # Make sure mat variable is a matrix
 #' mat <- as.matrix(exprs(ESet))

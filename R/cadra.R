@@ -204,14 +204,14 @@ CaDrA <- function(
   }
   
   # check the number of permuation value
-  n_perm = as.integer(n_perm)
+  n_perm <- as.integer(n_perm)
   
   if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
     stop("Please specify an INTEGER number of permutations to perform for permutation testings (nperm must be >= 1).\n")
   }
   
   # check the number of ncores value
-  ncores = as.integer(ncores)
+  ncores <- as.integer(ncores)
   
   if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
     stop("Please specify the number of cores to perform parallelization for permutation testings (ncores must be >= 1).\n")
@@ -262,13 +262,13 @@ CaDrA <- function(
     options(verbose = verbose)   
     
     # Sets up the parallel backend which will be utilized by Plyr.
-    parallel = FALSE
-    progress = "text"
+    parallel <- FALSE
+    progress <- "text"
     
     if(ncores > 1){
       registerDoParallel(cores = ncores)
-      parallel = TRUE
-      progress = "none"
+      parallel <- TRUE
+      progress <- "none"
       verbose("Running tests in parallel...\n")
     } 
     
@@ -278,7 +278,27 @@ CaDrA <- function(
     perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, verbose = FALSE)
     
     verbose("Computing permutation-based scores for N = ", n_perm, "...\n\n")
-    perm_best_scores <- unlist(plyr::alply(perm_labels_matrix, 1, function(x){ perm_input_score=x; names(perm_input_score) <- names(input_score); candidate_search(ES=ES, input_score=perm_input_score, method=method, custom_function=custom_function, custom_parameters=custom_parameters, alternative=alternative, metric=metric, weights=weights, top_N=top_N, search_start=search_start, search_method=search_method, max_size=max_size, best_score_only=TRUE, do_plot = FALSE, verbose = FALSE) }, .parallel=parallel, .progress=progress))
+    perm_best_scores <- 
+      unlist(plyr::alply(perm_labels_matrix, 1, 
+                         function(x){ perm_input_score<-x;
+                         names(perm_input_score) <- names(input_score); 
+                         candidate_search(ES=ES, 
+                         input_score=perm_input_score, 
+                         method=method, 
+                         custom_function=custom_function, 
+                         custom_parameters=custom_parameters, 
+                         alternative=alternative, 
+                         metric=metric, 
+                         weights=weights, 
+                         top_N=top_N, 
+                         search_start=search_start, 
+                         search_method=search_method, 
+                         max_size=max_size, 
+                         best_score_only=TRUE, 
+                         do_plot = FALSE, 
+                         verbose = FALSE) }, 
+                         .parallel=parallel, 
+                         .progress=progress))
     
     #Save computed scores to cache 
     cat("Saving to cache ..\n")
@@ -330,10 +350,10 @@ CaDrA <- function(
   
   #Add a smoothening factor of 1 if smooth is specified
   #This is just to not return a p-value of 0
-  c=0
+  c <- 0
   
   if(smooth)
-    c=1
+    c <- 1
   
   if(metric == "pval"){
     

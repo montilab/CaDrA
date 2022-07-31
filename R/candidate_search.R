@@ -231,7 +231,7 @@ candidate_search <- function(
   #######################################
     
   # Check if top_N is given and is numeric
-  top_N = as.integer(top_N)    
+  top_N <- as.integer(top_N)    
   
   # Check if search_start is given
   if(is.null(search_start)){ 
@@ -253,7 +253,7 @@ candidate_search <- function(
     
   } else {
     
-    search_start = strsplit(as.character(search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
+    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) %>% unlist() %>% trimws()
     
     if(!is.na(top_N) && length(top_N) > 0){
       warning("Since start_search variable is given, evaluating over top_N value will be ignored.\n")
@@ -278,7 +278,7 @@ candidate_search <- function(
   }
   
   ## Check the max_size variable ####
-  max_size = as.integer(max_size)   
+  max_size <- as.integer(max_size)   
   
   if(is.na(max_size) || length(max_size)==0 || max_size <= 0){
     stop("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search (max_size must be >= 1).\n")
@@ -309,7 +309,7 @@ candidate_search <- function(
     best.meta <- as.numeric(exprs(ES)[best.s.index,])
     
     #counter variable for number of iterations
-    i=0
+    i <- 0
     
     #Variable to store best score attained over all iterations
     #initialize this to the starting best score
@@ -462,7 +462,7 @@ candidate_search <- function(
       }
       
       #Increment counter
-      i = i+1
+      i <- i+1
       
     } #########End of while loop
     

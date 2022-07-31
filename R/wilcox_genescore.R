@@ -74,11 +74,11 @@ wilcox_genescore <- function
   y <- y[is.finite(y)]
   
   if (length(x) < 1L) {
-    print(x)
+    #print(x)
     stop("not enough (finite) 'x' observations")}
   
   if (length(y) < 1L){
-    print(y)
+    #print(y)
     stop("not enough 'y' observations")}
   
   METHOD <- "Wilcoxon rank sum test"

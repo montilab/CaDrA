@@ -221,11 +221,11 @@ CaDrA <- function(
   
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
-    cat("Using provided cache root path: ", cache_path, "\n")
+    message("Using provided cache root path: ", cache_path, "\n")
     setCacheRootPath(cache_path)
   } else{
     setCacheRootPath()
-    cat("Setting cache root path as: ", getCacheRootPath(), "\n")
+    message("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
   
   # We use the ES, top N (or search_start), score metric, scoring method as the key for each cached result  
@@ -245,18 +245,18 @@ CaDrA <- function(
   # Check if, given the dataset and search-specific parameters, there is already a cached null distribution available 
   if (!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
     
-    cat("Found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
-    cat("Loading permutation scores from cache..\n")
+    message("Found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters..\n")
+    message("Loading permutation scores from cache..\n")
     
   }  else{
     
     if (is.null(perm_best_scores)){
-      cat("No permutation scores for the specified dataset and search parameters were found in cache path...\n")
+      message("No permutation scores for the specified dataset and search parameters were found in cache path...\n")
     } else if (length(perm_best_scores) < n_perm) {
-      cat("n_perm is set to ", n_perm, " but found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters...\n")
+      message("n_perm is set to ", n_perm, " but found ", length(perm_best_scores), " cached permutation-based scores for the specified dataset and search parameters...\n")
     }
     
-    cat("BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n")
+    message("BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n")
     
     ##############################################################################################
     
@@ -274,7 +274,7 @@ CaDrA <- function(
       verbose("Running tests in parallel...\n")
     } 
     
-    cat("Using ", ncores, " core(s)...\n")
+    message("Using ", ncores, " core(s)...\n")
 
     # Generate matrix of permutated input_score  
     perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm, verbose = FALSE)
@@ -303,15 +303,15 @@ CaDrA <- function(
                          .progress=progress))
     
     #Save computed scores to cache 
-    cat("Saving to cache ..\n")
+    message("Saving to cache ..\n")
     saveCache(perm_best_scores, key=key, comment="null_ks()")
     
   } # end caching else statement block
   
   registerDoParallel(cores = 1) #Return to using just a single core
   
-  cat("FINISHED\n")
-  cat("Time elapsed: ", round((proc.time()-ptm)[3]/60,2), " mins \n\n")
+  message("FINISHED\n")
+  message("Time elapsed: ", round((proc.time()-ptm)[3]/60,2), " mins \n\n")
   
   ############################################################################################## 
   
@@ -319,7 +319,7 @@ CaDrA <- function(
   
   if(is.null(obs_best_score)){
     
-    cat("Computing observed best score ..\n\n")
+    message("Computing observed best score ..\n\n")
     
     obs_best_score <- candidate_search(
       ES = ES,
@@ -341,14 +341,14 @@ CaDrA <- function(
     
   } else{
     
-    cat("Using provided value of observed best score...\n\n")
+    message("Using provided value of observed best score...\n\n")
     
   }
   
   verbose("Observed score: ", obs_best_score, "\n\n")
   
   ########### PERMUTATION P-VALUE COMPUTATION ############
-  cat("Number of permutation-based scores being considered: ", length(perm_best_scores), "\n")
+  message("Number of permutation-based scores being considered: ", length(perm_best_scores), "\n")
   
   #Add a smoothening factor of 1 if smooth is specified
   #This is just to not return a p-value of 0
@@ -372,7 +372,7 @@ CaDrA <- function(
   
   perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/(n_perm + c) 
   
-  cat("Permutation p-value: ", perm_pval, "\n\n")
+  message("Permutation p-value: ", perm_pval, "\n\n")
   
   ########### END PERMUTATION P-VALUE COMPUTATION ############
   
@@ -408,7 +408,8 @@ CaDrA <- function(
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_continuous(expand = c(0, 0))
     
-    print(g)
+    g
+    #print(g)
     
   }
   

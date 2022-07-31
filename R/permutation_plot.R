@@ -55,8 +55,8 @@ permutation_plot <- function(permutation_results){
     theme(plot.title = element_text(hjust = 0.5)) +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0))
-  
-  print(g)
+  g
+  #print(g)
   
 }
 

@@ -7,13 +7,17 @@
 plot_ESet(d)
 }
 \arguments{
-\item{d}{a data frame object with columns 'x' and 'y' containing the necessary data for an ES plot (returned by ks.genescore() when plot.dat is set to TRUE for a given dataset)}
+\item{d}{a data frame object with columns 'x' and 'y' containing the 
+necessary data for an ES plot (returned by ks.genescore() 
+when plot.dat is set to TRUE for a given dataset)}
 }
 \value{
 A plot graphic of the Enrichment Score (ES) for a given distribution
 }
 \description{
-Plot the ES running sum statistic, including the max score (KS) using x and y-axis data returned by ks.genescore() when plot.dat is set to TRUE for a given dataset
+Plot the ES running sum statistic, including the max score (KS) using x and 
+y-axis data returned by ks.genescore() when plot.dat is set to TRUE 
+for a given dataset
 }
 \examples{
 
@@ -24,18 +28,20 @@ library(Biobase)
 data(topn.list)
 
 # With the results obtained from top-N evaluation,
-# We can find the combination of features that gives the best score in top N searches
+# We can find the combination of features that gives 
+# the best score in top N searches
 topn_best_meta <- topn_best(topn_list=topn.list) 
 
 # Extract the meta-feature set
-ESet =  topn_best_meta[["ESet"]]                    
+ESet <-  topn_best_meta[["ESet"]]                    
 
 # Make sure mat variable is a matrix
 mat <- as.matrix(exprs(ESet))
 
 # For cases when matrix only has one row
 if(ncol(mat) == 1){
-  mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+  mat <- matrix(t(mat), nrow=1, byrow=TRUE, 
+  dimnames = list(rownames(ESet), rownames(mat))) 
 }
 
 # Add on the OR function of all the returned entries

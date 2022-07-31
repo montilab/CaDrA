@@ -7,16 +7,27 @@
 meta_plot(topn_best_list, input_score_label = NULL)
 }
 \arguments{
-\item{topn_best_list}{a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.}
+\item{topn_best_list}{a list of lists, where each list entry is one that 
+is returned by the candidate search run for a given starting index. 
+This is computed within and can be returned by the topn_eval() function.}
 
-\item{input_score_label}{a label that references to the \code{input_score} variable used to compute the top N best features. Default is \code{NULL}.}
+\item{input_score_label}{a label that references to the \code{input_score} 
+variable used to compute the top N best features. Default is \code{NULL}.}
 }
 \value{
-A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
+A plot graphic with observed input scores (optional), a tile plot 
+of the features within the provided ESet and the corresponding 
+Enrichment Score (ES) for a given distribution (here, this will correspond 
+to the logical OR of the features)
 }
 \description{
-By utilizing the top N results obtained from \code{topn_eval()}, we can find the best meta-features among the top N searches using \code{topn_best()}. \code{meta_plot()} is then used to produce graphics including the top meta-features that associated with a molecular phenotype of interest, the enrichment scores of the meta-features matrix, and 
-lastly, it includes an optional density diagram of the distribution of \code{input_score} variable on the top.
+By utilizing the top N results obtained from \code{topn_eval()}, 
+we can find the best meta-features among the top N searches using 
+\code{topn_best()}. \code{meta_plot()} is then used to produce graphics 
+including the top meta-features that associated with a molecular phenotype 
+of interest, the enrichment scores of the meta-features matrix, and 
+lastly, it includes an optional density diagram of the distribution of 
+\code{input_score} variable on the top.
 }
 \examples{
 
@@ -24,7 +35,8 @@ lastly, it includes an optional density diagram of the distribution of \code{inp
 data(topn.list)
 
 # With the results obtained from top-N evaluation,
-# We can find the combination of features that gives the best score in top N searches
+# We can find the combination of features that gives the best score in 
+# top N searches
 topn_best_meta <- topn_best(topn_list=topn.list) 
 
 # Now we can plot this set of features

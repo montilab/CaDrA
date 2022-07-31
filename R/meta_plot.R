@@ -1,19 +1,31 @@
 
 #' Candidate Drivers Search Plot
 #' 
-#' By utilizing the top N results obtained from \code{topn_eval()}, we can find the best meta-features among the top N searches using \code{topn_best()}. \code{meta_plot()} is then used to produce graphics including the top meta-features that associated with a molecular phenotype of interest, the enrichment scores of the meta-features matrix, and 
-#' lastly, it includes an optional density diagram of the distribution of \code{input_score} variable on the top. 
-#' @param topn_best_list a list of lists, where each list entry is one that is returned by the candidate search run for a given starting index. This is computed within and can be returned by the topn_eval() function.
-#' @param input_score_label a label that references to the \code{input_score} variable used to compute the top N best features. Default is \code{NULL}.
+#' By utilizing the top N results obtained from \code{topn_eval()}, 
+#' we can find the best meta-features among the top N searches using 
+#' \code{topn_best()}. \code{meta_plot()} is then used to produce graphics 
+#' including the top meta-features that associated with a molecular phenotype 
+#' of interest, the enrichment scores of the meta-features matrix, and 
+#' lastly, it includes an optional density diagram of the distribution of 
+#' \code{input_score} variable on the top. 
+#' @param topn_best_list a list of lists, where each list entry is one that 
+#' is returned by the candidate search run for a given starting index. 
+#' This is computed within and can be returned by the topn_eval() function.
+#' @param input_score_label a label that references to the \code{input_score} 
+#' variable used to compute the top N best features. Default is \code{NULL}.
 #' 
-#' @return A plot graphic with observed input scores (optional), a tile plot of the features within the provided ESet and the corresponding Enrichment Score (ES) for a given distribution (here, this will correspond to the logical OR of the features)
+#' @return A plot graphic with observed input scores (optional), a tile plot 
+#' of the features within the provided ESet and the corresponding 
+#' Enrichment Score (ES) for a given distribution (here, this will correspond 
+#' to the logical OR of the features)
 #' @examples
 #' 
 #' # Load pre-computed Top-N list generated for sim.ES dataset
 #' data(topn.list)
 #' 
 #' # With the results obtained from top-N evaluation,
-#' # We can find the combination of features that gives the best score in top N searches
+#' # We can find the combination of features that gives the best score in 
+#' # top N searches
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Now we can plot this set of features
@@ -34,7 +46,8 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     var_score <- var_score[match(colnames(ESet), names(var_score))]
     
     # Get the input score label
-    var_name <- ifelse(is.null(input_score_label), "input_score", input_score_label)
+    var_name <- ifelse(is.null(input_score_label), "input_score", 
+                       input_score_label)
     
     # Plot y axis label
     y_lab <- var_name
@@ -42,17 +55,24 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     # Plot x axis label
     x_lab <- paste("Samples (n = ", ncol(ESet),")", sep="")
     
-    # Make dataframe of metric and sample information, with rows arranged in specific order of measure used for search
-    # Here we assume that var_score provided is ordered in the order that the stepwise search was run for the dataset
-    var_d <- data.frame("measure"=var_score, "sample"=factor(colnames(ESet), levels=colnames(ESet)))
+    # Make dataframe of metric and sample information, 
+    # with rows arranged in specific order of measure used for search
+    # Here we assume that var_score provided is ordered in the order 
+    # that the stepwise search was run for the dataset
+    var_d <- data.frame("measure"=var_score, 
+                        "sample"=factor(colnames(ESet), levels=colnames(ESet)))
     
-    # This plot assumes that there are two columns in the data frame called 'sample' and 'measure'
-    # The 'sample' variable has to be a factor with ordered levels for displaying in the correct sample order
+    # This plot assumes that there are two columns in the data frame 
+    # called 'sample' and 'measure'
+    # The 'sample' variable has to be a factor with ordered levels 
+    # for displaying in the correct sample order
     
     # Katia: adding ".data" to avoid a warning during check:
     # no visible binding for global variable 
-    m_plot <- ggplot(data=var_d, aes(x=.data$sample, y=.data$measure, group=1)) +
-      geom_area(alpha=0.6, fill="deepskyblue4", linetype=1, size=0.5, color="black") +
+    m_plot <- ggplot(data=var_d, 
+                     aes(x=.data$sample, y=.data$measure, group=1)) +
+      geom_area(alpha=0.6, fill="deepskyblue4", 
+                linetype=1, size=0.5, color="black") +
       scale_y_continuous(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
       theme_classic() +
@@ -71,15 +91,18 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # for cases when matrix only has one row
   if(ncol(mat) == 1){
-    mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+    mat <- matrix(t(mat), nrow=1, byrow=TRUE, 
+                  dimnames = list(rownames(ESet), rownames(mat))) 
   }
   
   # Add on the OR function of all the returned entries
   or <- ifelse(colSums(mat)==0, 0, 1)
   mat <- rbind(mat, or)
   
-  # Get x and y axis data for ES plot of cumulative function of individual features (i.e. the OR function)
-  ES_dat <- ks_gene_score(n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less")
+  # Get x and y axis data for ES plot of cumulative function of 
+  # individual features (i.e. the OR function)
+  ES_dat <- ks_gene_score(n.x=length(or), y=which(or==1), 
+                          plot_dat = TRUE, alternative = "less")
   
   # Plot for ES scores
   ES_plot <- plot_ESet(d = ES_dat)
@@ -87,27 +110,31 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""
   
-  mat[nrow(mat),] <- 2*(mat[nrow(mat),]) #Make the OR function have higher values for a different color (red)
+  mat[nrow(mat),] <- 2*(mat[nrow(mat),]) 
+  #Make the OR function have higher values for a different color (red)
   
-  m <- ExpressionSet(assayData = mat, featureData = AnnotatedDataFrame(data.frame("Name"=rownames(mat), row.names = rownames(mat))))
+  m <- ExpressionSet(assayData = mat, 
+                     featureData = AnnotatedDataFrame(
+                       data.frame("Name"=rownames(mat), 
+                                  row.names = rownames(mat))))
   
   x <- exprs(m)
-  
   x_m <- melt(x)
   
   # Make factor for genes so it stays in order of dataset (feature ESet)
-  # Here we need to reverse the order of the levels because geom_tile plots ascending from bottom to top
-  x_m$Var1 <- factor(as.character(x_m$Var1), levels=rev(unique(as.character(x_m$Var1))))
+  # Here we need to reverse the order of the levels because geom_tile 
+  # plots ascending from bottom to top
+  x_m$Var1 <- factor(as.character(x_m$Var1), 
+                     levels=rev(unique(as.character(x_m$Var1))))
   
   # Plot for mutation/CNA feature profile (with summary OR)
-  # Katia: adding ".data" to avoid a warning during check:
-  # no visible binding for global variable 
-  feature_plot <- ggplot(data=x_m, aes(x=factor(.data$Var2), y=.data$Var1, fill=.data$value)) +
-    geom_tile(colour=NA)+ #So that there are no line borders around each cell
-    scale_fill_gradient2( #This is only if we want different colors for different values
-      high="red", #This will be for our OR function values (which have 2's for 1's, based on our pre-processing) 
-      mid="black", #This is for our individual feature 1 values
-      low = "white", #This is for the background (0) values
+  feature_plot <- ggplot(data=x_m, aes(x=factor(.data$Var2), 
+                                       y=.data$Var1, fill=.data$value)) +
+    geom_tile(colour=NA)+ 
+    scale_fill_gradient2( 
+      high="red", 
+      mid="black", 
+      low = "white", 
       midpoint = 1
     ) + 
     theme(
@@ -120,14 +147,19 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   if(!is.null(var_score)){
     # Align the three plots, adjusting the widths to match
-    plot_tab <- stacked_gtable_max(ggplotGrob(m_plot), ggplotGrob(feature_plot + theme(legend.position="none")), ggplotGrob(ES_plot))
+    plot_tab <- stacked_gtable_max(ggplotGrob(m_plot), 
+                                   ggplotGrob(feature_plot + 
+                                                theme(legend.position="none")), 
+                                   ggplotGrob(ES_plot))
     
     # Set heights for each panel
     plot_tab <- setup_tab_heights(plot_tab, c(2,1.25,3))
     
   } else{
     # Align the three plots, adjusting the widths to match
-    plot_tab <- stacked_gtable_max(ggplotGrob(feature_plot + theme(legend.position="none")), ggplotGrob(ES_plot))
+    plot_tab <- stacked_gtable_max(
+      ggplotGrob(feature_plot + theme(legend.position="none")), 
+      ggplotGrob(ES_plot))
     
     # Set heights for each panel
     plot_tab <- setup_tab_heights(plot_tab, c(1.25, 3))
@@ -139,7 +171,8 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   
 }
 
-# Function to convert units depending on the version of R (for adjusting the dimensions of the ggplots)
+# Function to convert units depending on the version of R 
+# (for adjusting the dimensions of the ggplots)
 setup_tab_heights <- function(plot_tab, dims) {
   
   panels <- plot_tab$layout$t[grep("panel", plot_tab$layout$name)]
@@ -200,8 +233,12 @@ stacked_gtable_max <- function(...){
 
 #' Enrichment Score (ES) plot
 #' 
-#' Plot the ES running sum statistic, including the max score (KS) using x and y-axis data returned by ks.genescore() when plot.dat is set to TRUE for a given dataset
-#' @param d a data frame object with columns 'x' and 'y' containing the necessary data for an ES plot (returned by ks.genescore() when plot.dat is set to TRUE for a given dataset)
+#' Plot the ES running sum statistic, including the max score (KS) using x and 
+#' y-axis data returned by ks.genescore() when plot.dat is set to TRUE 
+#' for a given dataset
+#' @param d a data frame object with columns 'x' and 'y' containing the 
+#' necessary data for an ES plot (returned by ks.genescore() 
+#' when plot.dat is set to TRUE for a given dataset)
 #' @return A plot graphic of the Enrichment Score (ES) for a given distribution
 #' 
 #' @examples 
@@ -213,7 +250,8 @@ stacked_gtable_max <- function(...){
 #' data(topn.list)
 #' 
 #' # With the results obtained from top-N evaluation,
-#' # We can find the combination of features that gives the best score in top N searches
+#' # We can find the combination of features that gives 
+#' # the best score in top N searches
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Extract the meta-feature set
@@ -224,7 +262,8 @@ stacked_gtable_max <- function(...){
 #' 
 #' # For cases when matrix only has one row
 #' if(ncol(mat) == 1){
-#'   mat <- matrix(t(mat), nrow=1, byrow=TRUE, dimnames = list(rownames(ESet), rownames(mat))) 
+#'   mat <- matrix(t(mat), nrow=1, byrow=TRUE, 
+#'   dimnames = list(rownames(ESet), rownames(mat))) 
 #' }
 #' 
 #' # Add on the OR function of all the returned entries
@@ -256,8 +295,10 @@ plot_ESet <- function(
     geom_hline(yintercept=0, linetype=2) +
     # Katia: adding ".data" to avoid a warning during check:
     # no visible binding for global variable
-    geom_point(data=d[which.max(d$y),], aes(x=.data$x, y=.data$y), colour="black", fill="red", size=3, shape=21) +
-    annotate("text", x=d[which.max(d$y),1]+8, y=max(d$y),label=as.character(round(max(d$y),3)), size=3) +
+    geom_point(data=d[which.max(d$y),], aes(x=.data$x, y=.data$y), 
+               colour="black", fill="red", size=3, shape=21) +
+    annotate("text", x=d[which.max(d$y),1]+8, y=max(d$y),
+             label=as.character(round(max(d$y),3)), size=3) +
     scale_x_continuous(expand = c(0,0)) +
     scale_y_reverse() + # This inverts the ES score statistic line
     theme_classic() +

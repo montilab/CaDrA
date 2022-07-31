@@ -6,22 +6,34 @@ verbose <- function(...){
   if(!opt) return(invisible(NULL))
   msgs <- list(...)
   #msgs <- do.call(paste, c(msgs))
-  message(msgs)
+  message(msgs,"\n")
   
 }
 
 #' Pre-filter features
 #' 
-#' Pre-filter a dataset prior to running step-wise heuristic search in order to avoid testing features that are too prevalent or too sparse across samples in the dataset
-#' @param ES an expression set object containing binary features used for step-wise search
-#' @param max.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)
-#' @param min.cutoff a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)
-#' @param verbose a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}. 
-#' @return An expression set object with only the filtered-in features given the filter thresholds specified
+#' Pre-filter a dataset prior to running step-wise heuristic search in order to 
+#' avoid testing features that are too prevalent or too sparse across samples in
+#' the dataset
+#' @param ES an expression set object containing binary features used for 
+#' step-wise search
+#' @param max.cutoff a numeric value between 0 and 1 describing the absolute 
+#' prevalence of a feature across all samples in the dataset above which the 
+#' feature will be filtered out. Default is 0.6 (feature that occur in 
+#' 60 percent or more of the samples will be removed)
+#' @param min.cutoff a numeric value between 0 and 1 describing the absolute 
+#' prevalence of a feature across all samples in the dataset below which the 
+#' feature will be filtered out. Default is 0.03 (feature that occur in 
+#' 3 percent or less of the samples will be removed)
+#' @param verbose a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{FALSE}. 
+#' @return An expression set object with only the filtered-in features 
+#' given the filter thresholds specified
 #' @examples
 #' data(sim.ES)
 #' 
-#' # Filter out features having < 3 and > 60% prevalence across all samples (default)
+#' # Filter out features having < 3 and > 60% prevalence across all samples 
+#' # (default)
 #' sim.ES.filt1 <- prefilter_data(sim.ES)
 #' 
 #' # Change the min cut-off to 1% prevalence, instead of the default 3%
@@ -41,15 +53,18 @@ prefilter_data <- function(
   
   options(verbose = verbose)
   
-  # Compute the frequency of feature occurence across all samples  (i.e. fraction of samples having the feature)
+  # Compute the frequency of feature occurence across all samples  
+  # (i.e. fraction of samples having the feature)
   frac <- round(rowSums(exprs(ES))/ncol(ES),2)
   
   verbose("Pre-filtering features ..\n\n")
-  verbose("Removing features having < ",min.cutoff*100, "and > ",max.cutoff*100, " % occurence in sample set..\n")
+  verbose("Removing features having < ",min.cutoff*100, "and > ",
+          max.cutoff*100, " % occurence in sample set..\n")
   
   ES <- ES[ (frac >= min.cutoff) & (frac <= max.cutoff) , ]
   
-  verbose(nrow(ES)," features retained out of ",length(frac)," supplied features in dataset\n\n")
+  verbose(nrow(ES)," features retained out of ",length(frac),
+          " supplied features in dataset\n\n")
   
   return(ES)
   
@@ -139,7 +154,8 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
 
 #' Compute KS scores for each row of a given matrix
 #'
-#' Compute directional Kolmogorov-Smirnov scores for each row of a given binary matrix
+#' Compute directional Kolmogorov-Smirnov scores for each row of a 
+#' given binary matrix
 #' @param mat matrix of binary features to compute row-wise ks scores for
 #' @param alt an integer value specifying the alternative hypothesis
 #' @param weight a vector of weights to use if performing a weighted-KS test
@@ -148,7 +164,8 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
 #' @return Two lists: score and p-value
 ks_genescore_mat <- function(mat, alt="less", weight) {
   
-  if(!is.matrix(mat)) stop("Input argument to ks_genescore_mat function is not a matrix")
+  if(!is.matrix(mat)) 
+    stop("Input argument to ks_genescore_mat function is not a matrix")
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)

@@ -19,15 +19,19 @@ wilcox_genescore(
 
 \item{y}{an integer ranked values for group 2}
 
-\item{mu}{a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.}
+\item{mu}{a number uses as an optional parameter to form a null hypothesis. 
+Default is \code{0}.}
 
-\item{alternative}{alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
+\item{alternative}{alternative hypothesis for p-value calculation 
+(\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+Default is \code{less} for left-skewed significance testing.}
 
 \item{paired}{whether to perform paired test. Default is \code{FALSE}.}
 
 \item{exact}{whether to compute exact p-value. Default is \code{FALSE}.}
 
-\item{correct}{whether to consider continuity correction for p-value. Default is \code{TRUE}.}
+\item{correct}{whether to consider continuity correction for p-value. 
+Default is \code{TRUE}.}
 }
 \value{
 a data frame with two columns: \code{score} and \code{p_value}
@@ -46,7 +50,8 @@ data(sim.ES)
 set.seed(123)
 
 # Provide a vector of continuous scores for a target profile 
-# The scores must have labels or names that match the colnames of expression matrix
+# The scores must have labels or names 
+# that match the colnames of expression matrix
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
@@ -67,7 +72,8 @@ alternative <- "less"
 
 # Compute the wilcox rank sum statitic and p-value per row in the matrix
 wilcox <- apply(X=mat, MARGIN=1, function(x, r=ranks){
- wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], alternative=alternative) 
+ wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], 
+ alternative=alternative) 
 })
 
 }

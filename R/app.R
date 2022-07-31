@@ -32,7 +32,8 @@ dataset_choices <- list(
 )
 
 score_choices <- list(
-  "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = "TAZYAP_BRCA_ACTIVITY",
+  "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = 
+    "TAZYAP_BRCA_ACTIVITY",
   "Activation of B-catenin in Cancers (CTNBB1_reporter)" = "CTNBB1_reporter",
   "Random simulated input scores (sim.Scores)" = "sim.Scores"
 )
@@ -124,7 +125,7 @@ CaDrA_UI <- function(id){
     tags$script(
       HTML(
         paste0(
-          "Shiny.addCustomMessageHandler('ToggleOperation', function(message) {",
+          "Shiny.addCustomMessageHandler('ToggleOperation', function(message){",
           "var x = document.getElementById(message.id);",
             "if (message.display === 'yes') {",
               "x.style.display = 'flex';",
@@ -154,7 +155,8 @@ CaDrA_UI <- function(id){
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", ns("dataset"), dataset_choices[1]),
+          condition = sprintf("input['%s'] == '%s'", ns("dataset"), 
+                              dataset_choices[1]),
           selectInput(
             inputId = ns(paste0(dataset_choices[1], "_scores")), 
             label = "Choose an input_score:", 
@@ -165,7 +167,8 @@ CaDrA_UI <- function(id){
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", ns("dataset"), dataset_choices[2]),
+          condition = sprintf("input['%s'] == '%s'", ns("dataset"), 
+                              dataset_choices[2]),
           selectInput(
             inputId = ns(paste0(dataset_choices[2], "_scores")), 
             label = "Choose an input_score:", 
@@ -176,10 +179,17 @@ CaDrA_UI <- function(id){
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", ns("dataset"), dataset_choices[3]),
+          condition = sprintf("input['%s'] == '%s'", ns("dataset"), 
+                              dataset_choices[3]),
           selectInput(
             inputId = ns(paste0(dataset_choices[3], "_scores")), 
-            label = HTML("Choose an input_score", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The random simulated input scores are generated from rnorm(n=ncol(sim.ES), mean=0, sd=1) with seed=123.\">?</a>')), 
+            label = HTML("Choose an input_score", 
+                         paste0('<a class="tooltip-txt" data-html="true" ',
+                                'data-tooltip-toggle="tooltip" data-placement=',
+                                '"top" title=\"The random simulated ',
+                                'input scores are generated from ',
+                                'rnorm(n=ncol(sim.ES), mean=0, sd=1) ',
+                                'with seed=123.\">?</a>')), 
             choices = c(score_choices[3], "Import Data"), 
             selected = score_choices[3], 
             width = "100%"
@@ -190,12 +200,22 @@ CaDrA_UI <- function(id){
           condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
           fileInput(
             inputId = ns("ES_file"), 
-            label = strong(span(style = "color: red;", "*"), "Choose a binary feature file:"), 
+            label = strong(span(style = "color: red;", "*"), 
+                           "Choose a binary feature file:"), 
             width = "100%"
           ),
           radioButtons(
             inputId = ns("ES_file_type"), 
-            label = HTML("File type", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"NOTE: If file is in csv format, the \'BINARY feature set\' must be a data frame including a \'Features\' column name that contains unique names or labels to search for best features. Otherwise, Feature Set must be an object of class ExpressionSet from BioBase package.\">?</a>')), 
+            label = HTML("File type", 
+                         paste0('<a class="tooltip-txt" data-html="true" ',
+                                'data-tooltip-toggle="tooltip" data-placement=',
+                                '"top" title=\"NOTE:If file is in csv format, ',
+                                'the \'BINARY feature set\' must be a data ',
+                                'frame including a \'Features\' column name ',
+                                'that contains unique names or labels to ',
+                                'search for best features. Otherwise, Feature ',
+                                'Set must be an object of class ExpressionSet ',
+                                'from BioBase package.\">?</a>')), 
             choices = c(".csv", ".rds"), 
             selected = ".csv", 
             inline = TRUE
@@ -203,15 +223,34 @@ CaDrA_UI <- function(id){
         ),
 
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'Import Data' | (input['%s'] == '%s' & input['%s'] == 'Import Data') | (input['%s'] == '%s' & input['%s'] == 'Import Data') | (input['%s'] == '%s' & input['%s'] == 'Import Data')", ns("dataset"), ns("dataset"), dataset_choices[1], ns(paste0(dataset_choices[1], "_scores")), ns("dataset"), dataset_choices[2], ns(paste0(dataset_choices[2], "_scores")), ns("dataset"), dataset_choices[3], ns(paste0(dataset_choices[3], "_scores"))),
+          condition = sprintf("input['%s'] == 'Import Data' | 
+                              (input['%s'] == '%s' & input['%s'] == 
+                              'Import Data') | (input['%s'] == '%s' & 
+                              input['%s'] == 'Import Data') | 
+                              (input['%s'] == '%s' & input['%s'] == 
+                              'Import Data')", ns("dataset"), 
+                              ns("dataset"), dataset_choices[1], 
+                              ns(paste0(dataset_choices[1], "_scores")), 
+                              ns("dataset"), dataset_choices[2], 
+                              ns(paste0(dataset_choices[2], "_scores")), 
+                              ns("dataset"), dataset_choices[3], 
+                              ns(paste0(dataset_choices[3], "_scores"))),
           fileInput(
             inputId = ns("input_score_file"), 
-            label = strong(span(style = "color: red;", "*"), "Choose an input score file:"), 
+            label = strong(span(style = "color: red;", "*"), 
+                           "Choose an input score file:"), 
             width = "100%"
           ),
           radioButtons(
             inputId = ns("input_score_file_type"), 
-            label = HTML("File type", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"NOTE: The input score file must be a data frame with two columns (Samples and Scores) and the Samples must match the colnames of the binary feature set.\">?</a>')), 
+            label = HTML("File type", 
+                         paste0('<a class="tooltip-txt" data-html="true" ',
+                                'data-tooltip-toggle="tooltip" data-placement=',
+                                '"top" title=\"NOTE: The input score file ',
+                                'must be a data frame with two columns ',
+                                '(Samples and Scores) and the Samples ',
+                                'must match the colnames of the binary ',
+                                'feature set.\">?</a>')), 
             choices = c(".csv", ".rds"), 
             selected = ".csv", 
             inline = TRUE
@@ -242,21 +281,34 @@ CaDrA_UI <- function(id){
           width = "100%"
         ),
         
-        radioButtons(inputId = ns("method"), label = strong(span(style="color:red;", "*"), "Scoring method:"), choices = c("ks", "wilcox", "revealer"), selected = "ks", inline = TRUE),
+        radioButtons(inputId = ns("method"), 
+                     label = strong(span(style="color:red;", "*"), 
+                                    "Scoring method:"), 
+                     choices = c("ks", "wilcox", "revealer"), 
+                     selected = "ks", inline = TRUE),
         
         conditionalPanel(
           condition = sprintf("input['%s'] == 'ks'", ns("method")),
-          checkboxInput(inputId = ns("weighted_ks"), label = "Compute the weighted ks?", value = FALSE), 
+          checkboxInput(inputId = ns("weighted_ks"), 
+                        label = "Compute the weighted ks?", value = FALSE), 
           conditionalPanel(
             condition = sprintf("input['%s'] == true", ns("weighted_ks")),
             fileInput(
               inputId = ns("weights_file"), 
-              label = strong(span(style = "color: red;", "*"), "Choose a weight file:"), 
+              label = strong(span(style = "color: red;", "*"), 
+                             "Choose a weight file:"), 
               width = "100%"
             ),
             radioButtons(
               inputId = ns("weights_file_type"), 
-              label = HTML("File type", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"NOTE: The weights file must be a data frame with two columns (Samples and Weights) and the Samples must match the colnames of the binary feature set.\">?</a>')), 
+              label = HTML("File type", 
+                           paste0('<a class="tooltip-txt" data-html="true" ',
+                                  'data-tooltip-toggle="tooltip" ',
+                                  'data-placement="top" title=\"NOTE: ',
+                                  'The weights file must be a data frame ',
+                                  'with two columns (Samples and Weights) and ',
+                                  'the Samples must match the colnames ',
+                                  'of the binary feature set.\">?</a>')), 
               choices=c(".csv", ".rds"), 
               selected = ".csv", 
               inline = TRUE
@@ -265,55 +317,94 @@ CaDrA_UI <- function(id){
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'ks' | input['%s'] == 'wilcox'", ns("method"), ns("method")),
-          selectInput(inputId = ns("alternative"), label = strong(span(style="color:red;", "*"), "Alternative:"), choices = c("less", "two.sided", "greater"), selected = "less", width = "100%"),
+          condition = sprintf("input['%s'] == 'ks' | 
+                              input['%s'] == 'wilcox'", 
+                              ns("method"), 
+                              ns("method")),
+          selectInput(inputId = ns("alternative"), 
+                      label = strong(span(style="color:red;", "*"), 
+                                     "Alternative:"), 
+                      choices = c("less", "two.sided", "greater"), 
+                      selected = "less", width = "100%"),
         ),
         
         fluidRow(
           column(
             width = 6,
-            radioButtons(inputId = ns("metric"), label = strong(span(style="color:red;", "*"), "Type of metric:"), choices=c("pval", "stat"), selected = "pval", inline = FALSE)
+            radioButtons(inputId = ns("metric"), 
+                         label = strong(span(style="color:red;", "*"), 
+                                        "Type of metric:"), 
+                         choices=c("pval", "stat"), 
+                         selected = "pval", inline = FALSE)
           ),
           column(
             width = 6,
-            radioButtons(inputId = ns("search_method"), label = strong(span(style="color:red;", "*"), "Search method:"), choices=c("forward and backward"="both", "forward"="forward"), selected = "both", inline = FALSE)
+            radioButtons(inputId = ns("search_method"), 
+                         label = strong(span(style="color:red;", "*"), 
+                                        "Search method:"), 
+                         choices=c("forward and backward"="both", 
+                                   "forward"="forward"), 
+                         selected = "both", inline = FALSE)
           )
         ),
         
-        numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Select a maximum size that a meta-feature can extend to do for a given search"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
+        numericInput(inputId = ns("max_size"), 
+                     label = strong(span(style="color:red;", "*"), 
+"Select a maximum size that a meta-feature can extend to for a given search"),
+                   min = 1, max = 100, step = 1, value = 7, width = "100%"),
         
         radioButtons(
           inputId = ns("initial_seed"), 
-          label = HTML("<span style=\"color:red;\">*</span>How to start the search", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"If Top N seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
-          choices = c("Top N seeds"="top_N_seeds", "Known seeds"="search_start_seeds"), 
+          label = HTML("<span style=\"color:red;\">*</span>How to start the search", 
+                       paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"If Top N seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
+          choices = c("Top N seeds"="top_N_seeds", 
+                      "Known seeds"="search_start_seeds"), 
           selected = "top_N_seeds", 
           inline = TRUE
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'top_N_seeds'", ns("initial_seed")),
-          numericInput(inputId = ns("top_N"), label = strong(span(style="color:red;", "*"), "Select a number to evaluate over the top N features"), min = 1, max = 100, step = 1, value = 10, width = "100%"),
+          condition = sprintf("input['%s'] == 
+                              'top_N_seeds'", ns("initial_seed")),
+          numericInput(inputId = ns("top_N"), 
+                       label = strong(span(style="color:red;", "*"), 
+                      "Select a number to evaluate over the top N features"), 
+                      min = 1, max = 100, step = 1, value = 10, width = "100%"),
         ),
         
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'search_start_seeds'", ns("initial_seed")),
-          textAreaInput(inputId = ns("search_start"), label = strong(span(style = "color:red;", "*"), "Enter a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with"), value="", width="100%")
+          condition = sprintf("input['%s'] == 'search_start_seeds'", 
+                              ns("initial_seed")),
+          textAreaInput(inputId = ns("search_start"), 
+                        label = strong(span(style = "color:red;", "*"), 
+  "Enter a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with"), value="", width="100%")
         ),
         
-        checkboxInput(inputId = ns("permutation_test"), label = strong("Perform permutation testing?"), value = FALSE), 
+        checkboxInput(inputId = ns("permutation_test"), 
+                      label = strong("Perform permutation testing?"), 
+                      value = FALSE), 
         
         conditionalPanel(
           condition = sprintf("input['%s'] == true", ns("permutation_test")),
-          numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = Inf, step = 1, value = 100),
-          numericInput(inputId = ns("ncores"), label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), min = 1, max = Inf, step = 1, value = 1)
+          numericInput(inputId = ns("n_perm"), 
+                       label = strong(span(style="color:red;", "*"), 
+                                      "Number of permutations to perform"),
+                       min = 1, max = Inf, step = 1, value = 100),
+          numericInput(inputId = ns("ncores"), 
+                       label = strong(span(style="color:red;", "*"), 
+                                      "Number of cores to perform parallelization for permutation testing"), min = 1, max = Inf, step = 1, value = 1)
         ),
         
         br(),
         
         uiOutput(outputId = ns("error_message")),
         
-        actionButton(inputId = ns("run_cadra"), label = strong("RUN"), style="background: blue; color: white;"),
-        actionButton(inputId = ns("stop_cadra"), label = strong("STOP"), style="background: blue; color: white;"),
+        actionButton(inputId = ns("run_cadra"), 
+                     label = strong("RUN"), 
+                     style="background: blue; color: white;"),
+        actionButton(inputId = ns("stop_cadra"), 
+                     label = strong("STOP"), 
+                     style="background: blue; color: white;"),
         
         br(), br(), br(), br(),
         
@@ -507,9 +598,11 @@ CaDrA_Server <- function(id){
       output$min_cutoff_tooltip <- renderUI({
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Minimum Samples Frequency</strong>', 
+               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 30 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 30 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
         }else{
-          HTML('<strong>Minimum Samples Frequency</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
+          HTML('<strong>Minimum Samples Frequency</strong>', 
+               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"The \'Minimum Samples Frequency\' means each feature in \'Feature Set\' must have at least 5 or more samples with presence of \'omic feature\' across all samples (i.e., any feature occurs in less than 5 samples will be automatically removed).\n\nNOTE: \'Minimum Samples Frequency\' must be >= 5.\">?</a>')
         }
         
       })
@@ -539,7 +632,9 @@ CaDrA_Server <- function(id){
         error_message("Your process has been interrupted")
         
         ## Whether to display loading icon ####
-        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
+        session$sendCustomMessage(type = "ToggleOperation", 
+                                  message = list(id=ns("loading_icon"), 
+                                                 display="no"))
         
       })
         
@@ -563,7 +658,9 @@ CaDrA_Server <- function(id){
         error_message(NULL)
         
         ## Update connectivity option ####
-        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="yes"))
+        session$sendCustomMessage(type = "ToggleOperation", 
+                                  message = list(id=ns("loading_icon"), 
+                                                 display="yes"))
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           
@@ -578,7 +675,8 @@ CaDrA_Server <- function(id){
             input_score <- get("TAZYAP_BRCA_ACTIVITY", envir = environment())
               
             ## Samples to keep based on the overlap between the two inputs
-            overlap <- intersect(names(input_score), Biobase::sampleNames(eset_mut_scna))
+            overlap <- intersect(names(input_score), 
+                                 Biobase::sampleNames(eset_mut_scna))
             eset_mut_scna <- eset_mut_scna[,overlap]
             input_score <- input_score[overlap]
             
@@ -627,16 +725,29 @@ CaDrA_Server <- function(id){
             return(NULL)
           }
           
-          csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-          rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          csv_ext <-  grep(toupper(".csv"), 
+                           toupper(substr(inputfile$datapath, 
+                                          nchar(inputfile$datapath)-4, 
+                                          nchar(inputfile$datapath))), 
+                           fixed = TRUE)
+          rds_ext <-  grep(toupper(".rds"), 
+                           toupper(substr(inputfile$datapath, 
+                                          nchar(inputfile$datapath)-4, 
+                                          nchar(inputfile$datapath))), 
+                           fixed = TRUE)
           
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
             # read in the Eset file
-            Eset <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
+            Eset <- read.csv(inputfile$datapath, header=TRUE, 
+                             check.names = FALSE) %>% 
+              tibble::column_to_rownames(var="Features") %>% 
+              dplyr::mutate_all(as.numeric)
             
             # convert Eset to matrix
-            Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
+            Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), 
+                              byrow=TRUE, 
+                              dimnames=list(rownames(Eset), colnames(Eset)))
             
             #create phenotypic data
             pData <- data.frame(Samples = colnames(Eset), stringsAsFactors=TRUE)
@@ -644,12 +755,15 @@ CaDrA_Server <- function(id){
             phenoData <- methods::new("AnnotatedDataFrame", data=pData)
             
             #create feature data
-            fData <- data.frame(Features = rownames(Eset), stringsAsFactors = TRUE)
+            fData <- data.frame(Features = rownames(Eset), 
+                                stringsAsFactors = TRUE)
             rownames(fData) <- fData$Features
             featureData <-  methods::new("AnnotatedDataFrame", data=fData)
             
             #create expression set
-            ES <- Biobase::ExpressionSet(assayData=Eset, phenoData=phenoData, featureData=featureData)
+            ES <- Biobase::ExpressionSet(assayData=Eset, 
+                                         phenoData=phenoData, 
+                                         featureData=featureData)
             
           }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
             
@@ -657,14 +771,19 @@ CaDrA_Server <- function(id){
             
           }else{
             
-            error_message("Incorrect file format. Please check your file again.")
+            error_message("Incorrect file format. Please check your file.")
             return(NULL)
             
           }
           
         }
         
-        if(input$dataset == "Import Data" | (input$dataset == "BRCA_GISTIC_MUT_SIG" & input$BRCA_GISTIC_MUT_SIG_scores == "Import Data") | (input$dataset == "CCLE_MUT_SCNA" & input$CCLE_MUT_SCNA_scores == "Import Data") | (input$dataset == "sim.ES" & input$sim.ES_scores == "Import Data")){
+        if(input$dataset == "Import Data" | 
+           (input$dataset == "BRCA_GISTIC_MUT_SIG" & 
+            input$BRCA_GISTIC_MUT_SIG_scores == "Import Data") | 
+           (input$dataset == "CCLE_MUT_SCNA" & 
+            input$CCLE_MUT_SCNA_scores == "Import Data") | 
+           (input$dataset == "sim.ES" & input$sim.ES_scores == "Import Data")){
           
           inputfile <- input$input_score_file;
           inputtype <- input$input_score_file_type;
@@ -674,12 +793,21 @@ CaDrA_Server <- function(id){
             return(NULL)
           }
           
-          csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-          rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+          csv_ext <-  grep(toupper(".csv"), 
+                           toupper(substr(inputfile$datapath, 
+                                          nchar(inputfile$datapath)-4, 
+                                          nchar(inputfile$datapath))), 
+                           fixed = TRUE)
+          rds_ext <-  grep(toupper(".rds"), 
+                           toupper(substr(inputfile$datapath, 
+                                          nchar(inputfile$datapath)-4, 
+                                          nchar(inputfile$datapath))), 
+                           fixed = TRUE)
           
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
-            dat <- read.csv(inputfile$datapath, header = TRUE, check.names = FALSE)
+            dat <- read.csv(inputfile$datapath, header = TRUE, 
+                            check.names = FALSE)
             input_score <- as.numeric(dat$Scores)
             names(input_score) <- as.character(dat$Samples)
             
@@ -691,7 +819,7 @@ CaDrA_Server <- function(id){
             
           }else{
             
-            error_message("Incorrect file format. Please check your file again.")
+            error_message("Incorrect file format. Please check your file.")
             return(NULL)
             
           }
@@ -724,7 +852,8 @@ CaDrA_Server <- function(id){
         
         #print(sprintf("maximum cutoff: %s", max_cutoff))
         
-        if(is.na(max_cutoff) || length(max_cutoff)==0 || max_cutoff <= 0 || max_cutoff > 100){
+        if(is.na(max_cutoff) || length(max_cutoff)==0 || 
+           max_cutoff <= 0 || max_cutoff > 100){
           
           error_message("Please specify a value for Maximum Percent Cutoff between 1 to 100\n")
           return(NULL)
@@ -776,12 +905,14 @@ CaDrA_Server <- function(id){
         }
         
         # Check input_score is provided and are continuous values with no NAs
-        if(length(input_score) == 0 || any(!is.numeric(input_score)) || any(is.na(input_score))){
+        if(length(input_score) == 0 || any(!is.numeric(input_score)) || 
+           any(is.na(input_score))){
           error_message("input_score must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix.\n")
           return(NULL)
         }
         
-        # Make sure the input_score has names or labels that are the same as the colnames of ES
+        # Make sure the input_score has names or labels that are 
+        # the same as the colnames of ES
         if(is.null(names(input_score))){
           error_message("The input_score object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
           return(NULL)
@@ -823,12 +954,21 @@ CaDrA_Server <- function(id){
               return(NULL)
             }
             
-            csv_ext <-  grep(toupper(".csv"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
-            rds_ext <-  grep(toupper(".rds"), toupper(substr(inputfile$datapath, nchar(inputfile$datapath)-4, nchar(inputfile$datapath))), fixed = TRUE)
+            csv_ext <-  grep(toupper(".csv"), 
+                             toupper(substr(inputfile$datapath, 
+                                            nchar(inputfile$datapath)-4, 
+                                            nchar(inputfile$datapath))), 
+                             fixed = TRUE)
+            rds_ext <-  grep(toupper(".rds"), 
+                             toupper(substr(inputfile$datapath, 
+                                            nchar(inputfile$datapath)-4, 
+                                            nchar(inputfile$datapath))), 
+                             fixed = TRUE)
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE)
+              dat <- read.csv(inputfile$datapath, header=TRUE, 
+                              check.names = FALSE)
               weights <- as.numeric(dat$Weights)
               names(weights) <- as.character(dat$Samples)
               
@@ -846,18 +986,21 @@ CaDrA_Server <- function(id){
             }
             
             # Check weights is provided and are continuous values with no NAs
-            if(length(weights) == 0 || any(!is.numeric(weights)) || any(is.na(weights))){
+            if(length(weights) == 0 || any(!is.numeric(weights)) || 
+               any(is.na(weights))){
               error_message("weights must be a vector of continous values (with no NAs) where the vector names match the colnames of the expression matrix.\n")
               return(NULL)
             }
             
-            # Make sure the weights has names or labels that are the same as the colnames of ES
+            # Make sure the weights has names or labels that are 
+            # the same as the colnames of ES
             if(is.null(names(weights))){
               error_message("The weights object must have names or labels to track the samples by. Please provide unique sample names or labels that matches the colnames of the expression matrix.\n")
               return(NULL)
             }
             
-            # Make sure the weights has the same length as number of samples in ES
+            # Make sure the weights has the same length as 
+            # number of samples in ES
             if(length(weights) != ncol(ES)){
               
               error_message("The weights must have the same length as the number of columns in ES.\n")
@@ -917,7 +1060,8 @@ CaDrA_Server <- function(id){
           
         }else{
           
-          search_start <- strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
+          search_start <- strsplit(as.character(input$search_start), ",", 
+                                   fixed=TRUE) %>% unlist() %>% trimws();
           search_start <- search_start[search_start != ""]
           top_N <- NULL
           
@@ -1008,7 +1152,9 @@ CaDrA_Server <- function(id){
         ns <- session$ns
         
         ## Update loading icon ####
-        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
+        session$sendCustomMessage(type = "ToggleOperation", 
+                                  message = list(id=ns("loading_icon"), 
+                                                 display="no"))
         
         if(error_message() != "NONE"){
           p(style="color: red; font-weight: bold;", error_message())
@@ -1027,7 +1173,9 @@ CaDrA_Server <- function(id){
         dataset <- isolate({ input$dataset })
         
         if(dataset %in% c("BRCA_GISTIC_MUT_SIG", "CCLE_MUT_SCNA", "sim.ES")){
-          title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
+          title <- paste0("Dataset: ", 
+                          names(dataset_choices[
+                            which(dataset_choices == dataset)]))
         }else if(dataset == "Import Data"){
           title <- "Dataset: Imported Data"
         }
@@ -1036,7 +1184,8 @@ CaDrA_Server <- function(id){
           h2(title),
           br(),
           p(description),
-          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features Set")
+          downloadButton(outputId = ns("download_featureset"), 
+                         label="Download Filtered Features Set")
         )
         
       })
@@ -1049,7 +1198,8 @@ CaDrA_Server <- function(id){
         
         content = function(file) {
           
-          Eset_table <- feature_set_data() %>% as.data.frame(.) %>% rownames_to_column(var="Features")
+          Eset_table <- feature_set_data() %>% as.data.frame(.) %>% 
+            rownames_to_column(var="Features")
           
           write.csv(Eset_table, file, row.names=FALSE)
           
@@ -1122,9 +1272,11 @@ CaDrA_Server <- function(id){
         shiny::showModal(
           shiny::modalDialog(
             title = "Download Best Meta-Features Set",
-            downloadButton(outputId = ns("downloadEsetCSV"), "Download Table as CSV file"),
+            downloadButton(outputId = ns("downloadEsetCSV"), 
+                           "Download Table as CSV file"),
             br(), br(),
-            downloadButton(outputId = ns("downloadEsetRDS"), "Download Table as RDS file"),
+            downloadButton(outputId = ns("downloadEsetRDS"), 
+                           "Download Table as RDS file"),
           )
         )
         
@@ -1141,7 +1293,9 @@ CaDrA_Server <- function(id){
           
           topn_best_meta <- topn_best(topn_list=candidate_search_result())
           
-          Eset_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.) %>% tibble::rownames_to_column(., var="Features")
+          Eset_table <- topn_best_meta[["ESet"]] %>% 
+            exprs(.) %>% as.data.frame(.) %>% 
+            tibble::rownames_to_column(., var="Features")
           
           write.csv(Eset_table, file, row.names=FALSE)
           
@@ -1182,7 +1336,8 @@ CaDrA_Server <- function(id){
           scores <- isolate({ input$sim.ES_scores })
         }
         
-        if(scores %in% c("TAZYAP_BRCA_ACTIVITY", "CTNBB1_reporter", "sim.Scores")){
+        if(scores %in% c("TAZYAP_BRCA_ACTIVITY", 
+                         "CTNBB1_reporter", "sim.Scores")){
           title <- names(score_choices[which(score_choices == scores)])
         }else{
           title <- "Imported Data"
@@ -1200,7 +1355,10 @@ CaDrA_Server <- function(id){
         
         Scores <- input_score_data() %>% signif(., digits = 4)
         
-        score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=TRUE, dimnames=list("input_score", names(Scores)))
+        score_table <- matrix(Scores, nrow=1, 
+                              ncol=length(Scores), 
+                              byrow=TRUE, 
+                              dimnames=list("input_score", names(Scores)))
         
         hover_columns <- create_hover_txt(table = score_table)
         
@@ -1249,9 +1407,11 @@ CaDrA_Server <- function(id){
         shiny::showModal(
           shiny::modalDialog(
             title = "Download Observed Input Scores",
-            downloadButton(outputId = ns("downloadScoreCSV"), "Download Table as CSV file"),
+            downloadButton(outputId = ns("downloadScoreCSV"), 
+                           "Download Table as CSV file"),
             br(), br(),
-            downloadButton(outputId = ns("downloadScoreRDS"), "Download Table as RDS file"),
+            downloadButton(outputId = ns("downloadScoreRDS"), 
+                           "Download Table as RDS file"),
           )
         )
         
@@ -1331,7 +1491,8 @@ CaDrA_Server <- function(id){
           div(
             h2("Top N Overlapping Heatmap"),
             br(),
-            h4(style="color: red; font-weight: bold;", "NOTE: Cannot plot overlap matrix with provided top N seed = 1 or the number of provided feature names = 1.")
+            h4(style="color: red; font-weight: bold;", 
+               "NOTE: Cannot plot overlap matrix with provided top N seed = 1 or the number of provided feature names = 1.")
           )
           
         }else{

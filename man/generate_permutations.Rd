@@ -7,14 +7,18 @@
 generate_permutations(ord, n_perms, verbose = FALSE)
 }
 \arguments{
-\item{ord}{vector to be permuted. This determines the number of columns in the permutation matrix}
+\item{ord}{vector to be permuted. This determines the number of columns 
+in the permutation matrix}
 
-\item{n_perms}{number of permutations to generate. This determines the number of rows in the permutation matrix}
+\item{n_perms}{number of permutations to generate. This determines 
+the number of rows in the permutation matrix}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-A row matrix of permuted values (i.e. ranks) where each row is a single permutation result
+A row matrix of permuted values (i.e. ranks) where each row is a 
+single permutation result
 }
 \description{
 Produces a random permutation rank matrix given a vector of values

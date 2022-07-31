@@ -23,41 +23,75 @@ candidate_search(
 )
 }
 \arguments{
-\item{ES}{an expression set of binary features (required). It must be a \code{BioBase ExpressionSet} object. The rownames of the expression set must contain unique features which are used in the search.}
+\item{ES}{an expression set of binary features (required). It must be a 
+\code{BioBase ExpressionSet} object. The rownames of the expression set must 
+contain unique features which are used in the search.}
 
-\item{input_score}{a vector of continuous scores of a functional response of interest (required). The \code{input_score} must have names or labels that matches the colnames of the expression matrix.}
+\item{input_score}{a vector of continuous scores of a functional response of 
+interest (required). The \code{input_score} must have names or labels that 
+matches the colnames of the expression matrix.}
 
-\item{method}{a character string specifies a the scoring function that is used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized scoring method)). Default is \code{ks}.}
+\item{method}{a character string specifies a the scoring function that is 
+used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or 
+\code{"revealer"} (conditional mutual information from REVEALER) or 
+\code{"custom"} (a customized scoring method)). Default is \code{ks}.}
 
-\item{custom_function}{if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.}
+\item{custom_function}{if method is \code{"custom"}, specifies 
+the customized function here. Default is \code{NULL}.}
 
-\item{custom_parameters}{if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.}
+\item{custom_parameters}{if method is \code{"custom"}, specifies a list of 
+arguments to be passed to the custom_function(). Default is \code{NULL}.}
 
-\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
+\item{alternative}{a character string specifies an alternative hypothesis 
+testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to search for best features. \code{"pval"} or \code{"stat"} may be used which corresponding to p-value or score statistic. Default is \code{pval}. Note: \code{Revealer} method only utilized score statistics values (no p-value).}
+\item{metric}{a character string specifies a metric to search 
+for best features. \code{"pval"} or \code{"stat"} may be used which 
+corresponding to p-value or score statistic. Default is \code{pval}. 
+Note: \code{Revealer} method only utilized score statistics values 
+(no p-value).}
 
-\item{weights}{if method is \code{ks}, specifies a vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weights}{if method is \code{ks}, specifies a vector of weights 
+will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{search_start}{a list of character strings (separated by commas) which specifies feature names within the expression set object to start the search with. Default is \code{NULL}.}
+\item{search_start}{a list of character strings (separated by commas) 
+which specifies feature names within the expression set object to start 
+the search with. Default is \code{NULL}.}
 
-\item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.}
+\item{top_N}{an integer specifies the number of features to start the 
+search over, starting from the top 'N' features in each case. Default is 
+\code{1}.}
 
-\item{search_method}{a character string specifies an algorithm to filter out the best features (\code{"forward"} or \code{"both"}). Default is \code{both} (i.e. backward and forward).}
+\item{search_method}{a character string specifies an algorithm to filter 
+out the best features (\code{"forward"} or \code{"both"}). Default is 
+\code{both} (i.e. backward and forward).}
 
-\item{max_size}{an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.}
+\item{max_size}{an integer specifies a maximum size that a meta-feature 
+can extend to do for a given search. Default is \code{7}.}
 
-\item{best_score_only}{a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.}
+\item{best_score_only}{a logical value indicates whether or not the 
+function should return only the score corresponding to the search results. 
+Default is \code{FALSE}.}
 
-\item{do_plot}{a logical value indicates whether or not to plot the resulting evaluation matrix. Default is \code{TRUE}.}
+\item{do_plot}{a logical value indicates whether or not to plot the 
+resulting evaluation matrix. Default is \code{TRUE}.}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, the function returns a list object with the score corresponding to the union of the search meta-feature. If \code{best_score_only} is set to \code{FALSE}, a list containing the ES object (pertaining to the returned meta-feature) as well as its corresponding score and observed input scores are returned.
+If \code{best_score_only} is set to \code{TRUE}, the function 
+returns a list object with the score corresponding to the union of the 
+search meta-feature. If \code{best_score_only} is set to \code{FALSE}, 
+a list containing the ES object (pertaining to the returned meta-feature) 
+as well as its corresponding score and observed input scores are returned.
 }
 \description{
-Performs heuristic search on a set of binary features to determine whether there are features whose union is more skewed (enriched at the extremes) than either features alone. This is the main functionality of the CaDrA package.
+Performs heuristic search on a set of binary features to determine whether 
+there are features whose union is more skewed (enriched at the extremes) 
+than either features alone. This is the main functionality of the CaDrA 
+package.
 }
 \examples{
 
@@ -71,7 +105,8 @@ data(sim.ES)
 set.seed(123)
 
 # Provide a vector of continuous scores for a target profile 
-# The scores must have labels or names that match the colnames of expression matrix
+# The scores must have labels or names that match the colnames of 
+# expression matrix
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 

@@ -3,11 +3,15 @@
 #'
 #' @param x an integer ranked values for group 1
 #' @param y an integer ranked values for group 2
-#' @param mu a number uses as an optional parameter to form a null hypothesis. Default is \code{0}.
-#' @param alternative alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.
+#' @param mu a number uses as an optional parameter to form a null hypothesis. 
+#' Default is \code{0}.
+#' @param alternative alternative hypothesis for p-value calculation 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' Default is \code{less} for left-skewed significance testing.
 #' @param paired whether to perform paired test. Default is \code{FALSE}.
 #' @param exact whether to compute exact p-value. Default is \code{FALSE}.
-#' @param correct whether to consider continuity correction for p-value. Default is \code{TRUE}.
+#' @param correct whether to consider continuity correction for p-value. 
+#' Default is \code{TRUE}.
 #' 
 #' @examples 
 #' 
@@ -21,7 +25,8 @@
 #' set.seed(123)
 #' 
 #' # Provide a vector of continuous scores for a target profile 
-#' # The scores must have labels or names that match the colnames of expression matrix
+#' # The scores must have labels or names 
+#' # that match the colnames of expression matrix
 #' input_score = rnorm(n = ncol(sim.ES))
 #' names(input_score) <- colnames(sim.ES)
 #' 
@@ -42,7 +47,8 @@
 #' 
 #' # Compute the wilcox rank sum statitic and p-value per row in the matrix
 #' wilcox <- apply(X=mat, MARGIN=1, function(x, r=ranks){
-#'  wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], alternative=alternative) 
+#'  wilcox_genescore(x=r[which(x==1)], y=r[which(x==0)], 
+#'  alternative=alternative) 
 #' })
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
@@ -84,7 +90,8 @@ wilcox_genescore <- function
   METHOD <- "Wilcoxon rank sum test"
   
   ##### Modification ######
-  # Take input as ranks instead of continuous measures (normally internally ranked: see below)
+  # Take input as ranks instead of continuous measures 
+  # (normally internally ranked: see below)
   r <- c(x,y)
   
   #r <- rank(c(x - mu, y))
@@ -101,7 +108,9 @@ wilcox_genescore <- function
   if (exact && !TIES) {
     
     PVAL <- switch(alternative, two.sided = {
-      p <- if (STATISTIC > (n.x * n.y/2)) pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE) else pwilcox(STATISTIC, n.x, n.y)
+      p <- if (STATISTIC > (n.x * n.y/2)) 
+        pwilcox(STATISTIC - 1, n.x, n.y, 
+                lower.tail = FALSE) else pwilcox(STATISTIC, n.x, n.y)
       min(2 * p, 1)
     }, greater = {
       pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
@@ -111,7 +120,9 @@ wilcox_genescore <- function
     
     NTIES <- table(r)
     z <- STATISTIC - n.x * n.y/2
-    SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - sum(NTIES^3 - NTIES)/((n.x + n.y) * (n.x + n.y - 1))))
+    SIGMA <- sqrt((n.x * n.y/12) * ((n.x + n.y + 1) - 
+                                      sum(NTIES^3 - NTIES)/
+                                      ((n.x + n.y) * (n.x + n.y - 1))))
     
     if (correct) {
       CORRECTION <- switch(alternative, two.sided = sign(z) * 
@@ -121,7 +132,10 @@ wilcox_genescore <- function
     
     z <- (z - CORRECTION)/SIGMA
     
-    PVAL <- switch(alternative, less = pnorm(z), greater = pnorm(z, lower.tail = FALSE), two.sided = 2 * min(pnorm(z), pnorm(z, lower.tail = FALSE)))
+    PVAL <- switch(alternative, less = pnorm(z), 
+                   greater = pnorm(z, lower.tail = FALSE), 
+                   two.sided = 2 * min(pnorm(z), 
+                                       pnorm(z, lower.tail = FALSE)))
     
     if (exact && TIES) 
       warning("cannot compute exact p-value with ties")
@@ -130,7 +144,8 @@ wilcox_genescore <- function
   
   names(mu) <- ifelse (paired || !is.null(y), "location shift", "location") 
   
-  RVAL <- list(statistic = STATISTIC, parameter = NULL, p.value = as.numeric(PVAL), 
+  RVAL <- list(statistic = STATISTIC, 
+               parameter = NULL, p.value = as.numeric(PVAL), 
                null.value = mu, alternative = alternative, method = METHOD, 
                data.name = DNAME)
   

@@ -16,21 +16,30 @@ revealer_genescore_mat(
 \arguments{
 \item{mat}{a matrix of binary features (required)}
 
-\item{input_score}{a vector of continuous scores of a response of interest (required). \code{input_score} must have labels or names that associated with the colnames of the feature matrix.}
+\item{input_score}{a vector of continuous scores of a response of interest 
+(required). \code{input_score} must have labels or names that associated 
+with the colnames of the feature matrix.}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match higher values of \code{input_score}, \code{"negative"} to match lower values of \code{input_score}. Default is \code{positive}.}
+\item{target_match}{a direction of target matching (\code{"negative"} or 
+\code{"positive"}). Use \code{"positive"} to match higher values of 
+\code{input_score}, \code{"negative"} to match lower values of 
+\code{input_score}. Default is \code{positive}.}
 
-\item{seed_names}{one or more features that are associated with the activation of a response of interest (i.e. \code{input_score})}
+\item{seed_names}{one or more features that are associated with the 
+activation of a response of interest (i.e. \code{input_score})}
 
-\item{assoc_metric}{an association metric: \code{"IC"} for information coefficient or \code{"COR"} for correlation. Default is \code{IC}.}
+\item{assoc_metric}{an association metric: \code{"IC"} for information 
+coefficient or \code{"COR"} for correlation. Default is \code{IC}.}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 a data frame with one column: \code{score}
 }
 \description{
-Compute conditional mutual information of \code{x} and \code{y} given \code{z} for each row of a given binary feature matrix
+Compute conditional mutual information of \code{x} and \code{y} 
+given \code{z} for each row of a given binary feature matrix
 }
 \examples{
 
@@ -44,12 +53,13 @@ data(sim.ES)
 set.seed(123)
 
 # Provide a vector of continuous scores for a target profile
-input_score = rnorm(n = ncol(sim.ES))
+input_score <- rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
 # Define additional parameters and start the function
 revealer_genescore_result <- revealer_genescore_mat(
-  mat = exprs(sim.ES), input_score = input_score, target_match = "positive", assoc_metric = "IC"
+  mat = exprs(sim.ES), input_score = input_score, 
+  target_match = "positive", assoc_metric = "IC"
 )
  
 }

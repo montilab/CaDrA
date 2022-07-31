@@ -17,5 +17,6 @@ ks_genescore_mat(mat, alt = "less", weight)
 Two lists: score and p-value
 }
 \description{
-Compute directional Kolmogorov-Smirnov scores for each row of a given binary matrix
+Compute directional Kolmogorov-Smirnov scores for each row of a 
+given binary matrix
 }

@@ -14,17 +14,25 @@ wilcox_genescore_mat(
 \arguments{
 \item{mat}{a matrix of binary features (required).}
 
-\item{ranks}{a vector of sample rankings use to perform the \code{Wilcoxon test}. Default is \code{NULL}. If NULL, then samples are assumed to be ordered by increasing rankings. If not NULL, ranks must include labels or names that associated with the colnames of the feature matrix.}
+\item{ranks}{a vector of sample rankings use to perform the 
+\code{Wilcoxon test}. Default is \code{NULL}. If NULL, 
+then samples are assumed to be ordered by increasing rankings. 
+If not NULL, ranks must include labels or names that associated 
+with the colnames of the feature matrix.}
 
-\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
+\item{alternative}{a character string specifies an alternative 
+hypothesis testing (\code{"two.sided"} or \code{"greater"} or 
+\code{"less"}). Default is \code{less} for left-skewed significance testing.}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to 
+print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 A data frame with two columns: \code{score} and \code{p_value}
 }
 \description{
-Compute directional Wilcoxon rank sum score for each row of a given binary matrix
+Compute directional Wilcoxon rank sum score for each row of a 
+given binary matrix
 }
 \examples{
 

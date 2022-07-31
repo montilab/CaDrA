@@ -42,10 +42,10 @@ data(sim.ES)
 set.seed(123)
 
 # Extract the expression matrix
-mat = exprs(sim.ES)
+mat <- exprs(sim.ES)
 
 # Provide a vector of continuous scores for a target profile
-input_score = rnorm(n = ncol(sim.ES))
+input_score <- rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
 cmi <- seq_len(nrow(mat)) \%>\% 

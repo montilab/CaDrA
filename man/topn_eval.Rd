@@ -22,40 +22,72 @@ topn_eval(
 )
 }
 \arguments{
-\item{ES}{an expression set of binary features (required). It must be a BioBase expressionSet object. The rownames of the expression set must contain unique features which are used in the search.}
+\item{ES}{an expression set of binary features (required). It must be a 
+BioBase expressionSet object. The rownames of the expression set must 
+contain unique features which are used in the search.}
 
-\item{input_score}{a vector of continuous values for a target profile (required). The input_score must have names or labels that matches the colnames of the expression matrix.}
+\item{input_score}{a vector of continuous values for a target profile 
+(required). The input_score must have names or labels that matches the 
+colnames of the expression matrix.}
 
-\item{method}{a character string specifies a method to compute the score for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} (conditional mutual information from REVEALER) or \code{"custom"} (a customized method)). Default is \code{ks}.}
+\item{method}{a character string specifies a method to compute the score 
+for each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} 
+(conditional mutual information from REVEALER) or \code{"custom"} 
+(a customized method)). Default is \code{ks}.}
 
-\item{custom_function}{if method is \code{"custom"}, specifies the customized function here. Default is \code{NULL}.}
+\item{custom_function}{if method is \code{"custom"}, specifies the 
+customized function here. Default is \code{NULL}.}
 
-\item{custom_parameters}{if method is \code{"custom"}, specifies a list of arguments to be passed to the custom_function(). Default is \code{NULL}.}
+\item{custom_parameters}{if method is \code{"custom"}, specifies 
+a list of arguments to be passed to the custom_function(). 
+Default is \code{NULL}.}
 
-\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
+\item{alternative}{a character string specifies an alternative 
+hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to use for candidate search criteria. \code{"pval"} or \code{"stat"} may be used, corresponding to the score p-value or statistic. Default is \code{pval}.}
+\item{metric}{a character string specifies a metric to use for 
+candidate search criteria. \code{"pval"} or \code{"stat"} may be used, 
+corresponding to the score p-value or statistic. Default is \code{pval}.}
 
-\item{weights}{a vector of weights use to perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weights}{a vector of weights use to perform a weighted-KS testing. 
+Default is \code{NULL}.}
 
-\item{top_N}{an integer specifies the number of features to start the search over, starting from the top 'N' features in each case. Default is \code{1}.}
+\item{top_N}{an integer specifies the number of features to start 
+the search over, starting from the top 'N' features in each case. 
+Default is \code{1}.}
 
-\item{search_method}{a character string specifies a method to filter out the best candidates (\code{"forward"} or \code{"both"}). Default is \code{both} (backward and forward).}
+\item{search_method}{a character string specifies a method to filter out 
+the best candidates (\code{"forward"} or \code{"both"}). 
+Default is \code{both} (backward and forward).}
 
-\item{max_size}{an integer specifies a maximum size that a meta-feature can extend to do for a given search. Default is \code{7}.}
+\item{max_size}{an integer specifies a maximum size that a meta-feature can 
+extend to do for a given search. Default is \code{7}.}
 
-\item{best_score_only}{a logical value indicates whether or not the function should return only the score corresponding to the search results. Default is \code{FALSE}.}
+\item{best_score_only}{a logical value indicates whether or not the 
+function should return only the score corresponding to the search results. 
+Default is \code{FALSE}.}
 
-\item{do_plot}{a logical value indicates whether or not to plot the resulting evaluation matrix. Default is \code{TRUE}.}
+\item{do_plot}{a logical value indicates whether or not to plot 
+the resulting evaluation matrix. Default is \code{TRUE}.}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print 
+the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-By default, this function will return a list of lists, where each list entry is one that is returned by the candidate search for a given starting index (See \code{candidate_search()}). If \code{best_score_only} is set to \code{TRUE}, only the best score over the top N space is returned (useful for permutation-based testing)
-1's and 0's represent whether a feature in any given row is present in a meta-feature along with a starting feature in the corresponding column.
+By default, this function will return a list of lists, 
+where each list entry is one that is returned by the candidate search 
+for a given starting index (See \code{candidate_search()}). 
+If \code{best_score_only} is set to \code{TRUE}, only the best score over 
+the top N space is returned (useful for permutation-based testing)
+1's and 0's represent whether a feature in any given row is present 
+in a meta-feature along with a starting feature in the corresponding column.
 }
 \description{
-Generates and evaluates candidate search results for the top 'N' starting indices, checking for overlapping resulting features from each case. This function is mainly used to evaluate search results over the top 'N' best starting features for a given dataset.
+Generates and evaluates candidate search results for the top 'N' starting 
+indices, checking for overlapping resulting features from each case. 
+This function is mainly used to evaluate search results over the top 'N' 
+best starting features for a given dataset.
 }
 \examples{
 
@@ -68,7 +100,8 @@ data(sim.ES)
 # set seed
 set.seed(123)
 
-# Provide a vector of continuous scores for a target profile with names to each score value 
+# Provide a vector of continuous scores for a target 
+# profile with names to each score value 
 input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 

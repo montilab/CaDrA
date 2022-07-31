@@ -1,16 +1,20 @@
 #' Permutation Results
 #'
 #' A list of objects returned from \code{CaDrA()} when it runs
-#' on simulated dataset (\code{ES = sim.ES}) with \code{input_score = ncol(sim.ES):1} and \code{method = "ks"}. 
+#' on simulated dataset (\code{ES = sim.ES}) with 
+#' \code{input_score = ncol(sim.ES):1} and \code{method = "ks"}. 
 #'
 #' @docType data
 #'
 #' @usage data(perm.res)
 #'
 #' @format A list of objects returned from \code{CaDrA()}
-#' containing top_N value, search_start value, permutation best scores across n_perm, permutation p-value and observed best score. 
-#' The resulting list can be used to visualize the NULL permutation distribution by passing it to \code{\link[CaDrA]{permutation_plot}}
-#' See \code{\link[CaDrA]{CaDrA}} and \code{\link[CaDrA]{permutation_plot}} more details. 
+#' containing top_N value, search_start value, permutation best scores across 
+#' n_perm, permutation p-value and observed best score. 
+#' The resulting list can be used to visualize the NULL permutation distribution 
+#' by passing it to \code{\link[CaDrA]{permutation_plot}}
+#' See \code{\link[CaDrA]{CaDrA}} and \code{\link[CaDrA]{permutation_plot}} 
+#' more details. 
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2017) CaDrA: A computational framework for performing 

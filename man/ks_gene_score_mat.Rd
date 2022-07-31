@@ -12,13 +12,19 @@ ks_gene_score_mat(
 )
 }
 \arguments{
-\item{mat}{a matrix of binary features to compute row-wise scores based on the \code{Kolmogorov-Smirnov} test.}
+\item{mat}{a matrix of binary features to compute row-wise scores based on 
+the \code{Kolmogorov-Smirnov} test.}
 
-\item{weights}{a vector of weights to perform a \code{weighted-KS} test. Default is \code{NULL}. If not NULL, weights must include labels or names that associated with the colnames of the feature matrix.}
+\item{weights}{a vector of weights to perform a \code{weighted-KS} test. 
+Default is \code{NULL}. If not NULL, weights must include labels or names 
+that associated with the colnames of the feature matrix.}
 
-\item{alternative}{a character string specifies an alternative hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). Default is \code{less} for left-skewed significance testing.}
+\item{alternative}{a character string specifies an alternative hypothesis 
+testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+Default is \code{less} for left-skewed significance testing.}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 A data frame with two columns: \code{score} and \code{p_value}

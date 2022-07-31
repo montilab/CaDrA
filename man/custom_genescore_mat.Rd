@@ -13,21 +13,37 @@ custom_genescore_mat(
 )
 }
 \arguments{
-\item{mat}{a matrix of binary features (required). \code{NOTE:} The provided \code{mat} along with \code{input_score} and \code{custom_parameters} will be passed as arguments to custom_function() which is later used to compute row-wise scoring for each row of a given binary feature.}
+\item{mat}{a matrix of binary features (required). \code{NOTE:} 
+The provided \code{mat} along with \code{input_score} and 
+\code{custom_parameters} will be passed as arguments to custom_function() 
+which is later used to compute row-wise scoring for each row of 
+a given binary feature.}
 
-\item{input_score}{a vector of continuous values for a response of interest (required). \code{input_score} must include labels or names that associated with the colnames of the binary feature matrix. \code{NOTE:} \code{input_score} will be passed as one of the arguments to custom_function().}
+\item{input_score}{a vector of continuous values for a response of interest 
+(required). \code{input_score} must include labels or names that associated 
+with the colnames of the binary feature matrix. \code{NOTE:} 
+\code{input_score} will be passed as one of the arguments 
+to custom_function().}
 
-\item{custom_function}{a customized function to perform row-wise scoring for each row of a given binary feature matrix (required). \code{NOTE:} This function must return a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}.}
+\item{custom_function}{a customized function to perform row-wise scoring 
+for each row of a given binary feature matrix (required). \code{NOTE:} 
+This function must return a data frame with one or two columns: 
+\code{score} or \code{p_value} or \code{both}.}
 
-\item{custom_parameters}{a list of additional arguments to be passed to the custom_function() (exluding \code{mat} and \code{input_score} parameters).}
+\item{custom_parameters}{a list of additional arguments to be passed to 
+the custom_function() (exluding \code{mat} and \code{input_score} 
+parameters).}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-a data frame with one or two columns: \code{score} or \code{p_value} or \code{both}
+a data frame with one or two columns: \code{score} or 
+\code{p_value} or \code{both}
 }
 \description{
-Compute row-wise scoring for each row of a given binary feature matrix using a custom-defined function
+Compute row-wise scoring for each row of a given binary feature matrix 
+using a custom-defined function
 }
 \examples{
 
@@ -40,7 +56,8 @@ customized_genescore_mat <- function(mat, input_score, alternative){
     purrr::map_dfr(
       function(r){ 
         feature = mat[r,];
-        x = input_score[which(feature==1)]; y = input_score[which(feature==0)];
+        x = input_score[which(feature==1)]; 
+        y = input_score[which(feature==0)];
         res <- ks.test(x, y, alternative=alternative)
         return(data.frame(score=res$statistic, p_value=res$p.value))
    })
@@ -49,7 +66,7 @@ customized_genescore_mat <- function(mat, input_score, alternative){
 # Load pre-computed expression set
 data(sim.ES)
 
-mat = exprs(sim.ES)
+mat <- exprs(sim.ES)
 
 # set seed
 set.seed(123)

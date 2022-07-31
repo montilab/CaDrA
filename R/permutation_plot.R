@@ -1,9 +1,12 @@
 
 #' Permutation Best Scores Plot
 #' 
-#' Plot the Empirical Null Distribution of Permutation Best Scores of \code{n_perm}
+#' Plot the Empirical Null Distribution of Permutation Best Scores of 
+#' \code{n_perm}
 #' 
-#' @param permutation_results a list of objects returned from the cadra_search() using the simulated dataset (\code{sim.ES}) and random generated \code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123). 
+#' @param permutation_results a list of objects returned from the cadra_search() 
+#' using the simulated dataset (\code{sim.ES}) and random generated 
+#' \code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123). 
 #' 
 #' @return a density plot
 #' @examples
@@ -26,7 +29,12 @@ permutation_plot <- function(permutation_results){
   perm_pval <- permutation_results[["perm_pval"]]
   obs_best_score <- permutation_results[["obs_best_score"]]
   
-  plot_title <- paste("Emperical Null distribution (N = ", length(perm_best_scores), ")\n Permutation p-val <= ", round(perm_pval, 5), "\nBest observed score: ", round(obs_best_score, 5), sep="")
+  plot_title <- paste("Emperical Null distribution (N = ", 
+                      length(perm_best_scores), 
+                      ")\n Permutation p-val <= ", 
+                      round(perm_pval, 5), 
+                      "\nBest observed score: ", 
+                      round(obs_best_score, 5), sep="")
   
   if(!is.null(top_N)){
     plot_title <- paste(plot_title,"\n Top N: ", top_N, sep="")
@@ -34,10 +42,9 @@ permutation_plot <- function(permutation_results){
     plot_title <- paste(plot_title,"\n Seed: ", search_start, sep="")
   }
   
-  #Here, let us plot the absolute values of the permutation p-values, for simplicity
+  # Here, let us plot the absolute values of the permutation p-values, 
+  # for simplicity
   #You only consider absolute values when calculating the permutation p-values
-  #Katia: adding ".data" to avoid a warning during check:
-  # no visible binding for global variable 
   g <- ggplot(data = data.frame("x" = perm_best_scores), aes(x = .data$x)) +
     geom_histogram(fill = "black", color = "gray") +
     theme_classic() +
@@ -46,7 +53,8 @@ permutation_plot <- function(permutation_results){
       axis.line.y=element_line(color = "black")
     )
   
-  g <- g + geom_vline(xintercept = obs_best_score, linetype = "longdash", size = 1.5, colour = "red") +
+  g <- g + geom_vline(xintercept = obs_best_score, linetype = "longdash", 
+                      size = 1.5, colour = "red") +
     labs(
       title = plot_title,
       x = "Score",

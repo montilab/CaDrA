@@ -7,24 +7,36 @@
 prefilter_data(ES, max.cutoff = 0.6, min.cutoff = 0.03, verbose = FALSE)
 }
 \arguments{
-\item{ES}{an expression set object containing binary features used for step-wise search}
+\item{ES}{an expression set object containing binary features used for 
+step-wise search}
 
-\item{max.cutoff}{a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset above which the feature will be filtered out. Default is 0.6 (feature that occur in 60 percent or more of the samples will be removed)}
+\item{max.cutoff}{a numeric value between 0 and 1 describing the absolute 
+prevalence of a feature across all samples in the dataset above which the 
+feature will be filtered out. Default is 0.6 (feature that occur in 
+60 percent or more of the samples will be removed)}
 
-\item{min.cutoff}{a numeric value between 0 and 1 describing the absolute prevalence of a feature across all samples in the dataset below which the feature will be filtered out. Default is 0.03 (feature that occur in 3 percent or less of the samples will be removed)}
+\item{min.cutoff}{a numeric value between 0 and 1 describing the absolute 
+prevalence of a feature across all samples in the dataset below which the 
+feature will be filtered out. Default is 0.03 (feature that occur in 
+3 percent or less of the samples will be removed)}
 
-\item{verbose}{a logical value indicates whether or not to print the diagnostic messages. Default is \code{FALSE}.}
+\item{verbose}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-An expression set object with only the filtered-in features given the filter thresholds specified
+An expression set object with only the filtered-in features 
+given the filter thresholds specified
 }
 \description{
-Pre-filter a dataset prior to running step-wise heuristic search in order to avoid testing features that are too prevalent or too sparse across samples in the dataset
+Pre-filter a dataset prior to running step-wise heuristic search in order to 
+avoid testing features that are too prevalent or too sparse across samples in
+the dataset
 }
 \examples{
 data(sim.ES)
 
-# Filter out features having < 3 and > 60\% prevalence across all samples (default)
+# Filter out features having < 3 and > 60\% prevalence across all samples 
+# (default)
 sim.ES.filt1 <- prefilter_data(sim.ES)
 
 # Change the min cut-off to 1\% prevalence, instead of the default 3\%

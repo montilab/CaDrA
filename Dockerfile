@@ -29,11 +29,14 @@ RUN R -e "BiocManager::install('Biobase')"
 # Install the required R packages to run the app
 RUN R -e "install.packages('doParallel', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('plyr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('grid', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('gplots', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('gtable', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('R.cache', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('reshape2', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('magrittr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('purrr', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('stats', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('methods', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('MASS', dependencies=TRUE, repos='http://cran.rstudio.com/')"
@@ -56,10 +59,6 @@ RUN R -e "install.packages('promises', dependencies=TRUE, repos='http://cran.rst
 RUN R -e "install.packages('future', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('cachem', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('ipc', dependencies=TRUE, repos='http://cran.rstudio.com/')"
-
-# Install packages for plumber-api tp docker images
-RUN R -e "install.packages('unix', dependencies=TRUE, repos='http://cran.rstudio.com/')"
-RUN R -e "install.packages('plumber', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 # Install packages for plumber-api tp docker images
 RUN R -e "install.packages('unix', dependencies=TRUE, repos='http://cran.rstudio.com/')"

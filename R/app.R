@@ -5,8 +5,8 @@ create_hover_txt <- function(table){
   column_names <- colnames(table)
   
   th_tr <- lapply(seq_along(column_names), function(l){ 
-    title = column_names[l]
-    name = ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
+    title <- column_names[l]
+    name <- ifelse(nchar(title) > 4, paste0(substr(title, 1, 4), "..."), title)
     th <- sprintf('<th title = "%s">%s</th>\n', title, name) 
   }) %>% purrr::flatten_chr() %>% paste0(., collapse = "")
   
@@ -91,7 +91,8 @@ CaDrA_UI <- function(id)
           height: 400px;
         }
         .loading_text {
-          width: 120px;
+          text-align: center;
+          margin-left: -30px;
         }
         .loader {
           border: 16px solid #f3f3f3;
@@ -310,7 +311,7 @@ CaDrA_UI <- function(id)
             span(
               div(class = "loader"),
               br(),
-              p(class = "loading_text", "Loading...")
+              p(class = "loading_text", "Running Candidate Search...")
             )
           ),
           div(
@@ -331,6 +332,14 @@ CaDrA_UI <- function(id)
           div(
             uiOutput(outputId = ns("topn_plot_title")),
             plotOutput(outputId = ns("topn_plot"))
+          ),
+          div(
+            id = ns("permutation_loading_icon"), class = "loading_div", style="display: none;",
+            span(
+              div(class = "loader"),
+              br(),
+              p(class = "loading_text", "Running Permutation Testings...")
+            )
           ),
           div(
             uiOutput(outputId = ns("permutation_plot_title")),
@@ -415,12 +424,13 @@ CaDrA_UI <- function(id)
 #' # Launch and deploy Shiny app (NOT RUN)
 #' # shiny::runApp(app, host='0.0.0.0', port=3838)
 #'  
-#' @import shiny htmltools Biobase
+#' @import shiny htmltools Biobase parallel
 #' @importFrom tibble column_to_rownames rownames_to_column
 #' @importFrom dplyr mutate_all
 #' @importFrom stats rnorm 
 #' @importFrom utils read.csv write.csv data
 #' @importFrom methods new
+#' @importFrom tools pskill
 #' 
 #' @export 
 CaDrA_Server <- function(id){
@@ -430,12 +440,14 @@ CaDrA_Server <- function(id){
     function(input, output, session) {
       
       # Create reative values
-      stop_process <- reactiveVal(FALSE)
+      rVal <- reactiveValues()
+      rVal$candidate_search_process <- NULL
+      rVal$candidate_search_obs <- NULL
+      rVal$cadra_permutation_process <- NULL
+      rVal$cadra_permutation_obs <- NULL      
       feature_set_description <- reactiveVal()
       feature_set_data <- reactiveVal()
       input_score_data <- reactiveVal()
-      candidate_search_result <- reactiveVal()
-      permutation_result <- reactiveVal()  
       instructions_message <- reactiveVal(TRUE)
       error_message <- reactiveVal()
       
@@ -457,56 +469,43 @@ CaDrA_Server <- function(id){
         )
       })
       output$min_cutoff_tooltip <- renderUI({
-        
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           HTML('<strong>Min Event Frequency (n)</strong>', 
-               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' a feature (e.g., a mutation) must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ≥ 5.\">?</a>')
+               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' a feature (e.g., a mutation) must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ??? 5.\">?</a>')
         }else{
-          HTML('<strong>Min Event Frequency (n)</strong>', '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' a feature (e.g., a mutation) must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ≥ 5.\">?</a>')
+          HTML('<strong>Min Event Frequency (n)</strong>', 
+               '<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Minimum number of \'occurrences\' a feature (e.g., a mutation) must have to be included in the \'Feature Set\`. Features with fewer events than the specified number will be removed.\n\nNOTE: \'Min event frequency\' must be ??? 5.\">?</a>')
         }
       })
       output$max_cutoff_tooltip <- renderUI({
-        
-        HTML(paste0('<strong>Max Event Frequency (%)</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Maximum number (expressed as % of total) of \'occurrences\' a feature (e.g., a mutation) can have to be included in the \'Feature Set\`. Features with a higher percentage of events than the specified number will be removed.\n\nNOTE: \'Max event frequency\' must be ≤90.\">?</a>'))
+        HTML(paste0('<strong>Max Event Frequency (%)</strong> <a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Maximum number (expressed as % of total) of \'occurrences\' a feature (e.g., a mutation) can have to be included in the \'Feature Set\`. Features with a higher percentage of events than the specified number will be removed.\n\nNOTE: \'Max event frequency\' must be ???90.\">?</a>'))
       })
       observeEvent(input$dataset, {
-        
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
           updateNumericInput(session, inputId = "min_cutoff", value = 30)
         }else {
           updateNumericInput(session, inputId = "min_cutoff", value = 5)
         }
       })
-      observeEvent(input$stop_cadra, {
-        
-        ns <- session$ns
-        
-        shiny::invalidateLater(300, session)
-        stop_process(TRUE)
-        error_message("Your process has been interrupted")
-        
-        ## Whether to display loading icon ####
-        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
-      }) 
+      #
+      # Start the process
+      #    
       observeEvent(input$run_cadra, {
         
         ns <- session$ns
         
-        shiny::invalidateLater(300, session)
+        if(!is.null(rVal$candidate_search_process))
+          return()
         
-        if(stop_process()){         
-          return(NULL); 
-        }
-        stop_process(FALSE)
+        rVal$cadra_permutation_result <- NULL
+        rVal$candidate_search_result <- NULL
         feature_set_description(NULL)
         feature_set_data(NULL)
         input_score_data(NULL)
-        candidate_search_result(NULL)
-        permutation_result(NULL) 
         instructions_message(FALSE)
         error_message(NULL)
         
-        ## Update connectivity option ####
+        ## Show loading icon ####
         session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="yes"))
         
         if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
@@ -551,7 +550,7 @@ CaDrA_Server <- function(id){
             
           if(input$sim.ES_scores == "sim.Scores"){
             utils::data("sim.Scores", envir = environment())
-            input_score = get("sim.Scores", envir = environment())
+            input_score <- get("sim.Scores", envir = environment())
           }
         }
         if(input$dataset == "Import Data"){
@@ -569,7 +568,7 @@ CaDrA_Server <- function(id){
           if(inputtype %in% ".csv" & length(csv_ext) > 0){
             
             # read in the Eset file
-            Eset <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
+            Eset <- read.csv(inputfile$datapath, header=TRUE, check.names=FALSE) %>% tibble::column_to_rownames(var="Features") %>% dplyr::mutate_all(as.numeric)
             
             # convert Eset to matrix
             Eset <- as.matrix(Eset, nrow=nrow(Eset), ncol=ncol(Eset), byrow=TRUE, dimnames=list(rownames(Eset), colnames(Eset)))
@@ -580,7 +579,7 @@ CaDrA_Server <- function(id){
             phenoData <- methods::new("AnnotatedDataFrame", data=pData)
             
             #create feature data
-            fData <- data.frame(Features = rownames(Eset), stringsAsFactors = TRUE)
+            fData <- data.frame(Features = rownames(Eset), stringsAsFactors=TRUE)
             rownames(fData) <- fData$Features
             featureData <-  methods::new("AnnotatedDataFrame", data=fData)
             
@@ -640,10 +639,10 @@ CaDrA_Server <- function(id){
         } else {
           
           if(ncol(ES) < 5){
-            error_message(sprintf("The number of samples in \'Feature Set\' must be ≥  Min Event Frequency = %s \n", min_cutoff))
+            error_message(sprintf("The number of samples in \'Feature Set\' must be ???  Min Event Frequency = %s \n", min_cutoff))
             return(NULL)
           }
-          percent_min_cutoff = round(min_cutoff/ncol(ES), 2)
+          percent_min_cutoff <- round(min_cutoff/ncol(ES), 2)
         }
         # Obtain the pre-filter parameters (max_cutoff)
         max_cutoff <- as.numeric(input$max_cutoff)
@@ -718,7 +717,7 @@ CaDrA_Server <- function(id){
           ES <- ES[,names(input_score)]
         }
         # Get method
-        method = input$method; 
+        method <- input$method; 
         
         if(method == "ks"){
           
@@ -736,7 +735,7 @@ CaDrA_Server <- function(id){
             
             if(inputtype %in% ".csv" & length(csv_ext) > 0){
               
-              dat <- read.csv(inputfile$datapath, header=TRUE, check.names = FALSE)
+              dat <- read.csv(inputfile$datapath, header=TRUE, check.names=FALSE)
               weights <- as.numeric(dat$Weights)
               names(weights) <- as.character(dat$Samples)
               
@@ -784,22 +783,23 @@ CaDrA_Server <- function(id){
         if(method %in% c("ks", "wilcox")){
           alternative <- input$alternative
         }
-        metric = input$metric;
+        metric <- input$metric;
         
-        search_method = input$search_method;
+        search_method <- input$search_method;
         
-        max_size = as.integer(input$max_size)
+        max_size <- as.integer(input$max_size)
         
         if(is.na(max_size) || length(max_size) == 0 || max_size <= 0){
           error_message("Please specify an integer value specifies a maximum size that a meta-feature can extend to do for a given search (max_size must be >= 1).\n")
           return(NULL)
         }
-        initial_seed = input$initial_seed
+        
+        initial_seed <- input$initial_seed
         
         if(initial_seed == "top_N_seeds"){
           
-          search_start = NULL
-          top_N = as.integer(input$top_N)
+          search_start <- NULL
+          top_N <- as.integer(input$top_N)
           
           if(is.na(top_N) || length(top_N) == 0 || top_N <= 0){
             error_message("Please specify an INTEGER top_N value to evaluate over top N features (top_N must be >= 1).\n")
@@ -811,32 +811,38 @@ CaDrA_Server <- function(id){
           }
         } else {
           
-          search_start = strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
-          search_start = search_start[search_start != ""]
-          top_N = NULL
+          search_start <- strsplit(as.character(input$search_start), ",", fixed=TRUE) %>% unlist() %>% trimws();
+          search_start <- search_start[search_start != ""]
+          top_N <- NULL
           
           if(length(search_start) == 0 || any(!search_start %in% rownames(ES))){ 
             error_message("Provided starting feature(s) does not exist among ES's rownames.\n\n")
             return(NULL)
           }
         }
-        permutation = input$permutation_test
+        
+        permutation <- input$permutation_test
         
         if(permutation == TRUE){
           
-          n_perm = as.integer(input$n_perm)
+          ## show permutation loading icon ####
+          session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("permutation_loading_icon"), display="yes"))
+          
+          n_perm <- as.integer(input$n_perm)
           
           if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
             error_message("Please specify an INTEGER number of permutations (n_perm must be >= 1).\n")
             return(NULL)
           }
-          ncores = as.integer(input$ncores)
+          
+          ncores <- as.integer(input$ncores)
           
           if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
             error_message("Please specify the number of parallelization cores for permutation testings (ncores must be >= 1).\n")
             return(NULL)
           }
-          permutation_result(
+          
+          rVal$cadra_permutation_process <- parallel::mcparallel({
             CaDrA::CaDrA(
               ES = ES, 
               input_score = input_score, 
@@ -858,15 +864,19 @@ CaDrA_Server <- function(id){
               cache_path = NULL,
               verbose = FALSE
             )
-          )
+          })
+          
+          print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " started"))
+          
         }
+        
         # Export the ES and input_score to reactive datase
         feature_set_description(sprintf("After filtering features with Min Event Frequency = %s (or having < %s%% prevalence across all samples) and Max Event Frequency = %s (or having > %s%% prevalance across all samples), the \'Feature Set\' retained %s genomic features out of %s supplied features across %s samples.", min_cutoff, percent_min_cutoff*100, max_cutoff*100, max_cutoff*100, format(nrow(ES), big.mark = ","), format(n_orig_features, big.mark = ","), format(ncol(ES), big.mark =",")))
         feature_set_data(exprs(ES))
         input_score_data(input_score)
         
         # Compute the candidate search algorithm
-        candidate_search_result(
+        rVal$candidate_search_process <- parallel::mcparallel({
           CaDrA::candidate_search(
             ES = ES,
             input_score = input_score,
@@ -883,33 +893,120 @@ CaDrA_Server <- function(id){
             do_plot = FALSE,
             verbose = FALSE
           )
-        ) 
+        })
+        
+        print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " started"))
+        
         error_message("NONE")
         
       })
-      output$error_message <- renderUI({
+      #
+      # Stop the process
+      #
+      observeEvent(input$stop_cadra, {
         
-        req(error_message())
+        if(!is.null(rVal$candidate_search_process)) {
+          print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " killed"))
+          tools::pskill(rVal$candidate_search_process$pid)
+          rVal$candidate_search_process <- NULL
+
+          if (!is.null(rVal$candidate_search_process)) {
+            rVal$candidate_search_obs$destroy()
+          }
+        }
+        
+        if(!is.null(rVal$cadra_permutation_process)) {
+          print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " killed"))
+          tools::pskill(rVal$cadra_permutation_process$pid)
+          rVal$cadra_permutation_process <- NULL
+          
+          if (!is.null(rVal$cadra_permutation_process)) {
+            rVal$cadra_permutation_obs$destroy()
+          }
+        }
         
         ns <- session$ns
         
-        ## Update loading icon ####
+        rVal$candidate_search_result <- NULL; rVal$cadra_permutation_result <- NULL;
+        
+        error_message("Your process has been interrupted")
+        
+        ## Hide loading icon ####
         session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
         
+        ## Hide permutation loading icon ####
+        session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("permutation_loading_icon"), display="no"))
+        
+        # Show instruction message
+        instructions_message(TRUE)
+        
+      }, ignoreInit = TRUE) 
+      #
+      # Handle candidate search process event
+      #
+      observeEvent(rVal$candidate_search_process, {
+        rVal$candidate_search_obs <- observe({
+          shiny::invalidateLater(500, session)
+          isolate({
+            ns <- session$ns
+            result <- parallel::mccollect(rVal$candidate_search_process, wait = FALSE)
+            if(!is.null(result)) {
+              rVal$candidate_search_result <- result[[1]]
+              rVal$candidate_search_obs$destroy()
+              rVal$candidate_search_process <- NULL
+              ## Hide loading icon ####
+              session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
+            }
+          })
+        })
+      }, ignoreInit = TRUE)
+      #
+      # Handle cadra permutation process event
+      #      
+      observeEvent(rVal$cadra_permutation_process, {
+        rVal$cadra_permutation_obs <- observe({
+          shiny::invalidateLater(500, session)
+          isolate({
+            ns <- session$ns
+            result <- parallel::mccollect(rVal$cadra_permutation_process, wait = FALSE)
+            if(!is.null(result)) {
+              rVal$cadra_permutation_result <- result[[1]]
+              rVal$cadra_permutation_obs$destroy()
+              rVal$cadra_permutation_process <- NULL
+              ## Hide permutation loading icon ####
+              session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("permutation_loading_icon"), display="no"))
+            }
+          })
+        })
+      })
+      #
+      # Render messages
+      #
+      output$error_message <- renderUI({
+
+        req(error_message())
+
+        ns <- session$ns
+
         if(error_message() != "NONE"){
+          
+          ## Update loading icon ####
+          session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
+          
           p(style="color: red; font-weight: bold;", error_message())
         }
+        
       })
       output$featureData_title <- renderUI({
-        
-        req(feature_set_description())
-        
+
+        req(rVal$candidate_search_result, feature_set_description())
+
         ns <- session$ns
-        
+
         description <- feature_set_description()
-        
+
         dataset <- isolate({ input$dataset })
-        
+
         if (dataset %in% c("BRCA_GISTIC_MUT_SIG", "CCLE_MUT_SCNA", "sim.ES")) {
           title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
         } else if (dataset == "Import Data"){
@@ -919,40 +1016,41 @@ CaDrA_Server <- function(id){
           h2(title),
           br(),
           p(description),
-          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Features Set")
+          downloadButton(outputId = ns("download_featureset"), label="Download Filtered Feature Set")
         )
       })
       output$download_featureset <- downloadHandler(
-        
+
         filename = function() {
           paste0("CaDrA-Filtered-Features-Eset.csv")
         },
         content = function(file) {
-          
+
           Eset_table <- feature_set_data() %>% as.data.frame(.) %>% rownames_to_column(var="Features")
-          
+
           write.csv(Eset_table, file, row.names=FALSE)
         }
       )
       output$bestFeatureData_title <- renderUI({
         
-        req(candidate_search_result())
-        
+        req(rVal$candidate_search_result)
+
         h2("Best Meta-Features ESet")
+        
       })
       output$bestFeatureData <- DT::renderDataTable({
-        
-        req(candidate_search_result())
-        
+
+        req(rVal$candidate_search_result)
+
         ns <- session$ns
-        
-        topn_best_meta <- topn_best(topn_list=candidate_search_result())
-        
+
+        topn_best_meta <- topn_best(topn_list=rVal$candidate_search_result)
+
         ES_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.)
-        
+
         hover_columns <- create_hover_txt(table = ES_table)
-        
-        table <- ES_table %>% 
+
+        table <- ES_table %>%
           DT::datatable(
             container = hover_columns,
             rownames = TRUE,
@@ -988,9 +1086,9 @@ CaDrA_Server <- function(id){
         return(table)
       })
       observeEvent(input$Download_Eset, {
-        
+
         ns <- session$ns
-        
+
         shiny::showModal(
           shiny::modalDialog(
             title = "Download Best Meta-Features Set",
@@ -1002,42 +1100,42 @@ CaDrA_Server <- function(id){
       })
       ## Download CSV File ####
       output$downloadEsetCSV <- downloadHandler(
-        
+
         filename = function() {
           paste0("CaDrA-Best-Meta-Features-Eset.csv")
         },
-        
+
         content = function(file) {
-          
-          topn_best_meta <- topn_best(topn_list=candidate_search_result())
-          
+
+          topn_best_meta <- topn_best(topn_list=rVal$candidate_search_result)
+
           Eset_table <- topn_best_meta[["ESet"]] %>% exprs(.) %>% as.data.frame(.) %>% tibble::rownames_to_column(., var="Features")
-          
+
           write.csv(Eset_table, file, row.names=FALSE)
-          
+
         }
       )
       ## Download RDS File ####
       output$downloadEsetRDS <- downloadHandler(
-        
+
         filename = function() {
           paste0("CaDrA-Best-Meta-Features-Eset.rds")
         },
         content = function(file) {
-          
-          topn_best_meta <- topn_best(topn_list=candidate_search_result())
-          
+
+          topn_best_meta <- topn_best(topn_list=rVal$candidate_search_result)
+
           Eset_table <- topn_best_meta[["ESet"]]
-          
+
           saveRDS(Eset_table, file)
         }
       )
       output$inputScoreData_title <- renderUI({
-        
-        req(input_score_data())
-        
+
+        req(rVal$candidate_search_result, input_score_data())
+
         dataset <- isolate({ input$dataset })
-        
+
         if(dataset == "BRCA_GISTIC_MUT_SIG"){
           scores <- isolate({ input$BRCA_GISTIC_MUT_SIG_scores })
         }else if(dataset == "CCLE_MUT_SCNA"){
@@ -1053,18 +1151,18 @@ CaDrA_Server <- function(id){
         h2("Observed Input Scores:", title)
       })
       output$inputScoreData <- DT::renderDataTable({
-        
-        req(input_score_data())
-        
+
+        req(rVal$candidate_search_result, input_score_data())
+
         ns <- session$ns
-        
+
         Scores <- input_score_data() %>% signif(., digits = 4)
-        
+
         score_table <- matrix(Scores, nrow=1, ncol=length(Scores), byrow=TRUE, dimnames=list("input_score", names(Scores)))
-        
+
         hover_columns <- create_hover_txt(table = score_table)
-        
-        table <- score_table %>% 
+
+        table <- score_table %>%
           DT::datatable(
             container = hover_columns,
             rownames = TRUE,
@@ -1098,11 +1196,11 @@ CaDrA_Server <- function(id){
             )
           )
         return(table)
-      })  
+      })
       observeEvent(input$Download_InputScore, {
-        
+
         ns <- session$ns
-        
+
         shiny::showModal(
           shiny::modalDialog(
             title = "Download Observed Input Scores",
@@ -1114,15 +1212,15 @@ CaDrA_Server <- function(id){
       })
       ## Download CSV File ####
       output$downloadScoreCSV <- downloadHandler(
-        
+
         filename = function() {
           paste0("CaDrA-Observed-Input-Scores.csv")
         },
-        
+
         content = function(file) {
-          
+
           Scores <- input_score_data() %>% signif(., digits = 4)
-          
+
           score_table <- data.frame(
             Samples = names(Scores),
             Scores = Scores,
@@ -1133,14 +1231,14 @@ CaDrA_Server <- function(id){
       )
       ## Download RDS File ####
       output$downloadScoreRDS <- downloadHandler(
-        
+
         filename = function() {
           paste0("CaDrA-Observed-Input-Scores.rds")
         },
         content = function(file) {
-          
+
           Scores <- input_score_data() %>% signif(., digits = 4)
-          
+
           score_table <- data.frame(
             Samples = names(Scores),
             Scores = Scores,
@@ -1150,26 +1248,26 @@ CaDrA_Server <- function(id){
         }
       )
       output$meta_plot_title <- renderUI({
-        
-        req(candidate_search_result())
-        
+
+        req(rVal$candidate_search_result)
+
         h2("Best Meta-Features Plot")
       })
       output$meta_plot <- renderPlot({
-        
-        req(candidate_search_result())
-        
-        topn_res <- candidate_search_result()
+
+        req(rVal$candidate_search_result)
+
+        topn_res <- rVal$candidate_search_result
         topn_best_meta <- CaDrA::topn_best(topn_res)
-        
+
         CaDrA::meta_plot(topn_best_list = topn_best_meta)
       })
       output$topn_plot_title <- renderUI({
-        
-        req(candidate_search_result())
-        
-        if(length(candidate_search_result()) == 1){
-          
+
+        req(rVal$candidate_search_result)
+
+        if(length(rVal$candidate_search_result) == 1){
+
           div(
             h2("Top N Overlapping Heatmap"),
             br(),
@@ -1180,24 +1278,24 @@ CaDrA_Server <- function(id){
         }
       })
       output$topn_plot <- renderPlot({
-        
-        req(candidate_search_result())
-        
-        topn_res <- candidate_search_result()
-        
+
+        req(rVal$candidate_search_result)
+
+        topn_res <- rVal$candidate_search_result
+
         CaDrA::topn_plot(topn_res)
-      })      
+      })
       output$permutation_plot_title <- renderUI({
-        
-        req(permutation_result())
-        
-        h2("Permutation-Based Testing")
+
+        req(rVal$cadra_permutation_result)
+
+        h2("Permutation-Based Testings")
       })
       output$permutation_plot <- renderPlot({
-        
-        req(permutation_result())
-        
-        perm_res <- permutation_result()
+
+        req(rVal$cadra_permutation_result)
+
+        perm_res <- rVal$cadra_permutation_result
         permutation_plot(perm_res)
       })
     }

@@ -258,8 +258,15 @@ CaDrA_UI <- function(id)
             radioButtons(inputId = ns("search_method"), label = strong(span(style="color:red;", "*"), "Search method:"), choices=c("forward and backward"="both", "forward"="forward"), selected = "both", inline = FALSE)
           )
         ),
-        numericInput(inputId = ns("max_size"), label = strong(span(style="color:red;", "*"), "Max possible number of features to be included in the meta-feature (search will stop after max is reached)"), min = 1, max = 100, step = 1, value = 7, width = "100%"),
-        
+        numericInput(
+          inputId = ns("max_size"), 
+          label = HTML("<span style=\"color:red;\">*</span> Max meta-feature size", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"Max possible number of features to be included in the meta-feature (search will stop after max is reached)\">?</a>')), 
+          min = 1, 
+          max = 100, 
+          step = 1, 
+          value = 7, 
+          width = "100%"
+        ),
         radioButtons(
           inputId = ns("initial_seed"), 
           label = HTML("<span style=\"color:red;\">*</span> Search modality", paste0('<a class="tooltip-txt" data-html="true" data-tooltip-toggle="tooltip" data-placement="top" title=\"\'Top N\` repeats the search starting from each of the top N scoring features. \'Custom seeds\' repeats the search starting from each of the custom seeds. Warning: if number of seeds specified is greater than 10, this may result in a longer search time.\">?</a>')), 
@@ -273,14 +280,36 @@ CaDrA_UI <- function(id)
         ),
         conditionalPanel(
           condition = sprintf("input['%s'] == 'search_start_seeds'", ns("initial_seed")),
-          textAreaInput(inputId = ns("search_start"), label = strong(span(style = "color:red;", "*"), "Enter a list of character strings (separated by commas) corresponding to feature names within the \'Feature Set\' object"), value="", width="100%")
+          textAreaInput(
+            inputId = ns("search_start"), 
+            label = strong(span(style = "color:red;", "*"), "Enter a list of character strings (separated by commas) corresponding to feature names within the \'Feature Set\' object"), 
+            value="", 
+            width="100%"
+          )
         ),
-        checkboxInput(inputId = ns("permutation_test"), label = strong("Perform permutation testing?"), value = FALSE), 
-        
+        checkboxInput(
+          inputId = ns("permutation_test"), 
+          label = strong("Perform permutation testing?"), 
+          value = FALSE
+        ), 
         conditionalPanel(
           condition = sprintf("input['%s'] == true", ns("permutation_test")),
-          numericInput(inputId = ns("n_perm"), label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), min = 1, max = Inf, step = 1, value = 100),
-          numericInput(inputId = ns("ncores"), label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), min = 1, max = Inf, step = 1, value = 1)
+          numericInput(
+            inputId = ns("n_perm"), 
+            label = strong(span(style="color:red;", "*"), "Number of permutations to perform"), 
+            min = 1, 
+            max = Inf,
+            step = 1, 
+            value = 100
+          ),
+          numericInput(
+            inputId = ns("ncores"), 
+            label = strong(span(style="color:red;", "*"), "Number of cores to perform parallelization for permutation testing"), 
+            min = 1, 
+            max = Inf, 
+            step = 1, 
+            value = 1
+          )
         ),
         br(),
         uiOutput(outputId = ns("error_message")),

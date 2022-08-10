@@ -471,7 +471,7 @@ CaDrA_UI <- function(id)
         tabPanel(
           title = "Run CaDrA", 
           style = "padding: 5px 10px 10px 10px;",
-          icon = icon(name = "person-running", lib = "font-awesome"),
+          icon = icon(name = "running", lib = "font-awesome"),
           
           div(
             uiOutput(outputId = ns("instructions"))

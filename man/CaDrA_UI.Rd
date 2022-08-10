@@ -26,11 +26,9 @@ id <- "myapp"
 ui <- fluidPage(
    CaDrA::CaDrA_UI(id = id)
 )
-
 server <- function(input, output, session) {
    CaDrA::CaDrA_Server(id = id)
 }
-
 app <-  shinyApp(ui=ui, server=server)
 
 # Launch Shiny app (NOT RUN)

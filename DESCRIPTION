@@ -26,6 +26,7 @@ Imports:
     tibble,
     DT,
     doParallel,
+    parallel,
     plyr,
     ggplot2,
     grid,
@@ -41,7 +42,8 @@ Imports:
     misc3d,
     ppcor,
     graphics,
-    utils
+    utils,
+    tools
 Suggests: 
     devtools,
     rmarkdown,

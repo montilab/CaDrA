@@ -353,10 +353,12 @@ candidate_search <- function(
   ## Check the max_size variable ####
   max_size <- as.integer(max_size)   
   
-  if(is.na(max_size) || length(max_size)==0 || max_size <= 0){
+  if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(ES)){
     stop("Please specify an integer value specifies a maximum size ",
          "that a meta-feature can extend to do for a given search ",
-         "(max_size must be >= 1).\n")
+         "(max_size must be >= 1)",
+         "and max_size must be lesser than the number of features in",
+         "ES\n")
   }
   
   # Check the best_score_only variables

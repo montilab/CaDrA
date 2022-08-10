@@ -3,7 +3,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user
 ^docs
-^vignettes
 ^README\.Rmd$
 ^README_files
 ^NEWS\.Rmd$
@@ -15,3 +14,5 @@
 ^.*\.o$
 ^.*\.dll$
 ^\.Rproj\.user$
+^\.DS_Store
+

@@ -77,6 +77,7 @@ prefilter_data <- function(
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param alt alternative hypothesis for p-value calculation
+#' @keywords internal
 #' @useDynLib CaDrA ks_test_d_wrap_
 #' 
 #' @return need a return value here
@@ -103,6 +104,7 @@ ks_test_double_wrap <- function(n_x, y, alt="less") {
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param weight a vector of weights 
 #' @param alt alternative hypothesis for p-value calculation
+#' @keywords internal
 #' @useDynLib CaDrA ks_plot_wrap_
 #' 
 #' @return need a return value here
@@ -130,6 +132,7 @@ ks_plot_wrap <- function(n_x, y, weight, alt="less") {
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param weight a vector of weights 
 #' @param alt alternative hypothesis for p-value calculation
+#' @keywords internal
 #' @useDynLib CaDrA ks_genescore_wrap_
 #' 
 #' @return need a return value here
@@ -159,6 +162,7 @@ ks_genescore_wrap <- function(n_x, y, weight, alt="less") {
 #' @param mat matrix of binary features to compute row-wise ks scores for
 #' @param alt an integer value specifying the alternative hypothesis
 #' @param weight a vector of weights to use if performing a weighted-KS test
+#' @keywords internal
 #' @useDynLib CaDrA ks_genescore_mat_
 #' 
 #' @return Two lists: score and p-value

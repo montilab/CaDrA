@@ -20,3 +20,4 @@ Two lists: score and p-value
 Compute directional Kolmogorov-Smirnov scores for each row of a 
 given binary matrix
 }
+\keyword{internal}

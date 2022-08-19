@@ -21,3 +21,4 @@ need a return value here
 \description{
 Return a dataframe from ks_genescore function
 }
+\keyword{internal}

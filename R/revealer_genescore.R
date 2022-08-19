@@ -113,7 +113,9 @@ revealer_genescore <- function
   z <- z[ind]
   
   # Compute CMI and % explained with or without the provided z
-  cmi <- cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
+  cmi <- suppressWarnings(
+    cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
+  )
 
   # Only return score value for revealer
   return(c(score=cmi))

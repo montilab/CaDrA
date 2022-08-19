@@ -19,3 +19,4 @@ need a return value here
 \description{
 Compute directional Kolmogorov-Smirnov scores
 }
+\keyword{internal}

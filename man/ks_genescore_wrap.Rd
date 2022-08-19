@@ -21,3 +21,4 @@ need a return value here
 \description{
 Compute directional Kolmogorov-Smirnov scores for each row of a given vector
 }
+\keyword{internal}

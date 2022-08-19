@@ -4,7 +4,9 @@
 # CaDrA
 
 <!-- badges: start -->
+
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
+
 <!-- badges: end -->
 
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
@@ -27,16 +29,13 @@ making it useful to find complementary omics features likely driving the
 input molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et
-al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
+al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
-You can install the development version of CaDrA from GitHub
-(**Recommended**)
-
 ``` r
 library(devtools)
-devtools::install_github("montilab/CaDrA", ref="dev")
+devtools::install_github("montilab/CaDrA")
 ```
 
 ## (2) Quickstart
@@ -48,8 +47,8 @@ library(Biobase)
 
 ## (3) CaDrA Query of BRCA YAP/TAZ Activity
 
-Here, we reproduce the results of Figure 5 of [\[Kartha et al.,
-2019\]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
+Here, we reproduce the results of Figure 5 of [\[Kartha et
+al., 2019\]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 (the section titled “*CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ
 Activity in Human Breast Cancer*”).
 
@@ -70,20 +69,15 @@ eset_mut_scna <- eset_mut_scna[,overlap]
 input_scores <- input_scores[overlap]
 
 ## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
 
 ## Pre-filter ESet based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
   ES = eset_mut_scna,
-  max.cutoff = 0.6, # max frequency (60%)
+  max.cutoff = 0.6,  # max frequency (60%)
   min.cutoff = 0.03 # min frequency (3%)
 ) 
 ```
-
-    #> Pre-filtering features ..
-    #> 
-    #> Removing features having <  3 and >  60  % occurence in sample set..
-    #> 133  features retained out of  16873  supplied features in dataset
 
 ### (ii) Run CaDrA
 
@@ -118,7 +112,5 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 # Evaluate results across top N seed features you started from
 CaDrA::topn_plot(topn_res) 
 ```
-
-    #> Generating top N overlap heatmap..
 
 <img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;" />

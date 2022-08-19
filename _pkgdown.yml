@@ -37,10 +37,6 @@ reference:
   - '`revealer_genescore`'
   - '`generate_permutations`'
   - '`prefilter_data`'
-  - '`ks_genescore_mat`'
-  - '`ks_genescore_wrap`'
-  - '`ks_plot_wrap`'
-  - '`ks_test_double_wrap`'
   - '`plot_ESet`'
 
 - title: Plot Methods

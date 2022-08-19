@@ -96,7 +96,8 @@
 
 
 <dt>weights</dt>
-<dd><p>weights for weighted score (see Subramanian et al.) (usually, sort(score))</p></dd>
+<dd><p>weights for weighted score (see Subramanian et al.) 
+(usually, sort(score))</p></dd>
 
 
 <dt>weight_p</dt>
@@ -112,7 +113,8 @@
 
 
 <dt>absolute</dt>
-<dd><p>takes max - min score rather than the maximum deviation from null</p></dd>
+<dd><p>takes max - min score rather than the maximum 
+deviation from null</p></dd>
 
 
 <dt>exact</dt>
@@ -142,18 +144,20 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">topn.list</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With the results obtained from top-N evaluation,</span></span></span>
-<span class="r-in"><span><span class="co"># We can find the combination of features that gives the best score in top N searches</span></span></span>
+<span class="r-in"><span><span class="co"># We can find the combination of features that gives the best score </span></span></span>
+<span class="r-in"><span><span class="co"># in top N searches</span></span></span>
 <span class="r-in"><span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">topn.list</span><span class="op">)</span> </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract the meta-feature set</span></span></span>
-<span class="r-in"><span><span class="va">ESet</span> <span class="op">=</span>  <span class="va">topn_best_meta</span><span class="op">[[</span><span class="st">"ESet"</span><span class="op">]</span><span class="op">]</span>                    </span></span>
+<span class="r-in"><span><span class="va">ESet</span> <span class="op">&lt;-</span>  <span class="va">topn_best_meta</span><span class="op">[[</span><span class="st">"ESet"</span><span class="op">]</span><span class="op">]</span>                    </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Make sure mat variable is a matrix</span></span></span>
 <span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/exprs.html" class="external-link">exprs</a></span><span class="op">(</span><span class="va">ESet</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For cases when matrix only has one row</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span><span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">1</span>, byrow<span class="op">=</span><span class="cn">TRUE</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ESet</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>  <span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">1</span>, byrow<span class="op">=</span><span class="cn">TRUE</span>, </span></span>
+<span class="r-in"><span>  dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ESet</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add on the OR function of all the returned entries</span></span></span>
@@ -181,7 +185,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

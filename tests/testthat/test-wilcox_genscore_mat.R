@@ -25,7 +25,6 @@ test_that("wilcox_genescore_mat generates results consistent with wilcox() funct
 
 test_that("wilcox_genescore_mat generates a matrix with 2 rows", {
   
-  # Pass a numeric vector to the cadra_search and expect that it returns an error
   mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
                   0,0,1,0,1,0,1,0,0,0,
                   0,0,0,0,1,0,1,0,1,0), nrow=3)

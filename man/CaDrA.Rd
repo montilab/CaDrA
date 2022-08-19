@@ -116,7 +116,7 @@ Performs a permutation-based testing on sample permutation of observed input
 scores using candidate_search() as the main iterative function for each run.
 }
 \examples{
-
+\dontrun{
 # Load R library
 library(Biobase)
 
@@ -132,14 +132,15 @@ input_score = rnorm(n = ncol(sim.ES))
 names(input_score) <- colnames(sim.ES)
 
 # Define additional parameters and start the function
-# Not run as this would take some time to run
-# candidate_search_result <- cadra_search(
-#  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
-#  alternative = "less", metric = "pval", top_N = 1, 
-#  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
-#  plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
-#  ncores = 1, cache_path = NULL
-#)
+# This function takes some time to run
+ cadra_result <- CaDrA(
+  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
+  alternative = "less", metric = "pval", top_N = 1, 
+  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
+  plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
+  ncores = 1, cache_path = NULL
+)
+}
 
 }
 \author{

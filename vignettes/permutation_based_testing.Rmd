@@ -1,6 +1,6 @@
 ---
 title: "Permutation-Based Testing"
-output: html_document
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Permutation-Based Testing}
   %\VignetteEngine{knitr::rmarkdown}

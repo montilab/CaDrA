@@ -69,7 +69,7 @@
 #' test, permutation best scores for n_perm, a permutation p-value, and 
 #' observed best score
 #' @examples
-#'\dontrun{
+#'\donttest{
 #' # Load R library
 #' library(Biobase)
 #'

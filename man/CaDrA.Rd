@@ -116,7 +116,7 @@ Performs a permutation-based testing on sample permutation of observed input
 scores using candidate_search() as the main iterative function for each run.
 }
 \examples{
-\dontrun{
+\donttest{
 # Load R library
 library(Biobase)
 

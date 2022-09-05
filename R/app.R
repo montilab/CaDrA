@@ -608,7 +608,12 @@ CaDrA_Server <- function(id){
   moduleServer(
     id,
     function(input, output, session) {
-      
+
+      # Detect the Number of CPU Cores
+      num_of_cores <- detectCores()
+
+      print(num_of_cores)
+
       # Create reative values
       rVal <- reactiveValues()
       rVal$candidate_search_process <- NULL
@@ -1065,6 +1070,11 @@ CaDrA_Server <- function(id){
             error_message("Please specify the number of parallelization cores for permutation testing (ncores must be >= 1).\n")
             return(NULL)
           }
+
+          if(ncores > num_of_cores){
+            error_message(paste0("There are ONLY ", num_of_cores, " cores available on the system. Please specify the number of parallelization cores for permutation testing (ncores <= ", num_of_cores, ")."))
+            return(NULL)
+          }
           
           rVal$cadra_permutation_process <- parallel::mcparallel({
             CaDrA::CaDrA(
@@ -1233,6 +1243,9 @@ CaDrA_Server <- function(id){
           
           ## Update loading icon ####
           session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="no"))
+
+          ## Update loading icon for permutation test
+          session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("permutation_loading_icon"), display="no"))
           
           # Show instructions
           instructions_message(TRUE)

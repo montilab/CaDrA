@@ -1,0 +1,11 @@
+version: '3.6'
+
+services:
+  cadra:
+    image: montilab/cadra:2.0.0
+    container_name: cadra
+    restart: always
+    ports:
+      - 4567:3838
+    volumes:
+      - /home/centos/CaDrA/:/srv/shiny-server/

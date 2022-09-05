@@ -1582,10 +1582,10 @@ CaDrA_App <- function() {
     session$allowReconnect("force")
     
     ## Close app when browser closing
-    session$onSessionEnded(function() {
-      print("Closed Shiny Session.")
-      stopApp()
-    })
+    #session$onSessionEnded(function() {
+    #  print("Closed Shiny Session.")
+    #  stopApp()
+    #})
     
   }
   shinyApp(ui=ui, server=server)

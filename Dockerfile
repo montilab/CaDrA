@@ -1,3 +1,4 @@
+
 # Get shiny+tidyverse+devtools packages from rocker image
 FROM rocker/shiny-verse:4.0.3
 
@@ -20,7 +21,9 @@ RUN apt-get update && apt-get install -y \
     libsodium-dev \
     python-dev \
     libbz2-dev \
-    liblzma-dev
+    liblzma-dev \
+    tcl8.6-dev \
+    tk8.6-dev
   
 # Install the required bioconductor packages to run the app
 RUN R -e "install.packages('BiocManager', dependencies=TRUE, repos='http://cran.rstudio.com/')"
@@ -40,7 +43,6 @@ RUN R -e "install.packages('purrr', dependencies=TRUE, repos='http://cran.rstudi
 RUN R -e "install.packages('stats', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('methods', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('MASS', dependencies=TRUE, repos='http://cran.rstudio.com/')"
-RUN R -e "install.packages('misc3d', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('ppcor', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 # Install additional packages for shiny applications
@@ -64,11 +66,14 @@ RUN R -e "install.packages('ipc', dependencies=TRUE, repos='http://cran.rstudio.
 RUN R -e "install.packages('unix', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('plumber', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
+# Install packages for revealer
+RUN R -e "install.packages('misc3d', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+
 # Make the ShinyApp available at port 3838
 EXPOSE 3838
 
 # Copy configuration files to Docker image
-COPY shiny-server.sh /usr/bin/shiny-server.sh
+COPY inst/shinyapp/shiny-server.sh /usr/bin/shiny-server.sh
 
 # Allow permission
 RUN ["chmod", "+rwx", "/srv/shiny-server/"]

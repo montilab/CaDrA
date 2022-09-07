@@ -56,6 +56,9 @@ revealer_genescore_mat <- function
   # Setup verbose option definition
   options(verbose = verbose)
   
+
+  assoc_metric <- match.arg(assoc_metric)
+
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
   

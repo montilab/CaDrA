@@ -103,7 +103,7 @@
 CaDrA <- function(
   ES,
   input_score,
-  method = "ks",
+  method = c("ks","wilcox","revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = "less",
@@ -125,6 +125,9 @@ CaDrA <- function(
   # Set up verbose option
   options(verbose = verbose)
   
+  method <- match.arg(method)  
+
+
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")

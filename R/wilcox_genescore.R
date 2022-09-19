@@ -60,12 +60,14 @@ wilcox_genescore <- function
   x,                                                  
   y,                                                  
   mu = 0,                                             
-  alternative = "less",                               
+  alternative = c("less", "greater", "two.sided"),                          
   paired = FALSE,                                     
   exact = FALSE,                                      
   correct = TRUE
 ) 
 {
+  
+  alternative <- match.arg(alternative)
   
   if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu))) 
     stop("'mu' must be a single number")

@@ -8,7 +8,7 @@ wilcox_genescore(
   x,
   y,
   mu = 0,
-  alternative = "less",
+  alternative = c("less", "greater", "two.sided"),
   paired = FALSE,
   exact = FALSE,
   correct = TRUE

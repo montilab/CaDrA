@@ -7,7 +7,7 @@
 wilcox_genescore_mat(
   mat,
   ranks = NULL,
-  alternative = c("two.sided", "greater", "less"),
+  alternative = c("less", "greater", "two.sided"),
   verbose = FALSE
 )
 }

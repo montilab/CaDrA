@@ -39,13 +39,15 @@ wilcox_genescore_mat <- function
 (
   mat,
   ranks = NULL,
-  alternative = c("two.sided", "greater", "less"),
+  alternative = c("less", "greater", "two.sided"),
   verbose = FALSE
 )
 {
   
   # Set up verbose option
   options(verbose=FALSE)
+  
+  alternative <- match.arg(alternative)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)

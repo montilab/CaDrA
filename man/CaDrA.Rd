@@ -10,7 +10,7 @@ CaDrA(
   method = c("ks", "wilcox", "revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
-  alternative = "less",
+  alternative = c("less", "greater", "two.sided"),
   metric = c("pval", "stat"),
   weights = NULL,
   top_N = 1,

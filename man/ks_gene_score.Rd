@@ -9,7 +9,7 @@ ks_gene_score(
   y,
   weights = NULL,
   weight_p = 1,
-  alternative = "less",
+  alternative = c("less", "greater", "two.sided"),
   do_pval = TRUE,
   absolute = FALSE,
   exact = NULL,
@@ -26,7 +26,8 @@ ks_gene_score(
 
 \item{weight_p}{weights exponent}
 
-\item{alternative}{alternative hypothesis for p-value calculation}
+\item{alternative}{alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+Default is \code{less} for left-skewed significance testing.}
 
 \item{do_pval}{compute asymptotic p-value}
 

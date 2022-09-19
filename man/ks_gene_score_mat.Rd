@@ -7,7 +7,7 @@
 ks_gene_score_mat(
   mat,
   weights = NULL,
-  alternative = c("two.sided", "greater", "less"),
+  alternative = c("less", "greater", "two.sided"),
   verbose = FALSE
 )
 }

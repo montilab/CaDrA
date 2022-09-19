@@ -5,7 +5,8 @@
 #' @param weights weights for weighted score (see Subramanian et al.) 
 #' (usually, sort(score))
 #' @param weight_p weights exponent
-#' @param alternative alternative hypothesis for p-value calculation
+#' @param alternative alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' Default is \code{less} for left-skewed significance testing.
 #' @param do_pval compute asymptotic p-value
 #' @param absolute takes max - min score rather than the maximum 
 #' deviation from null
@@ -57,7 +58,7 @@ ks_gene_score <- function
   y,                                             
   weights = NULL,
   weight_p = 1,
-  alternative = "less",  
+  alternative = c("less", "greater", "two.sided"),  
   do_pval = TRUE, 
   absolute = FALSE, 
   exact = NULL,
@@ -66,8 +67,7 @@ ks_gene_score <- function
 {
   # efficient version of ks.score 
   # (should give same results as ks.test, when weights=NULL)
-  #
-  alternative <- match.arg(alternative, c("two.sided", "greater", "less"))
+  alternative <- match.arg(alternative, c("less", "greater", "two.sided"))
   DNAME <- paste( "1:", n.x, " and ", deparse(substitute(y)), sep="" )
   METHOD <- "Two-sample Kolmogorov-Smirnov test"
   n.y <- length(y)

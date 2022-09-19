@@ -236,7 +236,7 @@ stacked_gtable_max <- function(...){
 #' Plot the ES running sum statistic, including the max score (KS) using x and 
 #' y-axis data returned by ks.genescore() when plot.dat is set to TRUE 
 #' for a given dataset
-#' @param d a data frame object with columns 'x' and 'y' containing the 
+#' @param df a data frame object with columns 'x' and 'y' containing the 
 #' necessary data for an ES plot (returned by ks.genescore() 
 #' when plot.dat is set to TRUE for a given dataset)
 #' @return A plot graphic of the Enrichment Score (ES) for a given distribution
@@ -277,17 +277,15 @@ stacked_gtable_max <- function(...){
 #' )
 #' 
 #' # plot for ES scores
-#' ES_plot <- plot_ESet(d = ES_dat)
+#' ES_plot <- plot_ESet(df = ES_dat)
 #' 
 #' @export
 #' @import ggplot2
-plot_ESet <- function(
-  d 
-){
+plot_ESet <- function(df){
   
   # Katia: adding ".data" to avoid a warning during check:
   # no visible binding for global variable 
-  g <- ggplot(data = d, aes(x=.data$x, y=.data$y))
+  g <- ggplot(data = df, aes(x=.data$x, y=.data$y))
   
   g <- g +
     #geom_line(size=1.25,colour="blueviolet")+
@@ -295,10 +293,10 @@ plot_ESet <- function(
     geom_hline(yintercept=0, linetype=2) +
     # Katia: adding ".data" to avoid a warning during check:
     # no visible binding for global variable
-    geom_point(data=d[which.max(d$y),], aes(x=.data$x, y=.data$y), 
+    geom_point(data=df[which.max(df$y),], aes(x=.data$x, y=.data$y), 
                colour="black", fill="red", size=3, shape=21) +
-    annotate("text", x=d[which.max(d$y),1]+8, y=max(d$y),
-             label=as.character(round(max(d$y),3)), size=3) +
+    annotate("text", x=df[which.max(df$y),1]+8, y=max(df$y),
+             label=as.character(round(max(df$y),3)), size=3) +
     scale_x_continuous(expand = c(0,0)) +
     scale_y_reverse() + # This inverts the ES score statistic line
     theme_classic() +

@@ -83,6 +83,7 @@ prefilter_data <- function(
 #' 
 #' @return need a return value here
 ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
+
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)

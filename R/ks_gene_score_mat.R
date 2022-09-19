@@ -31,18 +31,19 @@
 #' )
 #' 
 #' @export
-#' @importFrom purrr map_dfr
 ks_gene_score_mat <- function
 (
   mat, 
   weights = NULL,
-  alternative = c("two.sided", "greater", "less"),
+  alternative = c("less", "greater", "two.sided"),
   verbose = FALSE
 )
 {
   
   # Set up verbose option
   options(verbose = verbose)
+  
+  alternative <- match.arg(alternative)
   
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)

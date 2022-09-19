@@ -41,12 +41,11 @@
 #' )
 #'  
 #' @export
-#' @importFrom purrr map_dfr
 revealer_genescore_mat <- function
 (
   mat,                                   
   input_score, 
-  target_match = "positive",             
+  target_match = c("positive", "negative"),             
   seed_names = NULL,
   assoc_metric = c("IC", "COR"),
   verbose = FALSE
@@ -58,7 +57,8 @@ revealer_genescore_mat <- function
   
 
   assoc_metric <- match.arg(assoc_metric)
-
+  target_match <- match.arg(target_match)
+  
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
   

@@ -47,10 +47,13 @@ revealer_genescore <- function
   x,
   y, 
   z = NULL,
-  assoc_metric = "IC",
-  target_match = "positive"
+  assoc_metric = c("IC", "COR"),
+  target_match = c("positive", "negative")
 )
 {
+  
+  assoc_metric <- match.arg(assoc_metric)
+  target_match <- match.arg(target_match)
   
   # Convert x, y, z as vector and numeric  
   x <- as.numeric(x); y <- as.numeric(y); z <- as.numeric(z); 

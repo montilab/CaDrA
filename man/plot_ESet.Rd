@@ -4,10 +4,10 @@
 \alias{plot_ESet}
 \title{Enrichment Score (ES) plot}
 \usage{
-plot_ESet(d)
+plot_ESet(df)
 }
 \arguments{
-\item{d}{a data frame object with columns 'x' and 'y' containing the 
+\item{df}{a data frame object with columns 'x' and 'y' containing the 
 necessary data for an ES plot (returned by ks.genescore() 
 when plot.dat is set to TRUE for a given dataset)}
 }
@@ -55,6 +55,6 @@ ES_dat <- ks_gene_score(
 )
 
 # plot for ES scores
-ES_plot <- plot_ESet(d = ES_dat)
+ES_plot <- plot_ESet(df = ES_dat)
 
 }

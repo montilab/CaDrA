@@ -8,8 +8,8 @@ revealer_genescore(
   x,
   y,
   z = NULL,
-  assoc_metric = "IC",
-  target_match = "positive"
+  assoc_metric = c("IC", "COR"),
+  target_match = c("positive", "negative")
 )
 }
 \arguments{

@@ -79,14 +79,14 @@
 topn_eval <- function(
   ES,
   input_score,
-  method = "ks", 
+  method = c("ks","wilcox","revealer", "custom"), 
   custom_function = NULL,
   custom_parameters = NULL,
-  alternative = "less", 
-  metric = "pval", 
+  alternative = c("less", "greater", "two.sided"), 
+  metric = c("pval", "stat"), 
   weights = NULL,
   top_N = 1,
-  search_method = "both", 
+  search_method = c("both", "forward"), 
   max_size = 7,
   best_score_only = FALSE,
   do_plot = TRUE,
@@ -95,6 +95,12 @@ topn_eval <- function(
   
   # Set up verbose option
   options(verbose = verbose)
+  
+  method <- match.arg(method)  
+  alternative <- match.arg(alternative)  
+  metric <- match.arg(metric)  
+  search_method <- match.arg(search_method)  
+  
   
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 

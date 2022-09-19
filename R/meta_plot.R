@@ -105,7 +105,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
                           plot_dat = TRUE, alternative = "less")
   
   # Plot for ES scores
-  ES_plot <- plot_ESet(d = ES_dat)
+  ES_plot <- plot_ESet(df = ES_dat)
   
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""

@@ -7,7 +7,7 @@
 revealer_genescore_mat(
   mat,
   input_score,
-  target_match = "positive",
+  target_match = c("positive", "negative"),
   seed_names = NULL,
   assoc_metric = c("IC", "COR"),
   verbose = FALSE

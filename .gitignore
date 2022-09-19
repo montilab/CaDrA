@@ -1,7 +1,6 @@
 .DS_Store
-
+.Rbuildignore
 .git
-
 .project
 
 # github actions
@@ -46,7 +45,7 @@
 *.Rproj
 
 # Unknown files
-.nfs00000000511ba62300000119
+.nfs*
 
 # c++
 *.o
@@ -54,3 +53,4 @@
 
 src-i386
 src-x64
+_pkgdown.yml

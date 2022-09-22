@@ -1,0 +1,17 @@
+^\.git
+^\.github
+^.*\.Rproj$
+^\.Rproj\.user
+^docs
+^README\.Rmd$
+^README_files
+^NEWS\.Rmd$
+^NEWS_files
+^\.travis\.yml$
+^_pkgdown\.yml$
+^Dockerfile$
+^shiny-server.sh$
+^.*\.o$
+^.*\.dll$
+^\.Rproj\.user$
+^\.DS_Store

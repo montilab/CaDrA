@@ -612,7 +612,7 @@ CaDrA_Server <- function(id){
       # Detect the Number of CPU Cores
       num_of_cores <- detectCores()
 
-      print(num_of_cores)
+      print(paste0("Number of Cores on system: ", num_of_cores))
 
       # Create reative values
       rVal <- reactiveValues()

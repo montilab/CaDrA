@@ -77,15 +77,15 @@ scores using candidate_search() as the main iterative function for each run.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CaDrA</span><span class="op">(</span></span>
 <span>  <span class="va">ES</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"ks"</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks"</span>, <span class="st">"wilcox"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,</span>
-<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
+<span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pval"</span>, <span class="st">"stat"</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  search_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  search_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"forward"</span><span class="op">)</span>,</span>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>

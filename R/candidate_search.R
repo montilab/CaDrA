@@ -167,48 +167,46 @@ candidate_search <- function(
   }
   
   # Check the method 
-  if(length(method) == 1 & method %in% c("ks", "wilcox", "revealer", "custom")){
+  # Compute row-wise directional KS scores for binary features in ES
+  if(method == "ks"){
     
-    # Compute row-wise directional KS scores for binary features in ES
-    if(method == "ks"){
-      verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
-      
-      # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=TRUE)
-      
-      # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(input_score)]
-    }
+    verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
+    
+    # Sort input_score from highest to lowest values
+    input_score <- sort(input_score, decreasing=TRUE)
+    
+    # Re-order the samples by input_score sorted from highest to lowest values
+    ES <- ES[,names(input_score)]
+    
+  }else if(method == "wilcox"){
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    if(method == "wilcox"){
-      verbose("Using Wilcoxon method for features scoring.")
-      
-      # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=TRUE)
-      
-      # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(input_score)]
-    }
+    verbose("Using Wilcoxon method for features scoring.")
+    
+    # Sort input_score from highest to lowest values
+    input_score <- sort(input_score, decreasing=TRUE)
+    
+    # Re-order the samples by input_score sorted from highest to lowest values
+    ES <- ES[,names(input_score)]
+    
+  }else if(method == "revealer"){
     
     # Compute mutually exclusive method for binary features in ES 
-    if(method == "revealer"){
-      # Sort input_score from highest to lowest values
-      input_score <- sort(input_score, decreasing=TRUE)
-      
-      # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(input_score)]
-      
-      verbose("Using Revealer's Mutually Exclusive method for features scoring")
-    }
+    verbose("Using Revealer's Mutually Exclusive method for features scoring")
+    
+    # Sort input_score from highest to lowest values
+    input_score <- sort(input_score, decreasing=TRUE)
+    
+    # Re-order the samples by input_score sorted from highest to lowest values
+    ES <- ES[,names(input_score)]
+    
+  }else if(method == "custom"){
     
     # Compute row-wise directional scores using user's customized function 
-    # for binary features in ES
-    if(method == "custom"){
-      verbose("Using a customized method for features scoring.\n")
-    }
+    # for binary features in ES      
+    verbose("Using a customized method for features scoring.\n")
     
-  } else {
+  }else {
     
     stop(paste0("Invalid method specified. The method can be ", 
                 paste0(c("ks", "wilcox", "revealer", "custom"), collapse="/"), 
@@ -224,7 +222,7 @@ candidate_search <- function(
   # Select the appropriate method to compute scores based on 
   # skewdness of a given binary matrix
   mat <- exprs(ES)
-    
+  
   # Compute the row-wise scoring
   s <- switch(
     method,

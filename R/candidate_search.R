@@ -11,10 +11,10 @@
 #' @param input_score a vector of continuous scores of a functional response of 
 #' interest (required). The \code{input_score} must have names or labels that 
 #' matches the colnames of the expression matrix.
-#' @param method a character string specifies a the scoring function that is 
+#' @param method a character string specifies a scoring method that is 
 #' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or 
-#' \code{"custom"} (a customized scoring method)). Default is \code{ks}.
+#' \code{"custom"} (a user customized scoring method)). Default is \code{ks}.
 #' @param custom_function if method is \code{"custom"}, specifies 
 #' the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of 
@@ -25,15 +25,17 @@
 #' @param metric a character string specifies a metric to search 
 #' for best features. \code{"pval"} or \code{"stat"} may be used which 
 #' corresponding to p-value or score statistic. Default is \code{pval}. 
-#' Note: \code{Revealer} method only utilized score statistics values 
-#' (no p-value).
+#' NOTE: \code{Revealer} method only utilized score statistics values 
+#' (no p-values).
 #' @param weights if method is \code{ks}, specifies a vector of weights 
 #' will perform a weighted-KS testing. Default is \code{NULL}.   
 #' @param search_start a list of character strings (separated by commas) 
 #' which specifies feature names within the expression set object to start 
-#' the search with. Default is \code{NULL}.
+#' the search with. If \code{search_start} is provided, then \code{top_N}
+#' parameter will be ignored. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the 
-#' search over, starting from the top 'N' features in each case. Default is 
+#' search over, starting from the top 'N' features in each case. If \code{top_N} 
+#' is provided, then \code{search_start} parameter will be ignored. Default is 
 #' \code{1}.
 #' @param search_method a character string specifies an algorithm to filter 
 #' out the best features (\code{"forward"} or \code{"both"}). Default is 
@@ -44,7 +46,9 @@
 #' function should return only the score corresponding to the search results. 
 #' Default is \code{FALSE}.
 #' @param do_plot a logical value indicates whether or not to plot the 
-#' resulting evaluation matrix. Default is \code{TRUE}.
+#' resulting meta-feature matrix. NOTE: plot can only be produced if resulting
+#' meta-feature matrix contains more than 1 feature (e.g. length(search_start) > 1 
+#' or top_N > 1). Default is \code{FALSE}.
 #' @param verbose a logical value indicates whether or not to print the 
 #' diagnostic messages. Default is \code{FALSE}. 
 #'
@@ -94,7 +98,7 @@ candidate_search <- function(
   search_method = c("both", "forward"),
   max_size = 7,
   best_score_only = FALSE,
-  do_plot = TRUE,
+  do_plot = FALSE,
   verbose = FALSE
 ){
   

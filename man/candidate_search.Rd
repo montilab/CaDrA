@@ -18,7 +18,7 @@ candidate_search(
   search_method = c("both", "forward"),
   max_size = 7,
   best_score_only = FALSE,
-  do_plot = TRUE,
+  do_plot = FALSE,
   verbose = FALSE
 )
 }
@@ -31,10 +31,10 @@ contain unique features which are used in the search.}
 interest (required). The \code{input_score} must have names or labels that 
 matches the colnames of the expression matrix.}
 
-\item{method}{a character string specifies a the scoring function that is 
+\item{method}{a character string specifies a scoring method that is 
 used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or 
-\code{"custom"} (a customized scoring method)). Default is \code{ks}.}
+\code{"custom"} (a user customized scoring method)). Default is \code{ks}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies 
 the customized function here. Default is \code{NULL}.}
@@ -49,18 +49,20 @@ Default is \code{less} for left-skewed significance testing.}
 \item{metric}{a character string specifies a metric to search 
 for best features. \code{"pval"} or \code{"stat"} may be used which 
 corresponding to p-value or score statistic. Default is \code{pval}. 
-Note: \code{Revealer} method only utilized score statistics values 
-(no p-value).}
+NOTE: \code{Revealer} method only utilized score statistics values 
+(no p-values).}
 
 \item{weights}{if method is \code{ks}, specifies a vector of weights 
 will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas) 
 which specifies feature names within the expression set object to start 
-the search with. Default is \code{NULL}.}
+the search with. If \code{search_start} is provided, then \code{top_N}
+parameter will be ignored. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the 
-search over, starting from the top 'N' features in each case. Default is 
+search over, starting from the top 'N' features in each case. If \code{top_N} 
+is provided, then \code{search_start} parameter will be ignored. Default is 
 \code{1}.}
 
 \item{search_method}{a character string specifies an algorithm to filter 
@@ -75,7 +77,9 @@ function should return only the score corresponding to the search results.
 Default is \code{FALSE}.}
 
 \item{do_plot}{a logical value indicates whether or not to plot the 
-resulting evaluation matrix. Default is \code{TRUE}.}
+resulting meta-feature matrix. NOTE: plot can only be produced if resulting
+meta-feature matrix contains more than 1 feature (e.g. length(search_start) > 1 
+or top_N > 1). Default is \code{FALSE}.}
 
 \item{verbose}{a logical value indicates whether or not to print the 
 diagnostic messages. Default is \code{FALSE}.}

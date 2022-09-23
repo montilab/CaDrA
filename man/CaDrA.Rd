@@ -28,17 +28,17 @@ CaDrA(
 }
 \arguments{
 \item{ES}{an expression set of binary features (required). It must be a 
-BioBase expressionSet object. The rownames of the expression set must 
+\code{BioBase expressionSet} object. The rownames of the expression set must 
 contain unique features which are used to search for best features.}
 
 \item{input_score}{a vector of continuous values of a response of 
 interest (required). The \code{input_score} object must have names or 
 labels that match the colnames of the expression matrix.}
 
-\item{method}{a character string specifies a method to compute the score for 
-each feature (\code{"ks"} or \code{"wilcox"} or \code{"revealer"} 
-(conditional mutual information from REVEALER) or \code{"custom"} 
-(a customized scoring method)). Default is \code{ks}.}
+\item{method}{a character string specifies a scoring method that is 
+used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or 
+\code{"revealer"} (conditional mutual information from REVEALER) or 
+\code{"custom"} (a user customized scoring method)). Default is \code{ks}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies the 
 customized function here. Default is \code{NULL}.}
@@ -53,24 +53,21 @@ Default is \code{less} for left-skewed significance testing.}
 \item{metric}{a character string specifies a metric to search for 
 best features. \code{"pval"} or \code{"stat"} may be used which 
 corresponding to p-value or score statistic. Default is \code{pval}. 
-Note: \code{Revealer} method only utilized score statistics values 
-(no p-value).}
+NOTE: \code{Revealer} method only utilized score statistics values 
+(no p-values).}
 
 \item{weights}{if method is \code{ks}, specifies a vector of weights 
 will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{top_N}{if \code{search_start} is NULL, then \code{top_N} can be 
-used here. top_N can be an integer specifies the number of features to 
-start the search over. Starting from the top to 'N' features. Default is 
-\code{NULL}.}
+\item{top_N}{an integer specifies the number of features to start the 
+search over, starting from the top 'N' features in each case. If \code{top_N} 
+is provided, then \code{search_start} parameter will be ignored. Default is 
+\code{1}.}
 
-\item{search_start}{if \code{top_N} is NULL, then \code{search_start} can be 
-used here. \code{search_start} can be an integer specifies an index within 
-the expression set object of which feature to start the search with. Default 
-is \code{NULL}. If NULL, then the search starts with the top ranked feature. 
-If an integer is specified (N, where N < nrow(ES)), the search starts with 
-the Nth best feature. If a string is specified, the search starts with the 
-feature with this name (must be a valid rowname in ES)}
+\item{search_start}{a list of character strings (separated by commas) 
+which specifies feature names within the expression set object to start 
+the search with. If \code{search_start} is provided, then \code{top_N}
+parameter will be ignored. Default is \code{NULL}.}
 
 \item{search_method}{a character string specifies an algorithm to filter out 
 the best candidates (\code{"forward"} or \code{"both"}). Default is 
@@ -85,14 +82,14 @@ Default is \code{1000}.}
 \item{smooth}{a logical value indicates whether or not to smooth the p-value 
 calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
-\item{obs_best_score}{a numeric value corresponding to the observed (best) 
-candidate search score to use for permutation based p-value computation. 
-Default is \code{NULL}. If set to NULL, we will compute the observed best 
-score based on the given \code{input_score} and \code{ES} variables.}
+\item{obs_best_score}{a numeric value corresponding to the best observed 
+score or p-value and later use to compare against permutation based scores or
+p-values. Default is \code{NULL}. If set to NULL, we will compute the observed 
+best score based on the given \code{input_score} and \code{ES} variables.}
 
 \item{plot}{a logical value indicates whether or not to plot the empirical 
-null distribution with the observed score and permutation p-value. Default is
- \code{TRUE}.}
+null distribution with the observed scores and permutation p-values. Default is
+\code{TRUE}.}
 
 \item{ncores}{an integer specifies the number of cores to perform 
 parallelization for permutation testing. Default is \code{1}.}
@@ -117,6 +114,7 @@ scores using candidate_search() as the main iterative function for each run.
 }
 \examples{
 \donttest{
+
 # Load R library
 library(Biobase)
 
@@ -133,13 +131,17 @@ names(input_score) <- colnames(sim.ES)
 
 # Define additional parameters and start the function
 # This function takes some time to run
- cadra_result <- CaDrA(
+cadra_result <- CaDrA(
   ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
   alternative = "less", metric = "pval", top_N = 1, 
   search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
   plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
   ncores = 1, cache_path = NULL
 )
+
+# Close parallel connection
+closeAllConnection();
+
 }
 
 }

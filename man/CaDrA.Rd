@@ -139,8 +139,8 @@ cadra_result <- CaDrA(
   ncores = 1, cache_path = NULL
 )
 
-# Close parallel connection
-closeAllConnection();
+# Close parallel connections
+base::closeAllConnections()
 
 }
 

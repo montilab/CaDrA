@@ -19,7 +19,6 @@ Encoding: UTF-8
 RoxygenNote: 7.2.1
 Imports: 
     Biobase,
-    BiocStyle,
     shiny,
     htmltools,
     markdown,
@@ -46,6 +45,7 @@ Imports:
     utils,
     tools
 Suggests: 
+    BiocStyle,
     devtools,
     rmarkdown,
     knitr,

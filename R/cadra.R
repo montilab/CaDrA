@@ -194,35 +194,36 @@ CaDrA <- function(
   }
   
   # Check the method 
-  if(length(method) == 1 & method %in% c("ks", "wilcox", "revealer", "custom")){
+  # Compute row-wise directional KS scores for binary features in ES
+  if(method == "ks"){
     
-    # Compute row-wise directional KS scores for binary features in ES
-    if(method == "ks"){
-      verbose("Using Kolmogorov-Smirnov method for features scoring.")
-      # Re-order the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
-    }
+    verbose("Using Kolmogorov-Smirnov method for features scoring.")
+    
+    # Re-order the samples by input_score sorted from highest to lowest values
+    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
+    
+  }else if(method == "wilcox"){
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    if(method == "wilcox"){
-      verbose("Using Wilcoxon method for features scoring.")
-      # Ranking the samples by input_score sorted from highest to lowest values
-      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
-    }
+    verbose("Using Wilcoxon method for features scoring.")
+    
+    # Ranking the samples by input_score sorted from highest to lowest values
+    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
+    
+  }else if(method == "revealer"){
+    
+    verbose("Using Revealer's Mutually Exclusive method for features scoring")
     
     # Compute mutually exclusive method for binary features in ES
-    if(method == "revealer"){
-      ES <- ES[,names(sort(input_score, decreasing=TRUE))]
-      verbose("Using Revealer's Mutually Exclusive method for features scoring")
-    }
+    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
+    
+  }else if(method == "custom"){
     
     # Compute row-wise directional scores using user's customized 
     # function for binary features in ES
-    if(method == "custom"){
-      verbose("Using a customized method for features scoring.")
-    }
+    verbose("Using a customized method for features scoring.")
     
-  } else {
+  }else {
     
     stop(paste0("Invalid method specified. The method can be ", 
                 paste0(c("ks", "wilcox", "revealer", "custom"), 

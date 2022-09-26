@@ -15,4 +15,4 @@
 ^.*\.dll$
 ^\.Rproj\.user$
 ^\.DS_Store
-^docker.compose.cadra.yml
+^docker\.compose\.cadra\.yml$

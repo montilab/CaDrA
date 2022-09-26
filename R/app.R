@@ -612,7 +612,7 @@ CaDrA_Server <- function(id){
       # Detect the Number of CPU Cores
       num_of_cores <- detectCores()
 
-      print(paste0("Number of Cores on system: ", num_of_cores))
+      #print(paste0("Number of Cores on system: ", num_of_cores))
 
       # Create reative values
       rVal <- reactiveValues()
@@ -1100,7 +1100,7 @@ CaDrA_Server <- function(id){
             )
           })
           
-          print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " started"))
+          #print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " started"))
           
         }
         
@@ -1146,7 +1146,7 @@ CaDrA_Server <- function(id){
           )
         })
         
-        print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " started"))
+        #print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " started"))
         
         error_message("NONE")
         
@@ -1157,7 +1157,7 @@ CaDrA_Server <- function(id){
       observeEvent(input$stop_cadra, {
         
         if(!is.null(rVal$candidate_search_process)) {
-          print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " killed"))
+          #print(paste0("candidate search process: ", rVal$candidate_search_process$pid, " killed"))
           tools::pskill(rVal$candidate_search_process$pid)
           rVal$candidate_search_process <- NULL
 
@@ -1167,7 +1167,7 @@ CaDrA_Server <- function(id){
         }
         
         if(!is.null(rVal$cadra_permutation_process)) {
-          print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " killed"))
+          #print(paste0("cadra permutation process: ", rVal$cadra_permutation_process$pid, " killed"))
           tools::pskill(rVal$cadra_permutation_process$pid)
           rVal$cadra_permutation_process <- NULL
           
@@ -1595,10 +1595,10 @@ CaDrA_App <- function() {
     session$allowReconnect("force")
     
     ## Close app when browser closing
-    #session$onSessionEnded(function() {
-    #  print("Closed Shiny Session.")
-    #  stopApp()
-    #})
+    session$onSessionEnded(function() {
+     #print("Closed Shiny Session.")
+     stopApp()
+    })
     
   }
   shinyApp(ui=ui, server=server)

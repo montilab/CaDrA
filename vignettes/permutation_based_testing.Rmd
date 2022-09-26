@@ -13,7 +13,7 @@ library(Biobase)
 devtools::load_all(".")
 ```
 
-**CaDrA** employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and a user's **custom-defined** scoring function). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, **CaDrA** can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.
+**CaDrA** employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, **CaDrA** can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.
 
 # Load packages
 
@@ -52,12 +52,12 @@ ks_candidate <- CaDrA::candidate_search(
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
   alternative = "less",        # one-sided p-value
   weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
-  metric = "pval",             # Use p-value to score features
+  metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 1,                   # Number of top features to kick start the search
   max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
-  best_score_only = FALSE      # If best_score_only = FALSE, it will return ESet, its corresponding
-                               # best score, and input_score
+  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
+                               # its observed input scores and corresponding best score
 )
 
 ```
@@ -66,10 +66,10 @@ ks_candidate <- CaDrA::candidate_search(
 
 ```{r ks.meta.plot}
 
-# Extract the best meta-features result
+# Extract the best meta-feature result
 topn_best_meta <- topn_best(topn_list=ks_candidate)
 
-# Meta-feature plot
+# Visualize meta-feature result
 meta_plot(topn_best_list = topn_best_meta)
 
 ```
@@ -82,11 +82,11 @@ ks_perm_res <- CaDrA::CaDrA(
   ES = sim.ES, 
   input_score = input_score, 
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
-  alternative = "less",        # one-sided p-value
   weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
-  metric = "pval",             # Use p-value to score features
+  alternative = "less",        # one-sided p-value
+  metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
-  top_N = 1,                   # Repeat the search with first top feature
+  top_N = 1,                   # Repeat the search with the top feature
   max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
   n_perm = 1000,               # number of permutations
   plot = FALSE,                # we will plot later

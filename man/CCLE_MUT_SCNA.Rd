@@ -3,7 +3,7 @@
 \docType{data}
 \name{CCLE_MUT_SCNA}
 \alias{CCLE_MUT_SCNA}
-\title{Genomic Data from CCLE SCNA}
+\title{Genomic Data from CCLE MUT + SCNA}
 \format{
 An object of class \code{ExpressionSet} from \code{Biobase} package
 containing a matrix of 17,723 rows (features) and 82 columns (samples). 

@@ -114,11 +114,12 @@
 <h3 id="i-load--format-data-inputs">(i) Load &amp; Format Data Inputs<a class="anchor" aria-label="anchor" href="#i-load--format-data-inputs"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co">## Read in BRCA GISTIC+Mutation ESet object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span></span>
 <span><span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span></span>
 <span></span>
-<span><span class="co">## Read in input score</span></span>
+<span><span class="co">## Read in input score of TAZYAP activity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span></span>
 <span><span class="va">input_scores</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span></span>
 <span></span>
@@ -133,30 +134,37 @@
 <span><span class="co">## Pre-filter ESet based on occurrence frequency</span></span>
 <span><span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span></span>
 <span>  ES <span class="op">=</span> <span class="va">eset_mut_scna</span>,</span>
-<span>  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>,  <span class="co"># max frequency (60%)</span></span>
-<span>  min.cutoff <span class="op">=</span> <span class="fl">0.03</span> <span class="co"># min frequency (3%)</span></span>
+<span>  max.cutoff <span class="op">=</span> <span class="fl">0.6</span>,  <span class="co"># max event frequency (60%)</span></span>
+<span>  min.cutoff <span class="op">=</span> <span class="fl">0.03</span>  <span class="co"># min event frequency (3%)</span></span>
 <span><span class="op">)</span> </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="ii-run-cadra">(ii) Run CaDrA<a class="anchor" aria-label="anchor" href="#ii-run-cadra"></a>
 </h3>
+<p>Here, we are evaluating the candidate search over top ‘N’ starting features and checking for overlapping resulting features from each case</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_eval.html">topn_eval</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  ES <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">input_scores</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># use Kolmogorow-Smirnow Scoring function </span></span>
-<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># use the KS p-value to score features</span></span>
+<span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># Use Kolmogorow-Smirnow Scoring function </span></span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, it will be used to perform a weighted-KS test</span></span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided p-value</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use the KS p-value to searc for best feature</span></span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for the search</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Maximum size that a meta-feature can extend to do for a given search</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># best_score_only = FALSE will return ESet, its corresponding</span></span>
-<span>                               <span class="co"># best scores, and observed input scores for top 7 features searches</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return meta-feature ESet, </span></span>
+<span>                               <span class="co"># its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="iii-visualize-best-results">(iii) Visualize Best Results<a class="anchor" aria-label="anchor" href="#iii-visualize-best-results"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Fetch the meta-features set corresponding to its best scores over top N features searches</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co">## Fetch the meta-feature set corresponding to its best scores over top N features searches</span></span>
 <span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Visualize the best results with the meta-feature plot</span></span>
@@ -167,10 +175,60 @@
 <h3 id="iv-summarize-top-n-results">(iv) Summarize Top N Results<a class="anchor" aria-label="anchor" href="#iv-summarize-top-n-results"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Evaluate results across top N seed features you started from</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Evaluate results across top N seed features you started from</span></span>
 <span><span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;"></p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="4-sessioninfo">(4) SessionInfo<a class="anchor" aria-label="anchor" href="#4-sessioninfo"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.0.3 (2020-10-10)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: macOS Big Sur 10.16</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib</span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] CaDrA_2.0.0         testthat_3.1.4      Biobase_2.50.0     </span></span>
+<span><span class="co">#&gt; [4] BiocGenerics_0.42.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] pkgload_1.3.0      foreach_1.5.2      R.utils_2.12.0     gtools_3.9.3      </span></span>
+<span><span class="co">#&gt;  [5] brio_1.1.3         shiny_1.7.2        assertthat_0.2.1   highr_0.9         </span></span>
+<span><span class="co">#&gt;  [9] yaml_2.3.5         remotes_2.4.2      sessioninfo_1.2.2  pillar_1.8.0      </span></span>
+<span><span class="co">#&gt; [13] glue_1.6.2         digest_0.6.29      promises_1.2.0.1   colorspace_2.0-3  </span></span>
+<span><span class="co">#&gt; [17] htmltools_0.5.3    httpuv_1.6.5       R.oo_1.25.0        plyr_1.8.7        </span></span>
+<span><span class="co">#&gt; [21] pkgconfig_2.0.3    devtools_2.4.4     misc3d_0.9-1       purrr_0.3.4       </span></span>
+<span><span class="co">#&gt; [25] xtable_1.8-4       scales_1.2.0       processx_3.7.0     later_1.3.0       </span></span>
+<span><span class="co">#&gt; [29] tibble_3.1.8       farver_2.1.1       generics_0.1.3     ggplot2_3.3.6     </span></span>
+<span><span class="co">#&gt; [33] usethis_2.1.6      ellipsis_0.3.2     DT_0.23            cachem_1.0.6      </span></span>
+<span><span class="co">#&gt; [37] withr_2.5.0        ppcor_1.1          cli_3.3.0          magrittr_2.0.3    </span></span>
+<span><span class="co">#&gt; [41] crayon_1.5.1       mime_0.12          memoise_2.0.1      evaluate_0.15     </span></span>
+<span><span class="co">#&gt; [45] ps_1.7.1           R.methodsS3_1.8.2  fs_1.5.2           fansi_1.0.3       </span></span>
+<span><span class="co">#&gt; [49] MASS_7.3-58.1      R.cache_0.16.0     doParallel_1.0.17  gplots_3.1.3      </span></span>
+<span><span class="co">#&gt; [53] pkgbuild_1.3.1     profvis_0.3.7      tools_4.0.3        prettyunits_1.1.1 </span></span>
+<span><span class="co">#&gt; [57] lifecycle_1.0.1    stringr_1.4.0      munsell_0.5.0      callr_3.7.1       </span></span>
+<span><span class="co">#&gt; [61] compiler_4.0.3     caTools_1.18.2     rlang_1.0.4        grid_4.0.3        </span></span>
+<span><span class="co">#&gt; [65] iterators_1.0.14   rstudioapi_0.13    htmlwidgets_1.5.4  miniUI_0.1.1.1    </span></span>
+<span><span class="co">#&gt; [69] labeling_0.4.2     tcltk_4.0.3        bitops_1.0-7       rmarkdown_2.14    </span></span>
+<span><span class="co">#&gt; [73] gtable_0.3.0       codetools_0.2-18   DBI_1.1.3          reshape2_1.4.4    </span></span>
+<span><span class="co">#&gt; [77] markdown_1.1       R6_2.5.1           knitr_1.39         dplyr_1.0.9       </span></span>
+<span><span class="co">#&gt; [81] fastmap_1.1.0      utf8_1.2.2         rprojroot_2.0.3    KernSmooth_2.23-20</span></span>
+<span><span class="co">#&gt; [85] desc_1.4.1         stringi_1.7.8      parallel_4.0.3     Rcpp_1.0.9        </span></span>
+<span><span class="co">#&gt; [89] vctrs_0.4.1        tidyselect_1.1.2   xfun_0.31          urlchecker_1.0.1</span></span></code></pre></div>
 </div>
 </div>
   </div>

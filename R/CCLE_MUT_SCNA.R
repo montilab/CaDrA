@@ -1,4 +1,4 @@
-#' Genomic Data from CCLE SCNA
+#' Genomic Data from CCLE MUT + SCNA
 #'
 #' An ExpressionSet object consists of 17,723 genomic features across 82 samples.
 #'

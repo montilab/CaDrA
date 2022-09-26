@@ -92,7 +92,7 @@ package.</p>
 <span>  search_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"forward"</span><span class="op">)</span>,</span>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  do_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -112,10 +112,10 @@ matches the colnames of the expression matrix.</p></dd>
 
 
 <dt>method</dt>
-<dd><p>a character string specifies a the scoring function that is 
+<dd><p>a character string specifies a scoring method that is 
 used in the search. There are 4 options: (<code>"ks"</code> or <code>"wilcox"</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or 
-<code>"custom"</code> (a customized scoring method)). Default is <code>ks</code>.</p></dd>
+<code>"custom"</code> (a user customized scoring method)). Default is <code>ks</code>.</p></dd>
 
 
 <dt>custom_function</dt>
@@ -138,8 +138,8 @@ Default is <code>less</code> for left-skewed significance testing.</p></dd>
 <dd><p>a character string specifies a metric to search 
 for best features. <code>"pval"</code> or <code>"stat"</code> may be used which 
 corresponding to p-value or score statistic. Default is <code>pval</code>. 
-Note: <code>Revealer</code> method only utilized score statistics values 
-(no p-value).</p></dd>
+NOTE: <code>Revealer</code> method only utilized score statistics values 
+(no p-values).</p></dd>
 
 
 <dt>weights</dt>
@@ -150,12 +150,14 @@ will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 <dt>search_start</dt>
 <dd><p>a list of character strings (separated by commas) 
 which specifies feature names within the expression set object to start 
-the search with. Default is <code>NULL</code>.</p></dd>
+the search with. If <code>search_start</code> is provided, then <code>top_N</code>
+parameter will be ignored. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>top_N</dt>
 <dd><p>an integer specifies the number of features to start the 
-search over, starting from the top 'N' features in each case. Default is 
+search over, starting from the top 'N' features in each case. If <code>top_N</code> 
+is provided, then <code>search_start</code> parameter will be ignored. Default is 
 <code>1</code>.</p></dd>
 
 
@@ -178,7 +180,9 @@ Default is <code>FALSE</code>.</p></dd>
 
 <dt>do_plot</dt>
 <dd><p>a logical value indicates whether or not to plot the 
-resulting evaluation matrix. Default is <code>TRUE</code>.</p></dd>
+resulting meta-feature matrix. NOTE: plot can only be produced if resulting
+meta-feature matrix contains more than 1 feature (e.g. length(search_start) &gt; 1 
+or top_N &gt; 1). Default is <code>FALSE</code>.</p></dd>
 
 
 <dt>verbose</dt>

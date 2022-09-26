@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(message=FALSE, comment="#>", fig.align="center")
+knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="#>", fig.align="center")
 library(Biobase)
 devtools::load_all(".")
 ```
@@ -47,26 +47,31 @@ exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
 ## Pre-filter ESet based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
   ES = eset_mut_scna,
-  max.cutoff = 0.6, # max frequency (60%)
-  min.cutoff = 0.03 # min frequency (3%)
+  max.cutoff = 0.6,  # max event frequency (60%)
+  min.cutoff = 0.03  # min event frequency (3%)
 ) 
 
 ```
 
 ## Run CaDrA
 
+Here, we are evaluating the candidate search over top 'N' starting features and checking for overlapping resulting features from each case
+
 ```{r cadra}
 
-topn_res <- CaDrA::topn_eval(
+topn_res <- CaDrA::candidate_search(
   ES = eset_mut_scna_flt,
   input_score = input_scores,
-  method = "ks",               # use Kolmogorow-Smirnow Scoring function 
-  alternative = "less",        # 
-  metric = "pval",             # use the KS p-value to score features
+  method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
+  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
+  alternative = "less",        # Use one-sided p-value
+  metric = "pval",             # use the KS p-value to search for best feature
+  search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for the search
+  max_size = 7,                # Maximum size that a meta-feature can extend to do for a given search
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # best_score_only = FALSE will return ESet, its corresponding
-                               # best score, and input_score for over 7 feature searches
+  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
+                               # its observed input scores and corresponding best score
 )
 
 ```
@@ -75,10 +80,10 @@ topn_res <- CaDrA::topn_eval(
 
 ```{r visualize.best}
 
-## Fetch the ESet and feature set corresponding to best score over the top_N searches
+## Fetch the meta-feature ESet corresponding to best scores over top N searches
 topn_best_meta <- CaDrA::topn_best(topn_res)
 
-# Visualize best results using the function meta_plot
+# Visualize best meta-feature result
 CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
 
 ```
@@ -87,7 +92,7 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 
 ```{r summarize}
 
-# Evaluate results across top_N features you started from
+# Evaluate results across top N features you started from
 CaDrA::topn_plot(topn_list = topn_res) 
 
 ```

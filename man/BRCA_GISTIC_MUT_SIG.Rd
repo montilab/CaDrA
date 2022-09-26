@@ -3,7 +3,7 @@
 \docType{data}
 \name{BRCA_GISTIC_MUT_SIG}
 \alias{BRCA_GISTIC_MUT_SIG}
-\title{Genomic Data from TCGA BRCA that associated with YAP/TAZ Activity}
+\title{Genomic Data from TCGA BRCA MUT + GISTIC that associated with YAP/TAZ Activity}
 \format{
 An object of class \code{ExpressionSet} from \code{Biobase} package
 containing a matrix of 16,873 rows (features) and 963 columns (samples) 

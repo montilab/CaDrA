@@ -97,7 +97,7 @@
 
     
     
-<p><strong>CaDrA</strong> employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (<strong>Kolmogorov-Smirnov</strong>, <strong>Conditional Mutual Information</strong>, <strong>Wilcoxon</strong>, <strong>custom-defined</strong> scoring function). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, <strong>CaDrA</strong> can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.</p>
+<p><strong>CaDrA</strong> employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (<strong>Kolmogorov-Smirnov</strong>, <strong>Conditional Mutual Information</strong>, <strong>Wilcoxon</strong>, and <strong>custom-defined</strong>). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, <strong>CaDrA</strong> can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.</p>
 <div class="section level2">
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
@@ -109,7 +109,7 @@
 <h2 id="load-required-datasets">Load required datasets<a class="anchor" aria-label="anchor" href="#load-required-datasets"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>A <code>binary features matrix</code> (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The <code>binary features matrix</code> must be an object of class <strong>ExpressionSet</strong> from <strong>Biobase</strong> package)</li>
+<li>A <code>binary features matrix</code> also known as <code>Feature Set</code> (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The <code>Feature Set</code> must be an object of class <strong>ExpressionSet</strong> from <strong>Biobase</strong> package)</li>
 <li>A vector of continuous scores (or <code>input_score</code>) represents a functional response of interest (such as protein expression, pathway activity, etc.)</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -125,7 +125,7 @@
 <div class="section level2">
 <h2 id="find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest">Find a subset of features that maximally associated with a given outcome of interest<a class="anchor" aria-label="anchor" href="#find-a-subset-of-features-that-maximally-associated-with-a-given-outcome-of-interest"></a>
 </h2>
-<p>Here we are using <strong>Kolmogorow-Smirnow</strong> scoring method to search for best features</p>
+<p>Here we are using <strong>Kolmogorow-Smirnow</strong> (KS) scoring method to search for best features</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ks_candidate</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  ES <span class="op">=</span> <span class="va">sim.ES</span>,</span>
@@ -133,57 +133,53 @@
 <span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
 <span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span></span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, it will be used to perform a weighted-KS test</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to search for best feature</span></span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
+<span>  top_N <span class="op">=</span> <span class="fl">1</span>,                   <span class="co"># Number of top features to kick start the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return ESet, its corresponding</span></span>
-<span>                               <span class="co"># best score, and input_score</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># If best_score_only = FALSE, it will return meta-feature ESet, </span></span>
+<span>                               <span class="co"># its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="visualize-best-meta-features-result">Visualize best meta-features result<a class="anchor" aria-label="anchor" href="#visualize-best-meta-features-result"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract the best meta-features result</span></span>
+<code class="sourceCode R"><span><span class="co"># Extract the best meta-feature result</span></span>
 <span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/topn_best.html">topn_best</a></span><span class="op">(</span>topn_list<span class="op">=</span><span class="va">ks_candidate</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Meta-feature plot</span></span>
+<span><span class="co"># Visualize meta-feature result</span></span>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span><span class="op">)</span></span></code></pre></div>
-<p><img src="permutation_based_testing_files/figure-html/ks.meta.plot-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="permutation_based_testing_files/figure-html/ks.meta.plot-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="permutation-based-testing">Permutation-based testing<a class="anchor" aria-label="anchor" href="#permutation-based-testing"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ks_perm_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/CaDrA.html">CaDrA</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">ks_perm_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/CaDrA.html">CaDrA</a></span><span class="op">(</span></span>
 <span>  ES <span class="op">=</span> <span class="va">sim.ES</span>, </span>
 <span>  input_score <span class="op">=</span> <span class="va">input_score</span>, </span>
 <span>  method <span class="op">=</span> <span class="st">"ks"</span>,               <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
-<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span></span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, it will be used to perform a weighted-KS test</span></span>
-<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to score features</span></span>
-<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># forward/backward search</span></span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># one-sided p-value</span></span>
+<span>  metric <span class="op">=</span> <span class="st">"pval"</span>,             <span class="co"># Use p-value to search for best feature</span></span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
+<span>  top_N <span class="op">=</span> <span class="fl">1</span>,                   <span class="co"># Repeat the search with the top feature</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Set max_size = 10 to account for 10 left-skewed features in sim.ES</span></span>
 <span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,               <span class="co"># number of permutations</span></span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,                <span class="co"># we will plot later</span></span>
-<span>  ncores <span class="op">=</span> <span class="fl">8</span>                   <span class="co"># number of cores to perform parallelization for permutation testing</span></span>
+<span>  ncores <span class="op">=</span> <span class="fl">1</span>                   <span class="co"># number of cores to perform parallelization for permutation testing</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code>Setting cache root path as: /Users/reinachau/Library/Caches/org.R-project.R/R/R.cache</code></pre>
-<pre><code>Found 1000 cached permutation-based scores for the specified dataset and search parameters..</code></pre>
-<pre><code>Loading permutation scores from cache..</code></pre>
-<pre><code><span><span class="va">FINISHED</span></span></code></pre>
-<pre><code>Time elapsed: 0 mins </code></pre>
-<pre><code>Computing observed best score ..</code></pre>
-<pre><code>Number of permutation-based scores being considered: 1000</code></pre>
-<pre><code>Permutation p-value: 0.882117882117882</code></pre>
 </div>
 <div class="section level2">
 <h2 id="visualize-permutation-result">Visualize permutation result<a class="anchor" aria-label="anchor" href="#visualize-permutation-result"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Visualize permutation results</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Visualize permutation results</span></span>
 <span><span class="fu"><a href="../reference/permutation_plot.html">permutation_plot</a></span><span class="op">(</span><span class="va">ks_perm_res</span><span class="op">)</span></span></code></pre></div>
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="permutation_based_testing_files/figure-html/ks.permutation.plot-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="ks.permutation.plot.png"></p>
 </div>
   </div>
 

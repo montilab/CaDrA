@@ -19,7 +19,7 @@ create_hover_txt <- function(table){
   return(sketch)
 }
 
-datalist <- read.table(system.file("extdata/README.txt", package = "CaDrA"), header=TRUE)
+datalist <- read.table(system.file("extdata/DATALIST.txt", package = "CaDrA"), header=TRUE)
 datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
 
 # Obtain the external data
@@ -751,7 +751,7 @@ CaDrA_Server <- function(id){
               envir_name <- load(dataset)
               ES <- get(envir_name)
             }else{
-              ES <- readRDS(file_path)
+              ES <- readRDS(dataset)
             }
           
         }
@@ -798,7 +798,7 @@ CaDrA_Server <- function(id){
             envir_name <- load(scores)
             input_score <- get(envir_name)
           }else{
-            input_score <- readRDS(file_path)
+            input_score <- readRDS(scores)
           }
           
         }

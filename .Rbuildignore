@@ -16,3 +16,7 @@
 ^\.Rproj\.user$
 ^\.DS_Store
 ^docker-compose\.cadra\.yml$
+^extdata
+^eset
+^input_score
+^DATALIST.txt

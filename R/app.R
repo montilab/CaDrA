@@ -19,18 +19,42 @@ create_hover_txt <- function(table){
   return(sketch)
 }
 
+datalist <- read.table(system.file("extdata/README.txt", package = "CaDrA"), header=TRUE)
+datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
+
+# Obtain the external data
+eset_paths <- datalist$eset_paths
+eset_names <- datalist$eset_names
+
+# Create a labels for each file
+names(eset_paths) <- eset_names
+
 dataset_choices <- list(
-  "TTGA BRCA Mutation Signatures (BRCA_GISTIC_MUT_SIG)" = "BRCA_GISTIC_MUT_SIG",
-  "CCLE SCNAs in Cancers (CCLE_MUT_SCNA)" = "CCLE_MUT_SCNA", 
-  "Simulated Data (sim.ES)" = "sim.ES"
+  "CCLE MUT + SCNAs in Cancers (CCLE_MUT_SCNA)" =  system.file("data/CCLE_MUT_SCNA.rda", package = "CaDrA"),
+  "Simulated Expression Set (sim.ES)" = system.file("data/sim.ES.RData", package = "CaDrA"),
+  "TCGA BRCA GISTIC + Mutation Signatures (BRCA_GISTIC_MUT_SIG)" = system.file("data/BRCA_GISTIC_MUT_SIG.rda", package = "CaDrA")
 )
 
+if(length(eset_paths) > 0){
+  dataset_choices <- c(dataset_choices, eset_paths)
+}
+
+# Obtain the external data
+score_paths <- datalist$score_paths
+score_names <- datalist$score_names
+
+# Create a labels for each file
+names(score_paths) <- score_names
+
 score_choices <- list(
-  "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = 
-    "TAZYAP_BRCA_ACTIVITY",
-  "Activation of B-catenin in Cancers (CTNBB1_reporter)" = "CTNBB1_reporter",
-  "Random simulated input scores (sim.Scores)" = "sim.Scores"
+  "Activation of B-catenin in Cancers (CTNBB1_reporter)" = system.file("data/CTNBB1_reporter.rda", package = "CaDrA"),
+  "Simulated Input Scores from rnorm(n=length(sim.ES), mean=0, sd=1) (sim.Scores)" =  system.file("data/sim.Scores.rda", package = "CaDrA"),
+  "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = system.file("data/TAZYAP_BRCA_ACTIVITY.rda", package = "CaDrA")
 )
+
+if(length(score_paths) > 0){
+  score_choices <- c(score_choices, score_paths)
+}
 
 #' Shiny UI modules 
 #' 
@@ -62,6 +86,7 @@ score_choices <- list(
 #' @export 
 CaDrA_UI <- function(id) 
 {
+  
   ns <- NS(id)
   
   fluidRow(
@@ -140,49 +165,6 @@ CaDrA_UI <- function(id)
           width = "100%"
         ),
         conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", 
-                              ns("dataset"), 
-                              dataset_choices[1]),
-          selectInput(
-            inputId = ns(paste0(dataset_choices[1], "_scores")), 
-            label = "Input Score", 
-            choices = c(score_choices[1], "Import Data"), 
-            selected = score_choices[1], 
-            width = "100%"
-          )
-        ),
-        conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", 
-                              ns("dataset"), 
-                              dataset_choices[2]),
-          selectInput(
-            inputId = ns(paste0(dataset_choices[2], "_scores")), 
-            label = "Input Score", 
-            choices = c(score_choices[2], "Import Data"), 
-            selected = score_choices[2], 
-            width = "100%"
-          )
-        ),
-        conditionalPanel(
-          condition = sprintf("input['%s'] == '%s'", 
-                              ns("dataset"), 
-                              dataset_choices[3]),
-          selectInput(
-            inputId = ns(paste0(dataset_choices[3], "_scores")), 
-            label = HTML(paste0(
-              'Choose an input_score ', 
-              '<a class="tooltip-txt" data-html="true" ',
-              'data-tooltip-toggle="tooltip" data-placement=',
-              '"top" title=\"The random simulated ',
-              'input scores are generated from ',
-              'rnorm(n=ncol(sim.ES), mean=0, sd=1) ',
-              'with seed=123.\">?</a>')), 
-            choices = c(score_choices[3], "Import Data"), 
-            selected = score_choices[3], 
-            width = "100%"
-          )
-        ),
-        conditionalPanel(
           condition = sprintf("input['%s'] == 'Import Data'", ns("dataset")),
           fileInput(
             inputId = ns("ES_file"), 
@@ -208,19 +190,14 @@ CaDrA_UI <- function(id)
             inline = TRUE
           )
         ),
+        selectInput(
+          inputId = ns("scores"), 
+          label = "Input Score", 
+          choices = "Import Data",
+          width = "100%"
+        ),
         conditionalPanel(
-          condition = sprintf("input['%s'] == 'Import Data' | 
-                              (input['%s'] == '%s' & input['%s'] == 
-                              'Import Data') | (input['%s'] == '%s' & 
-                              input['%s'] == 'Import Data') | 
-                              (input['%s'] == '%s' & input['%s'] == 
-                              'Import Data')", ns("dataset"), 
-                              ns("dataset"), dataset_choices[1], 
-                              ns(paste0(dataset_choices[1], "_scores")), 
-                              ns("dataset"), dataset_choices[2], 
-                              ns(paste0(dataset_choices[2], "_scores")), 
-                              ns("dataset"), dataset_choices[3], 
-                              ns(paste0(dataset_choices[3], "_scores"))),
+          condition = sprintf("input['%s'] == 'Import Data'", ns("scores")),
           fileInput(
             inputId = ns("input_score_file"), 
             label = strong(span(style = "color: red;", "*"), 
@@ -233,10 +210,14 @@ CaDrA_UI <- function(id)
               'File type ', 
               '<a class="tooltip-txt" data-html="true" ',
               'data-tooltip-toggle="tooltip" data-placement=',
-              '"top" title=\"NOTE: The \'Input Score\' file ',
+              '"top" title=\"NOTE: If file is in csv format, ', 
+              'then the \'Input Score\' file ',
               'must be a data frame with two columns ',
               '(Samples and Scores) and the \'Samples\' column ',
-              'must match the colnames of \'Feature Set\'.\">?</a>')), 
+              'must match the colnames of \'Feature Set\'. ',
+              'Otherwise, \'Input Score\' must be a list of  ',
+              'vectors and have names or labels that match the ',
+              'colnames of the \'Feature Set\'.\">?</a>')), 
             choices = c(".csv", ".rds"), 
             selected = ".csv", 
             inline = TRUE
@@ -306,10 +287,13 @@ CaDrA_UI <- function(id)
                 '<a class="tooltip-txt" data-html="true" ',
                 'data-tooltip-toggle="tooltip" ',
                 'data-placement="top" title=\"NOTE: ',
-                'The weights file must be a data frame ',
+                'If file is in csv format, then ',
+                'the \'Weights\' file must be a data frame ',
                 'with two columns (Samples and Weights) and ',
-                'the Samples must match the colnames of ',
-                '\'Feature Set\'.\">?</a>')), 
+                'the \'Samples\' column must match the colnames of ',
+                '\'Feature Set\'. Otherwise, \'Weights\' file',
+                'must contain a list of vectors and have names or ',
+                'labels that match the colnames of \'Feature Set\'.\">?</a>')), 
               choices=c(".csv", ".rds"), 
               selected = ".csv", 
               inline = TRUE
@@ -609,12 +593,10 @@ CaDrA_Server <- function(id){
     id,
     function(input, output, session) {
 
-      # Detect the Number of CPU Cores
+      # Detect number of cores on machine
       num_of_cores <- detectCores()
 
-      #print(paste0("Number of Cores on system: ", num_of_cores))
-
-      # Create reative values
+      # Create reactive values
       rVal <- reactiveValues()
       rVal$candidate_search_process <- NULL
       rVal$candidate_search_obs <- NULL
@@ -643,13 +625,39 @@ CaDrA_Server <- function(id){
           )
         )
       })
+      
       observeEvent(input$dataset, {
-        if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          updateNumericInput(session, inputId = "min_cutoff", value = 30)
-        }else {
-          updateNumericInput(session, inputId = "min_cutoff", value = 5)
+        
+        selected_dataset <- isolate({ input$dataset }) 
+        
+        if(selected_dataset != "Import Data"){
+          
+          selection <- score_choices[which(dataset_choices == selected_dataset)] %>% unlist()
+          
+          if(!is.na(names(selection))){
+            updateSelectInput(session, inputId = "scores", choices = c(selection, "Import Data"), selected = selection[1])
+          }else{
+            updateSelectInput(session, inputId = "scores", choices = "Import Data")
+          }
+          
+          if(tools::file_ext(selected_dataset) == "rda" | tools::file_ext(selected_dataset) == "RData"){
+            selected_dataset <- load(selected_dataset)
+          }
+          
+          if(selected_dataset == "BRCA_GISTIC_MUT_SIG"){
+            updateNumericInput(session, inputId = "min_cutoff", value = 30)
+          }else {
+            updateNumericInput(session, inputId = "min_cutoff", value = 5)
+          }
+          
+        }else{
+          
+          updateSelectInput(session, inputId = "scores", choices = "Import Data")
+          
         }
+        
       })
+      
       #
       # Start the process
       #    
@@ -660,8 +668,8 @@ CaDrA_Server <- function(id){
         if(!is.null(rVal$candidate_search_process))
           return()
         
-        rVal$cadra_permutation_result <- NULL
         rVal$candidate_search_result <- NULL
+        rVal$cadra_permutation_result <- NULL
         feature_set_description(NULL)
         feature_set_data(NULL)
         input_score_data(NULL)
@@ -671,53 +679,10 @@ CaDrA_Server <- function(id){
         ## Show loading icon ####
         session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("loading_icon"), display="yes"))
         
-        if(input$dataset == "BRCA_GISTIC_MUT_SIG"){
-          
-          ## Read in BRCA GISTIC+Mutation ESet object
-          utils::data("BRCA_GISTIC_MUT_SIG", envir = environment())
-          eset_mut_scna <- get("BRCA_GISTIC_MUT_SIG", envir = environment())
-          
-          if(input$BRCA_GISTIC_MUT_SIG_scores == "TAZYAP_BRCA_ACTIVITY"){
-            
-            ## Read in input score
-            utils::data("TAZYAP_BRCA_ACTIVITY", envir = environment())
-            input_score <- get("TAZYAP_BRCA_ACTIVITY", envir = environment())
-              
-            ## Samples to keep based on the overlap between the two inputs
-            overlap <- intersect(names(input_score), 
-                                 Biobase::sampleNames(eset_mut_scna))
-            eset_mut_scna <- eset_mut_scna[,overlap]
-            input_score <- input_score[overlap]
-            
-          }
-          ## Binarize ES to only have 0's and 1's
-          exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
-          
-          ES <- eset_mut_scna
-        }
-        if(input$dataset == "CCLE_MUT_SCNA"){
-          
-          ## Read in SCNA ESet object
-          utils::data("CCLE_MUT_SCNA", envir = environment())
-          ES <- get("CCLE_MUT_SCNA", envir = environment())
-            
-          if(input$CCLE_MUT_SCNA_scores == "CTNBB1_reporter"){
-            utils::data("CTNBB1_reporter", envir = environment())
-            input_score <- get("CTNBB1_reporter", envir = environment())
-          }
-        }
-        if(input$dataset == "sim.ES"){
-          
-          ## Read in simulated eset object
-          utils::data("sim.ES", envir = environment())
-          ES <- get("sim.ES", envir = environment())
-            
-          if(input$sim.ES_scores == "sim.Scores"){
-            utils::data("sim.Scores", envir = environment())
-            input_score <- get("sim.Scores", envir = environment())
-          }
-        }
-        if(input$dataset == "Import Data"){
+        dataset <- isolate({ input$dataset })
+        scores <- isolate({ input$scores })
+        
+        if(dataset == "Import Data"){
           
           inputfile <- input$ES_file;
           inputtype <- input$ES_file_type;
@@ -769,22 +734,29 @@ CaDrA_Server <- function(id){
               
             }
             
-          } else if (inputtype %in% ".rds" & length(rds_ext) > 0){
+          }else if (inputtype %in% ".rds" & length(rds_ext) > 0){
             
             ES <- readRDS(inputfile$datapath)
             
-          } else {
+          }else{
             
             error_message("Incorrect file format. Please check your 'Feature Set' file again.")
             return(NULL)
             
           }
+          
+        }else{
+          
+            if(tools::file_ext(dataset) == "rda" | tools::file_ext(dataset) == "RData"){
+              envir_name <- load(dataset)
+              ES <- get(envir_name)
+            }else{
+              ES <- readRDS(file_path)
+            }
+          
         }
         
-        if(input$dataset == "Import Data" | 
-           (input$dataset == "BRCA_GISTIC_MUT_SIG" & input$BRCA_GISTIC_MUT_SIG_scores == "Import Data") | 
-           (input$dataset == "CCLE_MUT_SCNA" & input$CCLE_MUT_SCNA_scores == "Import Data") | 
-           (input$dataset == "sim.ES" & input$sim.ES_scores == "Import Data")){
+        if(scores == "Import Data"){
           
           inputfile <- input$input_score_file;
           inputtype <- input$input_score_file_type;
@@ -811,15 +783,7 @@ CaDrA_Server <- function(id){
             
           } else if (inputtype %in% ".rds" & length(rds_ext) > 0){
             
-            dat <- readRDS(inputfile$datapath) 
-            
-            if(all(c("Samples", "Scores") %in% colnames(dat))){
-              input_score <- as.numeric(dat$Scores)
-              names(input_score) <- as.character(dat$Samples)
-            }else{
-              error_message("The 'Input Score' file must be a data frame with two columns: Samples and Scores.")
-              return(NULL)
-            }
+            input_score <- readRDS(inputfile$datapath) 
             
           } else {
             
@@ -827,7 +791,18 @@ CaDrA_Server <- function(id){
             return(NULL)
             
           }
+          
+        }else{
+
+          if(tools::file_ext(scores) == "rda" | tools::file_ext(scores) == "RData"){
+            envir_name <- load(scores)
+            input_score <- get(envir_name)
+          }else{
+            input_score <- readRDS(file_path)
+          }
+          
         }
+        
         # Obtain the pre-filter parameters (min_cutoff)
         min_cutoff <- as.integer(input$min_cutoff)
         
@@ -951,19 +926,11 @@ CaDrA_Server <- function(id){
                 return(NULL)
               }
               
-            } else if (inputtype %in% ".rds" & length(rds_ext) > 0){
+            }else if(inputtype %in% ".rds" & length(rds_ext) > 0){
               
-              dat <- readRDS(inputfile$datapath)
+              weights <- readRDS(inputfile$datapath)
               
-              if(all(c("Weights", "Samples") %in% colnames(dat))){
-                weights <- as.numeric(dat$Weights)
-                names(weights) <- as.character(dat$Samples)
-              }else{
-                error_message("The 'Weighted KS' file must be a data.frame with two columns: Samples and Weights.")
-                return(NULL)
-              }
-              
-            } else {
+            }else{
               
               error_message("Incorrect file format. Please check your 'Weighted KS' file again.")
               return(NULL)
@@ -1000,6 +967,7 @@ CaDrA_Server <- function(id){
           } else {
             
             weights <- NULL
+            
           }
         }
         if(method %in% c("ks", "wilcox")){
@@ -1266,10 +1234,10 @@ CaDrA_Server <- function(id){
 
         dataset <- isolate({ input$dataset })
 
-        if (dataset %in% c("BRCA_GISTIC_MUT_SIG", "CCLE_MUT_SCNA", "sim.ES")) {
-          title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
-        } else if (dataset == "Import Data"){
+        if (dataset == "Import Data"){
           title <- "Dataset: Imported Data"
+        }else{
+          title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
         }
         div(
           h2(title),
@@ -1289,7 +1257,7 @@ CaDrA_Server <- function(id){
       )
       output$bestFeatureData_title <- renderUI({
         req(rVal$candidate_search_result)
-        h2("Best Meta-Features Eset")
+        h2("Best Meta-Feature Eset")
       })
       output$bestFeatureData <- DT::renderDataTable({
 
@@ -1344,7 +1312,7 @@ CaDrA_Server <- function(id){
 
         shiny::showModal(
           shiny::modalDialog(
-            title = "Download Best Meta-Features Eset",
+            title = "Download Best Meta-Feature Eset",
             downloadButton(outputId = ns("downloadEsetCSV"), 
                            "Download Table as CSV file"),
             br(), br(),
@@ -1357,7 +1325,7 @@ CaDrA_Server <- function(id){
       output$downloadEsetCSV <- downloadHandler(
 
         filename = function() {
-          paste0("CaDrA-Best-Meta-Features-Eset.csv")
+          paste0("CaDrA-Best-Meta-Feature-Eset.csv")
         },
 
         content = function(file) {
@@ -1371,7 +1339,7 @@ CaDrA_Server <- function(id){
       output$downloadEsetRDS <- downloadHandler(
 
         filename = function() {
-          paste0("CaDrA-Best-Meta-Features-Eset.rds")
+          paste0("CaDrA-Best-Meta-Feature-Eset.rds")
         },
         content = function(file) {
 
@@ -1386,22 +1354,12 @@ CaDrA_Server <- function(id){
 
         req(rVal$candidate_search_result, input_score_data())
 
-        dataset <- isolate({ input$dataset })
+        selection <- isolate({ input$scores })
 
-        if(dataset == "BRCA_GISTIC_MUT_SIG"){
-          scores <- isolate({ input$BRCA_GISTIC_MUT_SIG_scores })
-        }else if(dataset == "CCLE_MUT_SCNA"){
-          scores <- isolate({ input$CCLE_MUT_SCNA_scores })
-        }else if(dataset == "sim.ES"){
-          scores <- isolate({ input$sim.ES_scores })
-        }else{
-          scores <- "Imported Data"
-        }
-        
-        if(scores %in% c("TAZYAP_BRCA_ACTIVITY", "CTNBB1_reporter", "sim.Scores")){
-          title <- names(score_choices[which(score_choices == scores)])
-        }else{
+        if(selection == "Import Data"){
           title <- "Imported Data"
+        }else{
+          title <- names(score_choices[which(score_choices == selection)])
         }
         
         h2("Observed Input Scores:", title)
@@ -1509,7 +1467,7 @@ CaDrA_Server <- function(id){
 
         req(rVal$candidate_search_result)
 
-        h2("Best Meta-Features Plot")
+        h2("Best Meta-Feature Plot")
       })
       output$meta_plot <- renderPlot({
 

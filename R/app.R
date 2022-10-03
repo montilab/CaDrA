@@ -19,41 +19,49 @@ create_hover_txt <- function(table){
   return(sketch)
 }
 
-datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)
-datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
-
-# Obtain the external data
-eset_paths <- datalist$eset_paths
-eset_names <- datalist$eset_names
-
-# Create a labels for each file
-names(eset_paths) <- eset_names
-
+# Global expression sets
 dataset_choices <- list(
   "CCLE MUT + SCNAs in Cancers (CCLE_MUT_SCNA)" =  system.file("data/CCLE_MUT_SCNA.rda", package = "CaDrA"),
   "Simulated Expression Set (sim.ES)" = system.file("data/sim.ES.RData", package = "CaDrA"),
   "TCGA BRCA GISTIC + Mutation Signatures (BRCA_GISTIC_MUT_SIG)" = system.file("data/BRCA_GISTIC_MUT_SIG.rda", package = "CaDrA")
 )
 
-if(length(eset_paths) > 0){
-  dataset_choices <- c(dataset_choices, eset_paths)
-}
-
-# Obtain the external data
-score_paths <- datalist$score_paths
-score_names <- datalist$score_names
-
-# Create a labels for each file
-names(score_paths) <- score_names
-
+# Global input scores
 score_choices <- list(
   "Activation of B-catenin in Cancers (CTNBB1_reporter)" = system.file("data/CTNBB1_reporter.rda", package = "CaDrA"),
   "Simulated Input Scores from rnorm(n=length(sim.ES), mean=0, sd=1) (sim.Scores)" =  system.file("data/sim.Scores.rda", package = "CaDrA"),
   "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = system.file("data/TAZYAP_BRCA_ACTIVITY.rda", package = "CaDrA")
 )
 
-if(length(score_paths) > 0){
-  score_choices <- c(score_choices, score_paths)
+# Obtain the external data if it exits
+if(file.exists(system.file("extdata/datalist.csv", package = "CaDrA"))){
+  
+  # Read in a list of files in datalist.csv 
+  datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)
+  datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
+  
+  # Obtain external expression sets
+  eset_paths <- datalist$eset_paths
+  eset_names <- datalist$eset_names
+  
+  # Create a labels for each file
+  names(eset_paths) <- eset_names
+  
+  if(length(eset_paths) > 0){
+    dataset_choices <- c(dataset_choices, eset_paths)
+  }
+  
+  # Obtain external input scores
+  score_paths <- datalist$score_paths
+  score_names <- datalist$score_names
+  
+  # Create a labels for each file
+  names(score_paths) <- score_names
+  
+  if(length(score_paths) > 0){
+    score_choices <- c(score_choices, score_paths)
+  }
+
 }
 
 #' Shiny UI modules 

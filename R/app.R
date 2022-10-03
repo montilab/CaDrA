@@ -19,7 +19,7 @@ create_hover_txt <- function(table){
   return(sketch)
 }
 
-datalist <- read.csv(system.file("extdata/datalist.txt", package = "CaDrA"), header=TRUE)
+datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)
 datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
 
 # Obtain the external data

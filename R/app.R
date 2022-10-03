@@ -37,7 +37,7 @@ score_choices <- list(
 get_extdata <- function(dataset_choices, score_choices){
   
   # Check if external data exists in package
-  if(file.exists(system.file("extdata/datalist.csv", package = "CaDrA"))){
+  if(file.exists(system.file("extdata", "datalist.csv", package = "CaDrA"))){
     
     # Read in a list of files in datalist.csv 
     datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)

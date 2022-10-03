@@ -33,37 +33,44 @@ score_choices <- list(
   "YAP/TAZ Activity in Human Breast Cancers (TAZYAP_BRCA_ACTIVITY)" = system.file("data/TAZYAP_BRCA_ACTIVITY.rda", package = "CaDrA")
 )
 
-# Obtain the external data if it exits
-if(file.exists(system.file("extdata/datalist.csv", package = "CaDrA"))){
+# Obtain the external data
+get_extdata <- function(dataset_choices, score_choices){
   
-  # Read in a list of files in datalist.csv 
-  datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)
-  datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
-  
-  # Obtain external expression sets
-  eset_paths <- datalist$eset_paths
-  eset_names <- datalist$eset_names
-  
-  # Create a labels for each file
-  names(eset_paths) <- eset_names
-  
-  if(length(eset_paths) > 0){
-    dataset_choices <- c(dataset_choices, eset_paths)
+  # Check if external data exists in package
+  if(file.exists(system.file("extdata/datalist.csv", package = "CaDrA"))){
+    
+    # Read in a list of files in datalist.csv 
+    datalist <- read.csv(system.file("extdata/datalist.csv", package = "CaDrA"), header=TRUE)
+    datalist <- datalist[which(datalist$eset_paths != "" & !is.na(datalist$eset_paths) & datalist$eset_names != "" & !is.na(datalist$eset_names)),]
+    
+    # Obtain external expression sets
+    eset_paths <- datalist$eset_paths
+    eset_names <- datalist$eset_names
+    
+    # Create a labels for each file
+    names(eset_paths) <- eset_names
+    
+    if(length(eset_paths) > 0){
+      dataset_choices <- c(dataset_choices, eset_paths)
+    }
+    
+    # Obtain external input scores
+    score_paths <- datalist$score_paths
+    score_names <- datalist$score_names
+    
+    # Create a labels for each file
+    names(score_paths) <- score_names
+    
+    if(length(score_paths) > 0){
+      score_choices <- c(score_choices, score_paths)
+    }
+    
   }
   
-  # Obtain external input scores
-  score_paths <- datalist$score_paths
-  score_names <- datalist$score_names
+  return(list(eset_choices=dataset_choices, input_score_choices=score_choices))
   
-  # Create a labels for each file
-  names(score_paths) <- score_names
-  
-  if(length(score_paths) > 0){
-    score_choices <- c(score_choices, score_paths)
-  }
-
 }
-
+  
 #' Shiny UI modules 
 #' 
 #' @param id A unique namespace identifier
@@ -94,6 +101,9 @@ if(file.exists(system.file("extdata/datalist.csv", package = "CaDrA"))){
 #' @export 
 CaDrA_UI <- function(id) 
 {
+  
+  # Combine extdata with global expression set and scores dataset if it was provided
+  eset_choices <- get_extdata(dataset_choices, score_choices)[["eset_choices"]] %>% unlist()
   
   ns <- NS(id)
   
@@ -168,8 +178,8 @@ CaDrA_UI <- function(id)
         selectInput(
           inputId = ns("dataset"), 
           label = "Feature Set", 
-          choices = c(dataset_choices, "Import Data"),
-          selected = dataset_choices[1], 
+          choices = c(eset_choices, "Import Data"),
+          selected = eset_choices[1], 
           width = "100%"
         ),
         conditionalPanel(
@@ -601,6 +611,11 @@ CaDrA_Server <- function(id){
     id,
     function(input, output, session) {
 
+      # Combine extdata with global expression set and scores dataset if it was provided
+      extdata <- get_extdata(dataset_choices, score_choices)
+      eset_choices <- extdata[["eset_choices"]] %>% unlist()
+      input_score_choices <- extdata[["input_score_choices"]] %>% unlist()
+      
       # Detect number of cores on machine
       num_of_cores <- detectCores()
 
@@ -640,7 +655,7 @@ CaDrA_Server <- function(id){
         
         if(selected_dataset != "Import Data"){
           
-          selection <- score_choices[which(dataset_choices == selected_dataset)] %>% unlist()
+          selection <- input_score_choices[which(eset_choices == selected_dataset)] %>% unlist()
           
           if(!is.na(names(selection))){
             updateSelectInput(session, inputId = "scores", choices = c(selection, "Import Data"), selected = selection[1])
@@ -1245,7 +1260,7 @@ CaDrA_Server <- function(id){
         if (dataset == "Import Data"){
           title <- "Dataset: Imported Data"
         }else{
-          title <- paste0("Dataset: ", names(dataset_choices[which(dataset_choices == dataset)]))
+          title <- paste0("Dataset: ", names(eset_choices[which(eset_choices == dataset)]))
         }
         div(
           h2(title),
@@ -1367,7 +1382,7 @@ CaDrA_Server <- function(id){
         if(selection == "Import Data"){
           title <- "Imported Data"
         }else{
-          title <- names(score_choices[which(score_choices == selection)])
+          title <- names(input_score_choices[which(input_score_choices == selection)])
         }
         
         h2("Observed Input Scores:", title)

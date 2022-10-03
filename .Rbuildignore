@@ -16,6 +16,7 @@
 ^\.DS_Store$
 ^Dockerfile$
 ^docker-compose\.cadra\.yml$
+^extdata$
 ^eset$
 ^input_score$
 ^datalist.csv$

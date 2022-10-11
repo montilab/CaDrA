@@ -527,6 +527,39 @@ CaDrA_UI <- function(id)
           
         ),
         tabPanel(
+          title = "Dataset",
+          style = "padding: 5px 10px 10px 10px;",
+          icon = icon(name = "database", lib = "font-awesome"),
+          
+          h2("Download Feature Set"),
+          selectInput(
+            inputId = ns("feature_set"),
+            label = NULL,
+            choices = eset_choices,
+            selected = eset_choices[1],
+            width = "600px"
+          ),
+          selectInput(
+            inputId = ns("dataset_type"),
+            label = "Type of Data to Download:",
+            choices = c("Expression Set", "Sample Names", "Feature Names"),
+            width = "600px"
+          ),
+          div(
+            id = ns("input_score_dl"), style="display: none;",
+            checkboxInput(
+              inputId = ns("include_scores"),
+              label = HTML(paste0(
+                'Include Input Scores ', 
+                '<a class="tooltip-txt" data-html="true" ',
+                'data-tooltip-toggle="tooltip" data-placement="top" ',
+                'title=\"Whether to download \'Input Scores\' associated with \'Feature Set\' as well\">?</a>')),
+              value = FALSE
+            )
+          ),
+          downloadButton(outputId = ns("download_data"), label="Download", icon=icon("download"))
+        ),
+        tabPanel(
           title = "Publication", 
           style = "padding: 5px 10px 10px 10px;",
           icon = icon(name = "book", lib = "font-awesome"),
@@ -648,7 +681,7 @@ CaDrA_Server <- function(id){
           )
         )
       })
-      
+      # update eset and score choices
       observeEvent(input$dataset, {
         
         selected_dataset <- isolate({ input$dataset }) 
@@ -680,7 +713,87 @@ CaDrA_Server <- function(id){
         }
         
       })
-      
+      # observe dataset choices
+      observeEvent(input$feature_set, {
+        
+        ns <- session$ns
+        
+        selected_dataset <- isolate({ input$feature_set }) 
+        
+        selection <- input_score_choices[which(eset_choices == selected_dataset)] %>% unlist()
+        
+        if(!is.na(names(selection))){
+          ## Show loading icon ####
+          session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("input_score_dl"), display="yes"))
+          updateCheckboxInput(session, inputId = "include_scores", value=TRUE)
+        }else{
+          ## Hide loading icon ####
+          session$sendCustomMessage(type = "ToggleOperation", message = list(id=ns("input_score_dl"), display="no"))
+          updateCheckboxInput(session, inputId = "include_scores", value=FALSE)
+        }
+
+      })
+      # Download dataset handler
+      output$download_data <- downloadHandler(
+        
+        filename = function() {
+          
+          dataset <- isolate({ input$feature_set })
+          type <- isolate({ input$dataset_type })
+          filename <- names(eset_choices[which(eset_choices == dataset)])
+          
+          if(type == "Expression Set"){
+            paste0(filename, "-Expression Set", ".rds")
+          }else if(type == "Sample Names"){
+            paste0(filename, "-Sample Names", ".rds")
+          }else if(type == "Feature Names"){
+            paste0(filename, "-Feature Names", ".rds")
+          }
+          
+        },
+        
+        content = function(file) {
+          
+          dataset <- isolate({ input$feature_set })
+          type <- isolate({ input$dataset_type })
+          include_scores <- isolate({ input$include_scores })
+          
+          if(tools::file_ext(dataset) == "rda" | tools::file_ext(dataset) == "RData"){
+            envir_name <- load(dataset)
+            ES <- get(envir_name)
+          }else{
+            ES <- readRDS(dataset)
+          }
+
+          dl_data <- list()
+          
+          if(type == "Expression Set"){
+            dl_data <- c(dl_data, ES=ES)
+          }else if(type == "Sample Names"){
+            dl_data <- c(dl_data, list(sample_names=colnames(ES)))
+          }else if(type == "Feature Names"){
+            dl_data <- c(dl_data, list(feature_names=rownames(ES)))
+          }
+          
+          if(include_scores){
+            
+            scores <- input_score_choices[which(eset_choices == dataset)] %>% unlist()
+            
+            if(tools::file_ext(scores) == "rda" | tools::file_ext(scores) == "RData"){
+              envir_name <- load(scores)
+              input_score <- get(envir_name)
+            }else{
+              input_score <- readRDS(scores)
+            }
+            
+            dl_data <- c(dl_data, input_score=list(input_score))
+            
+          }
+
+          saveRDS(dl_data, file)
+          
+        }
+      )
       #
       # Start the process
       #    
@@ -774,7 +887,7 @@ CaDrA_Server <- function(id){
               envir_name <- load(dataset)
               ES <- get(envir_name)
             }else{
-              ES <- readRDS(dataset)
+              ES <- readRDS(system.file("extdata", "eset", dataset, package = "CaDrA"))
             }
           
         }
@@ -821,7 +934,7 @@ CaDrA_Server <- function(id){
             envir_name <- load(scores)
             input_score <- get(envir_name)
           }else{
-            input_score <- readRDS(scores)
+            input_score <- readRDS(system.file("extdata", "input_score", scores, package = "CaDrA"))
           }
           
         }
@@ -1574,12 +1687,6 @@ CaDrA_App <- function() {
     
     ## Reconnecting to new sessions after grey out
     session$allowReconnect("force")
-    
-    ## Close app when browser closing
-    session$onSessionEnded(function() {
-     #print("Closed Shiny Session.")
-     stopApp()
-    })
     
   }
   shinyApp(ui=ui, server=server)

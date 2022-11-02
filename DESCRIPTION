@@ -1,7 +1,7 @@
 Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
-Version: 2.0.0
+Version: 0.99.0
 Date: 2022-04-25
 Authors@R: 
     c(person(given="Reina", family="Chau", role=c("aut","cre"), email="rchau88@bu.edu"), 

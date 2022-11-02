@@ -138,10 +138,7 @@ cadra_result <- CaDrA(
   plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
   ncores = 1, cache_path = NULL
 )
-
-# Close parallel connections
-base::closeAllConnections()
-
+ 
 }
 
 }

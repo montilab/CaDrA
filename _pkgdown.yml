@@ -46,13 +46,6 @@ reference:
   - '`topn_plot`'
   - '`permutation_plot`'
 
-- title: Shiny Modules
-  desc: ~
-  contents:
-  - '`CaDrA_UI`'
-  - '`CaDrA_Server`'
-  - '`CaDrA_App`'
-
 - title: Data Objects
   desc: ~
   contents:

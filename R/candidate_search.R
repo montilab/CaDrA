@@ -142,18 +142,23 @@ candidate_search <- function(
          "the samples by. Please provide unique sample names or labels ",
          "that matches the colnames of the expression matrix.\n")
   
-  # Make sure the input_score has the same length as number of samples in ES
-  if(length(input_score) != ncol(ES)){
-    stop("The input_score must have the same length as the number ",
-         "of columns in ES.\n")
-  }else{
-    if(any(!names(input_score) %in% colnames(ES))){
-      stop("The input_score object must have names or ",
-           "labels that match the colnames of the expression matrix.\n")
-    }
-    # match colnames of expression matrix with names of provided input_score
-    ES <- ES[,names(input_score)]
-  }
+  ## Samples to keep based on the overlap between the two inputs
+  overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
+  ES <- ES[,overlap]
+  input_score <- input_score[overlap]
+  
+  # # Make sure the input_score has the same length as number of samples in ES
+  # if(length(input_score) != ncol(ES)){
+  #   stop("The input_score must have the same length as the number ",
+  #        "of columns in ES.\n")
+  # }else{
+  #   if(any(!names(input_score) %in% colnames(ES))){
+  #     stop("The input_score object must have names or ",
+  #          "labels that match the colnames of the expression matrix.\n")
+  #   }
+  #   # match colnames of expression matrix with names of provided input_score
+  #   ES <- ES[,names(input_score)]
+  # }
   
   # Check if the dataset has any all 0 or 1 features 
   # (these are to be removed since they are not informative)

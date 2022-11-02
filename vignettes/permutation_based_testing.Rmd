@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(message=FALSE, comment="#>", fig.align="center")
+knitr::opts_chunk$set(message=FALSE, comment="", fig.align="center")
 library(Biobase)
 devtools::load_all(".")
 ```

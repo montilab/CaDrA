@@ -6,7 +6,6 @@
 <!-- badges: start -->
 
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
-
 <!-- badges: end -->
 
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
@@ -99,7 +98,7 @@ topn_res <- CaDrA::candidate_search(
   max_size = 7,                # Maximum size that a meta-feature can extend to do for a given search
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
-                               # its observed input scores and corresponding best score
+  # its observed input scores and corresponding best score
 )
 ```
 
@@ -114,7 +113,7 @@ topn_best_meta <- CaDrA::topn_best(topn_res)
 CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
 ```
 
-<img src="README_files/figure-gfm/visualize.best-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-visualize.best-1.png" style="display: block; margin: auto;" />
 
 ### (iv) Summarize Top N Results
 
@@ -124,7 +123,7 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 CaDrA::topn_plot(topn_res) 
 ```
 
-<img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-summarize-1.png" style="display: block; margin: auto;" />
 
 ## (4) SessionInfo
 
@@ -146,31 +145,30 @@ utils::sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] CaDrA_2.0.0         testthat_3.1.4      Biobase_2.50.0     
-#> [4] BiocGenerics_0.42.0
+#> [1] CaDrA_2.0.0         testthat_3.1.4      devtools_2.4.4     
+#> [4] usethis_2.1.6       Biobase_2.50.0      BiocGenerics_0.42.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] pkgload_1.3.0      foreach_1.5.2      R.utils_2.12.0     gtools_3.9.3      
 #>  [5] brio_1.1.3         shiny_1.7.2        assertthat_0.2.1   highr_0.9         
-#>  [9] yaml_2.3.5         remotes_2.4.2      sessioninfo_1.2.2  pillar_1.8.0      
+#>  [9] yaml_2.3.5         remotes_2.4.2      sessioninfo_1.2.2  pillar_1.8.1      
 #> [13] glue_1.6.2         digest_0.6.29      promises_1.2.0.1   colorspace_2.0-3  
-#> [17] htmltools_0.5.3    httpuv_1.6.5       R.oo_1.25.0        plyr_1.8.7        
-#> [21] pkgconfig_2.0.3    devtools_2.4.4     misc3d_0.9-1       purrr_0.3.4       
-#> [25] xtable_1.8-4       scales_1.2.0       processx_3.7.0     later_1.3.0       
-#> [29] tibble_3.1.8       farver_2.1.1       generics_0.1.3     ggplot2_3.3.6     
-#> [33] usethis_2.1.6      ellipsis_0.3.2     DT_0.23            cachem_1.0.6      
-#> [37] withr_2.5.0        ppcor_1.1          cli_3.3.0          magrittr_2.0.3    
-#> [41] crayon_1.5.1       mime_0.12          memoise_2.0.1      evaluate_0.15     
-#> [45] ps_1.7.1           R.methodsS3_1.8.2  fs_1.5.2           fansi_1.0.3       
-#> [49] MASS_7.3-58.1      R.cache_0.16.0     doParallel_1.0.17  gplots_3.1.3      
-#> [53] pkgbuild_1.3.1     profvis_0.3.7      tools_4.0.3        prettyunits_1.1.1 
-#> [57] lifecycle_1.0.1    stringr_1.4.0      munsell_0.5.0      callr_3.7.1       
-#> [61] compiler_4.0.3     caTools_1.18.2     rlang_1.0.4        grid_4.0.3        
-#> [65] iterators_1.0.14   rstudioapi_0.13    htmlwidgets_1.5.4  miniUI_0.1.1.1    
-#> [69] labeling_0.4.2     tcltk_4.0.3        bitops_1.0-7       rmarkdown_2.14    
-#> [73] gtable_0.3.0       codetools_0.2-18   DBI_1.1.3          reshape2_1.4.4    
-#> [77] markdown_1.1       R6_2.5.1           knitr_1.39         dplyr_1.0.9       
-#> [81] fastmap_1.1.0      utf8_1.2.2         rprojroot_2.0.3    KernSmooth_2.23-20
-#> [85] desc_1.4.1         stringi_1.7.8      parallel_4.0.3     Rcpp_1.0.9        
-#> [89] vctrs_0.4.1        tidyselect_1.1.2   xfun_0.31          urlchecker_1.0.1
+#> [17] htmltools_0.5.3    httpuv_1.6.6       R.oo_1.25.0        plyr_1.8.7        
+#> [21] pkgconfig_2.0.3    misc3d_0.9-1       purrr_0.3.4        xtable_1.8-4      
+#> [25] scales_1.2.1       processx_3.7.0     later_1.3.0        tibble_3.1.8      
+#> [29] farver_2.1.1       generics_0.1.3     ggplot2_3.3.6      ellipsis_0.3.2    
+#> [33] cachem_1.0.6       withr_2.5.0        ppcor_1.1          cli_3.4.1         
+#> [37] magrittr_2.0.3     crayon_1.5.2       mime_0.12          memoise_2.0.1     
+#> [41] evaluate_0.16      ps_1.7.1           R.methodsS3_1.8.2  fs_1.5.2          
+#> [45] fansi_1.0.3        R.cache_0.16.0     doParallel_1.0.17  MASS_7.3-58.1     
+#> [49] gplots_3.1.3       pkgbuild_1.3.1     profvis_0.3.7      tools_4.0.3       
+#> [53] prettyunits_1.1.1  lifecycle_1.0.2    stringr_1.4.1      munsell_0.5.0     
+#> [57] callr_3.7.2        compiler_4.0.3     caTools_1.18.2     rlang_1.0.6       
+#> [61] grid_4.0.3         iterators_1.0.14   rstudioapi_0.14    htmlwidgets_1.5.4 
+#> [65] miniUI_0.1.1.1     labeling_0.4.2     tcltk_4.0.3        bitops_1.0-7      
+#> [69] rmarkdown_2.16     gtable_0.3.1       codetools_0.2-18   DBI_1.1.3         
+#> [73] reshape2_1.4.4     R6_2.5.1           knitr_1.40         dplyr_1.0.10      
+#> [77] fastmap_1.1.0      utf8_1.2.2         rprojroot_2.0.3    KernSmooth_2.23-20
+#> [81] desc_1.4.2         stringi_1.7.8      parallel_4.0.3     Rcpp_1.0.9        
+#> [85] vctrs_0.4.2        tidyselect_1.1.2   xfun_0.33          urlchecker_1.0.1
 ```

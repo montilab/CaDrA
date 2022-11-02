@@ -12,7 +12,6 @@ Authors@R:
 Description: Performs both stepwise and backward heuristic search for candidate (epi)genetic drivers based on a binary multi-omics dataset. CaDrA's main objective is to identify features which, together, are significantly skewed or enriched pertaining to a given vector of continuous scores (e.g. sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.), based on the union occurence (i.e. logical OR) of the events.
 Depends: R (>= 4.0.0)
 LazyData: false
-StagedInstall: no
 License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
 Packaged: 2017-07-10 18:44:45 UTC; 
@@ -20,14 +19,7 @@ Encoding: UTF-8
 RoxygenNote: 7.2.1
 Imports: 
     Biobase,
-    shiny,
-    htmltools,
-    markdown,
-    dplyr,
-    tibble,
-    DT,
     doParallel,
-    parallel,
     plyr,
     ggplot2,
     grid,
@@ -42,9 +34,7 @@ Imports:
     MASS,
     misc3d,
     ppcor,
-    graphics,
-    utils,
-    tools
+    graphics
 Suggests: 
     BiocStyle,
     devtools,

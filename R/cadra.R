@@ -314,7 +314,7 @@ CaDrA <- function(
   
   # We use the ES, top N (or search_start), score metric, 
   # scoring method as the key for each cached result  
-  key <- list(ES=ES, input_score=input_score, 
+  key <- list(ES=ES, 
               method=method, 
               custom_function=custom_function, 
               custom_parameters=custom_parameters, 

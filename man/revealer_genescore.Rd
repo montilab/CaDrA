@@ -13,15 +13,21 @@ revealer_genescore(
 )
 }
 \arguments{
-\item{x}{a vector of continuous values of a given functional response of interest}
+\item{x}{a vector of continuous values of 
+a given functional response of interest}
 
 \item{y}{a binary feature for a given response of interest}
 
-\item{z}{a binary feature often known as causes of activation that associated with a given response of interest}
+\item{z}{a binary feature often known as causes of activation that 
+associated with a given response of interest}
 
-\item{assoc_metric}{an association metric: information coefficient (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}}
+\item{assoc_metric}{an association metric: information coefficient 
+(\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}}
 
-\item{target_match}{a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.}
+\item{target_match}{a direction of target matching (\code{"negative"} or 
+\code{"positive"}). Use \code{"positive"} to match the higher values of 
+the target, \code{"negative"} to match the lower values. 
+Default is \code{positive}.}
 }
 \value{
 a data frame with two columns: \code{score} and \code{p_value}
@@ -52,7 +58,11 @@ cmi <- seq_len(nrow(mat)) \%>\%
 purrr::map_dbl(
  function(r){
    revealer_genescore(
-     x=input_score, y=mat[r,], z=NULL, assoc_metric="IC", target_match="positive"
+     x=input_score, 
+     y=mat[r,], 
+     z=NULL, 
+     assoc_metric="IC", 
+     target_match="positive"
    ) 
  }
 )

@@ -45,10 +45,10 @@ verbose <- function(...){
 #' @export
 #' @import Biobase
 prefilter_data <- function(
-  ES, 
-  max.cutoff=0.6,
-  min.cutoff=0.03,
-  verbose=FALSE
+    ES, 
+    max.cutoff=0.6,
+    min.cutoff=0.03,
+    verbose=FALSE
 ){
   
   options(verbose = verbose)
@@ -76,14 +76,15 @@ prefilter_data <- function(
 #' Compute directional Kolmogorov-Smirnov scores
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
-#' @param alt alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' @param alt alternative hypothesis for p-value calculation 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
 #' @noRd
 #' @useDynLib CaDrA ks_test_d_wrap_
 #' 
 #' @return need a return value here
 ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
-
+  
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
@@ -105,13 +106,14 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param weight a vector of weights 
-#' @param alt alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' @param alt alternative hypothesis for p-value calculation 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
 #' @noRd
 #' @useDynLib CaDrA ks_plot_wrap_
 #' 
 #' @return need a return value here
-ks_plot_wrap <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")) {
+ks_plot_wrap <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")){
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
@@ -134,13 +136,15 @@ ks_plot_wrap <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")) 
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
 #' @param weight a vector of weights 
-#' @param alt alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' @param alt alternative hypothesis for p-value calculation 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_wrap_
 #' 
 #' @return need a return value here
-ks_genescore_wrap <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")) {
+ks_genescore_wrap <- function(n_x, y, weight, 
+                              alt=c("less", "greater", "two.sided")) {
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
@@ -164,14 +168,16 @@ ks_genescore_wrap <- function(n_x, y, weight, alt=c("less", "greater", "two.side
 #' Compute directional Kolmogorov-Smirnov scores for each row of a 
 #' given binary matrix
 #' @param mat matrix of binary features to compute row-wise ks scores for
-#' @param alt an integer value specifying the alternative hypothesis (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' @param alt an integer value specifying the alternative hypothesis 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
 #' @param weight a vector of weights to use if performing a weighted-KS test
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_mat_
 #' 
 #' @return Two lists: score and p-value
-ks_genescore_mat <- function(mat, alt=c("less", "greater", "two.sided"), weight) {
+ks_genescore_mat <- function(mat, 
+                             alt=c("less", "greater", "two.sided"), weight) {
   
   if(!is.matrix(mat)) 
     stop("Input argument to ks_genescore_mat function is not a matrix")

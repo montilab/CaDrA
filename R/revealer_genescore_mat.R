@@ -55,7 +55,7 @@ revealer_genescore_mat <- function
   # Setup verbose option definition
   options(verbose = verbose)
   
-
+  
   assoc_metric <- match.arg(assoc_metric)
   target_match <- match.arg(target_match)
   
@@ -226,6 +226,6 @@ revealer_genescore_mat <- function
   rownames(cmi) <- rownames(mat)
   
   return(cmi)
-
+  
 }
 

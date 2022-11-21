@@ -5,7 +5,8 @@
 #' @param weights weights for weighted score (see Subramanian et al.) 
 #' (usually, sort(score))
 #' @param weight_p weights exponent
-#' @param alternative alternative hypothesis for p-value calculation (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+#' @param alternative alternative hypothesis for p-value calculation 
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
 #' @param do_pval compute asymptotic p-value
 #' @param absolute takes max - min score rather than the maximum 

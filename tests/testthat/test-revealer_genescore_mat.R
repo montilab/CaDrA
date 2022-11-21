@@ -11,10 +11,10 @@ test_that("revealer_genescore_mat generates a list with one column", {
   
   
   result<- suppressWarnings(revealer_genescore_mat(mat = mat, 
-                                  input_score = input_score, 
-                                  seed_names = NULL,
-                                  target_match = "positive", 
-                                  assoc_metric = "IC"))
+                                                   input_score = input_score, 
+                                                   seed_names = NULL,
+                                                   target_match = "positive", 
+                                                   assoc_metric = "IC"))
   testthat::expect_equal(dim(result), c(3,1))
   testthat::expect_type(result, "list")
   testthat::expect_named(result, c("score"))

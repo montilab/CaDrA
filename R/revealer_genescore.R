@@ -1,11 +1,17 @@
 
 #' Compute Conditional Mutual Information of x and y given z from \code{REVEALER}
 #' 
-#' @param x a vector of continuous values of a given functional response of interest
+#' @param x a vector of continuous values of 
+#' a given functional response of interest
 #' @param y a binary feature for a given response of interest
-#' @param z a binary feature often known as causes of activation that associated with a given response of interest
-#' @param assoc_metric an association metric: information coefficient (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}
-#' @param target_match a direction of target matching (\code{"negative"} or \code{"positive"}). Use \code{"positive"} to match the higher values of the target, \code{"negative"} to match the lower values. Default is \code{positive}.
+#' @param z a binary feature often known as causes of activation that 
+#' associated with a given response of interest
+#' @param assoc_metric an association metric: information coefficient 
+#' (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}
+#' @param target_match a direction of target matching (\code{"negative"} or 
+#' \code{"positive"}). Use \code{"positive"} to match the higher values of 
+#' the target, \code{"negative"} to match the lower values. 
+#' Default is \code{positive}.
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
 #' 
@@ -32,7 +38,11 @@
 #' purrr::map_dbl(
 #'  function(r){
 #'    revealer_genescore(
-#'      x=input_score, y=mat[r,], z=NULL, assoc_metric="IC", target_match="positive"
+#'      x=input_score, 
+#'      y=mat[r,], 
+#'      z=NULL, 
+#'      assoc_metric="IC", 
+#'      target_match="positive"
 #'    ) 
 #'  }
 #' )
@@ -68,12 +78,15 @@ revealer_genescore <- function
   
   # Check if the x has the same length as the number of samples in the y
   if(length(x) != length(y))
-    stop("'The provided x variable must have the same length as the number of samples in y.\n")
+    stop("The provided x variable must have the same length ",
+         "as the number of samples in y.\n")
   
   # Check if z is provided 
   if(length(z) > 0){
     if(length(z) != length(x) || any(!z %in% c(0,1)) || any(is.na(z)))
-      stop("'The provided z variable must have the same length as the number of samples in x and y and contains only binary values (no empty values).\n")
+      stop("The provided z variable must have the same length as ",
+           " the number of samples in x and y",
+           " and contains only binary values (no empty values).\n")
   }else{
     z <- as.vector(rep(0, length(x)))      
   }
@@ -81,27 +94,45 @@ revealer_genescore <- function
   # If target_match variable is not specified, use "positive" as default.
   if(length(target_match) == 0 || nchar(target_match) == 0){
     target_match <- "positive"
-    warning("The target_match variable is not specified. Using 'positive' by default...\n")
-  }else if(length(target_match) == 1 && !target_match %in% c("positive", "negative")){
-    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.\n")
-  }else if(length(target_match) > 1 && all(!target_match %in% c("positive", "negative"))){
-    stop(paste0(target_match, collapse=", "), " is not a valid target_match value. The target_match variable must be 'positive' or 'negative'.\n")
-  }else if(length(target_match) > 1 && any(target_match %in% c("positive", "negative"))){
-    target_match <- target_match[which(target_match %in% c("positive", "negative"))][1]
-    warning("More than one target_match values were specified. Only the first valid target_match value, '", target_match, "', is used.\n")
+    warning("The target_match variable is not specified.",
+            " Using 'positive' by default...\n")
+  }else if(length(target_match) == 1 && 
+           !target_match %in% c("positive", "negative")){
+    stop(paste0(target_match, collapse=", "), 
+         " is not a valid target_match value.",
+         " The target_match variable must be 'positive' or 'negative'.\n")
+  }else if(length(target_match) > 1 && 
+           all(!target_match %in% c("positive", "negative"))){
+    stop(paste0(target_match, collapse=", "), 
+         " is not a valid target_match value.",
+         " The target_match variable must be 'positive' or 'negative'.\n")
+  }else if(length(target_match) > 1 && 
+           any(target_match %in% c("positive", "negative"))){
+    target_match <- target_match[which(target_match %in% 
+                                         c("positive", "negative"))][1]
+    warning("More than one target_match values were specified.", 
+            "Only the first valid target_match value, '", 
+            target_match, "', is used.\n")
   }
   
   # If assoc_metric variable is not specified, use "IC" as default.
   if(length(assoc_metric) == 0 || nchar(assoc_metric) == 0){
     assoc_metric <- "IC"
-    warning("The assoc_metric variable is not specified. Using 'IC' by default ..\n")
+    warning("The assoc_metric variable is not specified.", 
+                  "Using 'IC' by default ..\n")
   }else if(length(assoc_metric) == 1 && !assoc_metric %in% c("IC", "COR")){
-    stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.\n")
+    stop(paste0(assoc_metric, collapse=", "), 
+         " is not a valid assoc_metric value.",
+         " The assoc_metric variable must be 'IC' or 'COR'.\n")
   }else if(length(assoc_metric) > 1 && all(!assoc_metric %in% c("IC", "COR"))){
-    stop(paste0(assoc_metric, collapse=", "), " is not a valid assoc_metric value. The assoc_metric variable must be 'IC' or 'COR'.\n")
+    stop(paste0(assoc_metric, collapse=", "), 
+         " is not a valid assoc_metric value.",
+         " The assoc_metric variable must be 'IC' or 'COR'.\n")
   }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
     assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified. Only the first valid assoc_metric value, '", assoc_metric, "', is used.\n")
+    warning("More than one assoc_metric values were specified.",
+            " Only the first valid assoc_metric value, '", 
+            assoc_metric, "', is used.\n")
   }
   
   # reordering x by target_match direction
@@ -119,7 +150,7 @@ revealer_genescore <- function
   cmi <- suppressWarnings(
     cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
   )
-
+  
   # Only return score value for revealer
   return(c(score=cmi))
   
@@ -152,11 +183,14 @@ cond_assoc <-  function(x, y, z, metric) {
 }
 
 # Computes the Conditional mutual information
-cond_mutual_inf <- function(x, y, z, n.grid=25, delta = 0.25*c(bcv(x), bcv(y), bcv(z))) {
+cond_mutual_inf <- function(x, y, z, 
+                            n.grid=25, 
+                            delta = 0.25*c(bcv(x), bcv(y), bcv(z))) {
   
   # Computes the Conditional mutual information: 
   # I(X, Y | X) = H(X, Z) + H(Y, Z) - H(X, Y, Z) - H(Z)
-  # The 0.25 in front of the bandwidth is because different conventions between bcv and kde3d
+  # The 0.25 in front of the bandwidth is because different conventions 
+  # between bcv and kde3d
   
   # Compute correlation-dependent bandwidth
   
@@ -202,7 +236,10 @@ cond_mutual_inf <- function(x, y, z, n.grid=25, delta = 0.25*c(bcv(x), bcv(y), b
   IC <- sign(rho) * sqrt(1 - exp(- 2 * MI))
   CIC <- sign(rho) * sqrt(1 - exp(- 2 * CMI))
   
-  return(list(CMI=CMI, MI=MI, SCMI=SCMI, SMI=SMI, HXY=HXY, HXYZ=HXYZ, IC=IC, CIC=CIC))
+  return(list(CMI=CMI, MI=MI, 
+              SCMI=SCMI, SMI=SMI, 
+              HXY=HXY, HXYZ=HXYZ, 
+              IC=IC, CIC=CIC))
   
 }
 
@@ -220,7 +257,7 @@ mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
   # Kernel-based prob. density
   
   kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
-
+  
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]
   dy <- kde2d.xy$y[2] - kde2d.xy$y[1]

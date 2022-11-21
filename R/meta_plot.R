@@ -39,7 +39,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Get ESet and input_score for top N best features
   ESet <- topn_best_list[["ESet"]]                    
   var_score <- topn_best_list[["input_score"]]
-
+  
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
   if(length(var_score) > 0){
     

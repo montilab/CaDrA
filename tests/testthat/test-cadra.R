@@ -9,7 +9,8 @@ test_that("CaDrA returns expected result ",{
   # set seed
   set.seed(123)
   
-  # Provide a vector of continuous scores for a target profile with names to each score value 
+  # Provide a vector of continuous scores for a target profile 
+  # with names to each score value 
   input_score = rnorm(n = ncol(sim.ES))
   names(input_score) <- colnames(sim.ES)
   

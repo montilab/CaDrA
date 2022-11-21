@@ -100,25 +100,25 @@
 #' @author Reina Chau
 #' 
 CaDrA <- function(
-  ES,
-  input_score,
-  method = c("ks","wilcox","revealer", "custom"),
-  custom_function = NULL,
-  custom_parameters = NULL,
-  alternative = c("less", "greater", "two.sided"),
-  metric = c("pval", "stat"),
-  weights = NULL,
-  top_N = 1,
-  search_start = NULL,
-  search_method = c("both", "forward"),
-  max_size = 7,  
-  n_perm = 1000,
-  smooth = TRUE,
-  obs_best_score = NULL,
-  plot = TRUE,
-  ncores = 1,
-  cache_path = NULL,
-  verbose = FALSE
+    ES,
+    input_score,
+    method = c("ks","wilcox","revealer", "custom"),
+    custom_function = NULL,
+    custom_parameters = NULL,
+    alternative = c("less", "greater", "two.sided"),
+    metric = c("pval", "stat"),
+    weights = NULL,
+    top_N = 1,
+    search_start = NULL,
+    search_method = c("both", "forward"),
+    max_size = 7,  
+    n_perm = 1000,
+    smooth = TRUE,
+    obs_best_score = NULL,
+    plot = TRUE,
+    ncores = 1,
+    cache_path = NULL,
+    verbose = FALSE
 ){
   
   # Set up verbose option
@@ -129,7 +129,7 @@ CaDrA <- function(
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
   
-
+  
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")
@@ -166,19 +166,6 @@ CaDrA <- function(
   overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
   ES <- ES[,overlap]
   input_score <- input_score[overlap]
-  
-  # # Make sure the input_score has the same length as number of samples in ES
-  # if(length(input_score) != ncol(ES)){
-  #   stop("The input_score must have the same length ",
-  #        "as the number of columns in ES.\n")
-  # }else{
-  #   if(any(!names(input_score) %in% colnames(ES))){
-  #     stop("The input_score object must have names or ",
-  #          "labels that match the colnames of the expression matrix.")
-  #   }
-  #   # match colnames of expression matrix with names of provided input_score
-  #   ES <- ES[,names(input_score)]
-  # }
   
   # Check if the dataset has any all 0 or 1 features 
   # (these are to be removed since they are not informative)
@@ -377,7 +364,7 @@ CaDrA <- function(
     } 
     
     message("Using ", ncores, " core(s)...")
-
+    
     # Generate matrix of permutated input_score  
     perm_labels_matrix <- generate_permutations(ord=input_score, 
                                                 n_perms=n_perm, 
@@ -389,20 +376,20 @@ CaDrA <- function(
                          function(x){ perm_input_score<-x;
                          names(perm_input_score) <- names(input_score); 
                          candidate_search(ES=ES, 
-                         input_score=perm_input_score, 
-                         method=method, 
-                         custom_function=custom_function, 
-                         custom_parameters=custom_parameters, 
-                         alternative=alternative, 
-                         metric=metric, 
-                         weights=weights, 
-                         top_N=top_N, 
-                         search_start=search_start, 
-                         search_method=search_method, 
-                         max_size=max_size, 
-                         best_score_only=TRUE, 
-                         do_plot = FALSE, 
-                         verbose = FALSE) }, 
+                                          input_score=perm_input_score, 
+                                          method=method, 
+                                          custom_function=custom_function, 
+                                          custom_parameters=custom_parameters, 
+                                          alternative=alternative, 
+                                          metric=metric, 
+                                          weights=weights, 
+                                          top_N=top_N, 
+                                          search_start=search_start, 
+                                          search_method=search_method, 
+                                          max_size=max_size, 
+                                          best_score_only=TRUE, 
+                                          do_plot = FALSE, 
+                                          verbose = FALSE) }, 
                          .parallel=parallel, 
                          .progress=progress))
     
@@ -566,9 +553,9 @@ CaDrA <- function(
 #'   
 #' @export
 generate_permutations <- function(
-  ord,                  # These are the sample orderings to be permuted
-  n_perms,              # Number of permutations to produce
-  verbose = FALSE
+    ord,                  # These are the sample orderings to be permuted
+    n_perms,              # Number of permutations to produce
+    verbose = FALSE
 ){
   
   options(verbose = verbose)

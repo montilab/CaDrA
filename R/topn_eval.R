@@ -77,20 +77,20 @@
 #' @export
 #' @import Biobase methods
 topn_eval <- function(
-  ES,
-  input_score,
-  method = c("ks","wilcox","revealer", "custom"), 
-  custom_function = NULL,
-  custom_parameters = NULL,
-  alternative = c("less", "greater", "two.sided"), 
-  metric = c("pval", "stat"), 
-  weights = NULL,
-  top_N = 1,
-  search_method = c("both", "forward"), 
-  max_size = 7,
-  best_score_only = FALSE,
-  do_plot = TRUE,
-  verbose = FALSE
+    ES,
+    input_score,
+    method = c("ks","wilcox","revealer", "custom"), 
+    custom_function = NULL,
+    custom_parameters = NULL,
+    alternative = c("less", "greater", "two.sided"), 
+    metric = c("pval", "stat"), 
+    weights = NULL,
+    top_N = 1,
+    search_method = c("both", "forward"), 
+    max_size = 7,
+    best_score_only = FALSE,
+    do_plot = TRUE,
+    verbose = FALSE
 ){
   
   # Set up verbose option
@@ -110,7 +110,7 @@ topn_eval <- function(
   if(!all(exprs(ES) %in% c(0,1))){
     stop("The expression matrix must contain only binary values with no NAs.")
   }
-
+  
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N) 
   

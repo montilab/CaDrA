@@ -1,8 +1,8 @@
 test_that("candidate_search receives correct input arguments ", {
-
+  
   # Pass a numeric vector to the cadra_search and expect that it returns an error
   expect_error(candidate_search(1:10))
-
+  
 })
 
 
@@ -17,7 +17,8 @@ test_that("candidate_search returns expected result ",{
   # set seed
   set.seed(123)
   
-  # Provide a vector of continuous scores for a target profile with names to each score value 
+  # Provide a vector of continuous scores for a target profile with 
+  # names to each score value 
   input_score = rnorm(n = ncol(sim.ES))
   names(input_score) <- colnames(sim.ES)
   
@@ -49,7 +50,7 @@ test_that("candidate_search returns expected result ",{
     search_start = NULL, search_method = "both",
     max_size = 7, best_score_only = FALSE
   )
-
+  
   testthat::expect_type(wilcox, "list")
   testthat::expect_length(wilcox, 1)
   testthat::expect_type(wilcox[[1]], "list")

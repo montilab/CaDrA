@@ -96,3 +96,9 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 CaDrA::topn_plot(topn_list = topn_res) 
 
 ```
+
+## R Session Info
+```{r RsessionInfo}
+sessionInfo()
+```
+

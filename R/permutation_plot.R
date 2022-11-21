@@ -65,7 +65,7 @@ permutation_plot <- function(permutation_results){
     scale_y_continuous(expand = c(0, 0))
   
   g
-
+  
 }
 
 

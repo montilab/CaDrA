@@ -47,8 +47,8 @@
 #' Default is \code{FALSE}.
 #' @param do_plot a logical value indicates whether or not to plot the 
 #' resulting meta-feature matrix. NOTE: plot can only be produced if resulting
-#' meta-feature matrix contains more than 1 feature (e.g. length(search_start) > 1 
-#' or top_N > 1). Default is \code{FALSE}.
+#' meta-feature matrix contains more than 1 feature 
+#' (e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.
 #' @param verbose a logical value indicates whether or not to print the 
 #' diagnostic messages. Default is \code{FALSE}. 
 #'
@@ -85,33 +85,33 @@
 #' @export
 #' @import Biobase methods
 candidate_search <- function(
-  ES, 
-  input_score, 
-  method = c("ks", "wilcox", "revealer", "custom"), 
-  custom_function = NULL,
-  custom_parameters = NULL,
-  alternative = c("less", "greater", "two.sided"), 
-  metric = c("pval", "stat"),
-  weights = NULL,
-  search_start = NULL,
-  top_N = 1,
-  search_method = c("both", "forward"),
-  max_size = 7,
-  best_score_only = FALSE,
-  do_plot = FALSE,
-  verbose = FALSE
+    ES, 
+    input_score, 
+    method = c("ks", "wilcox", "revealer", "custom"), 
+    custom_function = NULL,
+    custom_parameters = NULL,
+    alternative = c("less", "greater", "two.sided"), 
+    metric = c("pval", "stat"),
+    weights = NULL,
+    search_start = NULL,
+    top_N = 1,
+    search_method = c("both", "forward"),
+    max_size = 7,
+    best_score_only = FALSE,
+    do_plot = FALSE,
+    verbose = FALSE
 ){
   
   # Set up verbose option
   options(verbose = verbose)
-
+  
   method <- match.arg(method)  
   alternative <- match.arg(alternative)  
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
   
   
-    
+  
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")
@@ -127,7 +127,7 @@ candidate_search <- function(
     stop("The ES object does not have rownames or featureData to track the ",
          "features by. Please provide unique features or rownames ",
          "for the expression matrix.\n")
-    
+  
   # Check input_score is provided and are continuous values with no NAs
   if(length(input_score) == 0 || any(!is.numeric(input_score)) || 
      any(is.na(input_score)))
@@ -294,7 +294,7 @@ candidate_search <- function(
   # the top N 'best' features
   score.rank <- if(metric != "pval") 
     order(score, decreasing=TRUE) else 
-    order(-sign(score), score)
+      order(-sign(score), score)
   
   verbose("Ranking ES features by metric...\n")
   
@@ -306,7 +306,7 @@ candidate_search <- function(
   
   ###### INITIALIZE VARIABLES ###########
   #######################################
-    
+  
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N)    
   
@@ -317,7 +317,7 @@ candidate_search <- function(
       stop("Please specify a NUMERIC top_N value to evaluate over top N ",
            "features (top_N must be >= 1).\n")
     }
-
+    
     if(top_N > nrow(ES))
       stop("Please specify a top_N value that is less than the number of ",
            "features in the ES.\n")
@@ -718,7 +718,7 @@ forward_backward_check <- function
                     byrow=TRUE, 
                     dimnames=list(c("sum"), 
                                   colnames(ES)))
-
+    
     s <- switch(
       method,
       ks = ks_gene_score_mat(

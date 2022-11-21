@@ -23,8 +23,8 @@
 #' @import gplots
 #' @importFrom graphics legend
 topn_plot <- function(
-  topn_list, 
-  verbose = FALSE
+    topn_list, 
+    verbose = FALSE
 ){
   
   # Set up verbose option

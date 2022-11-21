@@ -13,7 +13,7 @@ library(Biobase)
 devtools::load_all(".")
 ```
 
-**CaDrA** employs a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on one of the four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To find out whether the set of features associated with the observed input scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, **CaDrA** can perform a rigorous statistical significance testing based on the sample permutation to determine if there is an abnormality in the given response of interest while exploiting aspects of feature complementary and sample heterogeneity.
+**CaDrA** implements a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on (currently) one of four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To test whether the strength of the association between the set of features and the observed input scores (e.g., pathway activity, drug sensitivity, etc.) is greather than it would be expected by chance, **CaDrA** supports permutation-based significance testing. Importantly, the permutation test iterates over the entire search procedure (e.g., if `topN=10`, each permutation iteration will consist of running the search over the top 10 features).
 
 # Load packages
 
@@ -24,8 +24,8 @@ library(Biobase)
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
-2. A vector of continuous scores (or `input_score`) represents a functional response of interest (such as protein expression, pathway activity, etc.)
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
+2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
@@ -87,7 +87,7 @@ ks_perm_res <- CaDrA::CaDrA(
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 1,                   # Repeat the search with the top feature
-  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   n_perm = 1000,               # number of permutations
   plot = FALSE,                # we will plot later
   ncores = 1                   # number of cores to perform parallelization for permutation testing

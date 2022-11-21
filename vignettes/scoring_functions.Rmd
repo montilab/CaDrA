@@ -13,7 +13,7 @@ library(Biobase)
 devtools::load_all(".")
 ```
 
-In **CaDrA** package, there are four scoring functions that were implemented to search for relevant subsets of genomic features that are likely associated with a specific outcome of interest (i.e. protein expression, pathway activity, etc.)
+The **CaDrA** package currently provides four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
 
 1. Kolmogorov-Smirnov Method (`ks`)
 2. Conditional Mutual Information Method (`revealer`)
@@ -22,10 +22,10 @@ In **CaDrA** package, there are four scoring functions that were implemented to 
 
 **Important Note:**
 
-- To search for best meta-feature over top N starting seed features, see `?candidate_search()` or `?topn_eval()`
-- Both `candidate_search()` and `topn_eval()` are basically the same function as we previously combined functionality of `topn_eval()` into `candidate_search()` as one unified function
+- To search for the best meta-feature over the top N starting seed features, see `?candidate_search()` or `?topn_eval()`
+- The legacy function `topn_eval()` is equivalent to the recommended `candidate_search()`.
 
-Below, we are evaluating the candidate search over top 7 starting seed features using four different scoring methods mentioned above.
+Below, we run candidate search over the top 7 starting seed features using each of the four scoring functions described above.
 
 # Load packages
 
@@ -36,8 +36,8 @@ library(Biobase)
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicating the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
-2. A vector of continuous scores (or `input_score`) represents a functional response of interest (such as protein expression, pathway activity, etc.)
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
+2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
@@ -85,7 +85,7 @@ ks_topn_l <- CaDrA::candidate_search(
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for the search
-  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature Eset, 
                                # its observed input scores and corresponding best score
@@ -113,7 +113,7 @@ wilcox_topn_l <- CaDrA::candidate_search(
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for the search
-  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature Eset, 
                                # its observed input scores and corresponding best score
@@ -140,7 +140,7 @@ revealer_topn_l <- CaDrA::candidate_search(
   metric = "stat",             # Use score statistics to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for the search
-  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature Eset, 
                                # its observed input scores and corresponding best score
@@ -181,7 +181,7 @@ custom_topn_l <- CaDrA::candidate_search(
   metric = "pval",                                  # Use pval to search for best feature
   search_method = "both",                           # Apply both forward and backward search
   top_N = 7,                                        # Evaluate top 7 starting points for the search
-  max_size = 10,                                    # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  max_size = 10,                                    # Set max_size = 10 to allow at most 10 features in meta-feature
   do_plot = FALSE,                                  # We will plot it AFTER finding the best hits
   best_score_only = FALSE                           # If best_score_only = FALSE, it will return meta-feature Eset, 
                                                     # its observed input scores and corresponding best score

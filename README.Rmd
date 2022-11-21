@@ -19,7 +19,7 @@ devtools::load_all(".")
   
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 
-**CaDrA** is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of 'omics' features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) and a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). Based on this input, **CaDrA** implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
+**CaDrA** is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of 'omics' features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). Based on this input, **CaDrA** implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
@@ -72,7 +72,7 @@ eset_mut_scna_flt <- CaDrA::prefilter_data(
 
 ### (ii) Run CaDrA
 
-Here, we are evaluating the candidate search over top 'N' starting features and checking for overlapping resulting features from each case
+Here, we repeat the candidate search starting from each of the top 'N' features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs).
 
 ```{r cadra}
 

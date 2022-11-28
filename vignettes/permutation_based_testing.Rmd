@@ -8,21 +8,12 @@ vignette: >
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(message=FALSE, comment="", fig.align="center")
+knitr::opts_chunk$set(message=FALSE, comment="#>", fig.align="center")
 library(Biobase)
 devtools::load_all(".")
 ```
 
-**CaDrA** employs a forward/backward search algorithm to look for a subset of 
-features whose union is maximally associated with an outcome of interest, 
-based on one of the four scoring functions (**Kolmogorov-Smirnov**, 
-**Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). 
-To find out whether the set of features associated with the observed input 
-scores (i.e. pathway activity, drug sensitivity, etc.) would happen by chance, 
-**CaDrA** can perform a rigorous statistical significance testing based on the 
-sample permutation to determine if there is an abnormality in the given 
-response of interest while exploiting aspects of feature complementary and 
-sample heterogeneity.
+**CaDrA** implements a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on (currently) one of four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To test whether the strength of the association between the set of features and the observed input scores (e.g., pathway activity, drug sensitivity, etc.) is greather than it would be expected by chance, **CaDrA** supports permutation-based significance testing. Importantly, the permutation test iterates over the entire search procedure (e.g., if `topN=10`, each permutation iteration will consist of running the search over the top 10 features).
 
 # Load packages
 
@@ -33,13 +24,8 @@ library(Biobase)
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` 
-(such as somatic mutations, copy number alterations, chromosomal 
-translocations, etc.) The 1/0 vectors indicating the presence/absence of 
-‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
-2. A vector of continuous scores (or `input_score`) represents a 
-functional response of interest (such as protein expression, 
-pathway activity, etc.)
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
+2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
@@ -47,19 +33,16 @@ pathway activity, etc.)
 # See ?sim.ES for more information
 data(sim.ES)
 
-# Generate a vector of sample-specific scores representing a functional 
-# response of interest
+# Generate a vector of sample-specific scores representing a functional response of interest
 set.seed(123)                             # set seed
 input_score = rnorm(n = ncol(sim.ES))     # generate random scores
-names(input_score) = colnames(sim.ES)     # label input_score with names 
-                                          # similar to colnames of sim.ES
+names(input_score) = colnames(sim.ES)     # label input_score with names similar to colnames of sim.ES
 
 ```
 
 # Find a subset of features that maximally associated with a given outcome of interest
 
-Here we are using **Kolmogorow-Smirnow** (KS) scoring method to search for 
-best features
+Here we are using **Kolmogorow-Smirnow** (KS) scoring method to search for best features
 
 ```{r ks.method}
 
@@ -68,17 +51,13 @@ ks_candidate <- CaDrA::candidate_search(
   input_score = input_score,
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
   alternative = "less",        # one-sided p-value
-  weights = NULL,              # If weights is provided, it will be used 
-                               # to perform a weighted-KS test
+  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 1,                   # Number of top features to kick start the search
-  max_size = 10,               # Set max_size = 10 to account for 
-                               # 10 left-skewed features in sim.ES
-  best_score_only = FALSE      # If best_score_only = FALSE, it will 
-                               # return meta-feature ESet, 
-                               # its observed input scores and corresponding 
-                               # best score
+  max_size = 10,               # Set max_size = 10 to account for 10 left-skewed features in sim.ES
+  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
+                               # its observed input scores and corresponding best score
 )
 
 ```
@@ -103,18 +82,15 @@ ks_perm_res <- CaDrA::CaDrA(
   ES = sim.ES, 
   input_score = input_score, 
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
-  weights = NULL,              # If weights is provided, it will be 
-                               # used to perform a weighted-KS test
+  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
   alternative = "less",        # one-sided p-value
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 1,                   # Repeat the search with the top feature
-  max_size = 10,               # Set max_size = 10 to account for 
-                               # 10 left-skewed features in sim.ES
+  max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   n_perm = 1000,               # number of permutations
   plot = FALSE,                # we will plot later
-  ncores = 1                   # number of cores to perform parallelization 
-                               # for permutation testing
+  ncores = 1                   # number of cores to perform parallelization for permutation testing
 )
 
 ```
@@ -130,8 +106,3 @@ permutation_plot(ks_perm_res)
 
 ![](ks.permutation.plot.png)
 
-
-## R Session Info
-```{r RsessionInfo}
-sessionInfo()
-```

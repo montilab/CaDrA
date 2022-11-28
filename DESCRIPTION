@@ -5,7 +5,7 @@ Version: 0.99.1
 Date: 2022-11-20
 Authors@R: 
     c(person(given="Reina", family="Chau", role=c("aut","cre"), 
-             email="rchau88@bu.edu"), 
+             email="rchau88@bu.edu", comment=c(ORCID="0000-0003-3012-1404")), 
       person(given="Katia", family="Bulekova", role=c("aut"), 
              email="ktrn@bu.edu", comment=c(ORCID="0000-0003-1560-2146")),
       person(given="Vinay", family="Kartha", role=c("aut"), 

@@ -129,7 +129,6 @@ CaDrA <- function(
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
   
-  
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
     stop("'ES' must be an ExpressionSet class argument (required).")
@@ -302,12 +301,14 @@ CaDrA <- function(
   # We use the ES, top N (or search_start), score metric, 
   # scoring method as the key for each cached result  
   key <- list(ES=ES, 
-              input_score=ifelse(method == "revealer", input_score, NULL),
+              input_score=if(method %in% c("revealer", "custom")){ input_score }else { NULL },
               method=method, 
               custom_function=custom_function, 
               custom_parameters=custom_parameters, 
-              alternative=alternative, metric=metric, 
-              weights=weights, top_N=top_N, 
+              alternative=alternative, 
+              metric=metric, 
+              weights=weights, 
+              top_N=top_N, 
               search_start=search_start, 
               search_method=search_method, 
               max_size=max_size, 
@@ -330,22 +331,22 @@ CaDrA <- function(
     
     message("Found ", length(perm_best_scores), 
             " cached permutation-based scores ",
-            "for the specified dataset and search parameters..\n")
-    message("Loading permutation scores from cache..\n")
+            "for the specified dataset and search parameters...\n")
+    message("LOADING PERMUTATION SCORES FROM CACHE\n")
     
-  }  else{
+  } else{
     
     if (is.null(perm_best_scores)){
       message("No permutation scores for the specified dataset and ",
               "search parameters were found in cache path...")
+      message("BEGINNING PERMUTATION-BASED TESTINGS\n")
     } else if (length(perm_best_scores) < n_perm) {
       message("n_perm is set to ", n_perm, " but found ", 
               length(perm_best_scores), 
               " cached permutation-based scores for the specified dataset ",
               "and search parameters...")
+      message("RE-COMPUTE PERMUTATION-BASED TESTINGS")
     }
-    
-    message("BEGINNING PERMUTATION-BASED SIGNIFICANCE TESTING\n")
     
     #######################################################################
     
@@ -372,30 +373,33 @@ CaDrA <- function(
                                                 verbose = FALSE)
     
     verbose("Computing permutation-based scores for N = ", n_perm, "...\n")
-    perm_best_scores <- 
-      unlist(plyr::alply(perm_labels_matrix, 1, 
-                         function(x){ perm_input_score<-x;
-                         names(perm_input_score) <- names(input_score); 
-                         candidate_search(ES=ES, 
-                                          input_score=perm_input_score, 
-                                          method=method, 
-                                          custom_function=custom_function, 
-                                          custom_parameters=custom_parameters, 
-                                          alternative=alternative, 
-                                          metric=metric, 
-                                          weights=weights, 
-                                          top_N=top_N, 
-                                          search_start=search_start, 
-                                          search_method=search_method, 
-                                          max_size=max_size, 
-                                          best_score_only=TRUE, 
-                                          do_plot = FALSE, 
-                                          verbose = FALSE) }, 
-                         .parallel=parallel, 
-                         .progress=progress))
+    
+    perm_best_scores <- plyr::alply(
+      perm_labels_matrix, 
+      1, 
+      function(x){ 
+        perm_input_score <- x;
+        names(perm_input_score) <- names(input_score); 
+        candidate_search(ES=ES, 
+                         input_score=perm_input_score, 
+                         method=method, 
+                         custom_function=custom_function, 
+                         custom_parameters=custom_parameters, 
+                         alternative=alternative, 
+                         metric=metric, 
+                         weights=weights, 
+                         top_N=top_N, 
+                         search_start=search_start, 
+                         search_method=search_method, 
+                         max_size=max_size, 
+                         best_score_only=TRUE, 
+                         do_plot = FALSE, 
+                         verbose = FALSE) }, 
+      .parallel=parallel, 
+      .progress=progress) %>% unlist()
     
     #Save computed scores to cache 
-    message("Saving to cache ..\n")
+    message("Saving to cache...\n")
     saveCache(perm_best_scores, key=key, comment="null_ks()")
     
   } # end caching else statement block

@@ -170,14 +170,14 @@ CaDrA <- function(
   # (these are to be removed since they are not informative)
   if(any(rowSums(exprs(ES)) == 0) || 
      any(rowSums(exprs(ES)) == ncol(exprs(ES)))){
-    warning("Provided dataset has features that are either all 0 or 1. ",
+    warning("Provided dataset has features that are either all 0s or 1s. ",
             "These features will be removed from the computation.")
     ES <- ES[!(rowSums(exprs(ES))==0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
   }
   
   # Make sure matrix is not empty after removing uninformative features
   if(nrow(exprs(ES)) == 0){
-    stop("After removing features that are either all 0 or 1. ",
+    stop("After removing features that are either all 0s or 1s. ",
          "There are no more features remained for downsteam computation.")
   }
   
@@ -217,12 +217,7 @@ CaDrA <- function(
                 paste0(c("ks", "wilcox", "revealer", "custom"), 
                        collapse="/"), "."))
     
-  } 
-  
-  # Define scores based on specified metric of interest
-  if(!metric %in% c('stat', 'pval'))
-    stop("Please specify metric parameter as either ",
-         "'stat' or 'pval' to use for candidate_search().")  
+  }
   
   # Select the appropriate method to compute scores based on 
   # skewdness of a given binary matrix
@@ -264,8 +259,7 @@ CaDrA <- function(
               " method only return score values. ",
               "Thus, using 'stat' as metric to search for best features.")
       metric <- "stat"
-    }
-    if(colnames(s) == "p_value" & metric == "stat"){
+    }else if(colnames(s) == "p_value" & metric == "stat"){
       warning("metric provided is 'stat' but the ", method, 
               "method only return p-values. ",
               "Thus, using 'pval' as metric to search for best features.")
@@ -278,7 +272,7 @@ CaDrA <- function(
   
   if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
     stop("Please specify an INTEGER number of permutations to perform for ",
-         "permutation testings (nperm must be >= 1).")
+         "permutation-based testings (nperm must be >= 1).")
   }
   
   # check the number of ncores value
@@ -290,6 +284,8 @@ CaDrA <- function(
   }
   
   ####### CACHE CHECKING #######
+  options(verbose = verbose)
+
   if(!is.null(cache_path)){
     message("Using provided cache root path: ", cache_path, "")
     setCacheRootPath(cache_path)
@@ -323,16 +319,23 @@ CaDrA <- function(
   ptm <- proc.time()
   
   ####### CACHE CHECKING #######
-  options(verbose = TRUE)
   
   # Check if, given the dataset and search-specific parameters,
   # there is already a cached null distribution available 
   if (!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
     
-    message("Found ", length(perm_best_scores), 
-            " cached permutation-based scores ",
-            "for the specified dataset and search parameters...\n")
-    message("LOADING PERMUTATION SCORES FROM CACHE\n")
+    if(length(perm_best_scores) == n_perm){
+      message("Found ", length(perm_best_scores), 
+              " cached permutation-based scores ",
+              "for the specified dataset and search parameters...\n")      
+      message("LOADING PERMUTATION SCORES FROM CACHE\n")
+    }else{
+      message("n_perm is set to ", n_perm, " but found ", 
+              length(perm_best_scores), 
+              " cached permutation-based scores ",
+              "for the specified dataset and search parameters...\n")
+      message("LOADING LARGER PERMUTATION SCORES FROM CACHE\n")
+    }
     
   } else{
     
@@ -341,18 +344,14 @@ CaDrA <- function(
               "search parameters were found in cache path...")
       message("BEGINNING PERMUTATION-BASED TESTINGS\n")
     } else if (length(perm_best_scores) < n_perm) {
-      message("n_perm is set to ", n_perm, " but found ", 
+      message("n_perm is set to ", n_perm, " but found only ", 
               length(perm_best_scores), 
               " cached permutation-based scores for the specified dataset ",
               "and search parameters...")
-      message("RE-COMPUTE PERMUTATION-BASED TESTINGS")
+      message("RE-COMPUTE PERMUTATION-BASED TESTINGS WITH LARGER NUMBER OF PERMUTATIONS")
     }
     
     #######################################################################
-    
-    # Set verbose to FALSE (override parameter specification) 
-    # since we don't want to print any diagnostic statements
-    options(verbose = verbose)   
     
     # Sets up the parallel backend which will be utilized by Plyr.
     parallel <- FALSE
@@ -411,11 +410,9 @@ CaDrA <- function(
   
   #########################################################################
   
-  options(verbose = FALSE)    
-  
   if(is.null(obs_best_score)){
     
-    message("Computing observed best score ..\n\n")
+    message("Computing observed best score...\n\n")
     
     obs_best_score <- candidate_search(
       ES = ES,
@@ -441,7 +438,7 @@ CaDrA <- function(
     
   }
   
-  verbose("Observed score: ", obs_best_score, "\n")
+  message("Observed score: ", obs_best_score, "\n")
   
   ########### PERMUTATION P-VALUE COMPUTATION ############
   message("Number of permutation-based scores being considered: ", 
@@ -473,7 +470,7 @@ CaDrA <- function(
     
   }
   
-  perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/(n_perm + c) 
+  perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/(length(perm_best_scores) + c) 
   
   message("Permutation p-value: ", perm_pval, "\n\n")
   

@@ -176,11 +176,14 @@ ks_genescore_wrap <- function(n_x, y, weight,
 #' @useDynLib CaDrA ks_genescore_mat_
 #' 
 #' @return Two lists: score and p-value
-ks_genescore_mat <- function(mat, 
-                             alt=c("less", "greater", "two.sided"), weight) {
+ks_gene_score_mat <- function(
+  mat, 
+  alt=c("less", "greater", "two.sided"), 
+  weight
+) {
   
   if(!is.matrix(mat)) 
-    stop("Input argument to ks_genescore_mat function is not a matrix")
+    stop("Input argument to ks_gene_score_mat function is not a matrix")
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)

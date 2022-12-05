@@ -3,9 +3,11 @@
 #' 
 #' @param x a vector of continuous values of 
 #' a given functional response of interest
-#' @param y a binary feature for a given response of interest
-#' @param z a binary feature often known as causes of activation that 
-#' associated with a given response of interest
+#' @param y a binary present/absent feature typically representing 
+#' genome-wide alterations (mutations, cnvs, amplifications/deletions)
+#' @param z a consolidated or summarized vector of values obtained from 
+#' one or more binary features(s) which representing known “causes” 
+#' of activation or features associated with a given response of interest
 #' @param assoc_metric an association metric: information coefficient 
 #' (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}
 #' @param target_match a direction of target matching (\code{"negative"} or 
@@ -65,77 +67,29 @@ revealer_genescore <- function
   assoc_metric <- match.arg(assoc_metric)
   target_match <- match.arg(target_match)
   
-  # Convert x, y, z as vector and numeric  
-  x <- as.numeric(x); y <- as.numeric(y); z <- as.numeric(z); 
-  
   # Check if x is provided 
   if(length(x) == 0 || any(is.na(x)))
-    stop("x must be provided and are numeric (no empty values).\n")
+    stop("x must be provided (no empty values).\n")
   
   # Check if y is provided 
   if(length(y) == 0 || any(!y %in% c(0,1)) || any(is.na(y)))
-    stop("y must be provided and are binary (no empty values).\n")
+    stop("y must be provided (no empty values).\n")
   
   # Check if the x has the same length as the number of samples in the y
   if(length(x) != length(y))
-    stop("The provided x variable must have the same length ",
+    stop("The provided x must have the same length ",
          "as the number of samples in y.\n")
   
   # Check if z is provided 
-  if(length(z) > 0){
-    if(length(z) != length(x) || any(!z %in% c(0,1)) || any(is.na(z)))
-      stop("The provided z variable must have the same length as ",
-           " the number of samples in x and y",
-           " and contains only binary values (no empty values).\n")
-  }else{
+  if(length(z) == 0){
     z <- as.vector(rep(0, length(x)))      
+  }else if(length(z) != length(x)){
+    stop("The provided z must have the same length as ",
+         " the number of samples in x and y",
+         " (no empty values).\n")
   }
   
-  # If target_match variable is not specified, use "positive" as default.
-  if(length(target_match) == 0 || nchar(target_match) == 0){
-    target_match <- "positive"
-    warning("The target_match variable is not specified.",
-            " Using 'positive' by default...\n")
-  }else if(length(target_match) == 1 && 
-           !target_match %in% c("positive", "negative")){
-    stop(paste0(target_match, collapse=", "), 
-         " is not a valid target_match value.",
-         " The target_match variable must be 'positive' or 'negative'.\n")
-  }else if(length(target_match) > 1 && 
-           all(!target_match %in% c("positive", "negative"))){
-    stop(paste0(target_match, collapse=", "), 
-         " is not a valid target_match value.",
-         " The target_match variable must be 'positive' or 'negative'.\n")
-  }else if(length(target_match) > 1 && 
-           any(target_match %in% c("positive", "negative"))){
-    target_match <- target_match[which(target_match %in% 
-                                         c("positive", "negative"))][1]
-    warning("More than one target_match values were specified.", 
-            "Only the first valid target_match value, '", 
-            target_match, "', is used.\n")
-  }
-  
-  # If assoc_metric variable is not specified, use "IC" as default.
-  if(length(assoc_metric) == 0 || nchar(assoc_metric) == 0){
-    assoc_metric <- "IC"
-    warning("The assoc_metric variable is not specified.", 
-                  "Using 'IC' by default ..\n")
-  }else if(length(assoc_metric) == 1 && !assoc_metric %in% c("IC", "COR")){
-    stop(paste0(assoc_metric, collapse=", "), 
-         " is not a valid assoc_metric value.",
-         " The assoc_metric variable must be 'IC' or 'COR'.\n")
-  }else if(length(assoc_metric) > 1 && all(!assoc_metric %in% c("IC", "COR"))){
-    stop(paste0(assoc_metric, collapse=", "), 
-         " is not a valid assoc_metric value.",
-         " The assoc_metric variable must be 'IC' or 'COR'.\n")
-  }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
-    assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified.",
-            " Only the first valid assoc_metric value, '", 
-            assoc_metric, "', is used.\n")
-  }
-  
-  # reordering x by target_match direction
+  # Ordering x by target_match direction
   if (target_match == "negative") {
     ind <- order(x, decreasing=FALSE)
   } else {
@@ -182,7 +136,7 @@ cond_assoc <-  function(x, y, z, metric) {
   
 }
 
-# Computes the Conditional mutual information
+# Computes the conditional mutual information x, y | z
 cond_mutual_inf <- function(x, y, z, 
                             n.grid=25, 
                             delta = 0.25*c(bcv(x), bcv(y), bcv(z))) {

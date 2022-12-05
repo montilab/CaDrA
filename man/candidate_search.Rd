@@ -118,7 +118,7 @@ names(input_score) <- colnames(sim.ES)
 candidate_search_result <- candidate_search(
   ES = sim.ES, input_score = input_score, method = "ks", 
   alternative = "less", weights = NULL, metric = "pval", 
-  search_start = NULL, top_N = 1, search_method = "both", 
+  search_start = NULL, top_N = 3, search_method = "both", 
   max_size = 7, best_score_only = FALSE
 )
 

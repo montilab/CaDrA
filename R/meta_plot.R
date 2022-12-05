@@ -37,7 +37,7 @@
 meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # Get ESet and input_score for top N best features
-  ESet <- topn_best_list[["ESet"]]                    
+  ESet <- topn_best_list[["eset"]]                    
   var_score <- topn_best_list[["input_score"]]
   
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
@@ -59,8 +59,10 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     # with rows arranged in specific order of measure used for search
     # Here we assume that var_score provided is ordered in the order 
     # that the stepwise search was run for the dataset
-    var_d <- data.frame("measure"=var_score, 
-                        "sample"=factor(colnames(ESet), levels=colnames(ESet)))
+    var_d <- data.frame(
+      "measure"=var_score, 
+      "sample"=factor(colnames(ESet), levels=colnames(ESet))
+    )
     
     # This plot assumes that there are two columns in the data frame 
     # called 'sample' and 'measure'
@@ -101,8 +103,12 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   
   # Get x and y axis data for ES plot of cumulative function of 
   # individual features (i.e. the OR function)
-  ES_dat <- ks_gene_score(n.x=length(or), y=which(or==1), 
-                          plot_dat = TRUE, alternative = "less")
+  ES_dat <- ks_genescore(
+    n.x=length(or), 
+    y=which(or==1), 
+    plot_dat = TRUE,     # Set plot_dat=TRUE will return data for plotting
+    alternative = "less"
+  )
   
   # Plot for ES scores
   ES_plot <- plot_ESet(df = ES_dat)
@@ -110,13 +116,16 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""
   
+  # Make the OR function have higher values for a different color (red)
   mat[nrow(mat),] <- 2*(mat[nrow(mat),]) 
-  #Make the OR function have higher values for a different color (red)
   
-  m <- ExpressionSet(assayData = mat, 
-                     featureData = AnnotatedDataFrame(
-                       data.frame("Name"=rownames(mat), 
-                                  row.names = rownames(mat))))
+  m <- ExpressionSet(
+    assayData = mat, 
+    featureData = AnnotatedDataFrame(
+      data.frame(
+        "Name"=rownames(mat), 
+        row.names = rownames(mat)
+      )))
   
   x <- exprs(m)
   x_m <- melt(x)
@@ -255,7 +264,7 @@ stacked_gtable_max <- function(...){
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Extract the meta-feature set
-#' ESet <-  topn_best_meta[["ESet"]]                    
+#' ESet <-  topn_best_meta[["eset"]]                    
 #' 
 #' # Make sure mat variable is a matrix
 #' mat <- as.matrix(exprs(ESet))
@@ -271,9 +280,13 @@ stacked_gtable_max <- function(...){
 #' mat <- rbind(mat, or)
 #' 
 #' # Get x and y axis data for ES plot of 
-#' # cumulative function of individual features (i.e. the OR function)
-#' ES_dat <- ks_gene_score(
-#'    n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+#' # cumulative function of individual features 
+#' # (i.e. the OR function)
+#' ES_dat <- ks_genescore(
+#'    n.x=length(or), 
+#'    y=which(or==1), 
+#'    plot_dat = TRUE, 
+#'    alternative = "less"
 #' )
 #' 
 #' # plot for ES scores

@@ -32,12 +32,12 @@ topn_plot <- function(
   
   # Get eset and best scores for top n features
   eset_l <- lapply(seq_along(topn_list), 
-                   function(l){ topn_list[[l]][['ESet']] })
+                   function(l){ topn_list[[l]][['eset']] })
   scores_l <- lapply(seq_along(topn_list),
-                     function(l){ topn_list[[l]][['Score']] })
+                     function(l){ topn_list[[l]][['score']] })
   
-  f_list <- lapply(eset_l, featureNames)  
   #Get the list of feature names from each ESet
+  f_list <- lapply(eset_l, featureNames)  
   
   f_union <- Reduce(f = union, f_list) 
   #Get the union of all features that were returned across all top N runs

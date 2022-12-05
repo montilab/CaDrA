@@ -14,8 +14,6 @@
 #' @param alternative a character string specifies an alternative 
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or 
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing. 
-#' @param verbose a logical value indicates whether or not to 
-#' print the diagnostic messages. Default is \code{FALSE}. 
 #'
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
@@ -39,13 +37,9 @@ wilcox_genescore_mat <- function
 (
   mat,
   ranks = NULL,
-  alternative = c("less", "greater", "two.sided"),
-  verbose = FALSE
+  alternative = c("less", "greater", "two.sided")
 )
 {
-  
-  # Set up verbose option
-  options(verbose=FALSE)
   
   alternative <- match.arg(alternative)
   
@@ -121,33 +115,6 @@ wilcox_genescore_mat <- function
   if(nrow(mat) == 0){
     stop("After removing features that are either all 0 or 1. ",
          "There are no more features remained for downsteam computation.\n")
-  }
-  
-  # Give a warning if matrix has nrow < 2
-  if(nrow(mat) < 2)
-    verbose("Cannot compute a row-wise statistic over a matrix with nrow < 2.")
-  
-  # If no alternative is specified, we use "less" as default.
-  if(length(alternative) == 0 || nchar(alternative) == 0){
-    alternative <- "less"
-    warning("No alternative hypothesis specified. Using 'less' by default.\n")
-  }else if(length(alternative) == 1 && !alternative %in% 
-           c("two.sided", "greater", "less")){
-    stop(paste0(alternative, collapse=", "), 
-         " is not a valid alternative hypothesis. ",
-         "Alternative hypothesis must be 'two.sided', 'greater', or 'less'.")
-  }else if(length(alternative) > 1 && all(!alternative %in% 
-                                          c("two.sided", "greater", "less"))){
-    stop(paste0(alternative, collapse=", "), 
-         " is not a valid alternative hypothesis. ",
-         "Alternative hypothesis must be 'two.sided', 'greater', or 'less'.")
-  }else if(length(alternative) > 1 && any(alternative %in% 
-                                          c("two.sided", "greater", "less"))){
-    alternative <- alternative[which(alternative %in% 
-                                       c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. ",
-            "Only the first valid alternative hypothesis, '", 
-            alternative, "', is used.")
   }
   
   #Compute the wilcox rank sum statitic and p-value per row in the matrix

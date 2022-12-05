@@ -28,7 +28,7 @@
 #' topn_best_meta <- topn_best(topn_list=topn.list) 
 #' 
 #' # Extract the meta-feature set
-#' ESet <-  topn_best_meta[["ESet"]]                    
+#' ESet <-  topn_best_meta[["eset"]]                    
 #' 
 #' # Make sure mat variable is a matrix
 #' mat <- as.matrix(exprs(ESet))
@@ -46,14 +46,17 @@
 #' 
 #' # Get x and y axis data for ES plot of 
 #' # cumulative function of individual features (i.e. the OR function)
-#' ES_dat <- ks_gene_score(
-#'    n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+#' ES_dat <- ks_genescore(
+#'    n.x=length(or), 
+#'    y=which(or==1), 
+#'    plot_dat = FALSE, 
+#'    alternative = "less"
 #' )
 #'
 #' @return a data frame with two columns: \code{score} and \code{p_value}
 #' @export
 #' @importFrom stats ks.test
-ks_gene_score <- function
+ks_genescore <- function
 (
   n.x,                                             
   y,                                             
@@ -133,10 +136,12 @@ ks_gene_score <- function
       }
     }
   }
+  
   if(plot_dat){
     d <- data.frame("x"=x.axis, "y"=y.axis)
     return(d)
   }
+  
   # Here, choose suppressWarnings simply because you will 
   # generally have ties for binary data matrix
   test <- ks.test(
@@ -145,6 +150,9 @@ ks_gene_score <- function
     alternative=alternative, 
     exact=exact
   )
+  
   PVAL <- test$p.value
+  
   return(c(score=score, p_value=PVAL))
+  
 }

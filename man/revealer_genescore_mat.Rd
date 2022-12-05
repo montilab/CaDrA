@@ -9,8 +9,7 @@ revealer_genescore_mat(
   input_score,
   target_match = c("positive", "negative"),
   seed_names = NULL,
-  assoc_metric = c("IC", "COR"),
-  verbose = FALSE
+  assoc_metric = c("IC", "COR")
 )
 }
 \arguments{
@@ -25,14 +24,11 @@ with the colnames of the feature matrix.}
 \code{input_score}, \code{"negative"} to match lower values of 
 \code{input_score}. Default is \code{positive}.}
 
-\item{seed_names}{one or more features that are associated with the 
-activation of a response of interest (i.e. \code{input_score})}
+\item{seed_names}{one or more features representing known “causes” 
+of activation or features associated with a response of interest}
 
 \item{assoc_metric}{an association metric: \code{"IC"} for information 
 coefficient or \code{"COR"} for correlation. Default is \code{IC}.}
-
-\item{verbose}{a logical value indicates whether or not to print the 
-diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 a data frame with one column: \code{score}

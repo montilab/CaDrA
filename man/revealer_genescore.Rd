@@ -16,10 +16,12 @@ revealer_genescore(
 \item{x}{a vector of continuous values of 
 a given functional response of interest}
 
-\item{y}{a binary feature for a given response of interest}
+\item{y}{a binary present/absent feature typically representing 
+genome-wide alterations (mutations, cnvs, amplifications/deletions)}
 
-\item{z}{a binary feature often known as causes of activation that 
-associated with a given response of interest}
+\item{z}{a consolidated or summarized vector of values obtained from 
+one or more binary features(s) which representing known “causes” 
+of activation or features associated with a given response of interest}
 
 \item{assoc_metric}{an association metric: information coefficient 
 (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}}

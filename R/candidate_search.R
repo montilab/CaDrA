@@ -78,7 +78,7 @@
 #' candidate_search_result <- candidate_search(
 #'   ES = sim.ES, input_score = input_score, method = "ks", 
 #'   alternative = "less", weights = NULL, metric = "pval", 
-#'   search_start = NULL, top_N = 1, search_method = "both", 
+#'   search_start = NULL, top_N = 3, search_method = "both", 
 #'   max_size = 7, best_score_only = FALSE
 #' )
 #' 
@@ -109,8 +109,6 @@ candidate_search <- function(
   alternative <- match.arg(alternative)  
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
-  
-  
   
   # Check if the ES is provided and is a BioBase ExpressionSet object
   if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
@@ -146,19 +144,6 @@ candidate_search <- function(
   overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
   ES <- ES[,overlap]
   input_score <- input_score[overlap]
-  
-  # # Make sure the input_score has the same length as number of samples in ES
-  # if(length(input_score) != ncol(ES)){
-  #   stop("The input_score must have the same length as the number ",
-  #        "of columns in ES.\n")
-  # }else{
-  #   if(any(!names(input_score) %in% colnames(ES))){
-  #     stop("The input_score object must have names or ",
-  #          "labels that match the colnames of the expression matrix.\n")
-  #   }
-  #   # match colnames of expression matrix with names of provided input_score
-  #   ES <- ES[,names(input_score)]
-  # }
   
   # Check if the dataset has any all 0 or 1 features 
   # (these are to be removed since they are not informative)
@@ -203,30 +188,13 @@ candidate_search <- function(
     # Compute mutually exclusive method for binary features in ES 
     verbose("Using Revealer's Mutually Exclusive method for features scoring")
     
-    # Sort input_score from highest to lowest values
-    input_score <- sort(input_score, decreasing=TRUE)
-    
-    # Re-order the samples by input_score sorted from highest to lowest values
-    ES <- ES[,names(input_score)]
-    
   }else if(method == "custom"){
     
     # Compute row-wise directional scores using user's customized function 
     # for binary features in ES      
     verbose("Using a customized method for features scoring.\n")
     
-  }else {
-    
-    stop(paste0("Invalid method specified. The method can be ", 
-                paste0(c("ks", "wilcox", "revealer", "custom"), collapse="/"), 
-                "."))
-    
-  } 
-  
-  # Define scores based on specified metric of interest
-  if(!metric %in% c('stat', 'pval'))
-    stop("Please specify a metric parameter as either 'stat' or 'pval' ",
-         "for candidate_search().")
+  }
   
   # Select the appropriate method to compute scores based on 
   # skewdness of a given binary matrix
@@ -235,7 +203,7 @@ candidate_search <- function(
   # Compute the row-wise scoring
   s <- switch(
     method,
-    ks = ks_gene_score_mat(
+    ks = ks_genescore_mat(
       mat = mat,
       alternative = alternative, 
       weights = weights
@@ -259,7 +227,7 @@ candidate_search <- function(
       custom_parameters = custom_parameters
     )
   )
-  
+ 
   # Check if the returning result has one or two columns: 
   # score or p_value or both
   if(ncol(s) == 1){
@@ -268,8 +236,7 @@ candidate_search <- function(
               "return score values. Thus, using 'stat' as metric to search ",
               "for best features.")
       metric <- "stat"
-    }
-    if(colnames(s) == "p_value" & metric == "stat"){
+    }else if(colnames(s) == "p_value" & metric == "stat"){
       warning("metric provided is 'stat' but the method function only ",
               "return p-values. Thus, using 'pval' as metric to search ",
               "for best features.")
@@ -280,9 +247,9 @@ candidate_search <- function(
   # Score returned by the given method
   s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
   s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
-  
+
   # compute the scores according to the provided metric 
-  score <-ifelse(rep(metric, nrow(ES)) %in% "pval", sign(s.stat)*s.pval, s.stat)
+  score <- ifelse(rep(metric, nrow(ES)) %in% "pval", sign(s.stat)*s.pval, s.stat)
   
   verbose("Using ", metric, " as measure of improvement measure...\n")
   
@@ -295,8 +262,6 @@ candidate_search <- function(
   score.rank <- if(metric != "pval") 
     order(score, decreasing=TRUE) else 
       order(-sign(score), score)
-  
-  verbose("Ranking ES features by metric...\n")
   
   # Re-order the ES
   ES <- ES[score.rank,]
@@ -357,12 +322,7 @@ candidate_search <- function(
   } # end else (!is.null)
   
   ## Check the search_method variable ####
-  if(length(search_method) == 1 & search_method %in% c('both', 'forward')){
-    back_search <- ifelse(search_method == "both", TRUE, FALSE)
-  }else {
-    stop("Incorrect search_method parameter provided. ",
-         "The search_method can be either 'both' or 'forward'.")
-  }
+  back_search <- ifelse(search_method == "both", TRUE, FALSE)
   
   ## Check the max_size variable ####
   max_size <- as.integer(max_size)   
@@ -393,7 +353,7 @@ candidate_search <- function(
     best.feature <- start.feature
     best.s <- score[best.s.index]
     
-    verbose("Feature: ", start.feature, "\n")
+    verbose("Top Feature ", x, ": ", start.feature, "\n")
     verbose("Score: ", best.s, "\n")
     
     #Fetch the vector corresponding to best score
@@ -414,7 +374,7 @@ candidate_search <- function(
     ###### BEGIN ITERATIONS ###############
     #######################################
     
-    verbose("\n\nBeginning candidate search...\n\n")
+    verbose("\nBeginning candidate search...\n")
     
     while((ifelse(metric=="pval", 
                   (sign(best.s) > 0 & (abs(best.s) < abs(global.best.s))), 
@@ -440,9 +400,9 @@ candidate_search <- function(
         # Update the new best meta feature (from meta mat)
         best.meta <- meta.mat[hit.best.s.index,]  
         
-        #Add that index to the group of indices to be excluded 
+        # Add that index to the group of indices to be excluded 
         # for subsequent checks
-        #Here we go off the rownames in the original matrix to 
+        # Here we go off the rownames in the original matrix to 
         # find which index to exclude from the ES in subsequent iterations
         best.s.index <- c(best.s.index, which(rownames(ES) == best.feature))
         
@@ -466,8 +426,8 @@ candidate_search <- function(
         )  
         
         # Update globlal features, scores 
-        global.best.s.features <- backward_search.results[[1]]
-        global.best.s <- backward_search.results[[2]]
+        global.best.s.features <- backward_search.results[["best.features"]]
+        global.best.s <- backward_search.results[["best.scores"]]
         
         # Update best.meta based on feature set
         best.meta <- as.numeric(ifelse(
@@ -491,18 +451,30 @@ candidate_search <- function(
       # We cannot compute statistics for such features and they thus need 
       # to be filtered out
       if(any(rowSums(meta.mat) == ncol(meta.mat))){
-        warning("Features with all 1's generated upon taking matrix union .. ",
-                "removing such features before progressing..\n")
+        warning("Features with all 1's generated upon taking matrix union...",
+                "Removing such features before progressing...\n")
         meta.mat <- meta.mat[rowSums(meta.mat) != ncol(meta.mat),]
+      }
+      
+      # Remove best.s.index from the revealer matrix 
+      # but exclude the global.s.feature which will later use as
+      # conditional seed_names or features to compute mutual information of x, y | z
+      revealar_global_index <- which(rownames(ES) %in% global.best.s.features)
+      revealar_best_index <- best.s.index[which(!best.s.index %in% revealar_global_index)]
+      
+      if(length(revealar_best_index) > 0){
+        revealer_mat <- exprs(ES)[-revealar_best_index,]
+      }else{
+        revealer_mat <- exprs(ES)
       }
       
       # With the newly formed 'meta-feature' matrix, compute directional  
       # scores and choose the feature that gives the best score
-      # Compute row-wise directional  scores for existing (raw/starting) 
+      # Compute row-wise directional scores for existing (raw/starting) 
       # binary features in ES
       s <- switch(
         method,
-        ks = ks_gene_score_mat(
+        ks = ks_genescore_mat(
           mat = meta.mat,
           alternative = alternative, 
           weights = weights
@@ -513,7 +485,7 @@ candidate_search <- function(
           ranks = NULL
         ),
         revealer = revealer_genescore_mat(
-          mat = exprs(ES),                                   
+          mat = revealer_mat,                                   
           input_score = input_score,      
           seed_names = global.best.s.features,
           target_match = "positive",
@@ -527,24 +499,6 @@ candidate_search <- function(
         )
       ) 
       
-      # Check if the returning result has one or two columns: 
-      # score or p_value or both
-      if(ncol(s) == 1){
-        if(colnames(s) == "score" & metric == "pval"){
-          warning("metric = 'pval' is provided but the method function ",
-                  "only return score values. ",
-                  "Thus, using 'stat' as metric to search for best features.")
-          metric <- "stat"
-        }
-        if(colnames(s) == "p_value" & metric == "stat"){
-          warning("metric provided is 'stat' but the method function only ",
-                  "return p-values. Thus, using 'pval' as metric to search ",
-                  "for best features.")
-          metric <- "pval"
-        }
-        metric <- metric
-      }
-      
       # Score returned by the given method
       s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
       s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
@@ -554,7 +508,7 @@ candidate_search <- function(
       scores <- ifelse(rep(metric, nrow(meta.mat)) %in% "pval", 
                        sign(s.stat)*s.pval, s.stat)
       
-      #Find index of feature that gives lowest scores when 
+      # Find index of feature that gives lowest scores when 
       # combined with chosen starting feature
       if(metric != "pval"){
         hit.best.s.index <- which.max(scores) 
@@ -563,6 +517,7 @@ candidate_search <- function(
         #Top p-value ordered by sign and numerical value; 
         #This is the index within the meta matrix
       }
+      
       # The best score from the meta matrix
       best.s <- scores[hit.best.s.index] 
       
@@ -588,13 +543,12 @@ candidate_search <- function(
       
     } #########End of while loop
     
-    verbose("\n\n")
     verbose("\n\nFinished!\n\n")
     verbose("Number of iterations covered: ", i, "\n")
-    verbose("Best  score attained over iterations: ", global.best.s, "\n")
+    verbose("Best score attained over iterations: ", global.best.s, "\n")
     
     if(length(global.best.s.features) == 1){
-      verbose("No meta-feature that improves the enrichment was found ...\n") 
+      verbose("No meta-feature that improves the enrichment was found...\n") 
     }
     
     verbose("Features returned in ES: ", global.best.s.features, "\n")
@@ -620,8 +574,11 @@ candidate_search <- function(
     # starting feature that gave that score
     names(global.best.s) <- start.feature 
     
-    return(list("ESet" = ES.best, "Score" = global.best.s, 
-                "input_score" = input_score))
+    return(list("method" = method, 
+                "metric" = metric, 
+                "eset" = ES.best, 
+                "input_score" = input_score,
+                "score" = global.best.s))
     
   })
   
@@ -633,13 +590,12 @@ candidate_search <- function(
   # best_score_only
   if(best_score_only == TRUE){
     
-    scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['Score']] })
+    scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['score']] })
     
     # Working with scores for each top N run
     s <- unlist(scores_l)
     
     # Fetch the best score from the iterations
-    # This ASSUMES you're using metric = "pval"
     # NEEDS UPDATING TO ACCOMODATE STATISTIC 
     if(metric == "pval"){
       best_score <- s[order(s, decreasing = FALSE)][1] 
@@ -652,8 +608,8 @@ candidate_search <- function(
     
   }
   
+  # By Default, the function returns the top N candidate search results as a list of lists
   return(topn_l) 
-  #Default is to return the top N candidate search results as a list of lists
   
 } 
 
@@ -694,12 +650,12 @@ forward_backward_check <- function
   rownames(gmat) <- glob.f 
   
   # Here, we make a list that should store the features and their 
-  # corresponding meta-feature  score for each leave-one-out run
+  # corresponding meta-feature score for each leave-one-out run
   f.names <- list()
   f.scores <- c()
   
   # We want to see if leaving anyone feature out improves the overall 
-  # meta-feature  score
+  # meta-feature score
   # Here we only consider previous features in the meta-feature to remove 
   # (i.e. not the last one which was just added)
   for(n in seq_len(length(glob.f)-1)){
@@ -721,7 +677,7 @@ forward_backward_check <- function
     
     s <- switch(
       method,
-      ks = ks_gene_score_mat(
+      ks = ks_genescore_mat(
         mat = u.mat,
         alternative = alternative, 
         weights = weights
@@ -754,14 +710,12 @@ forward_backward_check <- function
                 "function only return score values. ",
                 "Thus, using 'stat' as metric to search for best features.")
         metric <- "stat"
-      }
-      if(colnames(s) == "p_value" & metric == "stat"){
+      }else if(colnames(s) == "p_value" & metric == "stat"){
         warning("metric provided is 'stat' but the method function only ",
                 "return p-values. Thus, using 'pval' as metric to ",
                 "search for best features.")
         metric <- "pval"
       }
-      metric <- metric
     }
     
     # Score returned by the given method
@@ -794,13 +748,13 @@ forward_backward_check <- function
     
     # Return the set of features that gave a better score than 
     # the existing best score, and the score as well
-    return(list(f.names[[f.best.index]], f.best.score))  
+    return(list(best.features=f.names[[f.best.index]], best.scores=f.best.score))  
     
   } else{
     
     # Don't change anything. Return the existing 
     # best set of features and the corresponding score
-    return(list(glob.f, glob.f.s))
+    return(list(best.features=glob.f, best.scores=glob.f.s))
     
   } 
   

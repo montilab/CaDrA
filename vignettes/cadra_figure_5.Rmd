@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="", fig.align="center")
 library(Biobase)
-devtools::load_all(".")
+library(CaDrA)
 ```
 
 # CaDrA Query of BRCA YAP/TAZ Activity

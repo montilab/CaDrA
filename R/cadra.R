@@ -152,7 +152,7 @@ CaDrA <- function(
      any(is.na(input_score)))
     stop("input_score must be a vector of continous values (with no NAs) ",
          "where the vector names match the colnames of ",
-         "the expression matrix (required).")
+         "the expression matrix.")
   
   # Make sure the input_score has names or labels that are 
   # the same as the colnames of ES
@@ -185,37 +185,22 @@ CaDrA <- function(
   # Compute row-wise directional KS scores for binary features in ES
   if(method == "ks"){
     
-    verbose("Using Kolmogorov-Smirnov method for features scoring.")
-    
-    # Re-order the samples by input_score sorted from highest to lowest values
-    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
+    verbose("Using Kolmogorov-Smirnov method for features scoring")
     
   }else if(method == "wilcox"){
     
     # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    verbose("Using Wilcoxon method for features scoring.")
-    
-    # Ranking the samples by input_score sorted from highest to lowest values
-    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
+    verbose("Using Wilcoxon method for features scoring")
     
   }else if(method == "revealer"){
     
     verbose("Using Revealer's Mutually Exclusive method for features scoring")
-    
-    # Compute mutually exclusive method for binary features in ES
-    ES <- ES[,names(sort(input_score, decreasing=TRUE))]
-    
+
   }else if(method == "custom"){
     
     # Compute row-wise directional scores using user's customized 
     # function for binary features in ES
-    verbose("Using a customized method for features scoring.")
-    
-  }else {
-    
-    stop(paste0("Invalid method specified. The method can be ", 
-                paste0(c("ks", "wilcox", "revealer", "custom"), 
-                       collapse="/"), "."))
+    verbose("Using a customized method for features scoring")
     
   }
   
@@ -226,7 +211,7 @@ CaDrA <- function(
   # Compute the row-wise scoring
   s <- switch(
     method,
-    ks = ks_gene_score_mat(
+    ks = ks_genescore_mat(
       mat = mat,
       alternative = alternative, 
       weights = weights
@@ -310,15 +295,10 @@ CaDrA <- function(
               max_size=max_size, 
               best_score_only=TRUE)
   
-  verbose("Using the following key for cached permutation values:")
-  verbose(key)
-  verbose("\n")
   perm_best_scores <- loadCache(key)
   
   #Start the 'clock' to see how long the process takes
   ptm <- proc.time()
-  
-  ####### CACHE CHECKING #######
   
   # Check if, given the dataset and search-specific parameters,
   # there is already a cached null distribution available 
@@ -341,13 +321,13 @@ CaDrA <- function(
     
     if (is.null(perm_best_scores)){
       message("No permutation scores for the specified dataset and ",
-              "search parameters were found in cache path...")
+              "search parameters were found in cache path...\n")
       message("BEGINNING PERMUTATION-BASED TESTINGS\n")
     } else if (length(perm_best_scores) < n_perm) {
       message("n_perm is set to ", n_perm, " but found only ", 
               length(perm_best_scores), 
               " cached permutation-based scores for the specified dataset ",
-              "and search parameters...")
+              "and search parameters...\n")
       message("RE-COMPUTE PERMUTATION-BASED TESTINGS WITH LARGER NUMBER OF PERMUTATIONS")
     }
     

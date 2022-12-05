@@ -11,8 +11,6 @@
 #' @param alternative a character string specifies an alternative hypothesis 
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
 #' Default is \code{less} for left-skewed significance testing.
-#' @param verbose a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{FALSE}.
 #' 
 #' @return A data frame with two columns: \code{score} and \code{p_value}
 #' @examples
@@ -24,24 +22,20 @@
 #' data(sim.ES)
 #' 
 #' #' Define additional parameters and start the function
-#' ks_gene_score_mat_result <- ks_gene_score_mat(
+#' ks_gene_score_mat_result <- ks_genescore_mat(
 #'   mat = exprs(sim.ES),
 #'   weights = NULL,
 #'   alternative = "less"
 #' )
 #' 
 #' @export
-ks_gene_score_mat <- function
+ks_genescore_mat <- function
 (
   mat, 
   weights = NULL,
-  alternative = c("less", "greater", "two.sided"),
-  verbose = FALSE
+  alternative = c("less", "greater", "two.sided")
 )
 {
-  
-  # Set up verbose option
-  options(verbose = verbose)
   
   alternative <- match.arg(alternative)
   
@@ -115,40 +109,9 @@ ks_gene_score_mat <- function
     stop("After removing features that are either all 0 or 1. ",
          "There are no more features remained for downsteam computation.")
   }
-  
-  # Give a warning if matrix has nrow < 2
-  if(nrow(mat) < 2)
-    verbose("Cannot compute a row-wise statistic over a matrix with nrow < 2.")
-  
-  # If no alternative is specified, we use "less" as default.
-  if(length(alternative) == 0 || nchar(alternative) == 0){
-    warning("No alternative hypothesis specified. Using 'less' by default .")
-    alternative <- "less"
-  }else if(length(alternative) == 1 && !alternative %in% 
-           c("two.sided", "greater", "less")){
-    stop(paste0(alternative, collapse=", "), 
-         " is not a valid alternative hypothesis. ",
-         "Alternative hypothesis must be 'two.sided', 'greater', or 'less'.")
-  }else if(length(alternative) > 1 && all(!alternative %in% 
-                                          c("two.sided", "greater", "less"))){
-    stop(paste0(alternative, collapse=", "), 
-         " is not a valid alternative hypothesis. ",
-         "Alternative hypothesis must be 'two.sided', 'greater', or 'less'.")
-  }else if(length(alternative) > 1 && any(alternative %in% 
-                                          c("two.sided", "greater", "less"))){
-    alternative <- alternative[which(alternative %in% 
-                                       c("two.sided", "greater", "less"))][1]
-    warning("More than one alternative hypothesis were specified. ",
-            "Only the first valid alternative hypothesis, '", 
-            alternative, "', is used.")
-  } 
-  
+
   # Compute the ks statistic and p-value per row in the matrix
-  ks <- ks_genescore_mat(mat=mat, alt=alternative, weight=weights)
-  
-  # ks <- apply(X = mat, 1, FUN = function(x, alt=alternative, w=weights){
-  #   ks_gene_score(n.x=length(x), y=which(x==1), alternative=alt, weights=w)
-  # })
+  ks <- ks_gene_score_mat(mat=mat, alt=alternative, weight=weights)
   
   # Convert list to data.frame
   ks <- data.frame(score=ks[1,], p_value=ks[2,])

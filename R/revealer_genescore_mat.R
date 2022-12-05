@@ -11,12 +11,10 @@
 #' \code{"positive"}). Use \code{"positive"} to match higher values of 
 #' \code{input_score}, \code{"negative"} to match lower values of 
 #' \code{input_score}. Default is \code{positive}. 
-#' @param seed_names one or more features that are associated with the 
-#' activation of a response of interest (i.e. \code{input_score})
+#' @param seed_names one or more features representing known “causes” 
+#' of activation or features associated with a response of interest
 #' @param assoc_metric an association metric: \code{"IC"} for information 
-#' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
-#' @param verbose a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{FALSE}. 
+#' coefficient or \code{"COR"} for correlation. Default is \code{IC}. 
 #'
 #' @return a data frame with one column: \code{score}
 #' @examples
@@ -47,15 +45,10 @@ revealer_genescore_mat <- function
   input_score, 
   target_match = c("positive", "negative"),             
   seed_names = NULL,
-  assoc_metric = c("IC", "COR"),
-  verbose = FALSE
+  assoc_metric = c("IC", "COR")
 )
 {
-  
-  # Setup verbose option definition
-  options(verbose = verbose)
-  
-  
+
   assoc_metric <- match.arg(assoc_metric)
   target_match <- match.arg(target_match)
   
@@ -133,55 +126,11 @@ revealer_genescore_mat <- function
                   does not exist among the rownames of expression matrix."))
     } 
   }
-  
-  # If target_match variable is not specified, use "positive" as default.
-  if(length(target_match) == 0 || nchar(target_match) == 0){
-    warning("The target_match variable is not specified. ",
-            "Using 'positive' by default.")
-    target_match <- "positive"
-  }else if(length(target_match) == 1 && 
-           !target_match %in% c("positive", "negative")){
-    stop(paste0(target_match, collapse=", "), 
-         " is not a valid target_match value. ",
-         "The target_match variable must be 'positive' or 'negative'.")
-  }else if(length(target_match) > 1 && 
-           all(!target_match %in% c("positive", "negative"))){
-    stop(paste0(target_match, collapse=", "), 
-         " is not a valid target_match value. ",
-         "The target_match variable must be 'positive' or 'negative'.")
-  }else if(length(target_match) > 1 && 
-           any(target_match %in% c("positive", "negative"))){
-    target_match <- target_match[which(target_match %in% 
-                                         c("positive", "negative"))][1]
-    warning("More than one target_match values were specified. ",
-            "Only the first valid target_match value, '", 
-            target_match, "', is used.\n")
-  }
-  
-  # If assoc_metric variable is not specified, use "IC" as default.
-  if(length(assoc_metric) == 0 || nchar(assoc_metric) == 0){
-    warning("The assoc_metric variable is not specified. ",
-            "Using 'IC' by default ..\n")
-    assoc_metric <- "IC"
-  }else if(length(assoc_metric) == 1 && !assoc_metric %in% c("IC", "COR")){
-    stop(paste0(assoc_metric, collapse=", "), 
-         " is not a valid assoc_metric value. ",
-         "The assoc_metric variable must be 'IC' or 'COR'.")
-  }else if(length(assoc_metric) > 1 && all(!assoc_metric %in% c("IC", "COR"))){
-    stop(paste0(assoc_metric, collapse=", "), 
-         " is not a valid assoc_metric value. ",
-         "The assoc_metric variable must be 'IC' or 'COR'.")
-  }else if(length(assoc_metric) > 1 && any(assoc_metric %in% c("IC", "COR"))){
-    assoc_metric <- assoc_metric[which(assoc_metric %in% c("IC", "COR"))][1]
-    warning("More than one assoc_metric values were specified. ",
-            "Only the first valid assoc_metric value, '", assoc_metric, "', 
-            is used.\n")
-  }
-  
+
   # Check if the dataset has any all 0 or 1 features 
   # (these are to be removed since they are not informative)
   if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
-    warning("The provided matrix has some features that are either all 0 or 1.",
+    warning("The provided matrix has some features that are either all 0s or 1s.",
             "These features will be removed from downsteam computation.\n")
     mat <- mat[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
   }
@@ -192,16 +141,12 @@ revealer_genescore_mat <- function
          "There are no more features remained for downsteam computation.\n")
   }
   
-  # Give a warning if matrix has nrow < 2
-  if(nrow(mat) < 2){
-    verbose("Cannot compute a row-wise statistic over a matrix with nrow < 2")
-  }
-  
   # Define seed from given seed_names
   if(length(seed_names) == 0){
     seed <- as.vector(rep(0, ncol(mat)))      
   } else {
     if (length(seed_names) > 1) {
+      # Consolidate or summarize one or more seeds to one vector of values
       seed <- as.numeric(ifelse(colSums(mat[seed_names,]) == 0, 0, 1))
     } else {
       seed <- mat[seed_names,]
@@ -224,7 +169,7 @@ revealer_genescore_mat <- function
   # Only score value from revealer is returned
   cmi <- data.frame(score=cmi)
   rownames(cmi) <- rownames(mat)
-  
+
   return(cmi)
   
 }

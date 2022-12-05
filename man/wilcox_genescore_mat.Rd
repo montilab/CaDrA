@@ -7,8 +7,7 @@
 wilcox_genescore_mat(
   mat,
   ranks = NULL,
-  alternative = c("less", "greater", "two.sided"),
-  verbose = FALSE
+  alternative = c("less", "greater", "two.sided")
 )
 }
 \arguments{
@@ -23,9 +22,6 @@ with the colnames of the feature matrix.}
 \item{alternative}{a character string specifies an alternative 
 hypothesis testing (\code{"two.sided"} or \code{"greater"} or 
 \code{"less"}). Default is \code{less} for left-skewed significance testing.}
-
-\item{verbose}{a logical value indicates whether or not to 
-print the diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 A data frame with two columns: \code{score} and \code{p_value}

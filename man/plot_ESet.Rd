@@ -33,7 +33,7 @@ data(topn.list)
 topn_best_meta <- topn_best(topn_list=topn.list) 
 
 # Extract the meta-feature set
-ESet <-  topn_best_meta[["ESet"]]                    
+ESet <-  topn_best_meta[["eset"]]                    
 
 # Make sure mat variable is a matrix
 mat <- as.matrix(exprs(ESet))
@@ -49,9 +49,13 @@ or <- ifelse(colSums(mat)==0, 0, 1)
 mat <- rbind(mat, or)
 
 # Get x and y axis data for ES plot of 
-# cumulative function of individual features (i.e. the OR function)
-ES_dat <- ks_gene_score(
-   n.x=length(or), y=which(or==1), plot_dat = TRUE, alternative = "less"
+# cumulative function of individual features 
+# (i.e. the OR function)
+ES_dat <- ks_genescore(
+   n.x=length(or), 
+   y=which(or==1), 
+   plot_dat = TRUE, 
+   alternative = "less"
 )
 
 # plot for ES scores

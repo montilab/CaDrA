@@ -252,13 +252,11 @@ custom_genescore_mat <- function
   
   ## check if the custom is a data frame
   if(!is.data.frame(custom)){
-    stop("The custom function must be a data frame with one or ",
+    stop("The custom function must return a data frame with one or ",
          "two columns: 'score' or 'p_value' or 'both'.")
-  }else{
-    if(all(!c("score", "p_value") %in% colnames(custom))){
-      stop("The custom function must return a data frame with one or ",
-           "two columns: 'score' or 'p_value' or 'both'.")
-    }
+  }else if(all(!c("score", "p_value") %in% colnames(custom))){
+    stop("The custom function must return a data frame with one or ",
+         "two columns: 'score' or 'p_value' or 'both'.")
   }
   
   return(custom)

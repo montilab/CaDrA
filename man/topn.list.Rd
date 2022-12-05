@@ -15,9 +15,10 @@ data(topn.list)
 }
 \description{
 A list of lists returned from topn_eval() using simulated dataset 
-(\code{ES = sim.ES}),  
-\code{input_score = ncol(sim.ES):1}, \code{top_N = 7}, \code{method = "ks"},
-and \code{max_size = 10} as inputs to the function.
+\code{ES = sim.ES}, \code{input_score = ncol(sim.ES):1}, \code{top_N = 7}, 
+\code{method = "ks"}, \code{alternative = "less"}, \code{metric = "pval"}, 
+\code{search_method = "both"}, \code{max_size = 10}, 
+and \code{best_score_only = FALSE} as inputs to the function.
 \code{Note:} \code{max_size} is set to 10 as we would like to account 
 for the presence of 10 left-skewed 
 (i.e. true positive or TP) features in the \code{sim.ES} dataset.
@@ -37,11 +38,11 @@ data(topn.list)
 topn.list[[1]]
 
 # To fetch just the ExpressionSet object
-topn.list[[1]]$ESet
+topn.list[[1]]$eset
 
 # ExpressionSet for the search result when starting with 
 # the second-best feature
-topn.list[[2]]$ESet
+topn.list[[2]]$eset
 
 # Or we can find the result that had the best score over the top N (N=7) runs
 best_meta <- topn_best(topn.list)

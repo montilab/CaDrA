@@ -23,30 +23,46 @@ topn_best <- function(topn_list){
   
   # get best score list
   scores_l <- lapply(seq_along(topn_list), 
-                     function(l){ topn_list[[l]][['Score']] })
+                     function(l){ topn_list[[l]][['score']] })
   
   # Working with scores for each top N run
   scores <- unlist(scores_l)
   
-  #
+  # Obtain the metric used in candidate search
+  metric <- lapply(
+    seq_along(topn_list), 
+    function(l){ topn_list[[l]][['metric']] }
+  ) %>%
+    unlist() %>% 
+    unique()
+  
+  # Fetch the best score from the iterations
   # NEEDS UPDATING TO ACCOMODATE STATISTIC 
-  #
-  
-  # Fetch the index housing the best ESet 
-  # (this wil be the one with the best score)
-  n <- which.min(scores)
-  
-  # Also store the score
-  top_score <- min(scores)
+  if(metric == "pval"){
+    # Fetch the index housing the best ESet 
+    # Based on the p-values, the lowest value will be the most significant 
+    n <- which.min(scores)
+    
+    # Also obtain the best score
+    top_score <- min(scores)  
+  }else{
+    # Fetch the index housing the best ESet 
+    # Based on the statistics, the largest value will be the most significant 
+    n <- which.max(scores)
+
+    # Obtain the best score
+    top_score <- max(scores)     
+  }
   
   # Corresponding ESet object
-  best_meta <- topn_list[[n]]$ESet
+  best_meta <- topn_list[[n]]$eset
   
   # Correspoding input_score
   best_input_score <- topn_list[[n]]$input_score
   
-  return(list("ESet" = best_meta, 
-              "Score" = top_score, 
+  return(list("eset" = best_meta, 
+              "score" = top_score, 
               "input_score" = best_input_score))
+  
   
 }

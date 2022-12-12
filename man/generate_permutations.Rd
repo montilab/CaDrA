@@ -4,13 +4,13 @@
 \alias{generate_permutations}
 \title{Random permutation matrix generator}
 \usage{
-generate_permutations(ord, n_perms, verbose = FALSE)
+generate_permutations(ord, n_perm, verbose = FALSE)
 }
 \arguments{
 \item{ord}{vector to be permuted. This determines the number of columns 
 in the permutation matrix}
 
-\item{n_perms}{number of permutations to generate. This determines 
+\item{n_perm}{number of permutations to generate. This determines 
 the number of rows in the permutation matrix}
 
 \item{verbose}{a logical value indicates whether or not to print the 
@@ -36,6 +36,6 @@ set.seed(123)
 n_perm = 1000
  
 # Define additional parameters and start the function
-perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm)
+perm_labels_matrix <- generate_permutations(ord=input_score, n_perm=n_perm)
   
 }

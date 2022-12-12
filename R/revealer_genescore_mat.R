@@ -49,6 +49,8 @@ revealer_genescore_mat <- function
 )
 {
 
+  verbose("Using Revealer's Mutually Exclusive method for features scoring")
+  
   assoc_metric <- match.arg(assoc_metric)
   target_match <- match.arg(target_match)
   

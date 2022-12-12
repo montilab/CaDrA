@@ -1,4 +1,3 @@
-
 #' CaDrA Search
 #' 
 #' Performs a permutation-based testing on sample permutation of observed input 
@@ -129,38 +128,10 @@ CaDrA <- function(
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
   
-  # Check if the ES is provided and is a BioBase ExpressionSet object
-  if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
-    stop("'ES' must be an ExpressionSet class argument (required).")
+  # Stop if input values are not valid
+  cadra_check_input( ES, input_score, method, n_perm, ncores)
   
-  # Check if the dataset has only binary 0 or 1 values 
-  if(!all(exprs(ES) %in% c(0,1))){
-    stop("The expression matrix (ES) must contain only binary values ",
-         "with no NAs.")
-  }
-  
-  # Make sure the input ES has rownames for features tracking
-  if(is.null(rownames(ES)))
-    stop("The ES object does not have rownames or featureData ",
-         "to track the features by. ",
-         "Please provide unique features or rownames ",
-         "for the expression matrix.")
-  
-  # Check input_score is provided and is a continuous values with no NAs
-  if(length(input_score) == 0 || 
-     any(!is.numeric(input_score)) || 
-     any(is.na(input_score)))
-    stop("input_score must be a vector of continous values (with no NAs) ",
-         "where the vector names match the colnames of ",
-         "the expression matrix.")
-  
-  # Make sure the input_score has names or labels that are 
-  # the same as the colnames of ES
-  if(is.null(names(input_score)))
-    stop("The input_score object must have names or labels ",
-         "to track the samples by. Please provide unique sample names ",
-         "or labels that matches the colnames of the expression matrix.")
-  
+
   ## Samples to keep based on the overlap between the two inputs
   overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
   ES <- ES[,overlap]
@@ -173,99 +144,52 @@ CaDrA <- function(
     warning("Provided dataset has features that are either all 0s or 1s. ",
             "These features will be removed from the computation.")
     ES <- ES[!(rowSums(exprs(ES))==0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
+    
+    # Make sure matrix is not empty after removing uninformative features
+    stopifnot("There are no more features remained for downsteam computation."=
+                (nrow(exprs(ES)) != 0))
   }
-  
-  # Make sure matrix is not empty after removing uninformative features
-  if(nrow(exprs(ES)) == 0){
-    stop("After removing features that are either all 0s or 1s. ",
-         "There are no more features remained for downsteam computation.")
-  }
-  
-  # Check the method 
-  # Compute row-wise directional KS scores for binary features in ES
-  if(method == "ks"){
-    
-    verbose("Using Kolmogorov-Smirnov method for features scoring")
-    
-  }else if(method == "wilcox"){
-    
-    # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    verbose("Using Wilcoxon method for features scoring")
-    
-  }else if(method == "revealer"){
-    
-    verbose("Using Revealer's Mutually Exclusive method for features scoring")
-
-  }else if(method == "custom"){
-    
-    # Compute row-wise directional scores using user's customized 
-    # function for binary features in ES
-    verbose("Using a customized method for features scoring")
-    
-  }
-  
+ 
   # Select the appropriate method to compute scores based on 
-  # skewdness of a given binary matrix
+  # skewness of a given binary matrix
   mat <- exprs(ES)
   
   # Compute the row-wise scoring
   s <- switch(
     method,
-    ks = ks_genescore_mat(
-      mat = mat,
-      alternative = alternative, 
-      weights = weights
-    ),
-    wilcox = wilcox_genescore_mat(
+    ks = ks_genescore_mat(                # Kolmogorov-Smirnov Scoring Method    
+        mat = mat,
+        alternative = alternative, 
+        weights = weights),
+    wilcox = wilcox_genescore_mat(        # Wicox Scoring Method
       mat = mat,
       alternative = alternative,
-      ranks = NULL
-    ),
-    revealer = revealer_genescore_mat(
+      ranks = NULL),
+    revealer = revealer_genescore_mat(    # Revealer Scoring Method
       mat = mat,                                   
       input_score = input_score,      
       seed_names = NULL,
       target_match = "positive",
-      assoc_metric = "IC"
-    ),
-    custom = custom_genescore_mat(
+      assoc_metric = "IC"),
+    custom = custom_genescore_mat(        # Custom Scoring Method
       mat = mat,
       input_score = input_score,      
       custom_function = custom_function,
-      custom_parameters = custom_parameters
-    )
+      custom_parameters = custom_parameters)
   )
   
   # Check if the returning result has one or two columns: 
   # score or p_value or both
-  if(ncol(s) == 1){
-    if(colnames(s) == "score" & metric == "pval"){
-      warning("metric = 'pval' is provided but the ", method, 
-              " method only return score values. ",
+  if(ncol(s) == 1 && colnames(s)[1] == "score" && metric == "pval"){
+      warning("metric = 'pval' is specified but the ", method, 
+              " method only returns score values. ",
               "Thus, using 'stat' as metric to search for best features.")
       metric <- "stat"
-    }else if(colnames(s) == "p_value" & metric == "stat"){
-      warning("metric provided is 'stat' but the ", method, 
-              "method only return p-values. ",
+  }else if(ncol(s) == 1 && colnames(s)[1] == "p_value" & metric == "stat"){
+      warning("metric requested is 'stat' but the ", method, 
+              "method only returns p-values. ",
               "Thus, using 'pval' as metric to search for best features.")
       metric <- "pval"
-    }
-  }
-  
-  # check the number of permuation value
-  n_perm <- as.integer(n_perm)
-  
-  if(is.na(n_perm) || length(n_perm)==0 || n_perm <= 0){
-    stop("Please specify an INTEGER number of permutations to perform for ",
-         "permutation-based testings (nperm must be >= 1).")
-  }
-  
-  # check the number of ncores value
-  ncores <- as.integer(ncores)
-  
-  if(is.na(ncores) || length(ncores)==0 || ncores <= 0){
-    stop("Please specify the number of cores to perform parallelization ",
-         "for permutation testings (ncores must be >= 1).")
   }
   
   ####### CACHE CHECKING #######
@@ -282,7 +206,8 @@ CaDrA <- function(
   # We use the ES, top N (or search_start), score metric, 
   # scoring method as the key for each cached result  
   key <- list(ES=ES, 
-              input_score=if(method %in% c("revealer", "custom")){ input_score }else { NULL },
+              input_score=if(method %in% c("revealer", "custom"))
+                { input_score }else { NULL },
               method=method, 
               custom_function=custom_function, 
               custom_parameters=custom_parameters, 
@@ -301,7 +226,8 @@ CaDrA <- function(
   ptm <- proc.time()
   
   # Check if, given the dataset and search-specific parameters,
-  # there is already a cached null distribution available 
+  # there is already a cached null distribution available
+  n_perms <-  as.integer(n_perm)
   if (!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
     
     if(length(perm_best_scores) == n_perm){
@@ -348,7 +274,7 @@ CaDrA <- function(
     
     # Generate matrix of permutated input_score  
     perm_labels_matrix <- generate_permutations(ord=input_score, 
-                                                n_perms=n_perm, 
+                                                n_perm = n_perm, 
                                                 verbose = FALSE)
     
     verbose("Computing permutation-based scores for N = ", n_perm, "...\n")
@@ -427,9 +353,7 @@ CaDrA <- function(
   #Add a smoothening factor of 1 if smooth is specified
   #This is just to not return a p-value of 0
   c <- 0
-  
-  if(smooth)
-    c <- 1
+  if(smooth) c <- 1
   
   if(metric == "pval"){
     
@@ -450,49 +374,20 @@ CaDrA <- function(
     
   }
   
-  perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/(length(perm_best_scores) + c) 
+  perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/
+    (length(perm_best_scores) + c) 
   
   message("Permutation p-value: ", perm_pval, "\n\n")
   
   ########### END PERMUTATION P-VALUE COMPUTATION ############
+  # Plot result
   
-  if(plot == TRUE){
-    
-    plot_title <- paste("Emperical Null distribution (N = ", 
-                        length(perm_best_scores), ")\n Permutation p-val <= ", 
-                        round(perm_pval, 5), "\nBest observed score: ", 
-                        round(obs_best_score, 5), sep="")
-    
-    if(!is.null(top_N)){
-      plot_title <- paste(plot_title,"\n Top N: ", top_N, sep="")
-    }else{
-      plot_title <- paste(plot_title,"\n Seed: ", search_start, sep="")
-    }
-    
-    #Here, let us plot the absolute values of the permutation p-values, 
-    # for simplicity
-    # you only consider absolute values when calculating the permutation p-vals.
-    g <- ggplot(data = data.frame("x" = perm_best_scores), aes(x = .data$x)) +
-      geom_histogram(fill = "black", color = "gray") +
-      theme_classic() +
-      theme(
-        axis.line.x=element_line(color = "black"),
-        axis.line.y=element_line(color = "black")
-      )
-    
-    g <- g + geom_vline(xintercept = obs_best_score, 
-                        linetype = "longdash", size = 1.5, colour = "red") +
-      labs(
-        title = plot_title,
-        x = "Score",
-        y = "Count"
-      ) +
-      theme(plot.title = element_text(hjust = 0.5)) +
-      scale_x_continuous(expand = c(0, 0)) +
-      scale_y_continuous(expand = c(0, 0))
-    
-    g
-  }
+  
+  if(plot == TRUE)cadra_plot( top_N,
+                              search_start,
+                              obs_best_score,
+                              perm_pval,
+                              perm_best_scores)
   
   perm_res <- list(
     key = key,
@@ -511,7 +406,7 @@ CaDrA <- function(
 #' Produces a random permutation rank matrix given a vector of values
 #' @param ord vector to be permuted. This determines the number of columns 
 #' in the permutation matrix
-#' @param n_perms number of permutations to generate. This determines 
+#' @param n_perm number of permutations to generate. This determines 
 #' the number of rows in the permutation matrix
 #' @param verbose a logical value indicates whether or not to print the 
 #' diagnostic messages. Default is \code{FALSE}. 
@@ -531,12 +426,12 @@ CaDrA <- function(
 #' n_perm = 1000
 #'  
 #' # Define additional parameters and start the function
-#' perm_labels_matrix <- generate_permutations(ord=input_score, n_perms=n_perm)
+#' perm_labels_matrix <- generate_permutations(ord=input_score, n_perm=n_perm)
 #'   
 #' @export
 generate_permutations <- function(
     ord,                  # These are the sample orderings to be permuted
-    n_perms,              # Number of permutations to produce
+    n_perm,              # Number of permutations to produce
     verbose = FALSE
 ){
   
@@ -546,23 +441,18 @@ generate_permutations <- function(
   m  <- length(ord)
   
   # Create permutation matrix
-  perm <- matrix(NA, nrow=n_perms, ncol=length(ord))
+  perm <- matrix(NA, nrow=n_perm, ncol=length(ord))
   
-  verbose("Generating ", n_perms," permuted sample observed input scores...")
+  verbose("Generating ", n_perm," permuted sample observed input scores...")
   
   # Sample the input scores
-  for (i in seq_len(n_perms) ) {
-    perm[i,] <- sample(ord, m)
-  }
+  for (i in seq_len(n_perm) ) perm[i,] <- sample(ord, m)
   
   verbose("Are all generated permutations unique?..")
-  
   verbose(nrow(perm)==nrow(unique.matrix(perm)))
   
-  if(nrow(perm) != nrow(unique.matrix(perm)))
-    stop("Not enough unique sample permutations for ",
-         "the permutation number specified. ",
-         "Please provide a reasonable nperm value...")
+  stopifnot("invalid nperm value" = 
+           (nrow(perm) == nrow(unique.matrix(perm))) )
   
   return(perm) 
   

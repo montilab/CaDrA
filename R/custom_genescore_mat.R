@@ -79,6 +79,8 @@ custom_genescore_mat <- function
   # Setup verbose option definition
   options(verbose=verbose)
   
+  verbose("Using a customized method for features scoring")
+  
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
   

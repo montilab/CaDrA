@@ -43,6 +43,8 @@ wilcox_genescore_mat <- function
   
   alternative <- match.arg(alternative)
   
+  verbose("Using Wilcoxon method for features scoring")
+  
   ## Make sure mat variable is a matrix
   mat <- as.matrix(mat)
   

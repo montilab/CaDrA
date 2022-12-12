@@ -70,6 +70,118 @@ prefilter_data <- function(
   
 }
 
+#' cadra_check_input
+#' 
+#' Checks if the input values to CaDrA function are valid.
+#'
+#' @param ES an expression set of binary features (required). It must be a 
+#' \code{BioBase expressionSet} object. The rownames of the expression set must 
+#' contain unique features which are used to search for best features.   
+#' @param input_score a vector of continuous values of a response of 
+#' interest (required). The \code{input_score} object must have names or 
+#' labels that match the colnames of the expression matrix.
+#' @param n_perm an integer specifies the number of permutations to perform. 
+#' @param ncores an integer specifies the number of CPU cores.
+#' @noRd
+cadra_check_input <- function(
+    ES,
+    input_score,
+    method,
+    n_perm,
+    ncores
+){
+  
+  # Check if the ES is provided and is a BioBase ExpressionSet object
+  stopifnot("'ES' must be an ExpressionSet class argument"=
+              (length(ES) > 0 && is(ES, "ExpressionSet") ) )
+  
+  # Check if the dataset has only binary 0 or 1 values 
+  stopifnot("The expression matrix (ES) must contain only binary values"=
+              (all(exprs(ES) %in% c(0,1))) )
+  
+  
+  # Make sure the input ES has rownames for features tracking
+  stopifnot("The expression matrix (ES) must have rownames or featureData"=
+              (!is.null(rownames(ES))) )
+  
+  
+  # Check input_score is provided and is a continuous values with no NAs
+  stopifnot("invalid input_score"= (length(input_score) != 0 &&
+                                      all(is.numeric(input_score)) &&
+                                      sum(is.na(input_score))==0 &&
+                                      !is.null(names(input_score))) )
+  
+  
+  stopifnot("invalid number of permutations (nperm)"=
+              (length(n_perm)==1 && !is.na(n_perm) &&  
+                 is.numeric(n_perm) && n_perm > 0) )
+  
+  stopifnot("invalid number of CPU cores (ncores)"=
+              (length(ncores)==1 && !is.na(ncores) &&  
+                 is.numeric(ncores) && ncores > 0) )
+  
+}
+
+
+#' cadra_plot
+#' 
+#' Plots result of CaDrA function
+#'
+#' @param top_N an integer specifies the number of features to start the 
+#' search over, starting from the top 'N' features in each case. If \code{top_N} 
+#' is provided, then \code{search_start} parameter will be ignored. Default is 
+#' \code{1}.
+#' @param search_start a list of character strings (separated by commas) 
+#' which specifies feature names within the expression set object to start 
+#' the search with. If \code{search_start} is provided, then \code{top_N}
+#' parameter will be ignored. Default is \code{NULL}.
+#' @param obs_best_score a numeric value corresponding to the best observed 
+#' score or p-value and later use to compare against permutation based scores or
+#' p-values. Default is \code{NULL}. If set to NULL, we will compute the observed 
+#' best score based on the given \code{input_score} and \code{ES} variables.
+#' @param perm_pval pval returned by CaDrA calculations
+#' @param perm_best_scores permutations best scores
+#' @noRd
+cadra_plot <- function(top_N, search_start, obs_best_score,
+                       perm_pval, perm_best_scores)
+{
+  
+  plot_title <- paste0("Emperical Null distribution (N = ", 
+                       length(perm_best_scores), ")\n Permutation p-val <= ", 
+                       round(perm_pval, 5), "\nBest observed score: ", 
+                       round(obs_best_score, 5))
+  
+  if(!is.null(top_N)){
+    plot_title <- paste0(plot_title,"\n Top N: ", top_N)
+  }else{
+    plot_title <- paste0(plot_title,"\n Seed: ", search_start)
+  }
+  
+  #Here, let us plot the absolute values of the permutation p-values, 
+  # for simplicity
+  # you only consider absolute values when calculating the permutation p-vals.
+  g <- ggplot(data = data.frame("x" = perm_best_scores), aes(x = .data$x)) +
+    geom_histogram(fill = "black", color = "gray") +
+    theme_classic() +
+    theme(
+      axis.line.x=element_line(color = "black"),
+      axis.line.y=element_line(color = "black")
+    )
+  
+  g <- g + geom_vline(xintercept = obs_best_score, 
+                      linetype = "longdash", size = 1.5, colour = "red") +
+    labs(
+      title = plot_title,
+      x = "Score",
+      y = "Count"
+    ) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0))
+  
+  g
+}
+
 
 #' ks_test_d_wrap_ wrapper
 #'

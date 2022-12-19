@@ -142,51 +142,17 @@ candidate_search <- function(
   
   # Select the appropriate method to compute scores based on 
   # skewness of a given binary matrix
-  mat <- exprs(ES)
+  s <- calc_rawscore(ES,
+                     method = method,
+                     alternative = alternative, 
+                     metric = metric,
+                     weights=weights, 
+                     input_score,
+                     seed_names=NULL,
+                     custom_function,
+                     custom_parameters, 
+                     warning=TRUE)
   
-  # Compute the row-wise scoring
-  s <- switch(
-    method,
-    ks = ks_genescore_mat(
-      mat = mat,
-      alternative = alternative, 
-      weights = weights
-    ),
-    wilcox = wilcox_genescore_mat(
-      mat = mat,
-      alternative = alternative,
-      ranks = NULL
-    ),
-    revealer = revealer_genescore_mat(
-      mat = mat,                                   
-      input_score = input_score,  
-      seed_names = NULL,
-      target_match = "positive",
-      assoc_metric = "IC"
-    ),
-    custom = custom_genescore_mat(
-      mat = mat,
-      input_score = input_score,
-      custom_function = custom_function,
-      custom_parameters = custom_parameters
-    )
-  )
- 
-  # Check if the returning result has one or two columns: 
-  # score or p_value or both
-  if(ncol(s) == 1){
-    if(colnames(s) == "score" & metric == "pval"){
-      warning("metric = 'pval' is provided but the method function only ",
-              "return score values. Thus, using 'stat' as metric to search ",
-              "for best features.")
-      metric <- "stat"
-    }else if(colnames(s) == "p_value" & metric == "stat"){
-      warning("metric provided is 'stat' but the method function only ",
-              "return p-values. Thus, using 'pval' as metric to search ",
-              "for best features.")
-      metric <- "pval"
-    }
-  }
   
   # Score returned by the given method
   s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
@@ -407,41 +373,27 @@ candidate_search <- function(
       revealar_best_index <- best.s.index[which(!best.s.index %in% revealar_global_index)]
       
       if(length(revealar_best_index) > 0){
-        revealer_mat <- exprs(ES)[-revealar_best_index,]
+        meta.mat <- exprs(ES)[-revealar_best_index,]
       }else{
-        revealer_mat <- exprs(ES)
+        meta.mat <- exprs(ES)
       }
       
       # With the newly formed 'meta-feature' matrix, compute directional  
       # scores and choose the feature that gives the best score
       # Compute row-wise directional scores for existing (raw/starting) 
       # binary features in ES
-      s <- switch(
-        method,
-        ks = ks_genescore_mat(
-          mat = meta.mat,
-          alternative = alternative, 
-          weights = weights
-        ),
-        wilcox = wilcox_genescore_mat(
-          mat = meta.mat,
-          alternative = alternative,
-          ranks = NULL
-        ),
-        revealer = revealer_genescore_mat(
-          mat = revealer_mat,                                   
-          input_score = input_score,      
-          seed_names = global.best.s.features,
-          target_match = "positive",
-          assoc_metric = "IC"
-        ),
-        custom = custom_genescore_mat(
-          mat = meta.mat,
-          input_score = input_score,
-          custom_function = custom_function,
-          custom_parameters = custom_parameters
-        )
-      ) 
+      # Select the appropriate method to compute scores based on 
+      # skewness of a given binary matrix
+      s <- calc_rawscore(meta.mat,
+                         method = method,
+                         alternative = alternative, 
+                         metric = metric,
+                         weights=weights, 
+                         input_score,
+                         seed_names=global.best.s.features,
+                         custom_function,
+                         custom_parameters, 
+                         warning=FALSE)
       
       # Score returned by the given method
       s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
@@ -619,48 +571,19 @@ forward_backward_check <- function
                     dimnames=list(c("sum"), 
                                   colnames(ES)))
     
-    s <- switch(
-      method,
-      ks = ks_genescore_mat(
-        mat = u.mat,
-        alternative = alternative, 
-        weights = weights
-      ),
-      wilcox = wilcox_genescore_mat(
-        mat = u.mat,
-        alternative = alternative,
-        ranks = NULL
-      ),
-      revealer = revealer_genescore_mat(
-        mat = u.mat,                                   
-        input_score = input_score,      
-        seed_names = NULL,
-        target_match = "positive",
-        assoc_metric = "IC"
-      ),
-      custom = custom_genescore_mat(
-        mat = u.mat,
-        input_score = input_score,
-        custom_function = custom_function,
-        custom_parameters = custom_parameters
-      )
-    )
     
-    # Check if the returning result has one or two columns: 
-    # score or p_value or both
-    if(ncol(s) == 1){
-      if(colnames(s) == "score" & metric == "pval"){
-        warning("metric = 'pval' is provided but the method ",
-                "function only return score values. ",
-                "Thus, using 'stat' as metric to search for best features.")
-        metric <- "stat"
-      }else if(colnames(s) == "p_value" & metric == "stat"){
-        warning("metric provided is 'stat' but the method function only ",
-                "return p-values. Thus, using 'pval' as metric to ",
-                "search for best features.")
-        metric <- "pval"
-      }
-    }
+    s <- calc_rawscore(u.mat,
+                       method = method,
+                       alternative = alternative, 
+                       metric = metric,
+                       weights=weights, 
+                       input_score,
+                       seed_names=NULL,
+                       custom_function,
+                       custom_parameters, 
+                       warning=TRUE)
+    
+    
     
     # Score returned by the given method
     s.stat <- if("score" %in% colnames(s)){ s[,"score"] }

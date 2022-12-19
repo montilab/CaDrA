@@ -152,46 +152,17 @@ CaDrA <- function(
  
   # Select the appropriate method to compute scores based on 
   # skewness of a given binary matrix
-  mat <- exprs(ES)
-  
-  # Compute the row-wise scoring
-  s <- switch(
-    method,
-    ks = ks_genescore_mat(                # Kolmogorov-Smirnov Scoring Method    
-        mat = mat,
-        alternative = alternative, 
-        weights = weights),
-    wilcox = wilcox_genescore_mat(        # Wicox Scoring Method
-      mat = mat,
-      alternative = alternative,
-      ranks = NULL),
-    revealer = revealer_genescore_mat(    # Revealer Scoring Method
-      mat = mat,                                   
-      input_score = input_score,      
-      seed_names = NULL,
-      target_match = "positive",
-      assoc_metric = "IC"),
-    custom = custom_genescore_mat(        # Custom Scoring Method
-      mat = mat,
-      input_score = input_score,      
-      custom_function = custom_function,
-      custom_parameters = custom_parameters)
-  )
-  
-  # Check if the returning result has one or two columns: 
-  # score or p_value or both
-  if(ncol(s) == 1 && colnames(s)[1] == "score" && metric == "pval"){
-      warning("metric = 'pval' is specified but the ", method, 
-              " method only returns score values. ",
-              "Thus, using 'stat' as metric to search for best features.")
-      metric <- "stat"
-  }else if(ncol(s) == 1 && colnames(s)[1] == "p_value" & metric == "stat"){
-      warning("metric requested is 'stat' but the ", method, 
-              "method only returns p-values. ",
-              "Thus, using 'pval' as metric to search for best features.")
-      metric <- "pval"
-  }
-  
+  s <- calc_rawscore(ES,
+                     method = method,
+                     alternative = alternative, 
+                     metric = metric,
+                     weights=weights, 
+                     input_score,
+                     seed_names=NULL,
+                     custom_function,
+                     custom_parameters, 
+                     warning=TRUE)
+    
   ####### CACHE CHECKING #######
   options(verbose = verbose)
 

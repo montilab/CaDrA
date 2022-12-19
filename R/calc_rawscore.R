@@ -48,24 +48,24 @@ calc_rawscore <- function(x,
   
   score <- switch(
     method,
-    ks = ks_genescore_mat(
+    ks = ks_rowscore(
       mat = x,
       alternative = alternative, 
       weights = weights
     ),
-    wilcox = wilcox_genescore_mat(
+    wilcox = wilcox_rowscore(
       mat = x,
       alternative = alternative,
       ranks = NULL
     ),
-    revealer = revealer_genescore_mat(
+    revealer = revealer_rowscore(
       mat = x,                                   
       input_score = input_score,      
       seed_names = seed_names,
       target_match = "positive",
       assoc_metric = "IC"
     ),
-    custom = custom_genescore_mat(
+    custom = custom_rowscore(
       mat = x,
       input_score = input_score,
       custom_function = custom_function,

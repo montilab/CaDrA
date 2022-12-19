@@ -131,6 +131,18 @@ CaDrA <- function(
   # Stop if input values are not valid
   cadra_check_input( ES, input_score, n_perm, ncores)
   
+  # --- CACHE CHECKING 
+  options(verbose = verbose)
+  
+  if(!is.null(cache_path)){
+    message("Using provided cache root path: ", cache_path, "")
+    setCacheRootPath(cache_path)
+  } else{
+    setCacheRootPath()
+    message("Setting cache root path as: ", getCacheRootPath(), "\n")
+  }
+  
+  
 
   ## Samples to keep based on the overlap between the two inputs
   overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
@@ -163,22 +175,11 @@ CaDrA <- function(
                      custom_parameters, 
                      warning=TRUE)
     
-  ####### CACHE CHECKING #######
-  options(verbose = verbose)
-
-  if(!is.null(cache_path)){
-    message("Using provided cache root path: ", cache_path, "")
-    setCacheRootPath(cache_path)
-  } else{
-    setCacheRootPath()
-    message("Setting cache root path as: ", getCacheRootPath(), "\n")
-  }
-  
   # We use the ES, top N (or search_start), score metric, 
   # scoring method as the key for each cached result  
   key <- list(ES=ES, 
               input_score=if(method %in% c("revealer", "custom"))
-                { input_score }else { NULL },
+                { input_score } else { NULL },
               method=method, 
               custom_function=custom_function, 
               custom_parameters=custom_parameters, 
@@ -243,7 +244,7 @@ CaDrA <- function(
     
     message("Using ", ncores, " core(s)...")
     
-    # Generate matrix of permutated input_score  
+    # Generate matrix of permuted input_score  
     perm_labels_matrix <- generate_permutations(ord=input_score, 
                                                 n_perm = n_perm, 
                                                 verbose = FALSE)
@@ -321,7 +322,7 @@ CaDrA <- function(
   message("Number of permutation-based scores being considered: ", 
           length(perm_best_scores), "\n")
   
-  #Add a smoothening factor of 1 if smooth is specified
+  #Add a smoothing factor of 1 if smooth is specified
   #This is just to not return a p-value of 0
   c <- 0
   if(smooth) c <- 1

@@ -95,7 +95,7 @@ as well as its corresponding score and observed input scores are returned.
 Performs heuristic search on a set of binary features to determine whether 
 there are features whose union is more skewed (enriched at the extremes) 
 than either features alone. This is the main functionality of the CaDrA 
-package.
+package. It supersedes the former function \code{topn_eval()}.
 }
 \examples{
 

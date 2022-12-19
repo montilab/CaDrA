@@ -4,7 +4,7 @@
 #' Performs heuristic search on a set of binary features to determine whether 
 #' there are features whose union is more skewed (enriched at the extremes) 
 #' than either features alone. This is the main functionality of the CaDrA 
-#' package.
+#' package. It supersedes the former function \code{topn_eval()}.
 #' @param ES an expression set of binary features (required). It must be a 
 #' \code{BioBase ExpressionSet} object. The rownames of the expression set must 
 #' contain unique features which are used in the search.   
@@ -110,36 +110,8 @@ candidate_search <- function(
   metric <- match.arg(metric)  
   search_method <- match.arg(search_method)  
   
-  # Check if the ES is provided and is a BioBase ExpressionSet object
-  if(length(ES) == 0 || !is(ES, "ExpressionSet")) 
-    stop("'ES' must be an ExpressionSet class argument (required).")
-  
-  # Check if the dataset has only binary 0 or 1 values 
-  if(!all(exprs(ES) %in% c(0,1))){
-    stop("The expression matrix (ES) must contain only binary values ",
-         "(0/1) with no NAs.\n")
-  }
-  
-  # Make sure the input ES has rownames for features tracking
-  if(is.null(rownames(ES)))
-    stop("The ES object does not have rownames or featureData to track the ",
-         "features by. Please provide unique features or rownames ",
-         "for the expression matrix.\n")
-  
-  # Check input_score is provided and are continuous values with no NAs
-  if(length(input_score) == 0 || any(!is.numeric(input_score)) || 
-     any(is.na(input_score)))
-    stop("input_score must be a vector of continous values ",
-         "(with no NAs) where the vector names match the colnames of ",
-         "the expression matrix.\n")
-  
-  # Make sure the input_score has names or labels that are the same 
-  # as the colnames of ES
-  if(is.null(names(input_score)))
-    stop("The input_score object must have names or labels to track ",
-         "the samples by. Please provide unique sample names or labels ",
-         "that matches the colnames of the expression matrix.\n")
-  
+  cadra_check_input( ES, input_score, n_perm=1, ncores=1)
+
   ## Samples to keep based on the overlap between the two inputs
   overlap <- intersect(names(input_score), Biobase::sampleNames(ES))
   ES <- ES[,overlap]
@@ -152,52 +124,24 @@ candidate_search <- function(
     warning("Provided dataset has features that are either all 0 or 1. ",
             "These features will be removed from the computation.\n")
     ES <-ES[!(rowSums(exprs(ES)) == 0 | rowSums(exprs(ES)) == ncol(exprs(ES))),]
-  }
-  
-  # Make sure matrix is not empty after removing uninformative features
-  if(nrow(exprs(ES)) == 0){
-    stop("After removing features that are either all 0s or 1s. ",
-         "There are no more features remained for downsteam computation.\n")
-  }
-  
-  # Check the method 
-  # Compute row-wise directional KS scores for binary features in ES
-  if(method == "ks"){
     
-    verbose("Using Kolmogorov-Smirnov method for features scoring.\n")
+    # Make sure matrix is not empty after removing uninformative features
+    stopifnot("There are no more features remained for downsteam computation."=
+                (nrow(exprs(ES)) != 0))
+  }
+  
+  if(method %in%  c("ks", "wilcox")){
     
     # Sort input_score from highest to lowest values
     input_score <- sort(input_score, decreasing=TRUE)
     
     # Re-order the samples by input_score sorted from highest to lowest values
     ES <- ES[,names(input_score)]
-    
-  }else if(method == "wilcox"){
-    
-    # Compute row-wise Wilcox rank sum scores for binary features in ES 
-    verbose("Using Wilcoxon method for features scoring.")
-    
-    # Sort input_score from highest to lowest values
-    input_score <- sort(input_score, decreasing=TRUE)
-    
-    # Re-order the samples by input_score sorted from highest to lowest values
-    ES <- ES[,names(input_score)]
-    
-  }else if(method == "revealer"){
-    
-    # Compute mutually exclusive method for binary features in ES 
-    verbose("Using Revealer's Mutually Exclusive method for features scoring")
-    
-  }else if(method == "custom"){
-    
-    # Compute row-wise directional scores using user's customized function 
-    # for binary features in ES      
-    verbose("Using a customized method for features scoring.\n")
     
   }
   
   # Select the appropriate method to compute scores based on 
-  # skewdness of a given binary matrix
+  # skewness of a given binary matrix
   mat <- exprs(ES)
   
   # Compute the row-wise scoring

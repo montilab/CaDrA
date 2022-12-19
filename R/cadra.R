@@ -129,7 +129,7 @@ CaDrA <- function(
   search_method <- match.arg(search_method)  
   
   # Stop if input values are not valid
-  cadra_check_input( ES, input_score, method, n_perm, ncores)
+  cadra_check_input( ES, input_score, n_perm, ncores)
   
 
   ## Samples to keep based on the overlap between the two inputs

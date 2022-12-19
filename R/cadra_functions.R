@@ -86,7 +86,6 @@ prefilter_data <- function(
 cadra_check_input <- function(
     ES,
     input_score,
-    method,
     n_perm,
     ncores
 ){

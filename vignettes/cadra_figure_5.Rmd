@@ -1,27 +1,23 @@
 ---
-title: "Reproduce CaDrA Figures"
+title: "CaDrA Query of BRCA YAP/TAZ Activity"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Reproduce CaDrA Figures}
+  %\VignetteIndexEntry{CaDrA Query of BRCA YAP/TAZ Activity}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="", fig.align="center")
-library(Biobase)
+knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 library(CaDrA)
+library(SummarizedExperiment)
 ```
-
-# CaDrA Query of BRCA YAP/TAZ Activity
-
-Here, we reproduce the results of Figure 5 of [[Kartha et al., 2019]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full) (the section titled "_CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer_").
 
 ## Load packages
 
 ```r
 library(CaDrA)
-library(Biobase)
+library(SummarizedExperiment)
 ```
 
 ## Load & Format Data Inputs
@@ -34,21 +30,21 @@ eset_mut_scna <- BRCA_GISTIC_MUT_SIG
 
 ## Read in input score
 data(TAZYAP_BRCA_ACTIVITY)
-input_scores <- TAZYAP_BRCA_ACTIVITY
+input_score <- TAZYAP_BRCA_ACTIVITY
 
 ## Samples to keep based on the overlap between the two inputs
-overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+overlap <- intersect(names(input_score), colnames(eset_mut_scna))
 eset_mut_scna <- eset_mut_scna[,overlap]
-input_scores <- input_scores[overlap]
+input_score <- input_score[overlap]
 
-## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
+## Binarize FS to only have 0's and 1's
+assay(eset_mut_scna)[assay(eset_mut_scna) > 1] <- 1.0
 
 ## Pre-filter ESet based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
-  ES = eset_mut_scna,
-  max.cutoff = 0.6,  # max event frequency (60%)
-  min.cutoff = 0.03  # min event frequency (3%)
+  FS = eset_mut_scna,
+  max_cutoff = 0.6,  # max event frequency (60%)
+  min_cutoff = 0.03  # min event frequency (3%)
 ) 
 
 ```
@@ -60,10 +56,10 @@ Here, we are evaluating the candidate search over top 'N' starting features and 
 ```{r cadra}
 
 topn_res <- CaDrA::candidate_search(
-  ES = eset_mut_scna_flt,
-  input_score = input_scores,
+  FS = eset_mut_scna_flt,
+  input_score = input_score,
   method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
-  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
+  weight = NULL,              # If weight is provided, it will be used to perform a weighted-KS test
   alternative = "less",        # Use one-sided p-value
   metric = "pval",             # use the KS p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search

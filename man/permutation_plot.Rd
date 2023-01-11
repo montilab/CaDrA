@@ -4,26 +4,26 @@
 \alias{permutation_plot}
 \title{Permutation Best Scores Plot}
 \usage{
-permutation_plot(permutation_results)
+permutation_plot(perm_res)
 }
 \arguments{
-\item{permutation_results}{a list of objects returned from the cadra_search() 
-using the simulated dataset (\code{sim.ES}) and random generated 
+\item{permutation_results}{a list of objects returned from CaDrA() function
+using the simulated dataset (\code{sim.ES}) and random generated
 \code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123).}
 }
 \value{
 a density plot
 }
 \description{
-Plot the Empirical Null Distribution of Permutation Best Scores of 
-\code{n_perm}
+Plot the Empirical Null Distribution of Permutation Best Scores Based on
+a given number of permutations (\code{n_perm})
 }
 \examples{
 
 # Load pre-computed permutation results
-data(perm.res)
+data(perm_res)
 
 # Plot the permutation results
-permutation_plot(perm.res)
+permutation_plot(perm_res)
 
 }

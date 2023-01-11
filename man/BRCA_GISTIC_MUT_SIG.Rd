@@ -5,20 +5,20 @@
 \alias{BRCA_GISTIC_MUT_SIG}
 \title{Genomic Data from TCGA BRCA MUT + GISTIC that associated with YAP/TAZ Activity}
 \format{
-An object of class \code{ExpressionSet} from \code{Biobase} package
-containing a matrix of 16,873 rows (features) and 963 columns (samples) 
-see (\href{http://bit.ly/2rjy29l}{ExpressionSet documentation})
+An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
+containing a matrix of 16,873 rows (features) and 963 columns (samples)
+see \code{?SummarizedExperiment} for more details.
 }
 \usage{
 data(BRCA_GISTIC_MUT_SIG)
 }
 \description{
-An ExpressionSet object consists of 16,873 genomic features across 963 samples.
+A SummarizedExperiment object consists of 16,873 genomic features across 963 samples.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,
-Varelas X, Monti S (2019) CaDrA: A computational framework for performing 
-candidate driver analyses using binary genomic features. 
+Varelas X, Monti S (2019) CaDrA: A computational framework for performing
+candidate driver analyses using binary genomic features.
 (\href{https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full}{Frontiers in Genetics})
 }
 \keyword{datasets}

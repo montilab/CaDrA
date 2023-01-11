@@ -8,9 +8,9 @@ vignette: >
 ---
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="#>", fig.align="center")
-library(Biobase)
+knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 library(CaDrA)
+library(SummarizedExperiment)
 ```
 
 The **CaDrA** package currently provides four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
@@ -31,63 +31,42 @@ Below, we run candidate search over the top 7 starting seed features using each 
 
 ```r
 library(CaDrA)
-library(Biobase)
+library(SummarizedExperiment)
 ```
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **ExpressionSet** from **Biobase** package) 
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **RangedSummarizedExperiment** from **SummarizedExperiment** package) 
 2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
-## Read in BRCA GISTIC+Mutation ESet object
-data(BRCA_GISTIC_MUT_SIG)
-eset_mut_scna <- BRCA_GISTIC_MUT_SIG
-
-## Read in input score of TAZYAP activity
-data(TAZYAP_BRCA_ACTIVITY)
-input_scores <- TAZYAP_BRCA_ACTIVITY
-
-## Samples to keep based on the overlap between the two inputs
-overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
-eset_mut_scna <- eset_mut_scna[,overlap]
-input_scores <- input_scores[overlap]
-
-## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) > 1] <- 1.0
-
-## Pre-filter ESet based on occurrence frequency
-eset_mut_scna_flt <- CaDrA::prefilter_data(
-  ES = eset_mut_scna,
-  max.cutoff = 0.6,  # max event frequency (60%)
-  min.cutoff = 0.03  # min event frequency (3%)
-) 
-
-# Define required variables
-ES = eset_mut_scna_flt
-input_score = input_scores
+# Load pre-computed expression set
+data(sim_FS)
+ 
+# Load pre-computed input-score
+data(sim_Scores)
 
 ```
 
 # Kolmogorov-Smirnov scoring method 
 
-See `?ks_genescore_mat` for more details
+See `?ks_rowscore` for more details
 
 ```{r ks.method}
 
 ks_topn_l <- CaDrA::candidate_search(
-  ES = ES,
-  input_score = input_score,
+  FS = sim_FS,
+  input_score = sim_Scores,
   method = "ks",               # Use Kolmogorow-Smirnow scoring function 
-  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
+  weight = NULL,               # If weight is provided, it will be used to perform a weighted-KS test
   alternative = "less",        # Use one-sided p-value
   metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for the search
   max_size = 10,               # Set max_size = 10 to allow at most 10 features in meta-feature
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature Eset, 
+  best_score_only = FALSE,     # If best_score_only = FALSE, it will return meta-feature Eset, 
                                # its observed input scores and corresponding best score
 )
 
@@ -101,13 +80,13 @@ meta_plot(topn_best_list = ks_topn_best_meta)
 
 # Wilcoxon Rank-Sum scoring method 
 
-See `?wilcox_genescore_mat` for more details
+See `?wilcox_rowscore` for more details
 
 ```{r wilcox.method}
 
 wilcox_topn_l <- CaDrA::candidate_search(
-  ES = ES,
-  input_score = input_score,
+  FS = sim_FS,
+  input_score = sim_Scores,
   method = "wilcox",           # Use Wilcoxon Rank-Sum scoring function
   alternative = "less",        # Use one-sided p-value
   metric = "pval",             # Use p-value to search for best feature
@@ -120,7 +99,7 @@ wilcox_topn_l <- CaDrA::candidate_search(
 )
 
 # Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
-wilcox_topn_best_meta <- topn_best(wilcox_topn_l)
+wilcox_topn_best_meta <- topn_best(topn_list = wilcox_topn_l)
 
 # Visualize best meta-feature result
 meta_plot(topn_best_list = wilcox_topn_best_meta)
@@ -129,13 +108,13 @@ meta_plot(topn_best_list = wilcox_topn_best_meta)
 
 # Conditional Mutual Information scoring method 
 
-See `?revealer_genescore_mat` for more details
+See `?revealer_rowscore` for more details
 
 ```{r revealer.method}
 
 revealer_topn_l <- CaDrA::candidate_search(
-  ES = ES,
-  input_score = input_score,
+  FS = sim_FS,
+  input_score = sim_Scores,
   method = "revealer",         # Use REVEALER's CMI scoring function
   metric = "stat",             # Use score statistics to search for best feature
   search_method = "both",      # Apply both forward and backward search
@@ -147,7 +126,7 @@ revealer_topn_l <- CaDrA::candidate_search(
 )
 
 # Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
-revealer_topn_best_meta <- topn_best(revealer_topn_l)
+revealer_topn_best_meta <- topn_best(topn_list = revealer_topn_l)
 
 # Visualize best meta-feature result
 meta_plot(topn_best_list = revealer_topn_best_meta)
@@ -156,27 +135,33 @@ meta_plot(topn_best_list = revealer_topn_best_meta)
 
 # Custom - user provided scoring method
 
-See `?custom_genescore_mat` for more details
+See `?custom_rowscore` for more details
 
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_genescore_mat <- function(mat, input_score, alternative){
-  result <- 1:nrow(mat) %>% 
-    purrr::map_dfr(
-      function(r){ 
-        feature = mat[r,];
-        x = input_score[which(feature==1)]; y = input_score[which(feature==0)];
-        res <- ks.test(x, y, alternative=alternative)
-        return(data.frame(score=res$statistic, p_value=res$p.value))
-   })
+customized_rowscore <- function(FS, input_score, alternative){
+  
+  result <- apply(FS, 1, function(r){ 
+    x = input_score[which(r==1)]; 
+    y = input_score[which(r==0)];
+    res <- ks.test(x, y, alternative=alternative)
+    return(c(res$statistic, res$p.value))
+  })
+  
+  # Convert list to data.frame
+  dat <- data.frame(score=result[1,], p_value=result[2,])
+  rownames(dat) <- rownames(ES)
+  
+  return(dat)
+  
 }
 
 # Search for best features using a custom-defined function
 custom_topn_l <- CaDrA::candidate_search(
-  ES = ES,
-  input_score = input_score,
-  custom_function = customized_genescore_mat,       # Use a customized scoring function
+  FS = sim_FS,
+  input_score = sim_Scores,
+  custom_function = customized_rowscore,            # Use a customized scoring function
   custom_parameters = list(alternative = "less"),   # Additional parameters to pass to custom_function
   metric = "pval",                                  # Use pval to search for best feature
   search_method = "both",                           # Apply both forward and backward search
@@ -188,7 +173,7 @@ custom_topn_l <- CaDrA::candidate_search(
 )
 
 # Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
-custom_topn_best_meta <- topn_best(custom_topn_l)
+custom_topn_best_meta <- topn_best(topn_list = custom_topn_l)
 
 # Visualize best meta-feature result
 meta_plot(topn_best_list = custom_topn_best_meta)

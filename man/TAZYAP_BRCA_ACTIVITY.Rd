@@ -5,22 +5,22 @@
 \alias{TAZYAP_BRCA_ACTIVITY}
 \title{YAP/TAZ Activity in TCGA BRCA dataset}
 \format{
-consists of a vector of continuous scores of YAP/TAZ activity 
-across 951 profiles. 
-The mutation and copy number associated with this sample cohorts can be found 
-in \code{BRCA_GISTIC_MUT_SIG} ExpressionSet.
+consists of a vector of continuous scores of YAP/TAZ activity
+across 951 profiles.
+The mutation and copy number associated with this sample cohorts can be found
+in \code{BRCA_GISTIC_MUT_SIG} dataset.
 }
 \usage{
 data(TAZYAP_BRCA_ACTIVITY)
 }
 \description{
-A vector of continuous scores represents oncogenic YAP/TAZ activity 
+A vector of continuous scores represents oncogenic YAP/TAZ activity
 in human breast carcinomas
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,
-Varelas X, Monti S (2019) CaDrA: A computational framework for performing 
-candidate driver analyses using binary genomic features. 
+Varelas X, Monti S (2019) CaDrA: A computational framework for performing
+candidate driver analyses using binary genomic features.
 (\href{https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full}{Frontiers in Genetics})
 }
 \keyword{datasets}

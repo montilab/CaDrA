@@ -7,8 +7,7 @@ output: rmarkdown::github_document
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="#>", fig.align="center")
-library(Biobase)
-devtools::load_all(".")
+library(SummarizedExperiment)
 ```
 
 # CaDrA
@@ -34,7 +33,7 @@ devtools::install_github("montilab/CaDrA")
 
 ```r
 library(CaDrA)
-library(Biobase)
+library(SummarizedExperiment)
 ```
 
 ## (3) CaDrA Query of BRCA YAP/TAZ Activity
@@ -49,24 +48,24 @@ Here, we reproduce the results of Figure 5 of [[Kartha et al., 2019]](https://ww
 data(BRCA_GISTIC_MUT_SIG)
 eset_mut_scna <- BRCA_GISTIC_MUT_SIG
 
-## Read in input score of TAZYAP activity
+## Read in input score
 data(TAZYAP_BRCA_ACTIVITY)
-input_scores <- TAZYAP_BRCA_ACTIVITY
+input_score <- TAZYAP_BRCA_ACTIVITY
 
 ## Samples to keep based on the overlap between the two inputs
-overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+overlap <- intersect(names(input_score), colnames(eset_mut_scna))
 eset_mut_scna <- eset_mut_scna[,overlap]
-input_scores <- input_scores[overlap]
+input_score <- input_score[overlap]
 
-## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
+## Binarize FS to only have 0's and 1's
+assay(eset_mut_scna)[assay(eset_mut_scna) > 1] <- 1.0
 
 ## Pre-filter ESet based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
-  ES = eset_mut_scna,
-  max.cutoff = 0.6,  # max event frequency (60%)
-  min.cutoff = 0.03  # min event frequency (3%)
-) 
+  FS = eset_mut_scna,
+  max_cutoff = 0.6,  # max event frequency (60%)
+  min_cutoff = 0.03  # min event frequency (3%)
+)  
 
 ```
 
@@ -77,7 +76,7 @@ Here, we repeat the candidate search starting from each of the top 'N' features 
 ```{r cadra}
 
 topn_res <- CaDrA::candidate_search(
-  ES = eset_mut_scna_flt,
+  FS = eset_mut_scna_flt,
   input_score = input_scores,
   method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
   weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test

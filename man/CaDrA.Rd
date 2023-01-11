@@ -5,14 +5,14 @@
 \title{CaDrA Search}
 \usage{
 CaDrA(
-  ES,
+  FS,
   input_score,
   method = c("ks", "wilcox", "revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
   metric = c("pval", "stat"),
-  weights = NULL,
+  weight = NULL,
   top_N = 1,
   search_start = NULL,
   search_method = c("both", "forward"),
@@ -27,118 +27,111 @@ CaDrA(
 )
 }
 \arguments{
-\item{ES}{an expression set of binary features (required). It must be a 
-\code{BioBase expressionSet} object. The rownames of the expression set must 
-contain unique features which are used to search for best features.}
+\item{FS}{a SummarizedExperiment object containing binary features where
+rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+and columns represent the samples.}
 
-\item{input_score}{a vector of continuous values of a response of 
-interest (required). The \code{input_score} object must have names or 
-labels that match the colnames of the expression matrix.}
+\item{input_score}{a vector of continuous scores of a molecular phenotype of
+interest such as protein expression, pathway activity, etc.
+The \code{input_score} object must have names or labels that match the column
+names of FS object.}
 
-\item{method}{a character string specifies a scoring method that is 
-used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or 
-\code{"revealer"} (conditional mutual information from REVEALER) or 
-\code{"custom"} (a user customized scoring method)). Default is \code{ks}.}
+\item{method}{a character string specifies a scoring method that is
+used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+\code{"revealer"} (conditional mutual information from REVEALER) or
+\code{"custom"} (a user-customized scoring method)). Default is \code{ks}.}
 
-\item{custom_function}{if method is \code{"custom"}, specifies the 
-customized function here. Default is \code{NULL}.}
+\item{custom_function}{if method is \code{"custom"}, just pass the name of the
+customized function. Default is \code{NULL}.}
 
-\item{custom_parameters}{if method is \code{"custom"}, specifies a list of 
-arguments to be passed to the custom_function(). Default is \code{NULL}.}
+\item{custom_parameters}{if method is \code{"custom"}, specifies a list of
+additional arguments (other than \code{FS} and \code{input_score}) to be passed
+to the \code{custom_function()} . Default is \code{NULL}.}
 
-\item{alternative}{a character string specifies an alternative hypothesis 
-testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}). 
+\item{alternative}{a character string specifies an alternative hypothesis
+testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to search for 
-best features. \code{"pval"} or \code{"stat"} may be used which 
-corresponding to p-value or score statistic. Default is \code{pval}. 
-NOTE: \code{Revealer} method only utilized score statistics values 
-(no p-values).}
+\item{metric}{a character string specifies a metric to search for
+best features. \code{"pval"} or \code{"stat"} may be used which
+corresponding to p-value or score statistics. Default is \code{pval}.
+NOTE: \code{Revealer} method only returns score statistics (no p-values).}
 
-\item{weights}{if method is \code{ks}, specifies a vector of weights 
-will perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weight}{if method is \code{ks}, specifies a vector of weights
+to perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{top_N}{an integer specifies the number of features to start the 
-search over, starting from the top 'N' features in each case. If \code{top_N} 
-is provided, then \code{search_start} parameter will be ignored. Default is 
-\code{1}.}
+\item{top_N}{an integer specifies the number of features to start the
+search over. By default, it starts from the top best feature (top_N = 1).
+NOTE: If \code{top_N} is provided, then \code{search_start} parameter
+will be ignored.}
 
-\item{search_start}{a list of character strings (separated by commas) 
-which specifies feature names within the expression set object to start 
+\item{search_start}{a list of character strings (separated by commas)
+which specifies feature names within the SummarizedExperiment object to start
 the search with. If \code{search_start} is provided, then \code{top_N}
 parameter will be ignored. Default is \code{NULL}.}
 
-\item{search_method}{a character string specifies an algorithm to filter out 
-the best candidates (\code{"forward"} or \code{"both"}). Default is 
+\item{search_method}{a character string specifies an algorithm to filter out
+the best candidates (\code{"forward"} or \code{"both"}). Default is
 \code{both} (i.e., backward and forward).}
 
-\item{max_size}{an integer specifies a maximum size that a meta-feature can 
+\item{max_size}{an integer specifies a maximum size that a meta-feature can
 extend to do for a given search. Default is \code{7}.}
 
-\item{n_perm}{an integer specifies the number of permutations to perform. 
+\item{n_perm}{an integer specifies the number of permutations to perform.
 Default is \code{1000}.}
 
-\item{smooth}{a logical value indicates whether or not to smooth the p-value 
+\item{smooth}{a logical value indicates whether or not to smooth the p-value
 calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
-\item{obs_best_score}{a numeric value corresponding to the best observed 
-score or p-value and later use to compare against permutation based scores or
-p-values. Default is \code{NULL}. If set to NULL, we will compute the observed 
-best score based on the given \code{input_score} and \code{ES} variables.}
+\item{obs_best_score}{a numeric value corresponding to the best observed
+score. This value is used to compare against the permuted best scores.
+Default is \code{NULL}. If set to NULL, we will compute the observed
+best score based on the given parameters.}
 
-\item{plot}{a logical value indicates whether or not to plot the empirical 
-null distribution with the observed scores and permutation p-values. Default is
-\code{TRUE}.}
+\item{plot}{a logical value indicates whether or not to plot the empirical
+null distribution of the permuted best scores. Default is \code{TRUE}.}
 
-\item{ncores}{an integer specifies the number of cores to perform 
-parallelization for permutation testing. Default is \code{1}.}
+\item{ncores}{an integer specifies the number of cores to perform
+parallelization for permutation-based testing. Default is \code{1}.}
 
-\item{cache_path}{a full path uses to cache permutation-based score 
-distributions. If the permutation for a given ES and its dependent search 
-variables such as 'top_N' exist, we recycle these values instead of 
-re-computing them to save time. Default is \code{NULL}. If NULL, the 
-cache path is set to \code{~/.Rcache} for future loading.}
+\item{cache_path}{a full path uses to cache the permuted best scores.
+We recycle these scores instead of re-computing them to save time.
+Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
+for future loading.}
 
-\item{verbose}{a logical value indicates whether or not to print the 
+\item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-a list of key parameters that were used to cache the permutation 
-test, permutation best scores for n_perm, a permutation p-value, and 
-observed best score
+a list of key parameters that are used to cache the result of
+permutation-based testing, a vector of permuted best scores for a given
+\code{n_perm}, an observed best score, and a permutation p-value.
 }
 \description{
-Performs a permutation-based testing on sample permutation of observed input 
-scores using candidate_search() as the main iterative function for each run.
+Performs a permutation-based testing on sample permutation of observed input
+scores using \code{candidate_search()} as the main iterative function for
+each run.
 }
 \examples{
+
 \donttest{
 
-# Load R library
-library(Biobase)
+# Load pre-computed feature set
+data(sim_FS)
 
-# Load pre-computed expression set
-data(sim.ES)
-
-# Set seed
-set.seed(123)
-
-# Provide a vector of continuous scores for a target profile with names 
-# to each score value 
-input_score = rnorm(n = ncol(sim.ES))
-names(input_score) <- colnames(sim.ES)
+# Load pre-computed input-score
+data(sim_Scores)
 
 # Define additional parameters and start the function
 # This function takes some time to run
 cadra_result <- CaDrA(
-  ES = sim.ES, input_score = input_score, method = "ks", weights = NULL,
-  alternative = "less", metric = "pval", top_N = 1, 
-  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000, 
-  plot = TRUE, smooth = TRUE, obs_best_score = NULL, 
+  FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
+  alternative = "less", metric = "pval", top_N = 1,
+  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
+  plot = TRUE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )
- 
+
 }
 
 }

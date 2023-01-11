@@ -4,38 +4,42 @@
 \alias{generate_permutations}
 \title{Random permutation matrix generator}
 \usage{
-generate_permutations(ord, n_perm, verbose = FALSE)
+generate_permutations(input_score, n_perm)
 }
 \arguments{
-\item{ord}{vector to be permuted. This determines the number of columns 
-in the permutation matrix}
+\item{input_score}{a vector of continuous scores of a molecular phenotype of interest
+such as protein expression, pathway activity, etc.}
 
-\item{n_perm}{number of permutations to generate. This determines 
-the number of rows in the permutation matrix}
-
-\item{verbose}{a logical value indicates whether or not to print the 
-diagnostic messages. Default is \code{FALSE}.}
+\item{n_perm}{a number of permutations to generate. This determines
+the number of rows in the permutation matrix.}
 }
 \value{
-A row matrix of permuted values (i.e. ranks) where each row is a 
-single permutation result
+a matrix of ordered values where each row contains the order of
+a single permuted \code{input_score}.
 }
 \description{
-Produces a random permutation rank matrix given a vector of values
+Produces a random permutation score matrix given a vector of sample-specific scores
+representing a phenotypic readout of interest such as protein expression,
+pathway activity, etc.
 }
 \examples{
 
-# Load pre-computed input score
-data(TAZYAP_BRCA_ACTIVITY)
-input_score = TAZYAP_BRCA_ACTIVITY
+# Load pre-simulated scores
+data(sim_Scores)
 
-# Set seed
+# Define the input score
+input_score <- sim_Scores
+
+# Set seed for permutation
 set.seed(123)
 
 # Define number of permutations
 n_perm = 1000
- 
-# Define additional parameters and start the function
-perm_labels_matrix <- generate_permutations(ord=input_score, n_perm=n_perm)
-  
+
+# Generate permuted scores
+perm_matrix <- generate_permutations(
+  input_score = input_score,
+  n_perm = n_perm
+)
+
 }

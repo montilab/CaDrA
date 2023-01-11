@@ -26,7 +26,7 @@ License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
 Packaged: 2022-11-20 18:35:45 UTC; 
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
     Biobase,
     doParallel,

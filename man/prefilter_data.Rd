@@ -4,45 +4,45 @@
 \alias{prefilter_data}
 \title{Pre-filter features}
 \usage{
-prefilter_data(ES, max.cutoff = 0.6, min.cutoff = 0.03, verbose = FALSE)
+prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03)
 }
 \arguments{
-\item{ES}{an expression set object containing binary features used for 
-step-wise search}
+\item{FS}{a SummarizedExperiment object containing binary features where
+rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+and columns represent the samples.}
 
-\item{max.cutoff}{a numeric value between 0 and 1 describing the absolute 
-prevalence of a feature across all samples in the dataset above which the 
-feature will be filtered out. Default is 0.6 (feature that occur in 
+\item{max_cutoff}{a numeric value between 0 and 1 describing the absolute
+prevalence of a feature across all samples in the dataset above which the
+feature will be filtered out. Default is 0.6 (feature that occur in
 60 percent or more of the samples will be removed)}
 
-\item{min.cutoff}{a numeric value between 0 and 1 describing the absolute 
-prevalence of a feature across all samples in the dataset below which the 
-feature will be filtered out. Default is 0.03 (feature that occur in 
+\item{min_cutoff}{a numeric value between 0 and 1 describing the absolute
+prevalence of a feature across all samples in the dataset below which the
+feature will be filtered out. Default is 0.03 (feature that occur in
 3 percent or less of the samples will be removed)}
-
-\item{verbose}{a logical value indicates whether or not to print the 
-diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-An expression set object with only the filtered-in features 
+An SummarizedExperiment object with only the filtered-in features
 given the filter thresholds specified
 }
 \description{
-Pre-filter a dataset prior to running step-wise heuristic search in order to 
-avoid testing features that are too prevalent or too sparse across samples in
+Pre-filter a dataset prior running \code{candidate_search()} to avoid
+testing features that are too prevalent or too sparse across samples in
 the dataset
 }
 \examples{
-data(sim.ES)
 
-# Filter out features having < 3 and > 60\% prevalence across all samples 
+# Load pre-computed feature set
+data(sim_ES)
+
+# Filter out features having < 3 and > 60\% prevalence across all samples
 # (default)
-sim.ES.filt1 <- prefilter_data(sim.ES)
+sim_ES_filt1 <- prefilter_data(FS = sim_ES)
 
 # Change the min cut-off to 1\% prevalence, instead of the default 3\%
-sim.ES.filt2 <- prefilter_data(sim.ES,min.cutoff=0.01)
+sim_ES_filt2 <- prefilter_data(FS = sim_ES, min_cutoff  = 0.01)
 
 # Change the max cut-off to 65\% prevalence, instead of the default 60\%
-sim.ES.filt3 <- prefilter_data(sim.ES,max.cutoff=0.65) 
+sim_ES_filt3 <- prefilter_data(FS = sim_ES, max_cutoff = 0.65)
 
 }

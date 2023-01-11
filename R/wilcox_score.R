@@ -1,86 +1,4 @@
 #'
-#' Wilcoxon Rank Sum Scoring Method
-#'
-#' Compute directional Wilcoxon rank sum score for each row of a
-#' given binary feature matrix
-#'
-#' @param FS a feature set of binary features. It can be an expression matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package
-#' @param input_score a vector of continuous scores representing a phenotypic
-#' readout of interest such as protein expression, pathway activity, etc.
-#' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
-#' @param alternative a character string specifies an alternative
-#' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
-#' \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#'
-#' @noRd
-#'
-#' @return A data frame with two columns: \code{score} and \code{p_value}
-#' @import SummarizedExperiment
-wilcox_rowscore <- function
-(
-  FS,
-  input_score,
-  alternative = c("less", "greater", "two.sided")
-)
-{
-
-  alternative <- match.arg(alternative)
-
-  # Check data values are valid, if yes, return the filtered feature set
-  datasets <- check_data_input(FS = FS, input_score = input_score)
-
-  # Retrieve filtered FS and input_score
-  FS <- datasets[["FS"]]
-  input_score <- datasets[["input_score"]]
-
-  # Wilcox is a ranked-based method
-  # So we need to sort input_score from highest to lowest values
-  input_score <- sort(input_score, decreasing=TRUE)
-
-  # Re-order the matrix based on the order of input_score
-  FS <- FS[, names(input_score)]
-
-  # Extract the feature binary matrix
-  if(class(FS)[1] == "SummarizedExperiment"){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(class(FS)[1] == "matrix"){
-    mat <- as.matrix(FS)
-  }else{
-    mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list("sum", names(FS)))
-  }
-
-  # Since input_score is already ordered from largest to smallest
-  # We can assign ranks as 1:N (N: number of samples)
-  ranks <- seq(1, ncol(mat))
-
-  #Compute the wilcox rank sum statitic and p-value per row in the matrix
-  wilcox <- apply(X=mat, MARGIN=1, function(x){
-    wilcox_score(
-      x = ranks[which(x==1)],
-      y = ranks[which(x==0)],
-      alternative = alternative
-    )
-  })
-
-  # Convert results as data frame
-  # Wilcox method returns both score and p-values
-  rowData <- DataFrame(feature=rownames(mat), score=wilcox[1,],
-                       p_value=wilcox[2,], row.names=rownames(mat))
-  colData <- DataFrame(samples=names(input_score), input_score=input_score,
-                       row.names=names(input_score))
-
-  wilcox_se <- SummarizedExperiment(assays=SimpleList(feature_set=mat),
-                                    colData=colData, rowData=rowData)
-
-  return(wilcox_se)
-
-}
-
-
-
 #' Compute rank sum scores for a given binary feature
 #'
 #' @param x an integer ranked values for group 1
@@ -97,8 +15,7 @@ wilcox_rowscore <- function
 #'
 #' @noRd
 #'
-#' @return two values: \code{score} and \code{p_value}
-#' @export
+#' @return a list with two values: \code{score} and \code{p_value}
 #'
 #' @importFrom stats pnorm pwilcox
 wilcox_score <- function
@@ -202,4 +119,3 @@ wilcox_score <- function
   return(c(score=RVAL$statistic, p_value=RVAL$p.value))
 
 }
-

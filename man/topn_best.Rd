@@ -2,30 +2,30 @@
 % Please edit documentation in R/topn_best.R
 \name{topn_best}
 \alias{topn_best}
-\title{Top 'N' best meta-features}
+\title{Top 'N' Best Meta-Features}
 \usage{
 topn_best(topn_list)
 }
 \arguments{
-\item{topn_list}{A nested list object that is returned by topn_eval() 
-function when best_score_only is set to FALSE. This contains both the 
-ESets as well as the scores and its input scores for each resulting 
-meta-feature in the top 'N' search mode.}
+\item{topn_list}{A nested list object that is returned from \code{candidate_search()}
+with \code{best_score_only = FALSE}. The nested list contains both the
+meta-feature sets as well as the scores and its associated input scores for
+each top 'N' search.}
 }
 \value{
-A list containing the (local) best meta-feature ESet, as well as 
-its corresponding search score and input scores
+A list containing the best meta-feature as well as
+its corresponding best score and its associated input scores
 }
 \description{
-Takes the resulting list of meta-features returned from topn_eval() 
-function and fetches the meta-features with best (local) score
+Takes the resulting list of meta-features returned from \code{candidate_search()}
+and fetches the meta-features with the best score
 }
 \examples{
 
-# Load pre-computed Top-N list generated for sim.ES dataset
-data(topn.list)
+# Load pre-computed Top-N list generated for sim_ES dataset
+data(topn_list)
 
 # Get the best meta-features list
-topn_best_meta <- topn_best(topn_list=topn.list) 
+topn_best_meta <- topn_best(topn_list = topn_list)
 
 }

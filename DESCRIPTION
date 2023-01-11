@@ -20,7 +20,7 @@ Description: Performs both stepwise and backward heuristic search for
     continuous scores (e.g. sample-specific scores representing a phenotypic 
     readout of interest, such as protein expression, pathway activity, etc.), 
     based on the union occurence (i.e. logical OR) of the events.
-Depends: R (>= 4.0.0)
+Depends: R (>= 4.1.0)
 LazyData: false
 License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
@@ -28,7 +28,7 @@ Packaged: 2022-11-20 18:35:45 UTC;
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Imports: 
-    Biobase,
+    SummarizedExperiment,
     doParallel,
     plyr,
     ggplot2,
@@ -37,8 +37,6 @@ Imports:
     gtable,
     R.cache,
     reshape2,
-    magrittr,
-    purrr,
     stats,
     methods,
     MASS,

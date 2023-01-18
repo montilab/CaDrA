@@ -13,7 +13,8 @@ calc_rawscore(
   weight,
   seed_names = NULL,
   custom_function,
-  custom_parameters
+  custom_parameters,
+  warning = TRUE
 )
 }
 \arguments{
@@ -49,9 +50,13 @@ customized function. Default is \code{NULL}.}
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
 additional arguments (other than \code{FS} and \code{input_score}) to be passed
 to the \code{custom_function()}. Default is \code{NULL}.}
+
+\item{warning}{a logical value indicates whether or not to print the 
+diagnostic messages. Default is \code{TRUE}}
 }
 \value{
-a data frame containing row-wise directional scores from a given scoring method
+a matrix containing row-wise directional scores from a given 
+scoring method
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on

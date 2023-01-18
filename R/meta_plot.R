@@ -113,7 +113,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   )
 
   # Plot for feature_set scores
-  enrichment_plot <- plot_enrichment_plot(df = enrichment_dat)
+  enrichment_plot <- ks_plot(df = enrichment_dat)
 
   # Give the last row no row name (this is just for the purpose of the plot)
   rownames(mat)[nrow(mat)] <- ""
@@ -242,13 +242,15 @@ stacked_gtable_max <- function(...){
 
 }
 
-#' Enrichment Score Plot
+#' KS Plot
 #'
-#' An enrichment plot of a sum statistic across a given meta-features. The x and y-axis
-#' data are returned from ks_plot_coordinates()
+#' An enrichment plot of a sum statistic across a given meta-features using ks method. 
+#' The x and y-axis data are returned from ks_plot_coordinates()
 #' @param df a data frame object with columns 'X' and 'Y' containing the
 #' x, y coordinates for the enrichment plot
 #' @return A graphic of Enrichment Scores for a given distribution
+#' 
+#' @noRd
 #'
 #' @examples
 #'
@@ -269,12 +271,6 @@ stacked_gtable_max <- function(...){
 #' # Make sure mat variable is a matrix
 #' mat <- as.matrix(assay(feature_set))
 #'
-#' # For cases when matrix only has one row
-#' if(ncol(mat) == 1){
-#'   mat <- matrix(t(mat), nrow=1, byrow=TRUE,
-#'   dimnames = list(rownames(feature_set), rownames(mat)))
-#' }
-#'
 #' # Add on the OR function of all the returned entries
 #' or <- ifelse(colSums(mat)==0, 0, 1)
 #'
@@ -282,18 +278,17 @@ stacked_gtable_max <- function(...){
 #' # cumulative function of individual features
 #' # (i.e. the OR function)
 #' enrichment_dat <- ks_plot_coordinates(
-#'    n.x = length(or),
+#'    n_x = length(or),
 #'    y = which(or==1),
 #'    weight = NULL,
 #'    alt = "less"
 #' )
 #'
 #' # Plot the enrichment scores
-#' plot_enrichment_plot(df = enrichment_dat)
+#' ks_plot(df = enrichment_dat)
 #'
-#' @export
 #' @import ggplot2
-plot_enrichment_plot <- function(df){
+ks_plot <- function(df){
 
   # Katia: adding ".data" to avoid a warning during check:
   # no visible binding for global variable
@@ -320,5 +315,36 @@ plot_enrichment_plot <- function(df){
 }
 
 
+
+
+#' x, y coordinates for creating ks plot
+#'
+#' Return a data frame with x, y coordinates using ks method
+#' which will later used to generate the enrichment plot
+#' @param n_x length of ranked list
+#' @param y positions of geneset items in ranked list (ranks)
+#' @param weight a vector of weights
+#' @param alt alternative hypothesis for p-value calculation
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+#' Default is \code{less} for left-skewed significance testing.
+#'
+#' @useDynLib CaDrA ks_plot_wrap_
+#' @noRd
+#'
+#' @return return a data frame with x, y coordinates to pass to ks_plot()
+ks_plot_coordinates <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")){
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  y <- as.integer(y)
+  n_x <- as.integer(n_x)
+  res <- .Call(ks_plot_wrap_, n_x, y, weight, alt_int)
+  res <- res[!is.na(res$X), ]
+  res
+  
+}
 
 

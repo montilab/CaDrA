@@ -4,7 +4,7 @@
 #' Plot the Empirical Null Distribution of Permutation Best Scores Based on
 #' a given number of permutations (\code{n_perm})
 #'
-#' @param permutation_results a list of objects returned from CaDrA() function
+#' @param perm_res a list of objects returned from CaDrA() function
 #' using the simulated dataset (\code{sim.ES}) and random generated
 #' \code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123).
 #'

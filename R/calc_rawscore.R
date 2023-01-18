@@ -27,8 +27,11 @@
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
 #' additional arguments (other than \code{FS} and \code{input_score}) to be passed
 #' to the \code{custom_function()}. Default is \code{NULL}.
-#'
-#' @return a data frame containing row-wise directional scores from a given scoring method
+#' @param warning a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{TRUE}
+#' 
+#' @return a matrix containing row-wise directional scores from a given 
+#' scoring method
 #' @examples
 #'
 #' # Load pre-computed feature set
@@ -72,7 +75,8 @@ calc_rawscore <- function(
     weight,
     seed_names = NULL,
     custom_function,
-    custom_parameters
+    custom_parameters,
+    warning = TRUE
 ){
 
   # Match arguments
@@ -86,24 +90,28 @@ calc_rawscore <- function(
       FS = FS,
       input_score = input_score,
       weight = weight,
-      alternative = alternative
+      alternative = alternative,
+      warning = warning
     ),
     wilcox = wilcox_rowscore(
       FS = FS,
       input_score = input_score,
-      alternative = alternative
+      alternative = alternative,
+      warning = warning
     ),
     revealer = revealer_rowscore(
       FS = FS,
       input_score = input_score,
       seed_names = seed_names,
-      assoc_metric = "IC"
+      assoc_metric = "IC",
+      warning = warning
     ),
     custom = custom_rowscore(
       FS = FS,
       input_score = input_score,
       custom_function = custom_function,
-      custom_parameters = custom_parameters
+      custom_parameters = custom_parameters,
+      warning = warning
     )
   )
 

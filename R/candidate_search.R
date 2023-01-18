@@ -50,7 +50,7 @@
 #' resulting meta-feature matrix. NOTE: plot can only be produced if resulting
 #' meta-feature matrix contains more than 1 feature
 #' (e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.
-#' @param verbose a logical value indicates whether or not to print the
+#' @param warning a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return If \code{best_score_only} is set to \code{TRUE}, the function
@@ -91,21 +91,23 @@ candidate_search <- function(
     max_size = 7,
     best_score_only = FALSE,
     do_plot = FALSE,
-    verbose = FALSE
+    warning = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = verbose)
+  options(verbose = warning)
 
   method <- match.arg(method)
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
 
+  # Check of FS and input_score are valid inputs
+  check_data_input(FS = FS, input_score = input_score, warning=TRUE)
+  
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
-  # Return filtered SummarizedExperiment object
-  FS <- calc_rawscore(
+  s <- calc_rawscore(
     FS = FS,
     input_score = input_score,
     method = method,
@@ -113,16 +115,9 @@ candidate_search <- function(
     weight = weight,
     seed_names = NULL,
     custom_function = custom_function,
-    custom_parameters = custom_parameters
+    custom_parameters = custom_parameters,
+    warning = FALSE
   )
-
-  # Retrieve input scores from filtered
-  # SummarizedExperiment object
-  input_score <- colData(FS)$input_score
-
-  # Retrieve row-wise directional scores from filtered
-  # SummarizedExperiment object
-  s <- rowData(FS)
 
   # Check if the returning result has one or two columns:
   # score or p_value or both
@@ -350,21 +345,9 @@ candidate_search <- function(
         meta.mat <- meta.mat[rowSums(meta.mat) != ncol(meta.mat),]
       }
 
-      # # Remove best.s.index from the revealer matrix
-      # # but exclude the global.s.feature which will later use as
-      # # conditional seed_names or features to compute mutual information of x, y | z
-      # revealar_global_index <- which(rownames(FS) %in% global.best.s.features)
-      # revealar_best_index <- best.s.index[which(!best.s.index %in% revealar_global_index)]
-      #
-      # if(length(revealar_best_index) > 0){
-      #   revealer_mat <- assay(FS)[-revealar_best_index,]
-      # }else{
-      #   revealer_mat <- assay(FS)
-      # }
-
       # With the newly formed 'meta-feature' matrix, compute directional
       # scores and choose the feature that gives the best score
-      meta_se <- calc_rawscore(
+      s <- calc_rawscore(
         FS = meta.mat,
         input_score = input_score,
         method = method,
@@ -372,12 +355,9 @@ candidate_search <- function(
         weight = weight,
         seed_names = NULL,
         custom_function = custom_function,
-        custom_parameters = custom_parameters
+        custom_parameters = custom_parameters,
+        warning = FALSE
       )
-
-      # Retrieve row-wise directional scores from the new
-      # SummarizedExperiment object
-      s <- rowData(meta_se)
 
       # Score returned by the given method
       s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
@@ -552,8 +532,8 @@ forward_backward_check <- function
                     byrow=TRUE,
                     dimnames=list(c("sum"),
                                   colnames(FS)))
-
-    u_se <- calc_rawscore(
+    
+    s <- calc_rawscore(
       FS = u.mat,
       input_score = input_score,
       method = method,
@@ -561,12 +541,9 @@ forward_backward_check <- function
       weight = weight,
       seed_names = NULL,
       custom_function = custom_function,
-      custom_parameters = custom_parameters
+      custom_parameters = custom_parameters,
+      warning = FALSE
     )
-
-    # Retrieve row-wise directional scores from the new
-    # SummarizedExperiment object
-    s <- rowData(u_se)
 
     # Check if the returning result has one or two columns:
     # score or p_value or both

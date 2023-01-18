@@ -33,16 +33,16 @@ the dataset
 \examples{
 
 # Load pre-computed feature set
-data(sim_ES)
+data(sim_FS)
 
 # Filter out features having < 3 and > 60\% prevalence across all samples
 # (default)
-sim_ES_filt1 <- prefilter_data(FS = sim_ES)
+sim_FS_filt1 <- prefilter_data(FS = sim_FS)
 
 # Change the min cut-off to 1\% prevalence, instead of the default 3\%
-sim_ES_filt2 <- prefilter_data(FS = sim_ES, min_cutoff  = 0.01)
+sim_FS_filt2 <- prefilter_data(FS = sim_FS, min_cutoff  = 0.01)
 
 # Change the max cut-off to 65\% prevalence, instead of the default 60\%
-sim_ES_filt3 <- prefilter_data(FS = sim_ES, max_cutoff = 0.65)
+sim_FS_filt3 <- prefilter_data(FS = sim_FS, max_cutoff = 0.65)
 
 }

@@ -12,14 +12,16 @@
 #' names of FS object.
 #' @param custom_function a customized function to perform row-wise scoring.
 #' NOTE: this function must take FS and input_score as input arguments, and its final
-#' result must return a data frame with one or two columns:
+#' result must return a matrix with one or two columns:
 #' \code{score} or \code{p_value} or \code{both (score and p_value)}.
 #' @param custom_parameters a list of additional arguments to be passed to
-#' the custom_function() (excluding \code{FS} and \code{input_score}).
-#'
+#' the custom_function (excluding \code{FS} and \code{input_score}).
+#' @param warning a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{TRUE}
+#' 
 #' @noRd
 #'
-#' @return a data frame with one or two columns: \code{score} or
+#' @return a matrix with one or two columns: \code{score} or
 #' \code{p_value} or \code{both} (score and p_value)
 #' @import SummarizedExperiment
 custom_rowscore <- function
@@ -27,17 +29,17 @@ custom_rowscore <- function
   FS,
   input_score,
   custom_function,
-  custom_parameters = NULL
+  custom_parameters = NULL,
+  warning = TRUE
 )
 {
-
-  # Check data values are valid, if yes, return the filtered feature set
-  datasets <- check_data_input(FS = FS, input_score = input_score)
-
-  # Retrieve filtered FS and input_score
-  FS <- datasets[["FS"]]
-  input_score <- datasets[["input_score"]]
-
+  
+  # Check of FS and input_score are valid inputs
+  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
+  
+  # Get the feature names
+  feature_names <- rownames(FS)
+  
   # Extract the feature binary matrix
   if(class(FS)[1] == "SummarizedExperiment"){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
@@ -45,7 +47,7 @@ custom_rowscore <- function
     mat <- as.matrix(FS)
   }else{
     mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list("sum", names(FS)))
+                  dimnames=list(feature_names, names(FS)))
   }
 
   # check if the custom_function is indeed a function
@@ -131,34 +133,16 @@ custom_rowscore <- function
     stop(err)
   })
 
-  ## check if the custom is a data frame
-  if(!is.data.frame(custom)){
-    stop("The custom function must return a data frame with one or ",
+  ## check if the custom is a matrix
+  if(!is.matrix(custom)){
+    stop("The custom function must return a matrix with one or ",
          "two columns: 'score' or 'p_value' or 'both'.")
   }else if(all(!c("score", "p_value") %in% colnames(custom))){
-    stop("The custom function must return a data frame with one or ",
+    stop("The custom function must return a matrix with one or ",
          "two columns: 'score' or 'p_value' or 'both'.")
   }
 
-  rowData <- data.frame(feature=rownames(mat), row.names=rownames(mat))
-
-  if("score" %in% colnames(custom)){
-    rowData <- DataFrame(rowData, score=custom$score,
-                         row.names=rownames(mat))
-  }
-
-  if("p_value" %in% colnames(custom)){
-    rowData <- DataFrame(rowData, p_value=custom$p_value,
-                         row.names=rownames(mat))
-  }
-
-  colData <- DataFrame(samples=names(input_score), input_score=input_score,
-                       row.names=names(input_score))
-
-  custom_se <- SummarizedExperiment(assays=SimpleList(feature_set=mat),
-                                    colData=colData, rowData=rowData)
-
-  return(custom_se)
+  return(custom)
 
 }
 

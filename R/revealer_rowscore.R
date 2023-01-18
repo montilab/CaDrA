@@ -4,7 +4,8 @@
 #' Compute conditional mutual information of \code{x} and \code{y}
 #' given \code{z} for each row of a given binary feature matrix
 #' @param FS a feature set of binary features. It can be a matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package
+#' a \code{SummarizedExperiment} class object from SummarizedExperiment package.
+#' 
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
@@ -14,28 +15,51 @@
 #' Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
 #' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
-#'
+#' @param warning a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{TRUE}
+#' 
 #' @noRd
 #'
-#' @return a data frame with one column: \code{score}
+#' @return a matrix with one column: \code{score}
 #' @import SummarizedExperiment
 revealer_rowscore <- function
 (
   FS,
   input_score,
   seed_names = NULL,
-  assoc_metric = c("IC", "COR")
+  assoc_metric = c("IC", "COR"),
+  warning = TRUE
 )
 {
 
   assoc_metric <- match.arg(assoc_metric)
+  
+  # Check of FS and input_score are valid inputs
+  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
 
-  # Check data values are valid, if yes, return the filtered feature set
-  datasets <- check_data_input(FS = FS, input_score = input_score)
+  # Get the feature names
+  feature_names <- rownames(FS)
+  
+  # Check if seed_names is provided
+  if(length(seed_names) == 0){
+    seed_vector <- as.vector(rep(0, ncol(FS)))
+  }else{
+    if(any(!seed_names %in% rownames(FS)))
+      stop(paste0("The provided seed_names, ",
+                  paste0(seed_names[which(!seed_names %in% rownames(FS))], collapse = ","), ",
+                  do not exist among the row names of the FS object"))
 
-  # Retrieve filtered FS and input_score
-  FS <- datasets[["FS"]]
-  input_score <- datasets[["input_score"]]
+    # Consolidate or summarize one or more seeds into one vector of values
+    if(length(seed_names) > 1) {
+      seed_vector <- as.numeric(ifelse(colSums(assay(FS)[seed_names,]) == 0, 0, 1))
+    }else{
+      seed_vector <- as.numeric(assay(FS)[seed_names,])
+    }
+    
+    # Remove the seeds from the binary feature matrix
+    locs <- match(seed_names, row.names(FS))
+    FS <- FS[-locs,]
+  }
 
   # Extract the feature binary matrix
   if(class(FS)[1] == "SummarizedExperiment"){
@@ -44,47 +68,28 @@ revealer_rowscore <- function
     mat <- as.matrix(FS)
   }else{
     mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list("sum", names(FS)))
+                  dimnames=list(feature_names, names(FS)))
   }
-
-  # Check if seed_names is provided
-  if(length(seed_names) == 0){
-    seed.vector <- as.vector(rep(0, ncol(mat)))
-  }else{
-    if(any(!seed_names %in% rownames(mat)))
-      stop(paste0("The provided seed_names, ",
-                  paste0(seed_names[which(!seed_names %in% rownames(mat))], collapse = ","), ",
-                  do not exist among the row names of the FS object"))
-
-    # Consolidate or summarize one or more seeds to one vector of values
-    seed.vector <- as.numeric(ifelse(colSums(mat[seed_names,]) == 0, 0, 1))
-    locs <- match(seed_names, row.names(mat))
-    mat <- mat[-locs,]
-  }
-
+  
   # Compute CMI
   cmi <- apply(X=mat, MARGIN=1, function(x){
     revealer_score(
       x = input_score,
       y = x,
-      z = seed.vector,
+      z = seed_vector,
       assoc_metric = assoc_metric
     )
   })
 
-  if(length(cmi) ==1) rownames(mat) <- "sum"
-
-  # Convert results as data.frame
-  # Revealer method returns only score statistics
-  rowData <- DataFrame(feature=rownames(mat), score=cmi,
-                       row.names=rownames(mat))
-  colData <- DataFrame(samples=names(input_score), input_score=input_score,
-                       row.names=names(input_score))
-
-  revealer_se <- SummarizedExperiment(assays=SimpleList(feature_set=mat),
-                                      colData=colData, rowData=rowData)
-
-  return(revealer_se)
+  # Convert results as matrix
+  # Revealer method only returns  score statistics (no p-values)
+  revealer_mat <- matrix(NA, nrow=nrow(mat), 
+                         ncol=1, byrow=TRUE, 
+                         dimnames=list(rownames(mat), "score"))
+  
+  revealer_mat[,1] <- cmi
+  
+  return(revealer_mat)
 
 }
 
@@ -104,7 +109,9 @@ revealer_rowscore <- function
 #' @param assoc_metric an association metric: information coefficient
 #' (\code{"IC"} by default) or correlation (\code{"COR"}) from \code{REVEALER}.
 #'
-#' @return a data frame with two columns: \code{score} and \code{p_value}
+#' @noRd
+#' 
+#' @return a score statistics value
 #'
 #' @importFrom MASS kde2d bcv
 #' @importFrom misc3d kde3d
@@ -114,45 +121,22 @@ revealer_score <- function
 (
   x,
   y,
-  z = NULL,
+  z,
   assoc_metric = c("IC", "COR")
 )
 {
 
   assoc_metric <- match.arg(assoc_metric)
 
-  # Check if x is provided
-  if(length(x) == 0 || any(is.na(x)))
-    stop("x must be provided (no empty values).\n")
-
-  # Check if y is provided
-  if(length(y) == 0 || any(!y %in% c(0,1)) || any(is.na(y)))
-    stop("y must be provided (no empty values).\n")
-
-  # Check if the x has the same length as the number of samples in the y
-  if(length(x) != length(y))
-    stop("The provided x must have the same length ",
-         "as the number of samples in y.\n")
-
-  # Check if z is provided
-  if(length(z) == 0){
-    z <- as.vector(rep(0, length(x)))
-  }else if(length(z) != length(x)){
-    stop("The provided z must have the same length as ",
-         " the number of samples in x and y",
-         " (no empty values).\n")
-  }
-
   # Compute CMI
   cmi <- suppressWarnings(
     cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
   )
 
-  # Revealer only returns score value
+  # Revealer only returns score statistics value
   return(c(score=cmi))
 
 }
-
 
 
 

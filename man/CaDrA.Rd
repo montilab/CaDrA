@@ -23,7 +23,7 @@ CaDrA(
   plot = TRUE,
   ncores = 1,
   cache_path = NULL,
-  verbose = FALSE
+  warning = FALSE
 )
 }
 \arguments{
@@ -99,7 +99,7 @@ We recycle these scores instead of re-computing them to save time.
 Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 for future loading.}
 
-\item{verbose}{a logical value indicates whether or not to print the
+\item{warning}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
@@ -127,7 +127,7 @@ data(sim_Scores)
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
   alternative = "less", metric = "pval", top_N = 1,
-  search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
+  search_start = NULL, search_method = "both", max_size = 7, n_perm = 100,
   plot = TRUE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )

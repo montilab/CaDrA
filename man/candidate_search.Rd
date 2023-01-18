@@ -19,7 +19,7 @@ candidate_search(
   max_size = 7,
   best_score_only = FALSE,
   do_plot = FALSE,
-  verbose = FALSE
+  warning = FALSE
 )
 }
 \arguments{
@@ -82,7 +82,7 @@ resulting meta-feature matrix. NOTE: plot can only be produced if resulting
 meta-feature matrix contains more than 1 feature
 (e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.}
 
-\item{verbose}{a logical value indicates whether or not to print the
+\item{warning}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{

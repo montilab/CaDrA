@@ -13,35 +13,37 @@
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#'
+#' @param warning a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{TRUE}
+#' 
 #' @noRd
 #'
-#' @return A data frame with two columns: \code{score} and \code{p_value}
+#' @return A matrix with two columns: \code{score} and \code{p_value}
 #' @import SummarizedExperiment
 wilcox_rowscore <- function
 (
   FS,
   input_score,
-  alternative = c("less", "greater", "two.sided")
+  alternative = c("less", "greater", "two.sided"),
+  warning = TRUE
 )
 {
 
   alternative <- match.arg(alternative)
-
-  # Check data values are valid, if yes, return the filtered feature set
-  datasets <- check_data_input(FS = FS, input_score = input_score)
-
-  # Retrieve filtered FS and input_score
-  FS <- datasets[["FS"]]
-  input_score <- datasets[["input_score"]]
-
+  
+  # Check of FS and input_score are valid inputs
+  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
+  
+  # Get the feature names
+  feature_names <- rownames(FS)
+  
   # Wilcox is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
-
+  
   # Re-order the matrix based on the order of input_score
   FS <- FS[, names(input_score)]
-
+  
   # Extract the feature binary matrix
   if(class(FS)[1] == "SummarizedExperiment"){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
@@ -49,7 +51,7 @@ wilcox_rowscore <- function
     mat <- as.matrix(FS)
   }else{
     mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list("sum", names(FS)))
+                  dimnames=list(feature_names, names(FS)))
   }
 
   # Since input_score is already ordered from largest to smallest
@@ -65,17 +67,16 @@ wilcox_rowscore <- function
     )
   })
 
-  # Convert results as data frame
+  # Convert results as matrix
   # Wilcox method returns both score and p-values
-  rowData <- DataFrame(feature=rownames(mat), score=wilcox[1,],
-                       p_value=wilcox[2,], row.names=rownames(mat))
-  colData <- DataFrame(samples=names(input_score), input_score=input_score,
-                       row.names=names(input_score))
+  wilcox_mat <- matrix(NA, nrow=nrow(mat), 
+                       ncol=2, byrow=TRUE, 
+                       dimnames=list(rownames(mat), c("score", "p_value")))
+  
+  wilcox_mat[,1] <- wilcox[1,]
+  wilcox_mat[,2] <- wilcox[2,]
 
-  wilcox_se <- SummarizedExperiment(assays=SimpleList(feature_set=mat),
-                                    colData=colData, rowData=rowData)
-
-  return(wilcox_se)
+  return(wilcox_mat)
 
 }
 
@@ -97,8 +98,7 @@ wilcox_rowscore <- function
 #'
 #' @noRd
 #'
-#' @return two values: \code{score} and \code{p_value}
-#' @export
+#' @return a vector with two values: \code{score} and \code{p_value}
 #'
 #' @importFrom stats pnorm pwilcox
 wilcox_score <- function
@@ -114,7 +114,7 @@ wilcox_score <- function
 {
 
   alternative <- match.arg(alternative)
-
+  
   if (!missing(mu) && ((length(mu) > 1L) || !is.finite(mu)))
     stop("'mu' must be a single number")
   if (!is.numeric(x))

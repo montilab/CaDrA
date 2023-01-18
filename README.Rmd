@@ -7,6 +7,7 @@ output: rmarkdown::github_document
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="#>", fig.align="center")
+library(CaDrA)
 library(SummarizedExperiment)
 ```
 

@@ -58,7 +58,7 @@
 #' We recycle these scores instead of re-computing them to save time.
 #' Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 #' for future loading.
-#' @param verbose a logical value indicates whether or not to print the
+#' @param warning a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return a list of key parameters that are used to cache the result of
@@ -80,7 +80,7 @@
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
 #'   alternative = "less", metric = "pval", top_N = 1,
-#'   search_start = NULL, search_method = "both", max_size = 7, n_perm = 1000,
+#'   search_start = NULL, search_method = "both", max_size = 7, n_perm = 100,
 #'   plot = TRUE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
 #' )
@@ -111,20 +111,23 @@ CaDrA <- function(
     plot = TRUE,
     ncores = 1,
     cache_path = NULL,
-    verbose = FALSE
+    warning = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = verbose)
+  options(verbose = warning)
 
   method <- match.arg(method)
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
+  
+  # Check of FS and input_score are valid inputs
+  check_data_input(FS = FS, input_score = input_score, warning=TRUE)
 
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
-  calc_res <- calc_rawscore(
+  s <- calc_rawscore(
     FS = FS,
     input_score = input_score,
     method = method,
@@ -132,11 +135,9 @@ CaDrA <- function(
     weight = weight,
     seed_names = NULL,
     custom_function = custom_function,
-    custom_parameters = custom_parameters
+    custom_parameters = custom_parameters,
+    warning = FALSE
   )
-
-  # Retrieve filtered FS and input_score and row-wise directional scores
-  s <- rowData(calc_res)
 
   # Check if the returning result has one or two columns:
   # score or p_value or both
@@ -268,9 +269,9 @@ CaDrA <- function(
                          max_size = max_size,
                          best_score_only = TRUE,
                          do_plot = FALSE,
-                         verbose = FALSE) },
+                         warning = FALSE) },
       .parallel=parallel,
-      .progress=progress) %>% unlist()
+      .progress=progress) |> unlist()
 
     # Save computed scores to cache
     message("Saving to cache...\n")
@@ -304,8 +305,8 @@ CaDrA <- function(
       max_size = max_size,
       best_score_only = TRUE,
       do_plot = FALSE,
-      verbose = FALSE
-    ) %>% unlist()
+      warning = FALSE
+    ) |> unlist()
 
   } else{
 

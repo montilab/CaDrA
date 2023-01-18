@@ -31,17 +31,17 @@ verbose <- function(...){
 #' @examples
 #'
 #' # Load pre-computed feature set
-#' data(sim_ES)
+#' data(sim_FS)
 #'
 #' # Filter out features having < 3 and > 60% prevalence across all samples
 #' # (default)
-#' sim_ES_filt1 <- prefilter_data(FS = sim_ES)
+#' sim_FS_filt1 <- prefilter_data(FS = sim_FS)
 #'
 #' # Change the min cut-off to 1% prevalence, instead of the default 3%
-#' sim_ES_filt2 <- prefilter_data(FS = sim_ES, min_cutoff  = 0.01)
+#' sim_FS_filt2 <- prefilter_data(FS = sim_FS, min_cutoff  = 0.01)
 #'
 #' # Change the max cut-off to 65% prevalence, instead of the default 60%
-#' sim_ES_filt3 <- prefilter_data(FS = sim_ES, max_cutoff = 0.65)
+#' sim_FS_filt3 <- prefilter_data(FS = sim_FS, max_cutoff = 0.65)
 #'
 #' @export
 #' @import SummarizedExperiment
@@ -79,16 +79,21 @@ prefilter_data <- function(
 #' interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#'
+#' @param warning a logical value indicates whether or not to print the 
+#' diagnostic messages. Default is \code{TRUE}
+#' 
 #' @noRd
 #'
 #' @return a filtered feature set and input scores with overlapping samples
 #' @import SummarizedExperiment
 check_data_input <- function(
     FS,
-    input_score
+    input_score,
+    warning = TRUE
 ){
 
+  if(warning == FALSE) return(NULL)
+    
   # Check if FS is a matrix or a SummarizedExperiment class object
   if(!class(FS)[1] %in% c("matrix", "SummarizedExperiment"))
     stop("'FS' must be a matrix or SummarizedExperiment class object
@@ -124,47 +129,22 @@ check_data_input <- function(
     stop("The input_score object must have names or labels to track ",
          "the samples by. Please provide unique sample names or labels ",
          "that match the column names of the FS object.\n")
+  
+  # Make sure the input_score has the same length as number of samples in FS
+  if(length(input_score) != ncol(mat))
+    stop("The input_score must have the same length ",
+         "as the number of columns in FS.\n")
+  
+  if(any(!names(input_score) == colnames(mat)))
+      stop("The input_score object must have names or ",
+           "labels that match the column names of the FS object.")
 
   # Check if the features have either all 0s or 1s values
-  # If yes, they will be removed since they are not informative
-  if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat))){
-    warning("The provided dataset has features that are either all 0s or 1s. ",
-            "These features will be removed from the FS object.")
-    FS <- FS[!(rowSums(mat) == 0 | rowSums(mat) == ncol(mat)),]
-  }
-
-  # Make sure FS is not empty after removing uninformative features
-  stopifnot("There are no more features remained for downsteam computation."=
-              (nrow(FS) != 0))
-
-  ## Samples to keep based on the overlap between the two inputs
-  overlap <- intersect(names(input_score), colnames(FS))
-
-  if(length(overlap) == 0)
-    stop("There are no overlapping samples or column names between input_score
-         and the FS object")
-
-  ## ONLY overlapping samples between input_score and the FS object are kept
-  FS <- FS[, overlap]
-  input_score <- input_score[overlap]
-
-  # Check if FS is still a matrix or SummarizedExperiment object
-  # after applied the overlapping method
-  # NOTE: When nrow(FS) = 1, the overlapping method will return a vector of values
-  # not a matrix. Thus, we need to convert it back to its matrix form
-  # This happen when running forward_backward_check()
-  if(!class(FS)[1] %in% c("matrix", "SummarizedExperiment")){
-    FS <- matrix(t(FS), nrow=1, byrow=TRUE,
-                 dimnames=list(rownames(FS), names(FS)))
-  }
-
-  return(
-    list(
-      FS = FS,
-      input_score = input_score
-    )
-  )
-
+  if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat)))
+    stop("The FS object has features that are either all 0s or 1s. ",
+         "These features must be removed from the FS object as ",
+         "they are uninformative.")
+  
 }
 
 #' ks_test_d_wrap_ wrapper
@@ -175,6 +155,7 @@ check_data_input <- function(
 #' @param alt alternative hypothesis for p-value calculation
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
+#' 
 #' @noRd
 #' @useDynLib CaDrA ks_test_d_wrap_
 #'
@@ -196,37 +177,6 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
 
 }
 
-#' x, y coordinates for enrichment plot
-#'
-#' Return a data frame with x, y coordinates using ks method
-#' which will later used to generate the enrichment plot
-#' @param n_x length of ranked list
-#' @param y positions of geneset items in ranked list (ranks)
-#' @param weight a vector of weights
-#' @param alt alternative hypothesis for p-value calculation
-#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-#' Default is \code{less} for left-skewed significance testing.
-#' @noRd
-#' @useDynLib CaDrA ks_plot_wrap_
-#'
-#' @return need a return value here
-ks_plot_coordinates <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")){
-
-  if(length(alt) > 0){
-    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
-  } else {
-    alt_int <- 1L
-  }
-  y <- as.integer(y)
-  n_x <- as.integer(n_x)
-  res <- .Call(ks_plot_wrap_, n_x, y, weight, alt_int)
-  res <- res[!is.na(res$X), ]
-  res
-
-}
-
-
-
 #' ks_genescore wrapper
 #'
 #' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
@@ -236,6 +186,7 @@ ks_plot_coordinates <- function(n_x, y, weight, alt=c("less", "greater", "two.si
 #' @param alt alternative hypothesis for p-value calculation
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
+#' 
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_wrap_
 #'

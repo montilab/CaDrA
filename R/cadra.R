@@ -313,8 +313,6 @@ CaDrA <- function(
   message("Observed score: ", obs_best_score, "\n")
 
   ########### PERMUTATION P-VALUE COMPUTATION ############
-  message("Number of permutation-based scores being considered: ",
-          length(perm_best_scores), "\n")
 
   #Add a smoothing factor of 1 if smooth is specified
   #This is just to not return a p-value of 0

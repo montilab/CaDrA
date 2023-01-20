@@ -5,17 +5,17 @@
 \alias{sim_Scores}
 \title{Simulated Input Scores}
 \format{
-A vector of continuous scores randomly generated from rnorm(n=ncol(sim_ES),
+A vector of continuous scores randomly generated from rnorm(n=ncol(sim_FS),
 mean=0, sd=1) with set.seed(123) based on the number of samples in the
-simulated dataset (sim_ES)
+simulated dataset (sim_FS)
 }
 \usage{
 data(sim_Scores)
 }
 \description{
-A simulated vector of continuous scores generated from rnorm(n=ncol(sim_ES),
+A simulated vector of continuous scores generated from rnorm(n=ncol(sim_FS),
 mean=0, sd=1) with set.seed(123) based on the number of samples in the
-simulated dataset (sim_ES)
+simulated dataset (sim_FS)
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

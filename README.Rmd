@@ -1,6 +1,7 @@
 
 ---
 output: rmarkdown::github_document
+title: CaDrA
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -11,15 +12,21 @@ library(CaDrA)
 library(SummarizedExperiment)
 ```
 
-# CaDrA
-
 <!-- badges: start -->
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
 <!-- badges: end -->
   
 Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 
-**CaDrA** is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. The main function takes two inputs: i) a binary multi-omics dataset (where the rows are 1/0 vectors indicating the presence/absence of 'omics' features such as somatic mutations, copy number alterations, epigenetic marks, etc.); and ii) a molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). Based on this input, **CaDrA** implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
+**CaDrA** is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. 
+
+The main function takes two inputs:
+
+i) A binary multi-omics dataset represented as a **SummarizedExperiment** class object (where the rows are 1/0 vectors indicating the presence/absence of 'omics' features such as somatic mutations, copy number alterations, epigenetic marks, etc., and the columns represent the samples)
+
+ii) A molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). 
+
+Based on this input, **CaDrA** implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
@@ -39,13 +46,11 @@ library(SummarizedExperiment)
 
 ## (3) CaDrA Query of BRCA YAP/TAZ Activity
 
-Here, we reproduce the results of Figure 5 of [[Kartha et al., 2019]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full) (the section titled "_CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ Activity in Human Breast Cancer_").
-
 ### (i) Load & Format Data Inputs
 
 ```{r load.data}
 
-## Read in BRCA GISTIC+Mutation ESet object
+## Read in BRCA GISTIC+Mutation object
 data(BRCA_GISTIC_MUT_SIG)
 eset_mut_scna <- BRCA_GISTIC_MUT_SIG
 
@@ -61,7 +66,7 @@ input_score <- input_score[overlap]
 ## Binarize FS to only have 0's and 1's
 assay(eset_mut_scna)[assay(eset_mut_scna) > 1] <- 1.0
 
-## Pre-filter ESet based on occurrence frequency
+## Pre-filter FS based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
   FS = eset_mut_scna,
   max_cutoff = 0.6,  # max event frequency (60%)
@@ -72,23 +77,24 @@ eset_mut_scna_flt <- CaDrA::prefilter_data(
 
 ### (ii) Run CaDrA
 
-Here, we repeat the candidate search starting from each of the top 'N' features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs).
+Here, we repeat the candidate search starting from each of the top 'N' features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs). 
+
+IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the recommended `candidate_search()` function
 
 ```{r cadra}
 
 topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
-  input_score = input_scores,
-  method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
-  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
-  alternative = "less",        # Use one-sided p-value
-  metric = "pval",             # Use the KS p-value to searc for best feature
+  input_score = input_score,
+  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  weight = NULL,               # If weights is provided, perform a weighted-KS test
+  alternative = "less",        # Use one-sided hypothesis testing
+  metric = "pval",             # Use p-value to search for best features
   search_method = "both",      # Apply both forward and backward search
-  top_N = 7,                   # Evaluate top 7 starting points for the search
-  max_size = 7,                # Maximum size that a meta-feature can extend to do for a given search
-  do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
-                               # its observed input scores and corresponding best score
+  top_N = 7,                   # Evaluate top 7 starting points for each search
+  max_size = 7,                # Maximum size a meta-feature matrix can extend to
+  do_plot = FALSE,             # Plot after finding the best features
+  best_score_only = FALSE      # Return meta-feature set, observed input scores and calculated best score
 )
 
 ```
@@ -109,16 +115,14 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 
 ```{r summarize}
 
-# Evaluate results across top N seed features you started from
+# Evaluate results across top N features you started from
 CaDrA::topn_plot(topn_res) 
 
 ```
 
 ## (4) SessionInfo
 
-```{r sessioninfo}
-
-utils::sessionInfo()
-
+```{r RsessionInfo}
+sessionInfo()
 ```
 

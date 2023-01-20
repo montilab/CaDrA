@@ -3,17 +3,17 @@
 \docType{data}
 \name{BRCA_GISTIC_MUT_SIG}
 \alias{BRCA_GISTIC_MUT_SIG}
-\title{Genomic Data from TCGA BRCA MUT + GISTIC that associated with YAP/TAZ Activity}
+\title{Genomic Data from TCGA BRCA MUT + GISTIC}
 \format{
 An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
-containing a matrix of 16,873 rows (features) and 963 columns (samples)
+containing an assay of 16,873 rows (features) and 951 columns (samples)
 see \code{?SummarizedExperiment} for more details.
 }
 \usage{
 data(BRCA_GISTIC_MUT_SIG)
 }
 \description{
-A SummarizedExperiment object consists of 16,873 genomic features across 963 samples.
+A SummarizedExperiment object consists of 16,873 genomic features across 951 samples.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

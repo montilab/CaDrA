@@ -7,15 +7,18 @@
 permutation_plot(perm_res)
 }
 \arguments{
-\item{perm_res}{a list of objects returned from CaDrA() function
-using the simulated dataset (\code{sim.ES}) and random generated
-\code{input_score = rnorm(n = ncol(sim.ES))} with set.seed(123).}
+\item{perm_res}{a list of objects returned from \code{CaDrA()} function
+using the simulated dataset (\code{sim_FS}) and random generated
+scores (\code{input_score = sim_Scores}). The returning object contains
+a list of key parameters that are used to cache the result of
+permutation-based testing, a vector of permuted best scores for a given
+\code{n_perm}, an observed best score, and a permutation p-value.}
 }
 \value{
 a density plot
 }
 \description{
-Plot the Empirical Null Distribution of Permutation Best Scores Based on
+Plot the Empirical Null Distribution of Permutation Best Scores based on
 a given number of permutations (\code{n_perm})
 }
 \examples{

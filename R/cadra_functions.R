@@ -16,7 +16,7 @@ verbose <- function(...){
 #' testing features that are too prevalent or too sparse across samples in
 #' the dataset
 #' @param FS a SummarizedExperiment object containing binary features where
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+#' rows represent features of interest (e.g. genes, transcripts, exons, etc.)
 #' and columns represent the samples.
 #' @param max_cutoff a numeric value between 0 and 1 describing the absolute
 #' prevalence of a feature across all samples in the dataset above which the
@@ -28,6 +28,8 @@ verbose <- function(...){
 #' 3 percent or less of the samples will be removed)
 #' @return An SummarizedExperiment object with only the filtered-in features
 #' given the filter thresholds specified
+#' @param warning a logical value indicates whether or not to print the
+#' diagnostic messages. Default is \code{FALSE}.
 #' @examples
 #'
 #' # Load pre-computed feature set
@@ -47,11 +49,20 @@ verbose <- function(...){
 #' @import SummarizedExperiment
 prefilter_data <- function(
     FS,
-    max_cutoff=0.6,
-    min_cutoff=0.03
+    max_cutoff = 0.6,
+    min_cutoff = 0.03,
+    warning = FALSE
 ){
 
-  # Compute the frequency of feature occurence across all samples
+  # Set up verbose option
+  options(verbose = warning)
+  
+  # Check if FS is a SummarizedExperiment class object
+  if(!is(FS, "SummarizedExperiment"))
+    stop("'FS' must be SummarizedExperiment class object
+         from SummarizedExperiment package")
+  
+  # Compute the frequency of feature occurrence across all samples
   # (i.e. fraction of samples having the feature)
   frac <- round(rowSums(assay(FS))/ncol(FS), 2)
 
@@ -95,12 +106,12 @@ check_data_input <- function(
   if(warning == FALSE) return(NULL)
     
   # Check if FS is a matrix or a SummarizedExperiment class object
-  if(!class(FS)[1] %in% c("matrix", "SummarizedExperiment"))
+  if(!is(FS, "matrix") & !is(FS, "SummarizedExperiment"))
     stop("'FS' must be a matrix or SummarizedExperiment class object
          from SummarizedExperiment package")
 
   # Retrieve the feature binary matrix
-  if(class(FS)[1] == "SummarizedExperiment"){
+  if(is(FS, "SummarizedExperiment")){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
   }else{
     mat <- as.matrix(FS)
@@ -227,9 +238,6 @@ ks_genescore_wrap <- function(n_x, y, weight,
 #' # Load pre-simulated scores
 #' data(sim_Scores)
 #'
-#' # Define the input score
-#' input_score <- sim_Scores
-#'
 #' # Set seed for permutation
 #' set.seed(123)
 #'
@@ -238,7 +246,7 @@ ks_genescore_wrap <- function(n_x, y, weight,
 #'
 #' # Generate permuted scores
 #' perm_matrix <- generate_permutations(
-#'   input_score = input_score,
+#'   input_score = sim_Scores,
 #'   n_perm = n_perm
 #' )
 #'
@@ -247,23 +255,31 @@ generate_permutations <- function(
     input_score,
     n_perm
 ){
-
+  
+  # Check input_score is provided and is a continuous values with no NAs
+  stopifnot("input_score must contain a vector of continuous values (no NAs)"= 
+              length(input_score) > 0 & all(is.numeric(input_score)) & 
+              all(!is.na(input_score)))
+  
+  # Make sure the input_score has names or labels to track samples by
+  stopifnot("input_score object must have names or labels to track samples by"=
+              !is.null(names(input_score)))
+  
   # Get number of samples
   n <- length(input_score)
-
+  
   # Create permutation matrix
   perm <- matrix(NA, nrow=n_perm, ncol=n)
-
-  verbose("Generating ", n_perm," permuted sample observed input scores...")
+  colnames(perm) <- names(input_score)
 
   # Sample the input scores
   for(i in seq_len(n_perm)){
-    perm[i,] <- sample(input_score, n, replace=TRUE)
+    perm[i,] <- sample(input_score, n, replace=FALSE)
   }
 
-  stopifnot("Invalid n_perm value. Permutations are not unique." =
+  stopifnot("Permutations are not unique. Try a different n_perm value." =
               (nrow(perm) == nrow(unique.matrix(perm))))
-
+  
   return(perm)
 
 }

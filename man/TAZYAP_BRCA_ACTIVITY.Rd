@@ -6,9 +6,8 @@
 \title{YAP/TAZ Activity in TCGA BRCA dataset}
 \format{
 consists of a vector of continuous scores of YAP/TAZ activity
-across 951 profiles.
-The mutation and copy number associated with this sample cohorts can be found
-in \code{BRCA_GISTIC_MUT_SIG} dataset.
+across 951 profiles. The mutation and copy number associated with this sample
+cohorts can be found in \code{BRCA_GISTIC_MUT_SIG} dataset.
 }
 \usage{
 data(TAZYAP_BRCA_ACTIVITY)

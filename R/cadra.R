@@ -67,8 +67,6 @@
 #'
 #' @examples
 #'
-#' \donttest{
-#'
 #' # Load pre-computed feature set
 #' data(sim_FS)
 #'
@@ -76,16 +74,13 @@
 #' data(sim_Scores)
 #'
 #' # Define additional parameters and start the function
-#' # This function takes some time to run
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
 #'   alternative = "less", metric = "pval", top_N = 1,
-#'   search_start = NULL, search_method = "both", max_size = 7, n_perm = 100,
-#'   plot = TRUE, smooth = TRUE, obs_best_score = NULL,
+#'   search_start = NULL, search_method = "both", max_size = 7, n_perm = 10,
+#'   plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
 #' )
-#'
-#' }
 #'
 #' @export
 #' @import SummarizedExperiment R.cache doParallel ggplot2 plyr methods
@@ -127,7 +122,7 @@ CaDrA <- function(
 
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
-  s <- calc_rawscore(
+  s <- calc_rowscore(
     FS = FS,
     input_score = input_score,
     method = method,
@@ -254,7 +249,7 @@ CaDrA <- function(
       1,
       function(x){
         perm_input_score <- x;
-        names(perm_input_score) <- names(input_score);
+        names(perm_input_score) <- colnames(perm_labels_matrix);
         candidate_search(FS = FS,
                          input_score = perm_input_score,
                          method = method,

@@ -114,8 +114,6 @@ each run.
 }
 \examples{
 
-\donttest{
-
 # Load pre-computed feature set
 data(sim_FS)
 
@@ -123,16 +121,13 @@ data(sim_FS)
 data(sim_Scores)
 
 # Define additional parameters and start the function
-# This function takes some time to run
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
   alternative = "less", metric = "pval", top_N = 1,
-  search_start = NULL, search_method = "both", max_size = 7, n_perm = 100,
-  plot = TRUE, smooth = TRUE, obs_best_score = NULL,
+  search_start = NULL, search_method = "both", max_size = 7, n_perm = 10,
+  plot = FALSE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )
-
-}
 
 }
 \author{

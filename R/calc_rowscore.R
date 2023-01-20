@@ -41,7 +41,7 @@
 #' data(sim_Scores)
 #'
 #' # Run the ks method
-#' ks_rowscore_result <- calc_rawscore(
+#' ks_rowscore_result <- calc_rowscore(
 #'   FS = sim_FS,
 #'   input_score = sim_Scores,
 #'   method = "ks",
@@ -50,7 +50,7 @@
 #' )
 #'
 #' # Run the wilcoxon method
-#' wilcox_rowscore_result <- calc_rawscore(
+#' wilcox_rowscore_result <- calc_rowscore(
 #'   FS = sim_FS,
 #'   input_score = sim_Scores,
 #'   method = "wilcox",
@@ -58,7 +58,7 @@
 #' )
 #'
 #' # Run the revealer method
-#' revealer_rowscore_result <- calc_rawscore(
+#' revealer_rowscore_result <- calc_rowscore(
 #'   FS = sim_FS,
 #'   input_score = sim_Scores,
 #'   method = "revealer",
@@ -67,7 +67,7 @@
 #'
 #' @export
 #' @import SummarizedExperiment
-calc_rawscore <- function(
+calc_rowscore <- function(
     FS,
     input_score,
     method = c("ks", "wilcox", "revealer", "custom"),

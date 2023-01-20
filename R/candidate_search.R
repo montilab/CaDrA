@@ -4,7 +4,10 @@
 #' Performs heuristic search on a set of binary features to determine whether
 #' there are features whose union is more skewed (enriched at the extremes)
 #' than either features alone. This is the main functionality of the \code{CaDrA}
-#' package.
+#' package. 
+#' 
+#' NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
+#' \code{candidate_search()} function
 #' @param FS a SummarizedExperiment object containing binary features where
 #' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
 #' and columns represent the samples.
@@ -107,7 +110,7 @@ candidate_search <- function(
   
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
-  s <- calc_rawscore(
+  s <- calc_rowscore(
     FS = FS,
     input_score = input_score,
     method = method,
@@ -347,7 +350,7 @@ candidate_search <- function(
 
       # With the newly formed 'meta-feature' matrix, compute directional
       # scores and choose the feature that gives the best score
-      s <- calc_rawscore(
+      s <- calc_rowscore(
         FS = meta.mat,
         input_score = input_score,
         method = method,
@@ -533,7 +536,7 @@ forward_backward_check <- function
                     dimnames=list(c("sum"),
                                   colnames(FS)))
     
-    s <- calc_rawscore(
+    s <- calc_rowscore(
       FS = u.mat,
       input_score = input_score,
       method = method,

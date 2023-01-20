@@ -1,10 +1,8 @@
+CaDrA
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# CaDrA
-
 <!-- badges: start -->
-
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
 <!-- badges: end -->
 
@@ -13,19 +11,27 @@ Functional Signatures
 
 **CaDrA** is an R package that supports a heuristic search framework
 aimed at identifying candidate drivers of a molecular phenotype of
-interest. The main function takes two inputs: i) a binary multi-omics
-dataset (where the rows are 1/0 vectors indicating the presence/absence
-of ‘omics’ features such as somatic mutations, copy number alterations,
-epigenetic marks, etc.); and ii) and a molecular phenotype represented
-as a vector of continuous scores (sample-specific scores representing a
-phenotypic readout of interest, such as protein expression, pathway
-activity, etc.). Based on this input, **CaDrA** implements a
-forward/backward search algorithm to find the set of features that
-together is maximally associated with the observed input scores, based
-on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional
-Mutual Information*, *Wilcoxon*, *custom-defined scoring function*),
-making it useful to find complementary omics features likely driving the
-input molecular phenotype.
+interest.
+
+The main function takes two inputs:
+
+1)  A binary multi-omics dataset represented as a
+    **SummarizedExperiment** class object (where the rows are 1/0
+    vectors indicating the presence/absence of ‘omics’ features such as
+    somatic mutations, copy number alterations, epigenetic marks, etc.,
+    and the columns represent the samples)
+
+2)  A molecular phenotype represented as a vector of continuous scores
+    (sample-specific scores representing a phenotypic readout of
+    interest, such as protein expression, pathway activity, etc.).
+
+Based on this input, **CaDrA** implements a forward/backward search
+algorithm to find the set of features that together is maximally
+associated with the observed input scores, based on one of several
+scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual
+Information*, *Wilcoxon*, *custom-defined scoring function*), making it
+useful to find complementary omics features likely driving the input
+molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et
 al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
@@ -41,64 +47,62 @@ devtools::install_github("montilab/CaDrA")
 
 ``` r
 library(CaDrA)
-library(Biobase)
+library(SummarizedExperiment)
 ```
 
 ## (3) CaDrA Query of BRCA YAP/TAZ Activity
-
-Here, we reproduce the results of Figure 5 of [\[Kartha et
-al., 2019\]](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
-(the section titled “*CaDrA Reveals Novel Drivers of Oncogenic YAP/TAZ
-Activity in Human Breast Cancer*”).
 
 ### (i) Load & Format Data Inputs
 
 ``` r
 
-## Read in BRCA GISTIC+Mutation ESet object
+## Read in BRCA GISTIC+Mutation object
 data(BRCA_GISTIC_MUT_SIG)
 eset_mut_scna <- BRCA_GISTIC_MUT_SIG
 
-## Read in input score of TAZYAP activity
+## Read in input score
 data(TAZYAP_BRCA_ACTIVITY)
-input_scores <- TAZYAP_BRCA_ACTIVITY
+input_score <- TAZYAP_BRCA_ACTIVITY
 
 ## Samples to keep based on the overlap between the two inputs
-overlap <- intersect(names(input_scores), Biobase::sampleNames(eset_mut_scna))
+overlap <- intersect(names(input_score), colnames(eset_mut_scna))
 eset_mut_scna <- eset_mut_scna[,overlap]
-input_scores <- input_scores[overlap]
+input_score <- input_score[overlap]
 
-## Binarize ES to only have 0's and 1's
-exprs(eset_mut_scna)[exprs(eset_mut_scna) >= 1] <- 1.0
+## Binarize FS to only have 0's and 1's
+assay(eset_mut_scna)[assay(eset_mut_scna) > 1] <- 1.0
 
-## Pre-filter ESet based on occurrence frequency
+## Pre-filter FS based on occurrence frequency
 eset_mut_scna_flt <- CaDrA::prefilter_data(
-  ES = eset_mut_scna,
-  max.cutoff = 0.6,  # max event frequency (60%)
-  min.cutoff = 0.03  # min event frequency (3%)
-) 
+  FS = eset_mut_scna,
+  max_cutoff = 0.6,  # max event frequency (60%)
+  min_cutoff = 0.03  # min event frequency (3%)
+)  
 ```
 
 ### (ii) Run CaDrA
 
-Here, we are evaluating the candidate search over top ‘N’ starting
-features and checking for overlapping resulting features from each case
+Here, we repeat the candidate search starting from each of the top ‘N’
+features and report the combined results as a heatmap (to summarize the
+number of times each feature is selected across repeated runs).
+
+IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the
+recommended `candidate_search()` function
 
 ``` r
 
 topn_res <- CaDrA::candidate_search(
-  ES = eset_mut_scna_flt,
-  input_score = input_scores,
-  method = "ks",               # Use Kolmogorow-Smirnow Scoring function 
-  weights = NULL,              # If weights is provided, it will be used to perform a weighted-KS test
-  alternative = "less",        # Use one-sided p-value
-  metric = "pval",             # Use the KS p-value to searc for best feature
+  FS = eset_mut_scna_flt,
+  input_score = input_score,
+  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  weight = NULL,               # If weights is provided, perform a weighted-KS test
+  alternative = "less",        # Use one-sided hypothesis testing
+  metric = "pval",             # Use p-value to search for best features
   search_method = "both",      # Apply both forward and backward search
-  top_N = 7,                   # Evaluate top 7 starting points for the search
-  max_size = 7,                # Maximum size that a meta-feature can extend to do for a given search
-  do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # If best_score_only = FALSE, it will return meta-feature ESet, 
-  # its observed input scores and corresponding best score
+  top_N = 7,                   # Evaluate top 7 starting points for each search
+  max_size = 7,                # Maximum size a meta-feature matrix can extend to
+  do_plot = FALSE,             # Plot after finding the best features
+  best_score_only = FALSE      # Return meta-feature set, observed input scores and calculated best score
 )
 ```
 
@@ -113,62 +117,66 @@ topn_best_meta <- CaDrA::topn_best(topn_res)
 CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
 ```
 
-<img src="man/figures/README-visualize.best-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/visualize.best-1.png" style="display: block; margin: auto;" />
 
 ### (iv) Summarize Top N Results
 
 ``` r
 
-# Evaluate results across top N seed features you started from
+# Evaluate results across top N features you started from
 CaDrA::topn_plot(topn_res) 
 ```
 
-<img src="man/figures/README-summarize-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/summarize-1.png" style="display: block; margin: auto;" />
 
 ## (4) SessionInfo
 
 ``` r
-
-utils::sessionInfo()
-#> R version 4.0.3 (2020-10-10)
+sessionInfo()
+#> R version 4.2.2 (2022-10-31)
 #> Platform: x86_64-apple-darwin17.0 (64-bit)
-#> Running under: macOS Big Sur 10.16
+#> Running under: macOS Big Sur ... 10.16
 #> 
 #> Matrix products: default
-#> BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-#> LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+#> BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+#> LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
 #> 
 #> locale:
 #> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 #> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+#> [8] base     
 #> 
 #> other attached packages:
-#> [1] CaDrA_2.0.0         testthat_3.1.4      devtools_2.4.4     
-#> [4] usethis_2.1.6       Biobase_2.50.0      BiocGenerics_0.42.0
+#>  [1] SummarizedExperiment_1.28.0 Biobase_2.58.0             
+#>  [3] GenomicRanges_1.50.2        GenomeInfoDb_1.34.4        
+#>  [5] IRanges_2.32.0              S4Vectors_0.36.1           
+#>  [7] BiocGenerics_0.44.0         MatrixGenerics_1.10.0      
+#>  [9] matrixStats_0.63.0          CaDrA_0.99.2               
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] pkgload_1.3.0      foreach_1.5.2      R.utils_2.12.0     gtools_3.9.3      
-#>  [5] brio_1.1.3         shiny_1.7.2        assertthat_0.2.1   highr_0.9         
-#>  [9] yaml_2.3.5         remotes_2.4.2      sessioninfo_1.2.2  pillar_1.8.1      
-#> [13] glue_1.6.2         digest_0.6.29      promises_1.2.0.1   colorspace_2.0-3  
-#> [17] htmltools_0.5.3    httpuv_1.6.6       R.oo_1.25.0        plyr_1.8.7        
-#> [21] pkgconfig_2.0.3    misc3d_0.9-1       purrr_0.3.4        xtable_1.8-4      
-#> [25] scales_1.2.1       processx_3.7.0     later_1.3.0        tibble_3.1.8      
-#> [29] farver_2.1.1       generics_0.1.3     ggplot2_3.3.6      ellipsis_0.3.2    
-#> [33] cachem_1.0.6       withr_2.5.0        ppcor_1.1          cli_3.4.1         
-#> [37] magrittr_2.0.3     crayon_1.5.2       mime_0.12          memoise_2.0.1     
-#> [41] evaluate_0.16      ps_1.7.1           R.methodsS3_1.8.2  fs_1.5.2          
-#> [45] fansi_1.0.3        R.cache_0.16.0     doParallel_1.0.17  MASS_7.3-58.1     
-#> [49] gplots_3.1.3       pkgbuild_1.3.1     profvis_0.3.7      tools_4.0.3       
-#> [53] prettyunits_1.1.1  lifecycle_1.0.2    stringr_1.4.1      munsell_0.5.0     
-#> [57] callr_3.7.2        compiler_4.0.3     caTools_1.18.2     rlang_1.0.6       
-#> [61] grid_4.0.3         iterators_1.0.14   rstudioapi_0.14    htmlwidgets_1.5.4 
-#> [65] miniUI_0.1.1.1     labeling_0.4.2     tcltk_4.0.3        bitops_1.0-7      
-#> [69] rmarkdown_2.16     gtable_0.3.1       codetools_0.2-18   DBI_1.1.3         
-#> [73] reshape2_1.4.4     R6_2.5.1           knitr_1.40         dplyr_1.0.10      
-#> [77] fastmap_1.1.0      utf8_1.2.2         rprojroot_2.0.3    KernSmooth_2.23-20
-#> [81] desc_1.4.2         stringi_1.7.8      parallel_4.0.3     Rcpp_1.0.9        
-#> [85] vctrs_0.4.2        tidyselect_1.1.2   xfun_0.33          urlchecker_1.0.1
+#>  [1] Rcpp_1.0.9             lattice_0.20-45        gtools_3.9.4          
+#>  [4] assertthat_0.2.1       digest_0.6.31          foreach_1.5.2         
+#>  [7] utf8_1.2.2             R6_2.5.1               plyr_1.8.8            
+#> [10] evaluate_0.19          highr_0.9              ggplot2_3.4.0         
+#> [13] pillar_1.8.1           gplots_3.1.3           zlibbioc_1.44.0       
+#> [16] rlang_1.0.6            misc3d_0.9-1           rstudioapi_0.14       
+#> [19] R.utils_2.12.2         R.oo_1.25.0            Matrix_1.5-3          
+#> [22] rmarkdown_2.19         labeling_0.4.2         stringr_1.5.0         
+#> [25] RCurl_1.98-1.9         munsell_0.5.0          DelayedArray_0.24.0   
+#> [28] compiler_4.2.2         xfun_0.35              pkgconfig_2.0.3       
+#> [31] tcltk_4.2.2            htmltools_0.5.4        tidyselect_1.2.0      
+#> [34] tibble_3.1.8           GenomeInfoDbData_1.2.9 ppcor_1.1             
+#> [37] codetools_0.2-18       fansi_1.0.3            withr_2.5.0           
+#> [40] dplyr_1.0.10           MASS_7.3-58.1          bitops_1.0-7          
+#> [43] R.methodsS3_1.8.2      grid_4.2.2             gtable_0.3.1          
+#> [46] lifecycle_1.0.3        DBI_1.1.3              magrittr_2.0.3        
+#> [49] scales_1.2.1           KernSmooth_2.23-20     cli_3.4.1             
+#> [52] stringi_1.7.8          farver_2.1.1           XVector_0.38.0        
+#> [55] reshape2_1.4.4         doParallel_1.0.17      generics_0.1.3        
+#> [58] vctrs_0.5.1            iterators_1.0.14       tools_4.2.2           
+#> [61] R.cache_0.16.0         glue_1.6.2             parallel_4.2.2        
+#> [64] fastmap_1.1.0          yaml_2.3.6             colorspace_2.0-3      
+#> [67] caTools_1.18.2         knitr_1.41
 ```

@@ -4,11 +4,11 @@
 \alias{prefilter_data}
 \title{Pre-filter features}
 \usage{
-prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03)
+prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03, warning = FALSE)
 }
 \arguments{
 \item{FS}{a SummarizedExperiment object containing binary features where
-rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+rows represent features of interest (e.g. genes, transcripts, exons, etc.)
 and columns represent the samples.}
 
 \item{max_cutoff}{a numeric value between 0 and 1 describing the absolute
@@ -20,6 +20,9 @@ feature will be filtered out. Default is 0.6 (feature that occur in
 prevalence of a feature across all samples in the dataset below which the
 feature will be filtered out. Default is 0.03 (feature that occur in
 3 percent or less of the samples will be removed)}
+
+\item{warning}{a logical value indicates whether or not to print the
+diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
 An SummarizedExperiment object with only the filtered-in features

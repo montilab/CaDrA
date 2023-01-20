@@ -49,9 +49,9 @@ ks_rowscore <- function
   FS <- FS[, names(input_score)]
   
   # Extract the feature binary matrix
-  if(class(FS)[1] == "SummarizedExperiment"){
+  if(is(FS, "SummarizedExperiment")){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(class(FS)[1] == "matrix"){
+  }else if(is(FS, "matrix")){
     mat <- as.matrix(FS)
   }else{
     mat <- matrix(t(FS), nrow=1, byrow=TRUE,

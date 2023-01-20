@@ -1,15 +1,15 @@
-#' Transcriptional Activity of Beta-Catenin in Cancer
+#' Transcriptional Activity of Beta-Catenin in Cancers
 #'
-#' A vector of continuous scores represents activation of B-catenin across
+#' A vector of continuous scores represents the activation of B-catenin across
 #' multiple cancer cell lines
 #'
 #' @docType data
 #'
 #' @usage data(CTNBB1_reporter)
 #'
-#' @format consists of a vector of continuous scores of B-catenin
-#' activity across 82 cancer cell lines
-#' who mutations and copy number profiles can be found in
+#' @format Consists of a vector of continuous scores of B-catenin
+#' activity across 82 cancer cell lines. The mutation and copy number 
+#' associated with this sample cohorts can be found in 
 #' \code{CCLE_MUT_SCNA} dataset.
 #'
 #' @references Kim, J., Botvinnik, O., Abudayyeh, O. et al.

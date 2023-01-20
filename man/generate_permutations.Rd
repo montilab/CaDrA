@@ -27,9 +27,6 @@ pathway activity, etc.
 # Load pre-simulated scores
 data(sim_Scores)
 
-# Define the input score
-input_score <- sim_Scores
-
 # Set seed for permutation
 set.seed(123)
 
@@ -38,7 +35,7 @@ n_perm = 1000
 
 # Generate permuted scores
 perm_matrix <- generate_permutations(
-  input_score = input_score,
+  input_score = sim_Scores,
   n_perm = n_perm
 )
 

@@ -7,14 +7,14 @@
 topn_best(topn_list)
 }
 \arguments{
-\item{topn_list}{A nested list object that is returned from \code{candidate_search()}
-with \code{best_score_only = FALSE}. The nested list contains both the
-meta-feature sets as well as the scores and its associated input scores for
-each top 'N' search.}
+\item{topn_list}{A nested list of objects that is returned from \code{candidate_search()}
+by setting \code{best_score_only = FALSE}. The nested list contains the
+meta-feature sets as well as the observed input scores and its corresponding best score 
+for each top 'N' search.}
 }
 \value{
-A list containing the best meta-feature as well as
-its corresponding best score and its associated input scores
+A list of objects containing the best meta-feature, its corresponding best score 
+and associated input scores
 }
 \description{
 Takes the resulting list of meta-features returned from \code{candidate_search()}
@@ -22,7 +22,7 @@ and fetches the meta-features with the best score
 }
 \examples{
 
-# Load pre-computed Top-N list generated for sim_ES dataset
+# Load pre-computed Top-N list generated for sim_FS dataset
 data(topn_list)
 
 # Get the best meta-features list

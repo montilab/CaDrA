@@ -1,15 +1,14 @@
-
 #' Top 'N' Plot
 #'
 #' Plots a heatmap representation of overlapping features given a list of
 #' top N features obtained from \code{candidate_search()} results
-#' @param topn_list a list of lists where each list entry is returned from the
-#' \code{candidate_search()} with a given \code{top_N} value.
+#' @param topn_list a list of objects where each list entry is returned from the
+#' \code{candidate_search()} for a given \code{top_N} value.
 #'
 #' @return a heatmap of the top N evaluation for a given top N search evaluation
 #' @examples
 #'
-#' # Load pre-computed Top-N list generated for sim_ES dataset
+#' # Load pre-computed Top-N list generated for sim_FS dataset
 #' data(topn_list)
 #'
 #' # Get top N plot
@@ -28,7 +27,7 @@ topn_plot <- function(
   scores_l <- lapply(seq_along(topn_list),
                      function(l){ topn_list[[l]][['score']] })
 
-  #Get the list of feature names from each ESet
+  #Get the list of feature names from each FS object
   f_list <- lapply(feature_set_l, rownames)
 
   f_union <- Reduce(f = union, f_list)

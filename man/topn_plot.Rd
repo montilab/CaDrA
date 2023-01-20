@@ -7,8 +7,8 @@
 topn_plot(topn_list)
 }
 \arguments{
-\item{topn_list}{a list of lists where each list entry is returned from the
-\code{candidate_search()} with a given \code{top_N} value.}
+\item{topn_list}{a list of objects where each list entry is returned from the
+\code{candidate_search()} for a given \code{top_N} value.}
 }
 \value{
 a heatmap of the top N evaluation for a given top N search evaluation
@@ -19,7 +19,7 @@ top N features obtained from \code{candidate_search()} results
 }
 \examples{
 
-# Load pre-computed Top-N list generated for sim_ES dataset
+# Load pre-computed Top-N list generated for sim_FS dataset
 data(topn_list)
 
 # Get top N plot

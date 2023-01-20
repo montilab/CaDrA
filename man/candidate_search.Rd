@@ -98,6 +98,10 @@ there are features whose union is more skewed (enriched at the extremes)
 than either features alone. This is the main functionality of the \code{CaDrA}
 package.
 }
+\details{
+NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
+\code{candidate_search()} function
+}
 \examples{
 
 # Load pre-computed expression set

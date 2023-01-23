@@ -272,7 +272,7 @@ candidate_search <- function(
           weight = weight
         )
 
-        # Update globlal features, scores
+        # Update global features, scores
         global.best.s.features <- backward_search_results[["best.features"]]
         global.best.s <- backward_search_results[["best.scores"]]
 
@@ -288,7 +288,7 @@ candidate_search <- function(
       # each time we find a hit that improves the score
       verbose("Forming meta-feature matrix with all other features in dataset.")
 
-      # Here "*1" is used to convert the boolean back to integer 1's and 0's
+      # Here "*1" is used to convert the Boolean back to integer 1's and 0's
       # Notice we remove anything in best.s.index from the original matrix
       # first to form the meta matrix.
       meta.mat <- base::sweep(assay(FS)[-best.s.index,], 2, best.meta, `|`)*1
@@ -384,7 +384,7 @@ candidate_search <- function(
     assayNames(FS.best) <- start.feature
     colnames(FS.best) <- colnames(FS)
 
-    # Make a list contaning two elements.
+    # Make a list containing two elements.
     #The first will be the FS with the features that gave the best meta-feature
     #The second will be the score corresponding to the meta-feature
     # (named by the starting feature that led to that score)

@@ -166,52 +166,7 @@ candidate_search <- function(
 
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N)
-
-  # Check if search_start is given
-  if(is.null(search_start)){
-
-    if(is.na(top_N) || length(top_N)==0 || top_N <= 0){
-      stop("Please specify a NUMERIC top_N value to evaluate over top N ",
-           "features (top_N must be >= 1).\n")
-    }
-
-    if(top_N > nrow(FS))
-      stop("Please specify a top_N value that is less than the number of ",
-           "features in the FS.\n")
-
-    if(top_N > 10)
-      warning("top_N value specified is greater than 10. ",
-              "This may result in a longer search time.\n")
-
-    # Start the search with top N features based on their sorted indexes
-    search_feature_index <- seq_len(top_N)
-
-    verbose("Evaluating search over top ", length(search_feature_index),
-            " features\n")
-
-  } else {
-
-    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
-      unlist() |>
-      trimws()
-
-    if(!is.na(top_N) && length(top_N) > 0){
-      warning("Since start_search variable is given, ",
-              "evaluating over top_N value will be ignored.\n")
-    }
-
-    # User-specified feature name
-    # (has to be a character from rownames(1:nrow(FS)))
-    verbose("Starting with specified feature names...\n")
-
-    if(length(search_start) == 0 || any(!search_start %in% rownames(FS)))
-      stop("Provided starting feature does not exist among FS's rownames.\n\n")
-
-    # Get the index of the search_start strings and start
-    # the search with the defined indexes
-    search_feature_index <- which(rownames(FS) %in% search_start)
-
-  } # end else (!is.null)
+  search_feature_index <- check_top_N(top_N, search_start, rownames(FS))
 
   ## Check the search_method variable ####
   back_search <- ifelse(search_method == "both", TRUE, FALSE)

@@ -158,6 +158,80 @@ check_data_input <- function(
   
 }
 
+
+#' Check top_N value for candidate_search
+#'
+#' Checks top_N value is valid
+#'
+#' @param top_N an integer specifies the number of features to start the
+#' search over, starting from the top 'N' features in each case. If \code{top_N}
+#' is provided, then \code{search_start} parameter will be ignored. 
+#' @param search_start a list of character strings (separated by commas)
+#' which specifies feature names within the expression set object to start
+#' the search with. If \code{search_start} is provided, then \code{top_N}
+#' parameter will be ignored. Default is \code{NULL}.
+#' @param rownames row names of input SummarizedExperiment object
+#' 
+#' @noRd
+#'
+#' @return an integer value - start search index
+
+check_top_N <- function(
+    top_N, search_start, rownames
+){
+  
+  # Check if search_start is given
+  if(is.null(search_start)){
+    
+    if(is.na(top_N) || length(top_N)==0 || top_N <= 0){
+      stop("Please specify a NUMERIC top_N value to evaluate over top N ",
+           "features (top_N must be >= 1).\n")
+    }
+    
+    if(top_N > length(rownames))
+      stop("Please specify a top_N value that is less than the number of ",
+           "features in the FS.\n")
+    
+    if(top_N > 10)
+      warning("top_N value specified is greater than 10. ",
+              "This may result in a longer search time.\n")
+    
+    # Start the search with top N features based on their sorted indexes
+    search_feature_index <- seq_len(top_N)
+    
+    verbose("Evaluating search over top ", length(search_feature_index),
+            " features\n")
+    
+  } else {
+    
+    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
+      unlist() |>
+      trimws()
+    
+    if(!is.na(top_N) && length(top_N) > 0){
+      warning("Since start_search variable is given, ",
+              "evaluating over top_N value will be ignored.\n")
+    }
+    
+    # User-specified feature name
+    # (has to be a character from rownames(1:nrow(FS)))
+    verbose("Starting with specified feature names...\n")
+    
+    if(length(search_start) == 0 || any(!search_start %in% rownames))
+      stop("Provided starting feature does not exist among FS's rownames.\n\n")
+    
+    # Get the index of the search_start strings and start
+    # the search with the defined indexes
+    search_feature_index <- which(rownames %in% search_start)
+    
+  } # end else (!is.null)
+  
+  
+  search_feature_index
+}
+
+
+
 #' ks_test_d_wrap_ wrapper
 #'
 #' Compute directional Kolmogorov-Smirnov scores

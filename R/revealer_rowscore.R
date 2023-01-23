@@ -19,6 +19,7 @@
 #' diagnostic messages. Default is \code{TRUE}
 #' 
 #' @noRd
+#' @useDynLib CaDrA cond_mutual_inf_ccc_1d_
 #'
 #' @return a matrix with one column: \code{score}
 #' @import SummarizedExperiment
@@ -79,6 +80,13 @@ revealer_rowscore <- function
       z = seed_vector,
       assoc_metric = assoc_metric
     )
+    # .Call(
+    #   cond_mutual_inf_ccc_1d_,
+    #   input_score,
+    #   input_score,
+    #   seed_vector,
+    #   3L
+    # )
   })
 
   # Convert results as matrix

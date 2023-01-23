@@ -32,7 +32,7 @@ wilcox_rowscore <- function
   alternative <- match.arg(alternative)
   
   # Check of FS and input_score are valid inputs
-  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
+  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, max_size = 1)
   
   # Get the feature names
   feature_names <- rownames(FS)

@@ -116,9 +116,10 @@ CaDrA <- function(
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
+  max_size <- as.integer(max_size)
   
   # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, warning=TRUE)
+  check_data_input(FS = FS, input_score = input_score, max_size = max_size)
 
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix

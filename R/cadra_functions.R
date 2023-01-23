@@ -90,8 +90,8 @@ prefilter_data <- function(
 #' interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param warning a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{TRUE}
+#' @param max_size an integer specifies a maximum size that a meta-feature
+#' can extend to do for a given search. Default is \code{7}.
 #' 
 #' @noRd
 #'
@@ -100,10 +100,8 @@ prefilter_data <- function(
 check_data_input <- function(
     FS,
     input_score,
-    warning = TRUE
+    max_size
 ){
-
-  if(warning == FALSE) return(NULL)
     
   # Check if FS is a matrix or a SummarizedExperiment class object
   if(!is(FS, "matrix") & !is(FS, "SummarizedExperiment"))
@@ -113,8 +111,6 @@ check_data_input <- function(
   # Retrieve the feature binary matrix
   if(is(FS, "SummarizedExperiment")){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else{
-    mat <- as.matrix(FS)
   }
 
   # Check if the matrix has only binary 0 or 1 values
@@ -136,25 +132,36 @@ check_data_input <- function(
 
   # Make sure the input_score has names or labels that are the
   # same as the column names of FS object
-  if(is.null(names(input_score)))
-    stop("The input_score object must have names or labels to track ",
-         "the samples by. Please provide unique sample names or labels ",
-         "that match the column names of the FS object.\n")
+  # No need for this check - this will be checked when we compare names with
+  # the column names of mat (see below)
+  # if(is.null(names(input_score)))
+  #   stop("The input_score object must have names or labels to track ",
+  #        "the samples by. Please provide unique sample names or labels ",
+  #        "that match the column names of the FS object.\n")
   
   # Make sure the input_score has the same length as number of samples in FS
-  if(length(input_score) != ncol(mat))
-    stop("The input_score must have the same length ",
-         "as the number of columns in FS.\n")
+  # We do not need this check either as it will fail if the following if is not TRUE
+  # if(length(input_score) != ncol(mat))
+  #   stop("The input_score must have the same length ",
+  #        "as the number of columns in FS.\n")
   
   if(any(!names(input_score) == colnames(mat)))
       stop("The input_score object must have names or ",
            "labels that match the column names of the FS object.")
 
   # Check if the features have either all 0s or 1s values
-  if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat)))
+  if(any(rowSums(mat) %in% c(0, ncol(mat)) ))
     stop("The FS object has features that are either all 0s or 1s. ",
          "These features must be removed from the FS object as ",
          "they are uninformative.")
+  
+  if(is.na(max_size) || max_size <= 0 || max_size > nrow(FS)){
+    stop("Please specify an integer value specifies a maximum size ",
+         "that a meta-feature can extend to do for a given search ",
+         "(max_size must be >= 1)",
+         "and max_size must be lesser than the number of features in",
+         "FS\n")
+  }
   
 }
 

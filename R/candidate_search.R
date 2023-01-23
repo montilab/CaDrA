@@ -104,9 +104,12 @@ candidate_search <- function(
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
+  max_size <- as.integer(max_size)
+  
 
+  
   # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, warning=TRUE)
+  check_data_input(FS = FS, input_score = input_score, max_size = max_size)
   
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
@@ -171,16 +174,6 @@ candidate_search <- function(
   ## Check the search_method variable ####
   back_search <- ifelse(search_method == "both", TRUE, FALSE)
 
-  ## Check the max_size variable ####
-  max_size <- as.integer(max_size)
-
-  if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(FS)){
-    stop("Please specify an integer value specifies a maximum size ",
-         "that a meta-feature can extend to do for a given search ",
-         "(max_size must be >= 1)",
-         "and max_size must be lesser than the number of features in",
-         "FS\n")
-  }
 
   # Check the best_score_only variables
   if(!best_score_only %in% c(TRUE, FALSE)){
@@ -222,11 +215,9 @@ candidate_search <- function(
     #######################################
 
     verbose("\nBeginning candidate search...\n")
-
-    while((ifelse(metric=="pval",
-                  (sign(best.s) > 0 & (abs(best.s) < abs(global.best.s))),
-                  best.s > global.best.s) | i == 0) &
-          (length(global.best.s.features) < max_size)){
+    condition <- TRUE
+    
+    while( condition ){
 
       verbose("\n\n")
       verbose("Iteration number ", (i+1), " ..\n")
@@ -350,15 +341,21 @@ candidate_search <- function(
               "with previous meta-feature: ", best.feature )
       verbose("Score: ", best.s)
 
-      # If no improvement (exiting loop)
-      if(ifelse(metric == "pval", sign(best.s) < 0 |
-                (abs(best.s) >= abs(global.best.s)), best.s <= global.best.s)){
-        verbose("No further improvement in score has been found.")
+      if (metric == "pval" ) {
+
+        condition <- (sign(best.s) > 0 & (abs(best.s) < abs(global.best.s))) &
+                     (length(global.best.s.features) < max_size)
+        
+      } else {
+        
+        condition <- (best.s > global.best.s) &
+          (length(global.best.s.features) < max_size)
+        
       }
+      
 
       #Increment counter
       i <- i+1
-
     } #########End of while loop
 
     verbose("\n\nFinished!\n\n")

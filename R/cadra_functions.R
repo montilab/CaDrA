@@ -269,38 +269,6 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
 
 }
 
-#' ks_genescore wrapper
-#'
-#' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
-#' @param n_x length of ranked list
-#' @param y positions of geneset items in ranked list (ranks)
-#' @param weight a vector of weights
-#' @param alt alternative hypothesis for p-value calculation
-#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-#' Default is \code{less} for left-skewed significance testing.
-#' 
-#' @noRd
-#' @useDynLib CaDrA ks_genescore_wrap_
-#'
-#' @return need a return value here
-ks_genescore_wrap <- function(n_x, y, weight,
-                              alt=c("less", "greater", "two.sided")) {
-
-  if(length(alt) > 0){
-    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
-  } else {
-    alt_int <- 1L
-  }
-
-  # Ensure the right type of input
-  y <- as.integer(y)
-  n_x <- as.integer(n_x)
-  if(length(weight) > 1) weight <- as.numeric(weight)
-  res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
-  res
-
-}
-
 
 #' Random permutation matrix generator
 #'

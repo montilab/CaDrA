@@ -13,7 +13,7 @@
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' @param warning a logical value indicates whether or not to print the 
+#' @param do_check a logical value indicates whether or not to print the 
 #' diagnostic messages. Default is \code{TRUE}
 #' 
 #' @noRd
@@ -25,14 +25,14 @@ wilcox_rowscore <- function
   FS,
   input_score,
   alternative = c("less", "greater", "two.sided"),
-  warning = TRUE
+  do_check = TRUE
 )
 {
 
   alternative <- match.arg(alternative)
   
   # Check of FS and input_score are valid inputs
-  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
+  if(do_check == TRUE) check_data_input(FS = FS, input_score = input_score, do_check=do_check)
   
   # Get the feature names
   feature_names <- rownames(FS)
@@ -45,11 +45,7 @@ wilcox_rowscore <- function
   FS <- FS[, names(input_score)]
   
   # Extract the feature binary matrix
-  if(is(FS, "SummarizedExperiment")){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(is(FS, "matrix")){
-    mat <- as.matrix(FS)
-  }else{
+  if(!is(FS, "matrix")){
     mat <- matrix(t(FS), nrow=1, byrow=TRUE,
                   dimnames=list(feature_names, names(FS)))
   }

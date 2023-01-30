@@ -3,76 +3,75 @@
 #'
 #' Compute conditional mutual information of \code{x} and \code{y}
 #' given \code{z} for each row of a given binary feature matrix
-#' @param FS a feature set of binary features. It can be a matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package.
-#' 
+#' @param FS_mat a matrix of binary features where 
+#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+#' and columns represent the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' names of FS_mat object.
 #' @param seed_names one or more features representing known “causes”
 #' of activation or features associated with a response of interest.
 #' Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
 #' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
-#' @param warning a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{TRUE}
 #' 
 #' @noRd
+#' 
+#' @examples 
+#'  
+#' # Load library
+#' library(SummarizedExperiment)
+#' 
+#' # Load simulated feature set
+#' data(sim_FS)
 #'
+#' # Load simulated input scores
+#' data(sim_Scores)
+#' 
+#' revealer_rs <- revealer_rowscore(
+#'    FS_mat = assay(sim_FS),
+#'    input_score = sim_Scores,
+#'    seed_names = NULL,
+#'    assoc_metric = "IC"
+#' )
+#' 
 #' @return a matrix with one column: \code{score}
 #' @import SummarizedExperiment
 revealer_rowscore <- function
 (
-  FS,
+  FS_mat,
   input_score,
   seed_names = NULL,
-  assoc_metric = c("IC", "COR"),
-  warning = TRUE
+  assoc_metric = c("IC", "COR")
 )
 {
 
   assoc_metric <- match.arg(assoc_metric)
   
-  # Check of FS and input_score are valid inputs
-  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, warning=warning)
-
-  # Get the feature names
-  feature_names <- rownames(FS)
-  
   # Check if seed_names is provided
   if(length(seed_names) == 0){
-    seed_vector <- as.vector(rep(0, ncol(FS)))
+    seed_vector <- as.vector(rep(0, ncol(FS_mat)))
   }else{
-    if(any(!seed_names %in% rownames(FS)))
+    if(any(!seed_names %in% rownames(FS_mat)))
       stop(paste0("The provided seed_names, ",
-                  paste0(seed_names[which(!seed_names %in% rownames(FS))], collapse = ","), ",
-                  do not exist among the row names of the FS object"))
+                  paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], collapse = ","), ",
+                  do not exist among the row names of the FS_mat object"))
 
     # Consolidate or summarize one or more seeds into one vector of values
     if(length(seed_names) > 1) {
-      seed_vector <- as.numeric(ifelse(colSums(assay(FS)[seed_names,]) == 0, 0, 1))
+      seed_vector <- as.numeric(ifelse(colSums(assay(FS_mat)[seed_names,]) == 0, 0, 1))
     }else{
-      seed_vector <- as.numeric(assay(FS)[seed_names,])
+      seed_vector <- as.numeric(assay(FS_mat)[seed_names,])
     }
     
     # Remove the seeds from the binary feature matrix
-    locs <- match(seed_names, row.names(FS))
-    FS <- FS[-locs,]
-  }
-
-  # Extract the feature binary matrix
-  if(is(FS, "SummarizedExperiment")){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(is(FS, "matrix")){
-    mat <- as.matrix(FS)
-  }else{
-    mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, names(FS)))
+    locs <- match(seed_names, row.names(FS_mat))
+    FS_mat <- FS_mat[-locs,]
   }
   
   # Compute CMI
-  cmi <- apply(X=mat, MARGIN=1, function(x){
+  cmi <- apply(X=FS_mat, MARGIN=1, function(x){
     revealer_score(
       x = input_score,
       y = x,
@@ -83,11 +82,8 @@ revealer_rowscore <- function
 
   # Convert results as matrix
   # Revealer method only returns  score statistics (no p-values)
-  revealer_mat <- matrix(NA, nrow=nrow(mat), 
-                         ncol=1, byrow=TRUE, 
-                         dimnames=list(rownames(mat), "score"))
-  
-  revealer_mat[,1] <- cmi
+  revealer_mat <- matrix(cmi, nrow=nrow(FS_mat), ncol=1, byrow=TRUE, 
+                         dimnames=list(rownames(FS_mat), "score"))
   
   return(revealer_mat)
 
@@ -168,7 +164,7 @@ cond_assoc <-  function(x, y, z, metric) {
 # Computes the conditional mutual information x, y | z
 cond_mutual_inf <- function(x, y, z,
                             n.grid=25,
-                            delta = 0.25*c(bcv(x), bcv(y), bcv(z))) {
+                            delta = 0.25*c(MASS::bcv(x), MASS::bcv(y), MASS::bcv(z))) {
 
   # Computes the Conditional mutual information:
   # I(X, Y | X) = H(X, Z) + H(Y, Z) - H(X, Y, Z) - H(Z)
@@ -183,7 +179,7 @@ cond_mutual_inf <- function(x, y, z,
 
   # Kernel-based prob. density
 
-  kde3d.xyz <- kde3d(x=x, y=y, z=z, h=delta, n = n.grid)
+  kde3d.xyz <- misc3d::kde3d(x=x, y=y, z=z, h=delta, n = n.grid)
   X <- kde3d.xyz$x
   Y <- kde3d.xyz$y
   Z <- kde3d.xyz$z
@@ -227,7 +223,7 @@ cond_mutual_inf <- function(x, y, z,
 }
 
 # Computes the Mutual Information/Information Coefficient IC(x, y)
-mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
+mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(MASS::bcv(x), MASS::bcv(y))) {
 
   # Computes the Mutual Information/Information Coefficient IC(x, y)
   #
@@ -239,7 +235,7 @@ mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(bcv(x), bcv(y))) {
 
   # Kernel-based prob. density
 
-  kde2d.xy <- kde2d(x, y, n = n.grid, h = delta)
+  kde2d.xy <- MASS::kde2d(x, y, n = n.grid, h = delta)
 
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]

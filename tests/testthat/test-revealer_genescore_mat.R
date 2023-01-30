@@ -11,10 +11,9 @@ test_that("revealer_genescore_mat generates a list with one column", {
   input_score = rnorm(n = ncol(mat))
   names(input_score) <- colnames(mat)
   
-  
   result <- suppressWarnings(
     revealer_rowscore(
-      FS = mat, 
+      FS_mat = mat, 
       input_score = input_score, 
       seed_names = NULL, 
       assoc_metric = "IC"

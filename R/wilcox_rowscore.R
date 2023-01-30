@@ -4,52 +4,70 @@
 #' Compute directional Wilcoxon rank sum score for each row of a
 #' given binary feature matrix
 #'
-#' @param FS a feature set of binary features. It can be an expression matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package
+#' @param FS_mat a matrix of binary features where 
+#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+#' and columns represent the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' names of FS_mat object.
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' @param do_check a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{TRUE}
 #' 
 #' @noRd
+#' 
+#' @examples 
+#' 
+#' # Load library
+#' library(SummarizedExperiment)
+#' 
+#' # Load simulated feature set
+#' data(sim_FS)
+#'
+#' # Load simulated input scores
+#' data(sim_Scores)
+#' 
+#' wilcox_ks <- wilcox_rowscore(
+#'    FS_mat = assay(sim_FS),
+#'    input_score = sim_Scores,
+#'    alternative = "less"
+#' )
 #'
 #' @return A matrix with two columns: \code{score} and \code{p_value}
 #' @import SummarizedExperiment
 wilcox_rowscore <- function
 (
-  FS,
+  FS_mat,
   input_score,
-  alternative = c("less", "greater", "two.sided"),
-  do_check = TRUE
+  alternative = c("less", "greater", "two.sided")
 )
 {
 
   alternative <- match.arg(alternative)
   
-  # Check of FS and input_score are valid inputs
-  if(do_check == TRUE) check_data_input(FS = FS, input_score = input_score, do_check=do_check)
-  
-  # Get the feature names
-  feature_names <- rownames(FS)
+  # Get the feature names 
+  feature_names <- rownames(FS_mat)
   
   # Wilcox is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  FS <- FS[, names(input_score)]
+  FS_mat <- FS_mat[, names(input_score)]
   
-  # Extract the feature binary matrix
-  if(!is(FS, "matrix")){
-    mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, names(FS)))
+  # Make sure the FS_mat is matrix after re-ordering
+  # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
+  # the re-ordering will convert the matrix to a vector form.
+  # Hence, we need to convert it back to its matrix form in order 
+  # for the function to work
+  if(is(FS_mat, "matrix")){
+    mat <- FS_mat
+  }else{
+    mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
+                  dimnames=list(feature_names, names(FS_mat)))
   }
-
+  
   # Since input_score is already ordered from largest to smallest
   # We can assign ranks as 1:N (N: number of samples)
   ranks <- seq(1, ncol(mat))
@@ -64,16 +82,12 @@ wilcox_rowscore <- function
   })
 
   # Convert results as matrix
-  # Wilcox method returns both score and p-values
-  wilcox_mat <- matrix(NA, nrow=nrow(mat), 
-                       ncol=2, byrow=TRUE, 
-                       dimnames=list(rownames(mat), c("score", "p_value")))
+  # Return a matrix with two columns (score and p-value)
+  wilcox_mat <- t(wilcox)
+  colnames(wilcox_mat) <- c("score", "p_value")
   
-  wilcox_mat[,1] <- wilcox[1,]
-  wilcox_mat[,2] <- wilcox[2,]
-
   return(wilcox_mat)
-
+  
 }
 
 

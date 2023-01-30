@@ -7,11 +7,11 @@
 candidate_search(
   FS,
   input_score,
-  method = c("ks", "wilcox", "revealer", "custom"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
+    "custom_pval", "custom_score"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  metric = c("pval", "stat"),
   weight = NULL,
   search_start = NULL,
   top_N = 1,
@@ -23,9 +23,10 @@ candidate_search(
 )
 }
 \arguments{
-\item{FS}{a SummarizedExperiment object containing binary features where
-rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-and columns represent the samples.}
+\item{FS}{a SummarizedExperiment class object from SummarizedExperiment package
+where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
+and columns represent the samples. The assay of FS contains binary (1/0) values 
+indicating the presence/absence of ‘omics’ features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
@@ -33,9 +34,11 @@ The \code{input_score} object must have names or labels that match the column
 names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a user customized scoring method)). Default is \code{ks}.}
+\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+Default is \code{ks_pval}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies
 the customized function here. Default is \code{NULL}.}
@@ -47,14 +50,8 @@ arguments to be passed to the custom_function(). Default is \code{NULL}.}
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.}
 
-\item{metric}{a character string specifies a metric to search
-for best features. \code{"pval"} or \code{"stat"} may be used which
-corresponding to p-value or score statistic. Default is \code{pval}.
-NOTE: \code{Revealer} method only utilized score statistics values
-(no p-values).}
-
-\item{weight}{if method is \code{ks}, specifies a vector of weight
-will perform a weighted-KS testing. Default is \code{NULL}.}
+\item{weight}{if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
+of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)
 which specifies feature names within the expression set object to start
@@ -112,8 +109,8 @@ data(sim_Scores)
 
 # Define additional parameters and run the function
 candidate_search_result <- candidate_search(
-  FS = sim_FS, input_score = sim_Scores, method = "ks",
-  alternative = "less", weight = NULL, metric = "pval",
+  FS = sim_FS, input_score = sim_Scores, 
+  method = "ks_pval", alternative = "less", weight = NULL, 
   search_start = NULL, top_N = 3, search_method = "both",
   max_size = 7, best_score_only = FALSE
 )

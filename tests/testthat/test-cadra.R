@@ -9,10 +9,9 @@ test_that("CaDrA returns expected result ",{
   cadra_result <- CaDrA(
     FS = sim_FS, 
     input_score = sim_Scores, 
-    method = "ks", 
+    method = "ks_pval", 
     weight = NULL,
     alternative = "less", 
-    metric = "pval", 
     top_N = 1,
     search_start = NULL, 
     search_method = "both", 

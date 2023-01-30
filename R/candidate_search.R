@@ -8,17 +8,20 @@
 #' 
 #' NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
 #' \code{candidate_search()} function
-#' @param FS a SummarizedExperiment object containing binary features where
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-#' and columns represent the samples.
+#' @param FS a SummarizedExperiment class object from SummarizedExperiment package
+#' where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
+#' and columns represent the samples. The assay of FS contains binary (1/0) values 
+#' indicating the presence/absence of ‘omics’ features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param method a character string specifies a scoring method that is
-#' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+#' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+#' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom"} (a user customized scoring method)). Default is \code{ks}.
+#' \code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+#' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
@@ -26,13 +29,8 @@
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param metric a character string specifies a metric to search
-#' for best features. \code{"pval"} or \code{"stat"} may be used which
-#' corresponding to p-value or score statistic. Default is \code{pval}.
-#' NOTE: \code{Revealer} method only utilized score statistics values
-#' (no p-values).
-#' @param weight if method is \code{ks}, specifies a vector of weight
-#' will perform a weighted-KS testing. Default is \code{NULL}.
+#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
+#' of weights will perform a weighted-KS testing. Default is \code{NULL}.
 #' @param search_start a list of character strings (separated by commas)
 #' which specifies feature names within the expression set object to start
 #' the search with. If \code{search_start} is provided, then \code{top_N}
@@ -61,6 +59,7 @@
 #' search meta-feature. If \code{best_score_only} is set to \code{FALSE},
 #' a list containing the FS object (pertaining to the returned meta-feature)
 #' as well as its corresponding score and observed input scores are returned.
+#' 
 #' @examples
 #'
 #' # Load pre-computed expression set
@@ -71,8 +70,8 @@
 #'
 #' # Define additional parameters and run the function
 #' candidate_search_result <- candidate_search(
-#'   FS = sim_FS, input_score = sim_Scores, method = "ks",
-#'   alternative = "less", weight = NULL, metric = "pval",
+#'   FS = sim_FS, input_score = sim_Scores, 
+#'   method = "ks_pval", alternative = "less", weight = NULL, 
 #'   search_start = NULL, top_N = 3, search_method = "both",
 #'   max_size = 7, best_score_only = FALSE
 #' )
@@ -82,11 +81,10 @@
 candidate_search <- function(
     FS,
     input_score,
-    method = c("ks", "wilcox", "revealer", "custom"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom_pval", "custom_score"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
-    metric = c("pval", "stat"),
     weight = NULL,
     search_start = NULL,
     top_N = 1,
@@ -101,17 +99,23 @@ candidate_search <- function(
   options(verbose = warning)
 
   method <- match.arg(method)
-  metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
 
   # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, warning=TRUE)
+  check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
+
+  # Define metric value based on a given scoring method
+  if(length(grep("score", method)) > 0 | method == "revealer"){
+    metric <- "stat"
+  }else{
+    metric <- "pval"
+  }
   
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
-  s <- calc_rowscore(
-    FS = FS,
+  rowscore <- calc_rowscore(
+    FS_mat = assay(FS),
     input_score = input_score,
     method = method,
     alternative = alternative,
@@ -119,28 +123,14 @@ candidate_search <- function(
     seed_names = NULL,
     custom_function = custom_function,
     custom_parameters = custom_parameters,
-    warning = FALSE
+    do_check = FALSE
   )
+  
+  # Score and p_value returned by a given method
+  s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
+  s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
 
-  # Check if the returning result has one or two columns:
-  # score or p_value or both
-  if("score" %in% colnames(s) & !"p_value" %in% colnames(s) & metric == "pval"){
-    warning("metric = 'pval' is provided but the method function only ",
-            "return score values. Thus, using 'stat' as metric to search ",
-            "for best features.")
-    metric <- "stat"
-  }else if("p_value" %in% colnames(s) & !"score" %in% colnames(s) & metric == "stat"){
-    warning("metric provided is 'stat' but the method function only ",
-            "return p-values. Thus, using 'pval' as metric to search ",
-            "for best features.")
-    metric <- "pval"
-  }
-
-  # Score returned by the given method
-  s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
-  s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
-
-  # compute the scores according to the provided metric
+  # Compute the scores according to the provided metric
   score <- ifelse(rep(metric, nrow(FS)) %in% "pval", sign(s.stat)*s.pval, s.stat)
 
   verbose("Using ", metric, " as measure of improvement measure...\n")
@@ -307,14 +297,14 @@ candidate_search <- function(
         backward_search_results <- forward_backward_check(
           FS = FS,
           input_score = input_score,
-          glob.f = global.best.s.features, # Global feature set so far
+          glob.f = global.best.s.features,     # Global feature set so far
           glob.f.s = global.best.s,
           method = method,
           custom_function = custom_function,
           custom_parameters = custom_parameters,
           alternative = alternative,
-          metric = metric,
-          weight = weight
+          weight = weight,
+          metric = metric
         )
 
         # Update globlal features, scores
@@ -350,8 +340,8 @@ candidate_search <- function(
 
       # With the newly formed 'meta-feature' matrix, compute directional
       # scores and choose the feature that gives the best score
-      s <- calc_rowscore(
-        FS = meta.mat,
+      rowscore <- calc_rowscore(
+        FS_mat = meta.mat,
         input_score = input_score,
         method = method,
         alternative = alternative,
@@ -359,30 +349,30 @@ candidate_search <- function(
         seed_names = NULL,
         custom_function = custom_function,
         custom_parameters = custom_parameters,
-        warning = FALSE
+        do_check = FALSE
       )
-
-      # Score returned by the given method
-      s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
-      s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
+      
+      # Score and p_value returned by a given method
+      s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
+      s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
 
       # Take signed pval or stat depending on user-defined metric
       # This will be the same length as nrow(meta.mat)
-      scores <- ifelse(rep(metric, nrow(meta.mat)) %in% "pval",
+      score <- ifelse(rep(metric, nrow(meta.mat)) %in% "pval",
                        sign(s.stat)*s.pval, s.stat)
 
       # Find index of feature that gives lowest scores when
       # combined with chosen starting feature
       if(metric != "pval"){
-        hit.best.s.index <- which.max(scores)
+        hit.best.s.index <- which.max(score)
       } else { #If signed pvalues
-        hit.best.s.index <- order(-sign(scores), scores)[1]
+        hit.best.s.index <- order(-sign(score), score)[1]
         #Top p-value ordered by sign and numerical value;
         #This is the index within the meta matrix
       }
 
       # The best score from the meta matrix
-      best.s <- scores[hit.best.s.index]
+      best.s <- score[hit.best.s.index]
 
       # Find which feature produced that score,
       # in combination with meta feature used
@@ -442,7 +432,7 @@ candidate_search <- function(
                 "feature_set" = FS.best,
                 "input_score" = input_score,
                 "score" = global.best.s))
-
+    
   })
 
   # length of search_feature must be greater 2 in order to generate topn_plot
@@ -476,31 +466,52 @@ candidate_search <- function(
 
 
 # Performance backward selection
-# FS: # an Expression Set object with the same sample
-# ordering and features as processed by the stepwise.search() function
-
-# glob.f: a vector containing the feature (row) names whose
-# union gives the best score (so far) in the search.
-# Feature names should match those of the provided expression set object
-
-# glob.f.s: score corresponding to the union of the specified vector of features
-
-# metric: # a character string specifying which metric to use for
-# stepwise search criteria. One of either 'pval' or 'stat' may be used,
-# corresponding to the  p-value or statistic. Uses value passed in the
-# candidate_search() function
+#' @param FS a SummarizedExperiment class object from SummarizedExperiment package
+#' where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
+#' and columns represent the samples. The assay of FS contains binary (1/0) values 
+#' indicating the presence/absence of ‘omics’ features.
+#' @param input_score a vector of continuous scores representing a phenotypic
+#' readout of interest such as protein expression, pathway activity, etc.
+#' The \code{input_score} object must have names or labels that match the column
+#' names of FS object.
+#' @param method a character string specifies a scoring method that is
+#' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+#' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"custom"} (a user customized scoring method)). Default is \code{ks}.
+#' @param custom_function if method is \code{"custom"}, specifies
+#' the customized function here. Default is \code{NULL}.
+#' @param custom_parameters if method is \code{"custom"}, specifies a list of
+#' arguments to be passed to the custom_function(). Default is \code{NULL}.
+#' @param alternative a character string specifies an alternative hypothesis
+#' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+#' Default is \code{less} for left-skewed significance testing.
+#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
+#' of weights will perform a weighted-KS testing. Default is \code{NULL}.
+#' @param metric a character string specifying which metric to use for
+#' stepwise search criteria. One of either 'pval' or 'stat' may be used,
+#' corresponding to the  p-value or statistic. 
+#' @param glob.f a vector containing the features (or row names) whose
+#' union gives the best score (so far) in the search.
+#' Feature names should match those of the provided FS object
+#' @param glob.f.s a vector of scores corresponding to the union of the 
+#' specified vector of features
+#' 
+#' @noRd
+#' 
+#' @return return the set of features that gave a better score than
+# the existing best score, and its best scores as well
 forward_backward_check <- function
 (
   FS,
   input_score,
-  glob.f,
-  glob.f.s,
   method,
   custom_function,
-  custom_parameters,
+  custom_parameters,  
   alternative,
+  weight,
   metric,
-  weight
+  glob.f,
+  glob.f.s
 ){
 
   verbose("Performing backward search...\n")
@@ -530,14 +541,11 @@ forward_backward_check <- function
     # Compute scores for this meta feature
     # Here we suprress warnings just to avoid messages warning-related single
     # vector score computation (nrow(mat) < 2)
-    u.mat <- matrix(t(matrix(u)),
-                    nrow=1,
-                    byrow=TRUE,
-                    dimnames=list(c("sum"),
-                                  colnames(FS)))
+    u.mat <- matrix(u, nrow=1, byrow=TRUE,
+                    dimnames=list(c("OR"), colnames(FS)))
     
-    s <- calc_rowscore(
-      FS = u.mat,
+    rowscore <- calc_rowscore(
+      FS_mat = u.mat,
       input_score = input_score,
       method = method,
       alternative = alternative,
@@ -545,35 +553,22 @@ forward_backward_check <- function
       seed_names = NULL,
       custom_function = custom_function,
       custom_parameters = custom_parameters,
-      warning = FALSE
+      do_check = FALSE
     )
-
-    # Check if the returning result has one or two columns:
-    # score or p_value or both
-    if(ncol(s) == 1){
-      if(colnames(s) == "score" & metric == "pval"){
-        warning("metric = 'pval' is provided but the method ",
-                "function only return score values. ",
-                "Thus, using 'stat' as metric to search for best features.")
-        metric <- "stat"
-      }else if(colnames(s) == "p_value" & metric == "stat"){
-        warning("metric provided is 'stat' but the method function only ",
-                "return p-values. Thus, using 'pval' as metric to ",
-                "search for best features.")
-        metric <- "pval"
-      }
-    }
-
-    # Score returned by the given method
-    s.stat <- if("score" %in% colnames(s)){ s[,"score"] }
-    s.pval <- if("p_value" %in% colnames(s)){ s[,"p_value"] }
-
+    
+    # Score and p_value returned by a given method
+    s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
+    s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
+    
+    # Compute scores based on a given metric
     score <- ifelse(metric %in% "pval", sign(s.stat)*s.pval, s.stat)
 
+    # Store score to list
     f.scores <- c(f.scores, score)
 
   } # end for loop
 
+  # Obtain best feature by a given metric
   if(metric != "pval"){
     f.best.index <- which.max(f.scores)
   } else { #If signed pvalues

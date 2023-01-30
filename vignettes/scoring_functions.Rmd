@@ -9,6 +9,7 @@ vignette: >
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
+library(SummarizedExperiment)
 library(CaDrA)
 ```
 
@@ -55,10 +56,9 @@ See `?ks_rowscore` for more details
 ks_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
   weight = NULL,               # If weight is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
-  metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 7,                # Allow at most 7 features in meta-feature matrix
@@ -83,12 +83,11 @@ See `?wilcox_rowscore` for more details
 wilcox_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "wilcox",           # Use Wilcoxon Rank-Sum scoring function
+  method = "wilcox_pval",      # Use Wilcoxon Rank-Sum scoring function
   alternative = "less",        # Use one-sided hypothesis testing
-  metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
-  max_size = 7,               # Allow at most 7 features in meta-feature matrix
+  max_size = 7,                # Allow at most 7 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
 )
@@ -111,7 +110,6 @@ revealer_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "revealer",         # Use REVEALER's CMI scoring function
-  metric = "stat",             # Use score statistics to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 7,                # Allow at most 7 features in meta-feature matrix
@@ -134,20 +132,21 @@ See `?custom_rowscore` for more details
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS, input_score, alternative){
+customized_rowscore <- function(FS_mat, input_score, alternative){
   
-  result <- apply(FS, 1, function(r){ 
+  ks_result <- apply(FS_mat, 1, function(r){ 
     x = input_score[which(r==1)]; 
     y = input_score[which(r==0)];
     res <- ks.test(x, y, alternative=alternative)
     return(c(res$statistic, res$p.value))
   })
   
-  # Convert list to data.frame
-  dat <- data.frame(score=result[1,], p_value=result[2,])
-  rownames(dat) <- rownames(ES)
+  # Convert results as matrix
+  # Return a matrix with two columns (score and p-value)
+  ks_mat <- t(ks_result)
+  colnames(ks_mat) <- c("score", "p_value")
   
-  return(dat)
+  return(ks_mat)
   
 }
 
@@ -155,6 +154,7 @@ customized_rowscore <- function(FS, input_score, alternative){
 custom_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
+  method = "custom_pval",                           # Use custom scoring function
   custom_function = customized_rowscore,            # Use a customized scoring function
   custom_parameters = list(alternative = "less"),   # Additional parameters to pass to custom_function
   search_method = "both",                           # Apply both forward and backward search

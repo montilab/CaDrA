@@ -3,24 +3,25 @@
 \name{calc_rowscore}
 \alias{calc_rowscore}
 \title{Calculate row-wise scores of a given binary feature set based on
-an appropriate scoring method}
+a given scoring method}
 \usage{
 calc_rowscore(
-  FS,
+  FS_mat,
   input_score,
-  method = c("ks", "wilcox", "revealer", "custom"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
+    "custom_pval", "custom_score"),
   alternative = c("less", "greater", "two.sided"),
   weight,
   seed_names = NULL,
   custom_function,
   custom_parameters,
-  warning = TRUE
+  do_check = TRUE
 )
 }
 \arguments{
-\item{FS}{a SummarizedExperiment object containing
-binary features where rows represent features of interest
-(e.g. genes, transcripts, exons, etc...) and columns represent the samples.}
+\item{FS_mat}{a matrix of binary features where 
+rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+and columns represent the samples.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
@@ -28,9 +29,11 @@ The \code{input_score} object must have names or labels that match the column
 names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a user-customized scoring method)). Default is \code{ks}.}
+\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+Default is \code{ks_pval}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -51,18 +54,21 @@ customized function. Default is \code{NULL}.}
 additional arguments (other than \code{FS} and \code{input_score}) to be passed
 to the \code{custom_function()}. Default is \code{NULL}.}
 
-\item{warning}{a logical value indicates whether or not to print the 
+\item{do_check}{a logical value indicates whether or not to check
 diagnostic messages. Default is \code{TRUE}}
 }
 \value{
-a matrix containing row-wise directional scores from a given 
-scoring method
+a matrix with one column (score or p_value) containing row-wise 
+directional scores based on a given scoring method
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on
-an appropriate scoring method
+a given scoring method
 }
 \examples{
+
+# Load library
+library(SummarizedExperiment)
 
 # Load pre-computed feature set
 data(sim_FS)
@@ -72,24 +78,24 @@ data(sim_Scores)
 
 # Run the ks method
 ks_rowscore_result <- calc_rowscore(
-  FS = sim_FS,
+  FS_mat = assay(sim_FS),
   input_score = sim_Scores,
-  method = "ks",
+  method = "ks_pval",
   weight = NULL,
   alternative = "less"
 )
 
 # Run the wilcoxon method
 wilcox_rowscore_result <- calc_rowscore(
-  FS = sim_FS,
+  FS_mat = assay(sim_FS),
   input_score = sim_Scores,
-  method = "wilcox",
+  method = "wilcox_pval",
   alternative = "less"
 )
 
 # Run the revealer method
 revealer_rowscore_result <- calc_rowscore(
-  FS = sim_FS,
+  FS_mat = assay(sim_FS),
   input_score = sim_Scores,
   method = "revealer",
   seed_names = NULL

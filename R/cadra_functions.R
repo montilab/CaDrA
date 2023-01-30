@@ -79,19 +79,21 @@ prefilter_data <- function(
 
 }
 
-#' Check feature set and input scores
+
+#' Checks if feature set and input scores are valid dataset
 #'
-#' Checks if feature set and input scores are valid dataset.
-#'
-#' @param FS a SummarizedExperiment object containing
-#' binary features where rows represent features of interest
-#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples.
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of ‘omics’ features.
 #' @param input_score a vector of continuous scores of a molecular phenotype of
 #' interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param max_size an integer specifies a maximum size that a meta-feature
-#' can extend to do for a given search. Default is \code{7}.
+#' @param do_check a logical value indicates whether or not to validate if the  
+#' given parameters (FS and input_score) are valid inputs. 
+#' Default is \code{TRUE}
 #' 
 #' @noRd
 #'
@@ -100,29 +102,33 @@ prefilter_data <- function(
 check_data_input <- function(
     FS,
     input_score,
-    max_size
+    do_check = TRUE
 ){
-    
+  
+  if(do_check == FALSE) return(NULL)
+  
   # Check if FS is a matrix or a SummarizedExperiment class object
-  if(!is(FS, "matrix") & !is(FS, "SummarizedExperiment"))
-    stop("'FS' must be a matrix or SummarizedExperiment class object
+  if(!is(FS, "SummarizedExperiment") & !is(FS, "matrix"))
+    stop("'FS' must be a matrix or a SummarizedExperiment class object
          from SummarizedExperiment package")
-
+  
   # Retrieve the feature binary matrix
   if(is(FS, "SummarizedExperiment")){
     mat <- as.matrix(SummarizedExperiment::assay(FS))
+  }else{
+    mat <- FS
   }
-
+  
   # Check if the matrix has only binary 0 or 1 values
   if(length(mat) == 0 || any(!mat %in% c(0,1)) || any(is.na(mat)))
     stop("FS object must contain binary values 0s or 1s (no empty values).")
-
+  
   # Make sure the FS object has row names for features tracking
   if(is.null(rownames(mat)))
     stop("The FS object does not have row names to ",
          "track features by. Please provide unique features or row names ",
          "for the FS object.\n")
-
+  
   # Check input_score is provided and is a continuous values with no NAs
   if(length(input_score) == 0 ||
      any(!is.numeric(input_score)) || any(is.na(input_score)))
@@ -146,8 +152,8 @@ check_data_input <- function(
   #        "as the number of columns in FS.\n")
   
   if(any(!names(input_score) == colnames(mat)))
-      stop("The input_score object must have names or ",
-           "labels that match the column names of the FS object.")
+      stop("The input_score object must have names or labels that ",
+      "match the exact order of the column names of the FS object.")
 
   # Check if the features have either all 0s or 1s values
   if(any(rowSums(mat) %in% c(0, ncol(mat)) ))

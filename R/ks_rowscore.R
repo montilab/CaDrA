@@ -3,59 +3,74 @@
 #'
 #' Compute directional KS scores for each row of a given binary feature matrix
 #'
-#' @param FS a feature set of binary features. It can be a matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package.
+#' @param FS_mat a matrix of binary features where 
+#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+#' and columns represent the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' names of FS_mat object.
 #' @param weight a vector of weights to perform a \code{weighted-KS} test.
 #' Default is \code{NULL}. If not NULL, \code{weight} must have labels or names
 #' that match labels of \code{input_score}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param warning a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{TRUE}
 #' 
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_mat_
+#' 
+#' @examples 
+#' 
+#' # Load library
+#' library(SummarizedExperiment)
+#' 
+#' # Load simulated feature set
+#' data(sim_FS)
+#'
+#' # Load simulated input scores
+#' data(sim_Scores)
+#' 
+#' ks_rs <- ks_rowscore(
+#'    FS_mat = assay(sim_FS),
+#'    input_score = sim_Scores,
+#'    weight = NULL,
+#'    alternative = "less"
+#' )
 #'
 #' @return A matrix with two columns: \code{score} and \code{p_value}
 #' @import SummarizedExperiment
 ks_rowscore <- function
 (
-  FS,
+  FS_mat,
   input_score,
   weight = NULL,
-  alternative = c("less", "greater", "two.sided"),
-  warning = TRUE
+  alternative = c("less", "greater", "two.sided")
 )
 {
 
   alternative <- match.arg(alternative)
   
-  # Check of FS and input_score are valid inputs
-  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, max_size = 1)
-  
   # Get the feature names
-  feature_names <- rownames(FS)
+  feature_names <- rownames(FS_mat)
   
   # KS is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
-
-  # Re-order the matrix based on the order of input_score
-  FS <- FS[, names(input_score)]
   
-  # Extract the feature binary matrix
-  if(is(FS, "SummarizedExperiment")){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(is(FS, "matrix")){
-    mat <- as.matrix(FS)
+  # Re-order the matrix based on the order of input_score
+  FS_mat <- FS_mat[, names(input_score)]
+  
+  # Make sure the FS_mat is matrix after re-ordering
+  # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
+  # the re-ordering will convert the matrix to a vector form.
+  # Hence, we need to convert it back to its matrix form in order 
+  # for the function to work
+  if(is(FS_mat, "matrix")){
+    mat <- FS_mat
   }else{
-    mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, names(FS)))
+    mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
+                  dimnames=list(feature_names, names(FS_mat)))
   }
 
   # Check if weight is provided
@@ -66,7 +81,7 @@ ks_rowscore <- function
            "match the labels of input_score\n")
 
     # Make sure its labels or names match the
-    # the labels of input_score
+    # the labels of input_score 
     weight <- as.numeric(weight[names(input_score)])
   }
 
@@ -77,16 +92,12 @@ ks_rowscore <- function
   ks <- .Call(ks_genescore_mat_, mat, weight, alt_int)
 
   # Convert results as matrix
-  # KS method returns both score and p-values
-  ks_mat <- matrix(NA, nrow=nrow(mat), 
-                   ncol=2, byrow=TRUE, 
-                   dimnames=list(rownames(mat), c("score", "p_value")))
-  
-  ks_mat[,1] <- ks[1,]
-  ks_mat[,2] <- ks[2,]
+  # Return a matrix with two columns (score and p-value)
+  ks_mat <- t(ks)
+  colnames(ks_mat) <- c("score", "p_value")
   
   return(ks_mat)
-
+  
 }
 
 
@@ -99,6 +110,7 @@ ks_rowscore <- function
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' @param weight a vector of weights to use if performing a weighted-KS test
+#' 
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_mat_
 #'

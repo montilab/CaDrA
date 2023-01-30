@@ -7,11 +7,11 @@
 CaDrA(
   FS,
   input_score,
-  method = c("ks", "wilcox", "revealer", "custom"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
+    "custom_pval", "custom_score"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  metric = c("pval", "stat"),
   weight = NULL,
   top_N = 1,
   search_start = NULL,
@@ -37,9 +37,11 @@ The \code{input_score} object must have names or labels that match the column
 names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a user-customized scoring method)). Default is \code{ks}.}
+\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+Default is \code{ks_pval}.}
 
 \item{custom_function}{if method is \code{"custom"}, just pass the name of the
 customized function. Default is \code{NULL}.}
@@ -51,11 +53,6 @@ to the \code{custom_function()} . Default is \code{NULL}.}
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.}
-
-\item{metric}{a character string specifies a metric to search for
-best features. \code{"pval"} or \code{"stat"} may be used which
-corresponding to p-value or score statistics. Default is \code{pval}.
-NOTE: \code{Revealer} method only returns score statistics (no p-values).}
 
 \item{weight}{if method is \code{ks}, specifies a vector of weights
 to perform a weighted-KS testing. Default is \code{NULL}.}
@@ -122,10 +119,10 @@ data(sim_Scores)
 
 # Define additional parameters and start the function
 cadra_result <- CaDrA(
-  FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
-  alternative = "less", metric = "pval", top_N = 1,
-  search_start = NULL, search_method = "both", max_size = 7, n_perm = 10,
-  plot = FALSE, smooth = TRUE, obs_best_score = NULL,
+  FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
+  weight = NULL, alternative = "less", top_N = 1,
+  search_start = NULL, search_method = "both", max_size = 7, 
+  n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )
 

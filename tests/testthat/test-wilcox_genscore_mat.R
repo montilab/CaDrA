@@ -3,7 +3,12 @@ test_that(
     
     x <- c(15, 20, 39, 42, 44)
     y <- (1:100)[-x]
-    res.wilcox<- wilcox_score(x=x, y=y, alternative="less")
+    
+    res.wilcox <- wilcox_score(
+      x=x, 
+      y=y, 
+      alternative="less"
+    )
     
     CORRECTION=-0.5
     
@@ -21,7 +26,6 @@ test_that(
     testthat::expect_equal(unname(res.wilcox["score.W"]), W)
     testthat::expect_equal(unname(res.wilcox["p_value"]), p)
     
-    
   })
 
 test_that("wilcox_genescore_mat generates a matrix with 2 rows", {
@@ -36,11 +40,14 @@ test_that("wilcox_genescore_mat generates a matrix with 2 rows", {
   input_score = rnorm(n = ncol(mat))
   names(input_score) <- colnames(mat)
   
-  result<- wilcox_rowscore(mat, input_score, alt="less")
+  result <- wilcox_rowscore(
+    FS_mat = mat, 
+    input_score = input_score, 
+    alternative = "less"
+  )
   
   testthat::expect_equal(dim(result), c(3,2))
   testthat::expect_type(result, "double")
-
   
 })
 

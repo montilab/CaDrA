@@ -4,52 +4,43 @@
 #' Compute row-wise scoring for each row of a given binary feature matrix
 #' using a custom-defined function
 #'
-#' @param FS a feature set of binary features. It can be a matrix or
-#' a \code{SummarizedExperiment} class object from SummarizedExperiment package.
+#' @param FS_mat a matrix of binary features where 
+#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
+#' and columns represent the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' names of FS_mat object.
+#' @param method a character string specifies a scoring method which is
+#' used to compute the row wise statistics. There are 2 options: (\code{"custom_pval"} 
+#' or \code{"custom_score"}. Default is \code{custom_pval}.
 #' @param custom_function a customized function to perform row-wise scoring.
-#' NOTE: this function must take FS and input_score as input arguments, and its final
-#' result must return a matrix with one or two columns:
-#' \code{score} or \code{p_value} or \code{both (score and p_value)}.
+#' NOTE: this function must take FS_mat and input_score as input arguments, 
+#' and its final result must return a matrix with one or two columns:
+#' \code{score} or \code{score} and \code{p_value}.
 #' @param custom_parameters a list of additional arguments to be passed to
-#' the custom_function (excluding \code{FS} and \code{input_score}).
-#' @param warning a logical value indicates whether or not to print the 
-#' diagnostic messages. Default is \code{TRUE}
+#' the custom_function (excluding \code{FS_mat} and \code{input_score}).
 #' 
 #' @noRd
 #'
-#' @return a matrix with one or two columns: \code{score} or
-#' \code{p_value} or \code{both} (score and p_value)
+#' @return If method is "custom_score", the function must return a matrix 
+#' with one column: \code{score}.
+#' Otherwise, if method = "custom_pval", the function must return a matrix 
+#' with two columns: \code{score} and {p_value}.
+#' 
 #' @import SummarizedExperiment
 custom_rowscore <- function
 (
-  FS,
+  FS_mat,
   input_score,
+  method = c("custom_pval", "custom_score"),
   custom_function,
-  custom_parameters = NULL,
-  warning = TRUE
+  custom_parameters = NULL
 )
 {
   
-  # Check of FS and input_score are valid inputs
-  if(warning == TRUE) check_data_input(FS = FS, input_score = input_score, max_size = 1)
+  method <- match.arg(method)
   
-  # Get the feature names
-  feature_names <- rownames(FS)
-  
-  # Extract the feature binary matrix
-  if(is(FS, "SummarizedExperiment")){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else if(is(FS, "matrix")){
-    mat <- as.matrix(FS)
-  }else{
-    mat <- matrix(t(FS), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, names(FS)))
-  }
-
   # check if the custom_function is indeed a function
   if(!is.function(custom_function)){
     stop("custom_function must be a function.")
@@ -75,12 +66,12 @@ custom_rowscore <- function
     }
   }
 
-  # check if custom_function() required FS and input_score as arguments
+  # check if custom_function() required FS_mat and input_score as arguments
   custom_args <- names(formals(custom_function))
 
-  # if custom_args does not contain 'FS' as parameter, gives a warning
-  if(!"FS" %in% custom_args){
-    stop("custom_function() must contain 'FS' as ",
+  # if custom_args does not contain 'FS_mat' as parameter, gives a warning
+  if(!"FS_mat" %in% custom_args){
+    stop("custom_function() must contain 'FS_mat' as ",
          "one of its arguments (required).")
   }
 
@@ -90,12 +81,12 @@ custom_rowscore <- function
          "as one of its arguments (required).")
   }
 
-  # using the required FS argument as parameter. removing any FS variables
+  # using the required FS_mat argument as parameter. removing any FS_mat variables
   # from the custom_parameter list since it is redundant.
-  if("FS" %in% names(custom_parameters)){
-    warning("Removing 'FS' from the custom_parameter list. ",
-            "Using the provided 'FS' argument instead.")
-    custom_parameters <- within(custom_parameters, rm(FS))
+  if("FS_mat" %in% names(custom_parameters)){
+    warning("Removing 'FS_mat' from the custom_parameter list. ",
+            "Using the provided 'FS_mat' argument instead.")
+    custom_parameters <- within(custom_parameters, rm(FS_mat))
   }
 
   # using the required input_score argument as parameter.
@@ -108,9 +99,9 @@ custom_rowscore <- function
   }
 
   ## create a list for the required binary data matrix and input_score variables
-  mat_list <- list(FS = FS, input_score = input_score)
+  mat_list <- list(FS_mat = FS_mat, input_score = input_score)
 
-  ## combine a FS and input_score variables with additional parameters
+  ## combine a FS_mat and input_score variables with additional parameters
   # provided in the custom_parameters list
   custom_parameters <- base::append(mat_list, custom_parameters)
 
@@ -127,22 +118,25 @@ custom_rowscore <- function
     custom_parameters[which(names(custom_parameters) %in% custom_args)]
 
   ## check if the function runs with no errors
-  custom <- tryCatch({
+  custom_mat <- tryCatch({
     base::do.call(custom_function, custom_parameters)
   }, error = function(err){
     stop(err)
   })
 
   ## check if the custom is a matrix
-  if(!is.matrix(custom)){
-    stop("The custom function must return a matrix with one or ",
-         "two columns: 'score' or 'p_value' or 'both'.")
-  }else if(all(!c("score", "p_value") %in% colnames(custom))){
-    stop("The custom function must return a matrix with one or ",
-         "two columns: 'score' or 'p_value' or 'both'.")
+  if(!is.matrix(custom_mat)){
+    stop("The custom function must return a matrix with one or two columns: 'score' or 'score' and 'p_value")
+  }else if(all(!c("score", "p_value") %in% colnames(custom_mat))){
+    stop("The custom function must return a matrix with one or two columns: 'score' or 'score' and 'p_value")
   }
-
-  return(custom)
-
+  
+  # Return a matrix with one or two columns (score and p-value) based on given method
+  if(method == "custom_pval" & any(!c("score", "p_value") %in% colnames(custom_mat)))
+    stop("If method = 'custom_pval', it must return a matrix with two columns: ",
+         "'score' and 'p_value'")
+  
+  return(custom_mat)
+  
 }
 

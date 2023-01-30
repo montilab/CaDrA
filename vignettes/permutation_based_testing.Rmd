@@ -9,6 +9,7 @@ vignette: >
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
 knitr::opts_chunk$set(message=FALSE, comment="")
+library(SummarizedExperiment)
 library(CaDrA)
 ```
 
@@ -46,10 +47,9 @@ Here we are using **Kolmogorow-Smirnow** (KS) scoring method to search for best 
 ks_candidate <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
   alternative = "less",        # Use one-sided hypothesis testing
   weight = NULL,               # If weight is provided, perform a weighted-KS test
-  metric = "pval",             # Use p-value to search for best feature
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Number of top features to kick start the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
@@ -77,10 +77,9 @@ meta_plot(topn_best_list = topn_best_meta)
 ks_perm_res <- CaDrA::CaDrA(
   FS = sim_FS, 
   input_score = sim_Scores, 
-  method = "ks",               # Use Kolmogorow-Smirnow scoring function 
+  method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
   weight = NULL,               # If weight is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
-  metric = "pval",             # Use p-value to search for best features
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Repeat the search with the top N features
   max_size = 10,               # Allow at most 10 features in the meta-feature matrix

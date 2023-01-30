@@ -12,9 +12,11 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param method a character string specifies a scoring method that is
-#' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+#' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+#' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom"} (a user-customized scoring method)). Default is \code{ks}.
+#' \code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+#' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, just pass the name of the
 #' customized function. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
@@ -23,10 +25,6 @@
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param metric a character string specifies a metric to search for
-#' best features. \code{"pval"} or \code{"stat"} may be used which
-#' corresponding to p-value or score statistics. Default is \code{pval}.
-#' NOTE: \code{Revealer} method only returns score statistics (no p-values).
 #' @param weight if method is \code{ks}, specifies a vector of weights
 #' to perform a weighted-KS testing. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
@@ -75,10 +73,10 @@
 #'
 #' # Define additional parameters and start the function
 #' cadra_result <- CaDrA(
-#'   FS = sim_FS, input_score = sim_Scores, method = "ks", weight = NULL,
-#'   alternative = "less", metric = "pval", top_N = 1,
-#'   search_start = NULL, search_method = "both", max_size = 7, n_perm = 10,
-#'   plot = FALSE, smooth = TRUE, obs_best_score = NULL,
+#'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
+#'   weight = NULL, alternative = "less", top_N = 1,
+#'   search_start = NULL, search_method = "both", max_size = 7, 
+#'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
 #' )
 #'
@@ -90,11 +88,10 @@
 CaDrA <- function(
     FS,
     input_score,
-    method = c("ks","wilcox","revealer", "custom"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom_pval", "custom_score"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
-    metric = c("pval", "stat"),
     weight = NULL,
     top_N = 1,
     search_start = NULL,
@@ -113,39 +110,17 @@ CaDrA <- function(
   options(verbose = warning)
 
   method <- match.arg(method)
-  metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
   max_size <- as.integer(max_size)
   
   # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, max_size = max_size)
+  check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
 
-  # Select the appropriate method to compute scores based on
-  # skewness of a given binary matrix
-  s <- calc_rowscore(
-    FS = FS,
-    input_score = input_score,
-    method = method,
-    alternative = alternative,
-    weight = weight,
-    seed_names = NULL,
-    custom_function = custom_function,
-    custom_parameters = custom_parameters,
-    warning = FALSE
-  )
-
-  # Check if the returning result has one or two columns:
-  # score or p_value or both
-  if("score" %in% colnames(s) & !"p_value" %in% colnames(s) & metric == "pval"){
-    warning("metric = 'pval' is provided but the method function only ",
-            "return score values. Thus, using 'stat' as metric to search ",
-            "for best features.")
+  # Define metric value based on a given scoring method
+  if(length(grep("score", method)) > 0 | method == "revealer"){
     metric <- "stat"
-  }else if("p_value" %in% colnames(s) & !"score" %in% colnames(s) & metric == "stat"){
-    warning("metric provided is 'stat' but the method function only ",
-            "return p-values. Thus, using 'pval' as metric to search ",
-            "for best features.")
+  }else{
     metric <- "pval"
   }
 
@@ -178,8 +153,8 @@ CaDrA <- function(
               custom_function = custom_function,
               custom_parameters = custom_parameters,
               alternative = alternative,
-              metric = metric,
               weight = weight,
+              metric = metric,
               top_N = top_N,
               search_start = search_start,
               search_method = search_method,
@@ -257,7 +232,6 @@ CaDrA <- function(
                          custom_function = custom_function,
                          custom_parameters = custom_parameters,
                          alternative = alternative,
-                         metric = metric,
                          weight = weight,
                          top_N = top_N,
                          search_start = search_start,
@@ -268,15 +242,15 @@ CaDrA <- function(
                          warning = FALSE) },
       .parallel=parallel,
       .progress=progress) |> unlist()
-
+    
     # Save computed scores to cache
     message("Saving to cache...\n")
     saveCache(perm_best_scores, key=key, comment="null_scores()")
-
+    
   } # end caching else statement block
-
+  
   registerDoParallel(cores = 1) #Return to using just a single core
-
+  
   message("FINISHED\n")
   message("Time elapsed: ", round((proc.time()-ptm)[3]/60,2), " mins \n\n")
 
@@ -293,7 +267,6 @@ CaDrA <- function(
       custom_function = custom_function,
       custom_parameters = custom_parameters,
       alternative = alternative,
-      metric = metric,
       weight = weight,
       top_N = top_N,
       search_start = search_start,

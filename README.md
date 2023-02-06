@@ -116,7 +116,7 @@ topn_best_meta <- CaDrA::topn_best(topn_res)
 CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ Activity")
 ```
 
-![](README_files/figure-gfm/visualize.best-1.png)<!-- -->
+![](./man/figures/visualize.best-1.png)<!-- -->
 
 ### (iv) Summarize Top N Results
 
@@ -126,7 +126,7 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 CaDrA::topn_plot(topn_res) 
 ```
 
-![](README_files/figure-gfm/summarize-1.png)<!-- -->
+![](./man/figures/summarize-1.png)<!-- -->
 
 ## (4) SessionInfo
 

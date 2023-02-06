@@ -1,0 +1,71 @@
+url: https://github.com/montilab/CaDrA/
+
+development:
+  mode: auto
+
+template:
+  params:
+    bootswatch: cosmo
+
+authors:
+  Reina Chau:
+    href: https://github.com/RC-88
+  Stefano Monti:
+    href: https://github.com/tetomonti
+  Katia Bulekova:
+    href: https://github.com/katgit
+  Vinay Kartha:
+    href: https://github.com/vkartha
+
+news:
+  one_page: false
+
+reference:
+- title: Workflow Methods
+  desc: ~
+  contents:
+  - '`CaDrA`'
+  - '`candidate_search`'
+  - '`calc_rowscore`'
+  - '`topn_best`'
+  - '`prefilter_data`'
+  - '`generate_permutations`'
+
+- title: Plot Methods
+  desc: ~
+  contents:
+  - '`meta_plot`'
+  - '`topn_plot`'
+  - '`permutation_plot`'
+
+- title: Data Objects
+  desc: ~
+  contents:
+  - '`sim_FS`'
+  - '`sim_Scores`'
+  - '`topn_list`'
+  - '`perm_res`'
+  - '`CCLE_MUT_SCNA`'
+  - '`CTNBB1_reporter`'
+  - '`BRCA_GISTIC_MUT_SIG`'
+  - '`TAZYAP_BRCA_ACTIVITY`'
+
+navbar:
+  title: "CaDrA"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Docs"
+      menu:
+      - text: "Scoring Functions"
+        href: articles/scoring_functions.html
+      - text: "Permutation-Based Testing"
+        href: articles/permutation_based_testing.html
+    - text: "Reference"
+      href: reference/index.html
+  right:
+    - text: "Change Log"
+      href: news/index.html
+    - icon: fa-github
+      href: https://github.com/montilab/CaDrA
+

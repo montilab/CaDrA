@@ -89,7 +89,8 @@ calc_rowscore <- function(
   alternative <- match.arg(alternative)
   
   # Check of FS and input_score are valid inputs
-  if(do_check == TRUE) check_data_input(FS = FS_mat, input_score = input_score, do_check=do_check)
+  if(do_check == TRUE) check_data_input(FS = FS_mat, input_score = input_score, 
+                                        max_size = 7, do_check=do_check)
 
   # Select the appropriate method to compute row-wise directional scores
   score <- switch(

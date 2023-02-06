@@ -115,7 +115,8 @@ CaDrA <- function(
   max_size <- as.integer(max_size)
   
   # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
+  check_data_input(FS = FS, input_score = input_score, 
+                   max_size = max_size, do_check=TRUE)
 
   # Define metric value based on a given scoring method
   if(length(grep("score", method)) > 0 | method == "revealer"){

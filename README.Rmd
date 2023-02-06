@@ -7,7 +7,7 @@ title: CaDrA
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
+knitr::opts_chunk$set(fig.path="./man/figures/", message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
 library(CaDrA)
 ```

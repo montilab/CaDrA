@@ -24,6 +24,7 @@ topn_plot <- function(
   # Get feature_set and best scores for top n features
   feature_set_l <- lapply(seq_along(topn_list),
                    function(l){ topn_list[[l]][['feature_set']] })
+  
   scores_l <- lapply(seq_along(topn_list),
                      function(l){ topn_list[[l]][['score']] })
 

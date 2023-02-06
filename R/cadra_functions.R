@@ -132,8 +132,8 @@ check_data_input <- function(
   # Check input_score is provided and is a continuous values with no NAs
   if(length(input_score) == 0 ||
      any(!is.numeric(input_score)) || any(is.na(input_score)))
-    stop("input_score must contain a vector of continuous values ",
-         "(with no NAs) where its vector names match the colnames of ",
+    stop("input_score must contain a vector of continuous scores ",
+         "(with no NAs) where its vector names match the column names of ",
          "the FS object.\n")
 
   # Make sure the input_score has names or labels that are the

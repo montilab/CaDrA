@@ -28,33 +28,14 @@ topn_best <- function(topn_list){
 
   # Working with scores for each top N run
   scores <- unlist(scores_l)
-
-  # Obtain the metric used in candidate search
-  metric <- lapply(
-    seq_along(topn_list),
-    function(l){ topn_list[[l]][['metric']] }
-  ) |>
-    unlist() |>
-    unique()
-
-  # Fetch the best score from the iterations
-  # NEEDS UPDATING TO ACCOMODATE STATISTIC
-  if(metric == "pval"){
-    # Fetch the index housing the best FS
-    # Based on the p-values, the lowest value will be the most significant
-    n <- which.min(scores)
-
-    # Also obtain the best score
-    top_score <- min(scores)
-  }else{
-    # Fetch the index housing the best FS
-    # Based on the statistics, the largest value will be the most significant
-    n <- which.max(scores)
-
-    # Obtain the best score
-    top_score <- max(scores)
-  }
-
+  
+  # Fetch the index housing the best FS
+  # Based on the statistics, the largest value will be the most significant
+  n <- which.max(scores)
+  
+  # Obtain the best score
+  top_score <- max(scores)
+  
   # Corresponding FS object
   best_meta <- topn_list[[n]]$feature_set
 

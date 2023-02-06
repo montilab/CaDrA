@@ -32,7 +32,7 @@
 #' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
 #' of weights will perform a weighted-KS testing. Default is \code{NULL}.
 #' @param search_start a list of character strings (separated by commas)
-#' which specifies feature names within the expression set object to start
+#' which specifies feature names within the FS object to start
 #' the search with. If \code{search_start} is provided, then \code{top_N}
 #' parameter will be ignored. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
@@ -51,6 +51,9 @@
 #' resulting meta-feature matrix. NOTE: plot can only be produced if resulting
 #' meta-feature matrix contains more than 1 feature
 #' (e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.
+#' @param do_check a logical value indicates whether or not to validate if the  
+#' given parameters (FS and input_score) are valid inputs. 
+#' Default is \code{TRUE}.
 #' @param warning a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
@@ -62,10 +65,10 @@
 #' 
 #' @examples
 #'
-#' # Load pre-computed expression set
+#' # Load pre-computed feature set
 #' data(sim_FS)
 #'
-#' # Load pre-computed input-score
+#' # Load pre-computed input scores
 #' data(sim_Scores)
 #'
 #' # Define additional parameters and run the function
@@ -81,7 +84,7 @@
 candidate_search <- function(
     FS,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom_pval", "custom_score"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
@@ -92,6 +95,7 @@ candidate_search <- function(
     max_size = 7,
     best_score_only = FALSE,
     do_plot = FALSE,
+    do_check = TRUE,
     warning = FALSE
 ){
 
@@ -101,19 +105,13 @@ candidate_search <- function(
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
-
-  # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
-
-  # Define metric value based on a given scoring method
-  if(length(grep("score", method)) > 0 | method == "revealer"){
-    metric <- "stat"
-  }else{
-    metric <- "pval"
-  }
   
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
+  # Return a vector of scores that already been ordered from 
+  # most significant to least significant
+  # This comes in handy when doing the top-N evaluation of
+  # the top N 'best' features
   rowscore <- calc_rowscore(
     FS_mat = assay(FS),
     input_score = input_score,
@@ -123,85 +121,65 @@ candidate_search <- function(
     seed_names = NULL,
     custom_function = custom_function,
     custom_parameters = custom_parameters,
-    do_check = FALSE
+    do_check = do_check
   )
   
-  # Score and p_value returned by a given method
-  s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
-  s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
-
-  # Compute the scores according to the provided metric
-  score <- ifelse(rep(metric, nrow(FS)) %in% "pval", sign(s.stat)*s.pval, s.stat)
-
-  verbose("Using ", metric, " as measure of improvement measure...\n")
-
-  ###### FEATURE PRE-RANKING #####
-  ##################################
-
-  # Re-order FS in decreasing order of user-defined score (stat or pval)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  score.rank <- if(metric != "pval")
-    order(score, decreasing=TRUE) else
-      order(-sign(score), score)
-
-  # Re-order the FS
-  FS <- FS[score.rank,]
-
-  # Re-order the computed scores
-  score <- score[score.rank]
-
   ###### INITIALIZE VARIABLES ###########
   #######################################
-
+  
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N)
-
+  
   # Check if search_start is given
   if(is.null(search_start)){
-
-    if(is.na(top_N) || length(top_N)==0 || top_N <= 0){
+    
+    if(is.na(top_N) || length(top_N)==0 || top_N <= 0)
       stop("Please specify a NUMERIC top_N value to evaluate over top N ",
            "features (top_N must be >= 1).\n")
-    }
-
+    
     if(top_N > nrow(FS))
       stop("Please specify a top_N value that is less than the number of ",
-           "features in the FS.\n")
-
+           "features in the FS object.\n")
+    
     if(top_N > 10)
       warning("top_N value specified is greater than 10. ",
               "This may result in a longer search time.\n")
-
+    
+    # Getting the top N features with the biggest scores
+    top_features <- names(rowscore[seq_len(top_N)])
+    
     # Start the search with top N features based on their sorted indexes
-    search_feature_index <- seq_len(top_N)
-
-    verbose("Evaluating search over top ", length(search_feature_index),
-            " features\n")
-
-  } else {
-
+    search_feature_index <- sapply(seq_along(top_features), function(f){
+      #f=1;
+      which(rownames(FS) %in% top_features[f])
+    })
+    
+    verbose("Evaluating search over top ", length(search_feature_index), " features\n")
+    
+  }else{
+    
     search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
       unlist() |>
       trimws()
 
-    if(!is.na(top_N) && length(top_N) > 0){
+    if(!is.na(top_N) && length(top_N) > 0)
       warning("Since start_search variable is given, ",
               "evaluating over top_N value will be ignored.\n")
-    }
 
-    # User-specified feature name
-    # (has to be a character from rownames(1:nrow(FS)))
+    # User-specified feature names
     verbose("Starting with specified feature names...\n")
 
     if(length(search_start) == 0 || any(!search_start %in% rownames(FS)))
-      stop("Provided starting feature does not exist among FS's rownames.\n\n")
+      stop("The provided starting feature does not exist among the row names of FS object.\n\n")
 
     # Get the index of the search_start strings and start
     # the search with the defined indexes
-    search_feature_index <- which(rownames(FS) %in% search_start)
+    search_feature_index <- sapply(seq_along(search_start), function(f){
+      #f=1;
+      which(rownames(FS) %in% search_start[f])
+    })
 
-  } # end else (!is.null)
+  } 
 
   ## Check the search_method variable ####
   back_search <- ifelse(search_method == "both", TRUE, FALSE)
@@ -209,139 +187,132 @@ candidate_search <- function(
   ## Check the max_size variable ####
   max_size <- as.integer(max_size)
 
-  if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(FS)){
+  if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(FS))
     stop("Please specify an integer value specifies a maximum size ",
          "that a meta-feature can extend to do for a given search ",
          "(max_size must be >= 1)",
-         "and max_size must be lesser than the number of features in",
-         "FS\n")
-  }
-
+         "and max_size must be lesser than the number of features in FS\n")
+  
   # Check the best_score_only variables
-  if(!best_score_only %in% c(TRUE, FALSE)){
+  if(!best_score_only %in% c(TRUE, FALSE))
     stop("Please specify a logical value TRUE/FALSE ",
          "for best_score_only variable.\n")
-  }
-
-  # Performs the search over the feature indices
+  
+  # Performs the search based on the given indices of the starting best features 
   topn_l <- lapply(seq_along(search_feature_index), function(x){
     # x=1;
-    # Evaluate over top N features using their indexes
-    best.s.index <- search_feature_index[x]
-
-    # Print the featureData for this starting point feature so that we are aware
-    # Here we assume the FS's fData is included as rownames
-    start.feature <- rownames(FS)[best.s.index]
-    best.feature <- start.feature
-    best.s <- score[best.s.index]
-
-    verbose("Top Feature ", x, ": ", start.feature, "\n")
-    verbose("Score: ", best.s, "\n")
-
-    #Fetch the vector corresponding to best score
-    #Set this as the initial 'meta-feature'
-    best.meta <- as.numeric(assay(FS)[best.s.index,])
-
-    #counter variable for number of iterations
+    # Extract the index of the feature 
+    best_s_index <- search_feature_index[x]
+    
+    # Get the name of the starting feature and its best score
+    start_feature <- rownames(FS)[best_s_index]
+    best_feature <- start_feature
+    best_s <- rowscore[start_feature]
+    
+    verbose("Top Feature ", x, ": ", start_feature, "\n")
+    verbose("Score: ", best_s, "\n")
+    
+    # Fetch the vector corresponding to best score
+    # Set this as the initial 'meta-feature'
+    best_meta <- as.numeric(assay(FS)[best_s_index,])
+    
+    # Counter variable for number of iterations
     i <- 0
-
-    #Variable to store best score attained over all iterations
-    #initialize this to the starting best score
-    global.best.s <- best.s
+    
+    # Variable to store best score attained over all iterations
+    # initialize this to the starting best score
+    global_best_s <- best_s
 
     # Vector of features in the (growing) obtained meta-feature.
     # Begin with just the starting feature
-    global.best.s.features <- c()
+    global_best_s_features <- c()
 
     ###### BEGIN ITERATIONS ###############
     #######################################
 
     verbose("\nBeginning candidate search...\n")
 
-    while((ifelse(metric=="pval",
-                  (sign(best.s) > 0 & (abs(best.s) < abs(global.best.s))),
-                  best.s > global.best.s) | i == 0) &
-          (length(global.best.s.features) < max_size)){
-
+    while((best_s > global_best_s | i == 0) &&
+          (length(global_best_s_features) < max_size)){
+      
       verbose("\n\n")
       verbose("Iteration number ", (i+1), " ..\n")
-      verbose("Global best score: ", global.best.s, "\n")
-      verbose("Previous score: ", best.s, "\n")
+      verbose("Global best score: ", global_best_s, "\n")
+      verbose("Previous score: ", best_s, "\n")
 
       # Update scores and feature set since entry into the
       # loop means there is an improvement (iteration > 0)
-      global.best.s <- best.s
-      global.best.s.features <- c(global.best.s.features, best.feature)
+      global_best_s <- best_s
+      global_best_s_features <- c(global_best_s_features, best_feature)
 
-      verbose("Current feature set: ", global.best.s.features, "\n")
+      verbose("Current feature set: ", global_best_s_features, "\n")
 
       if(i != 0){
 
         verbose("Found feature that improves score!\n")
 
         # Update the new best meta feature (from meta mat)
-        best.meta <- meta.mat[hit.best.s.index,]
+        best_meta <- meta_mat[hit_best_s_index,]
 
         # Add that index to the group of indices to be excluded
         # for subsequent checks
         # Here we go off the rownames in the original matrix to
         # find which index to exclude from the FS in subsequent iterations
-        best.s.index <- c(best.s.index, which(rownames(FS) == best.feature))
+        best_s_index <- c(best_s_index, which(rownames(FS) == best_feature))
 
       }
 
       # Perform a backward check on the list of existing features and
       # update global scores/feature lists accordingly
-      if(length(global.best.s.features) > 3 & back_search == TRUE){
+      if(length(global_best_s_features) > 3 & back_search == TRUE){
 
         backward_search_results <- forward_backward_check(
           FS = FS,
           input_score = input_score,
-          glob.f = global.best.s.features,     # Global feature set so far
-          glob.f.s = global.best.s,
+          glob_f = global_best_s_features,     # Global feature set so far
+          glob_f_s = global_best_s,
           method = method,
           custom_function = custom_function,
           custom_parameters = custom_parameters,
           alternative = alternative,
-          weight = weight,
-          metric = metric
+          weight = weight
         )
 
         # Update globlal features, scores
-        global.best.s.features <- backward_search_results[["best.features"]]
-        global.best.s <- backward_search_results[["best.scores"]]
+        global_best_s_features <- backward_search_results[["best_features"]]
+        global_best_s <- backward_search_results[["best_scores"]]
 
-        # Update best.meta based on feature set
-        best.meta <- as.numeric(ifelse(
-          colSums(assay(FS)[global.best.s.features,]) == 0, 0, 1))
+        # Update best_meta based on feature set
+        best_meta <- as.numeric(ifelse(
+          colSums(assay(FS)[global_best_s_features,]) == 0, 0, 1))
 
       }
 
       # Take the OR function between that feature and all
       # other features to see which gives the best score
-      # Keep in mind, the number of rows in meta.mat keeps reducing by one
+      # Keep in mind, the number of rows in meta_mat keeps reducing by one
       # each time we find a hit that improves the score
       verbose("Forming meta-feature matrix with all other features in dataset.")
 
       # Here "*1" is used to convert the boolean back to integer 1's and 0's
-      # Notice we remove anything in best.s.index from the original matrix
+      # Notice we remove anything in best_s_index from the original matrix
       # first to form the meta matrix.
-      meta.mat <- base::sweep(assay(FS)[-best.s.index,], 2, best.meta, `|`)*1
+      meta_mat <- base::sweep(assay(FS)[-best_s_index,], 2, best_meta, `|`)*1
 
       # Check if there are any features that are all 1's generated on
       # taking the union
       # We cannot compute statistics for such features and they thus need
       # to be filtered out
-      if(any(rowSums(meta.mat) == ncol(meta.mat))){
-        warning("Features with all 1's generated upon taking matrix union...",
-                "Removing such features before progressing...\n")
-        meta.mat <- meta.mat[rowSums(meta.mat) != ncol(meta.mat),]
+      if(any(rowSums(meta_mat) == ncol(meta_mat))){
+        warning("Features with all 1's generated upon taking matrix union ",
+                "will be removed before progressing...\n")
+        meta_mat <- meta_mat[rowSums(meta_mat) != ncol(meta_mat),]
       }
 
-      # With the newly formed 'meta-feature' matrix, compute directional
-      # scores and choose the feature that gives the best score
-      rowscore <- calc_rowscore(
-        FS_mat = meta.mat,
+      # With the newly formed 'meta-feature' matrix, 
+      # compute row-wise directional scores
+      meta_rowscore <- calc_rowscore(
+        FS_mat = meta_mat,
         input_score = input_score,
         method = method,
         alternative = alternative,
@@ -352,86 +323,55 @@ candidate_search <- function(
         do_check = FALSE
       )
       
-      # Score and p_value returned by a given method
-      s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
-      s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
+      # Get the first best score from already ordered meta matrix
+      best_s <- meta_rowscore[1]
 
-      # Take signed pval or stat depending on user-defined metric
-      # This will be the same length as nrow(meta.mat)
-      score <- ifelse(rep(metric, nrow(meta.mat)) %in% "pval",
-                       sign(s.stat)*s.pval, s.stat)
-
-      # Find index of feature that gives lowest scores when
-      # combined with chosen starting feature
-      if(metric != "pval"){
-        hit.best.s.index <- which.max(score)
-      } else { #If signed pvalues
-        hit.best.s.index <- order(-sign(score), score)[1]
-        #Top p-value ordered by sign and numerical value;
-        #This is the index within the meta matrix
-      }
-
-      # The best score from the meta matrix
-      best.s <- score[hit.best.s.index]
-
-      # Find which feature produced that score,
-      # in combination with meta feature used
-      # We go from index to rowname space here in the meta matrix
-      # We can do this because rownames are preserved between the
-      # original and meta features on using sweep()
-      best.feature <- rownames(meta.mat)[hit.best.s.index]
+      # Get feature name of the best score
+      best_feature <- names(best_s)
 
       verbose("Feature that produced best score in combination ",
-              "with previous meta-feature: ", best.feature )
-      verbose("Score: ", best.s)
+              "with previous meta-feature: ", best_feature)
+      verbose("Score: ", best_s)
+      
+      # Get the best hit index in meta_mat
+      hit_best_s_index <- which(rownames(meta_mat) == best_feature)
 
       # If no improvement (exiting loop)
-      if(ifelse(metric == "pval", sign(best.s) < 0 |
-                (abs(best.s) >= abs(global.best.s)), best.s <= global.best.s)){
+      if(best_s <= global_best_s)
         verbose("No further improvement in score has been found.")
-      }
-
-      #Increment counter
+        
+      # Increment the next loop
       i <- i+1
 
-    } #########End of while loop
+    } ######### End of while loop
 
     verbose("\n\nFinished!\n\n")
     verbose("Number of iterations covered: ", i, "\n")
-    verbose("Best score attained over iterations: ", global.best.s, "\n")
+    verbose("Best score attained over ", i , " iterations: ", global_best_s, "\n")
 
-    if(length(global.best.s.features) == 1){
+    if(length(global_best_s_features) == 1)
       verbose("No meta-feature that improves the enrichment was found...\n")
-    }
 
-    verbose("Features returned in FS: ", global.best.s.features, "\n")
-    verbose("\n\n")
+    verbose("Features returned in FS: ", global_best_s_features, "\n")
 
     # We don't just want the combination (meta-feature) at the end.
     # We want all the features that make up the meta-feature
     # This can be obtained using the list of indices that were progressively
     # excluded (if at all) in the step-wise procedure
     # If returning only those features that led to the best global score
-    FS.best <- FS[global.best.s.features,]
+    FS_best <- FS[global_best_s_features,]
 
-    # Here, give the returned FS an annotation based on the starting
-    # feature that gave these best results
-    assayNames(FS.best) <- start.feature
-    colnames(FS.best) <- colnames(FS)
-
-    # Make a list contaning two elements.
+    # Make a list containing two elements.
     #The first will be the FS with the features that gave the best meta-feature
     #The second will be the score corresponding to the meta-feature
     # (named by the starting feature that led to that score)
     # Assign the name of the best meta-feature score to be the
     # starting feature that gave that score
-    names(global.best.s) <- start.feature
+    names(global_best_s) <- start_feature
 
-    return(list("method" = method,
-                "metric" = metric,
-                "feature_set" = FS.best,
+    return(list("feature_set" = FS_best,
                 "input_score" = input_score,
-                "score" = global.best.s))
+                "score" = global_best_s))
     
   })
 
@@ -444,16 +384,9 @@ candidate_search <- function(
     scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['score']] })
 
     # Working with scores for each top N run
-    s <- unlist(scores_l)
+    best_meta_scores <- unlist(scores_l)
 
-    # Fetch the best score from the iterations
-    # NEEDS UPDATING TO ACCOMODATE STATISTIC
-    if(metric == "pval"){
-      best_score <- s[order(s, decreasing = FALSE)][1]
-      #Based on the p-values, the lowest value will be the most significant
-    }else{
-      best_score <- s[order(s, decreasing = TRUE)][1]
-    }
+    best_score <- best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
 
     return(best_score)
 
@@ -487,19 +420,16 @@ candidate_search <- function(
 #' Default is \code{less} for left-skewed significance testing.
 #' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
 #' of weights will perform a weighted-KS testing. Default is \code{NULL}.
-#' @param metric a character string specifying which metric to use for
-#' stepwise search criteria. One of either 'pval' or 'stat' may be used,
-#' corresponding to the  p-value or statistic. 
-#' @param glob.f a vector containing the features (or row names) whose
+#' @param glob_f a vector containing the features (or row names) whose
 #' union gives the best score (so far) in the search.
 #' Feature names should match those of the provided FS object
-#' @param glob.f.s a vector of scores corresponding to the union of the 
+#' @param glob_f_s a vector of scores corresponding to the union of the 
 #' specified vector of features
 #' 
 #' @noRd
 #' 
-#' @return return the set of features that gave a better score than
-# the existing best score, and its best scores as well
+#' @return return the set of features with its current best score that is
+#' better than the existing meta-feature best score
 forward_backward_check <- function
 (
   FS,
@@ -509,43 +439,42 @@ forward_backward_check <- function
   custom_parameters,  
   alternative,
   weight,
-  metric,
-  glob.f,
-  glob.f.s
+  glob_f,
+  glob_f_s
 ){
 
   verbose("Performing backward search...\n")
-  verbose("Iterating over ", length(glob.f), " chosen features...\n")
+  verbose("Iterating over ", length(glob_f), " chosen features...\n")
 
   # Matrix of only global best features so far
-  gmat <- assay(FS[glob.f,])
-  rownames(gmat) <- glob.f
+  gmat <- assay(FS[glob_f,])
+  rownames(gmat) <- glob_f
 
   # Here, we make a list that should store the features and their
   # corresponding meta-feature score for each leave-one-out run
-  f.names <- list()
-  f.scores <- c()
+  f_names <- list()
+  f_scores <- c()
 
   # We want to see if leaving anyone feature out improves the overall
   # meta-feature score
   # Here we only consider previous features in the meta-feature to remove
   # (i.e. not the last one which was just added)
-  for(n in seq_len(length(glob.f)-1)){
+  for(n in seq_len(length(glob_f)-1)){
     #n=1;
-    f.names[[n]] <- glob.f[-n]
+    f_names[[n]] <- glob_f[-n]
 
     # Take leave-one-out union of features from matrix
     # This will result in a single vector to compute the scores on
-    u <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
+    f_union <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
 
     # Compute scores for this meta feature
     # Here we suprress warnings just to avoid messages warning-related single
     # vector score computation (nrow(mat) < 2)
-    u.mat <- matrix(u, nrow=1, byrow=TRUE,
+    u_mat <- matrix(f_union, nrow=1, byrow=TRUE,
                     dimnames=list(c("OR"), colnames(FS)))
     
     rowscore <- calc_rowscore(
-      FS_mat = u.mat,
+      FS_mat = u_mat,
       input_score = input_score,
       method = method,
       alternative = alternative,
@@ -555,47 +484,35 @@ forward_backward_check <- function
       custom_parameters = custom_parameters,
       do_check = FALSE
     )
-    
-    # Score and p_value returned by a given method
-    s.stat <- if("score" %in% colnames(rowscore)) rowscore[,"score"]
-    s.pval <- if("p_value" %in% colnames(rowscore)) rowscore[,"p_value"]
-    
-    # Compute scores based on a given metric
-    score <- ifelse(metric %in% "pval", sign(s.stat)*s.pval, s.stat)
 
     # Store score to list
-    f.scores <- c(f.scores, score)
+    f_scores <- c(f_scores, rowscore[1])
 
   } # end for loop
 
-  # Obtain best feature by a given metric
-  if(metric != "pval"){
-    f.best.index <- which.max(f.scores)
-  } else { #If signed pvalues
-    f.best.index <- order(-sign(f.scores), f.scores)[1]
-  }
+  # Obtain best feature index
+  f_best_index <- which.max(f_scores)
 
-  f.best.score <- f.scores[f.best.index]
+  # Obtain best feature score
+  f_best_score <- f_scores[f_best_index]
 
   # Check if any one of the computed scores has a better score than the
   # entire meta-feature's score
-  if(ifelse(metric == "pval",
-            (sign(f.best.score) > 0 & abs(f.best.score) < abs(glob.f.s)),
-            f.best.score > glob.f.s)){
+  if(f_best_score > glob_f_s){
 
     verbose("Found improvement on removing existing feature...\n")
-    verbose("New feature set: ", f.names[[f.best.index]], "\n")
-    verbose("New global best score: ", f.best.score, "\n")
+    verbose("New feature set: ", f_names[[f_best_index]], "\n")
+    verbose("New global best score: ", f_best_score, "\n")
 
     # Return the set of features that gave a better score than
     # the existing best score, and the score as well
-    return(list(best.features=f.names[[f.best.index]], best.scores=f.best.score))
+    return(list(best_features=f_names[[f_best_index]], best_scores=f_best_score))
 
   } else{
 
     # Don't change anything. Return the existing
     # best set of features and the corresponding score
-    return(list(best.features=glob.f, best.scores=glob.f.s))
+    return(list(best_features=glob_f, best_scores=glob_f_s))
 
   }
 

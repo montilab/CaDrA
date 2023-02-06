@@ -7,8 +7,7 @@
 candidate_search(
   FS,
   input_score,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
-    "custom_pval", "custom_score"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
@@ -19,6 +18,7 @@ candidate_search(
   max_size = 7,
   best_score_only = FALSE,
   do_plot = FALSE,
+  do_check = TRUE,
   warning = FALSE
 )
 }
@@ -54,7 +54,7 @@ Default is \code{less} for left-skewed significance testing.}
 of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)
-which specifies feature names within the expression set object to start
+which specifies feature names within the FS object to start
 the search with. If \code{search_start} is provided, then \code{top_N}
 parameter will be ignored. Default is \code{NULL}.}
 
@@ -79,6 +79,10 @@ resulting meta-feature matrix. NOTE: plot can only be produced if resulting
 meta-feature matrix contains more than 1 feature
 (e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.}
 
+\item{do_check}{a logical value indicates whether or not to validate if the
+given parameters (FS and input_score) are valid inputs. 
+Default is \code{TRUE}.}
+
 \item{warning}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
@@ -101,10 +105,10 @@ NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
 }
 \examples{
 
-# Load pre-computed expression set
+# Load pre-computed feature set
 data(sim_FS)
 
-# Load pre-computed input-score
+# Load pre-computed input scores
 data(sim_Scores)
 
 # Define additional parameters and run the function

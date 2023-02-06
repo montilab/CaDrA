@@ -16,6 +16,9 @@
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
+#' @param metric a character string specifies a metric to search for 
+#' best features. \code{"pval"} or \code{"stat"} may be used which is 
+#' corresponding to p-value or score statistic. Default is \code{pval}. 
 #' 
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_mat_
@@ -35,23 +38,27 @@
 #'    FS_mat = assay(sim_FS),
 #'    input_score = sim_Scores,
 #'    weight = NULL,
-#'    alternative = "less"
+#'    alternative = "less",
+#'    metric = "pval"
 #' )
 #'
-#' @return A matrix with two columns: \code{score} and \code{p_value}
-#' @import SummarizedExperiment
+#' @return return a vector of scores ordered from most significant to least
+#' significant where its labels or names match the row names of FS_mat object
+#' 
 ks_rowscore <- function
 (
   FS_mat,
   input_score,
   weight = NULL,
-  alternative = c("less", "greater", "two.sided")
+  alternative = c("less", "greater", "two.sided"),
+  metric = c("stat", "pval")
 )
 {
 
+  metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
-  # Get the feature names
+  # Get the feature names before reordering FS by input score
   feature_names <- rownames(FS_mat)
   
   # KS is a ranked-based method
@@ -91,12 +98,20 @@ ks_rowscore <- function
   # Compute the ks statistic and p-value per row in the matrix
   ks <- .Call(ks_genescore_mat_, mat, weight, alt_int)
 
-  # Convert results as matrix
-  # Return a matrix with two columns (score and p-value)
-  ks_mat <- t(ks)
-  colnames(ks_mat) <- c("score", "p_value")
+  # Obtain score statistics and p-values from KS method
+  stat <- ks[1,]
+  pval <- ks[2,]
   
-  return(ks_mat)
+  # Compute the scores according to the provided metric
+  scores <- ifelse(rep(metric, nrow(mat)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(mat)
+  
+  # Re-order FS in a decreasing order (from most to least significant)
+  # This comes in handy when doing the top-N evaluation of
+  # the top N 'best' features
+  scores <- scores[order(scores, decreasing=TRUE)]
+  
+  return(scores)
   
 }
 

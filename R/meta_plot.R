@@ -38,12 +38,18 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Get feature_set and input_score for top N best features
   feature_set <- topn_best_list[["feature_set"]]
   var_score <- topn_best_list[["input_score"]]
-
+  
+  ## Order input score from  largest to lowest values
+  var_score <- var_score[order(var_score, decreasing = TRUE)]
+  
+  ## Reorder feature set based on the order of input score
+  feature_set <- feature_set[,names(var_score)]
+  
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
   if(length(var_score) > 0){
-
+    
     var_score <- var_score[match(colnames(feature_set), names(var_score))]
-
+    
     # Get the input score label
     var_name <- ifelse(is.null(input_score_label), "input_score",
                        input_score_label)
@@ -73,7 +79,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     m_plot <- ggplot(data=var_d,
                      aes(x=.data$sample, y=.data$measure, group=1)) +
       geom_area(alpha=0.6, fill="deepskyblue4",
-                linetype=1, size=0.5, color="black") +
+                linetype=1, linewidth=0.5, color="black") +
       scale_y_continuous(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
       theme_classic() +
@@ -95,7 +101,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     mat <- matrix(t(mat), nrow=1, byrow=TRUE,
                   dimnames = list(rownames(feature_set), rownames(mat)))
   }
-
+  
   # Add on the OR function of all the returned entries
   or <- ifelse(colSums(mat)==0, 0, 1)
 

@@ -1,7 +1,7 @@
 
 #' Customized Scoring Method
 #'
-#' Compute row-wise scoring for each row of a given binary feature matrix
+#' Compute row-wise scores for each row of a given binary feature matrix
 #' using a custom-defined function
 #'
 #' @param FS_mat a matrix of binary features where 
@@ -11,9 +11,6 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS_mat object.
-#' @param method a character string specifies a scoring method which is
-#' used to compute the row wise statistics. There are 2 options: (\code{"custom_pval"} 
-#' or \code{"custom_score"}. Default is \code{custom_pval}.
 #' @param custom_function a customized function to perform row-wise scoring.
 #' NOTE: this function must take FS_mat and input_score as input arguments, 
 #' and its final result must return a matrix with one or two columns:
@@ -23,23 +20,17 @@
 #' 
 #' @noRd
 #'
-#' @return If method is "custom_score", the function must return a matrix 
-#' with one column: \code{score}.
-#' Otherwise, if method = "custom_pval", the function must return a matrix 
-#' with two columns: \code{score} and {p_value}.
+#' @return return a vector of scores ordered from most significant to least
+#' significant where its labels or names match the row names of FS_mat object
 #' 
-#' @import SummarizedExperiment
 custom_rowscore <- function
 (
   FS_mat,
   input_score,
-  method = c("custom_pval", "custom_score"),
   custom_function,
   custom_parameters = NULL
 )
 {
-  
-  method <- match.arg(method)
   
   # check if the custom_function is indeed a function
   if(!is.function(custom_function)){
@@ -117,26 +108,38 @@ custom_rowscore <- function
   custom_parameters <-
     custom_parameters[which(names(custom_parameters) %in% custom_args)]
 
-  ## check if the function runs with no errors
-  custom_mat <- tryCatch({
+  ## Check if the function runs with no errors
+  custom <- tryCatch({
     base::do.call(custom_function, custom_parameters)
   }, error = function(err){
     stop(err)
   })
 
-  ## check if the custom is a matrix
-  if(!is.matrix(custom_mat)){
-    stop("The custom function must return a matrix with one or two columns: 'score' or 'score' and 'p_value")
-  }else if(all(!c("score", "p_value") %in% colnames(custom_mat))){
-    stop("The custom function must return a matrix with one or two columns: 'score' or 'score' and 'p_value")
-  }
+  ## Make sure custom function returns a vector of scores with no NAs
+  if(length(custom) == 0 || any(!is.numeric(custom)) || any(is.na(custom)))
+    stop("The custom function must return a vector of continuous scores ",
+         "(with no NAs) where it has names or labels that match the row names ",
+         "(or feature names) of the FS_mat object.\n")
   
-  # Return a matrix with one or two columns (score and p-value) based on given method
-  if(method == "custom_pval" & any(!c("score", "p_value") %in% colnames(custom_mat)))
-    stop("If method = 'custom_pval', it must return a matrix with two columns: ",
-         "'score' and 'p_value'")
+  # Make sure the custom has names or labels that are the
+  # same as the feature names as the FS_mat object
+  if(is.null(names(custom)))
+    stop("The custom function must return a vector of continuous scores ",
+         "(with no NAs) where it has names or labels that match the row names ",
+         "(or feature names) of the FS_mat object.\n")
   
-  return(custom_mat)
+  # Make sure the custom has the same length as number of features in FS_mat
+  if(length(custom) != nrow(FS_mat))
+    stop("The custom function must return a vector of continuous scores that has ",
+         "the same length as the number of rows in FS_mat object.\n")
+  
+  # Make sure the custom has names or labels that are the
+  # same as the feature names as the FS_mat object  
+  if(any(!names(custom) %in% rownames(FS_mat)))
+    stop("The custom object must have names or labels that match the feature names ",
+         "(or row names) of FS_mat object.")
+  
+  return(custom)
   
 }
 

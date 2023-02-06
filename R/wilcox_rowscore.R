@@ -14,7 +14,10 @@
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
-#' 
+#' @param metric a character string specifies a metric to search for 
+#' best features. \code{"pval"} or \code{"stat"} may be used which is 
+#' corresponding to p-value or score statistic. Default is \code{pval}. 
+#'  
 #' @noRd
 #' 
 #' @examples 
@@ -31,22 +34,26 @@
 #' wilcox_ks <- wilcox_rowscore(
 #'    FS_mat = assay(sim_FS),
 #'    input_score = sim_Scores,
-#'    alternative = "less"
+#'    alternative = "less",
+#'    metric = "pval"
 #' )
 #'
-#' @return A matrix with two columns: \code{score} and \code{p_value}
-#' @import SummarizedExperiment
+#' @return return a vector of scores ordered from most significant to least
+#' significant where its labels or names match the row names of FS_mat object
+#' 
 wilcox_rowscore <- function
 (
   FS_mat,
   input_score,
-  alternative = c("less", "greater", "two.sided")
+  alternative = c("less", "greater", "two.sided"),
+  metric = c("stat", "pval")
 )
 {
 
+  metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
-  # Get the feature names 
+  # Get the feature names before reordering FS by input score
   feature_names <- rownames(FS_mat)
   
   # Wilcox is a ranked-based method
@@ -56,9 +63,9 @@ wilcox_rowscore <- function
   # Re-order the matrix based on the order of input_score
   FS_mat <- FS_mat[, names(input_score)]
   
-  # Make sure the FS_mat is matrix after re-ordering
+  # Make sure FS_mat is still a matrix after re-ordering
   # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
-  # the re-ordering will convert the matrix to a vector form.
+  # the re-ordering will convert matrix to a vector form.
   # Hence, we need to convert it back to its matrix form in order 
   # for the function to work
   if(is(FS_mat, "matrix")){
@@ -72,7 +79,7 @@ wilcox_rowscore <- function
   # We can assign ranks as 1:N (N: number of samples)
   ranks <- seq(1, ncol(mat))
 
-  #Compute the wilcox rank sum statitic and p-value per row in the matrix
+  # Compute the wilcox rank sum statitic and p-value per row in the matrix
   wilcox <- apply(X=mat, MARGIN=1, function(x){
     wilcox_score(
       x = ranks[which(x==1)],
@@ -80,13 +87,21 @@ wilcox_rowscore <- function
       alternative = alternative
     )
   })
-
-  # Convert results as matrix
-  # Return a matrix with two columns (score and p-value)
-  wilcox_mat <- t(wilcox)
-  colnames(wilcox_mat) <- c("score", "p_value")
   
-  return(wilcox_mat)
+  # Obtain score statistics and p-values from Wilcox method
+  stat <- wilcox[1,]
+  pval <- wilcox[2,]
+
+  # Compute the scores according to the provided metric
+  scores <- ifelse(rep(metric, nrow(mat)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(mat)
+  
+  # Re-order FS in a decreasing order (from most to least significant)
+  # This comes in handy when doing the top-N evaluation of
+  # the top N 'best' features
+  scores <- scores[order(scores, decreasing=TRUE)]
+  
+  return(scores)
   
 }
 

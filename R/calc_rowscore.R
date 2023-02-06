@@ -10,11 +10,10 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param method a character string specifies a scoring method that is
-#' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
-#' or \code{"wilcox_pval"} or \code{wilcox_score} or 
+#' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
-#' Default is \code{ks_pval}.
+#' or \code{custom} (a user-customized scoring method). 
+#' Default is \code{ks}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -29,11 +28,13 @@
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
 #' additional arguments (other than \code{FS} and \code{input_score}) to be passed
 #' to the \code{custom_function()}. Default is \code{NULL}.
-#' @param do_check a logical value indicates whether or not to check
-#' diagnostic messages. Default is \code{TRUE}
+#' @param do_check a logical value indicates whether or not to validate if the  
+#' given parameters (FS and input_score) are valid inputs. 
+#' Default is \code{TRUE}.
 #' 
-#' @return a matrix with one column (score or p_value) containing row-wise 
-#' directional scores based on a given scoring method
+#' @return return a vector of scores ordered from most significant to least
+#' significant where its labels or names match the row names of FS_mat object
+#' 
 #' @examples
 #' 
 #' # Load library
@@ -75,7 +76,7 @@
 calc_rowscore <- function(
     FS_mat,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom_pval", "custom_score"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
     alternative = c("less", "greater", "two.sided"),
     weight,
     seed_names = NULL,
@@ -91,30 +92,31 @@ calc_rowscore <- function(
   # Check of FS and input_score are valid inputs
   if(do_check == TRUE) check_data_input(FS = FS_mat, input_score = input_score, do_check=do_check)
 
+  # Extract method value based on a given method string
+  method <- gsub("_score|_pval", "", method)
+  
+  # Define metric value based on a given scoring method
+  if(length(grep("score", method)) > 0){
+    metric <- "stat"
+  }else{
+    metric <- "pval"
+  }
+  
   # Select the appropriate method to compute row-wise directional scores
-  score <- switch(
+  rscore <- switch(
     method,
-    ks_pval = ks_rowscore(
+    ks = ks_rowscore(
       FS_mat = FS_mat,
       input_score = input_score,
       weight = weight,
-      alternative = alternative
+      alternative = alternative,
+      metric = metric
     ),
-    ks_score = ks_rowscore(
+    wilcox = wilcox_rowscore(
       FS_mat = FS_mat,
       input_score = input_score,
-      weight = weight,
-      alternative = alternative
-    ),
-    wilcox_pval = wilcox_rowscore(
-      FS_mat = FS_mat,
-      input_score = input_score,
-      alternative = alternative
-    ),
-    wilcox_score = wilcox_rowscore(
-      FS_mat =FS_mat,
-      input_score = input_score,
-      alternative = alternative
+      alternative = alternative,
+      metric = metric
     ),
     revealer = revealer_rowscore(
       FS_mat = FS_mat,
@@ -122,23 +124,15 @@ calc_rowscore <- function(
       seed_names = seed_names,
       assoc_metric = "IC"
     ),
-    custom_pval = custom_rowscore(
+    custom = custom_rowscore(
       FS_mat = FS_mat,
       input_score = input_score,
-      method = "custom_pval",
-      custom_function = custom_function,
-      custom_parameters = custom_parameters
-    ),
-    custom_score = custom_rowscore(
-      FS_mat = FS_mat,
-      input_score = input_score,
-      method = "custom_score",
       custom_function = custom_function,
       custom_parameters = custom_parameters
     )
   )
 
-  return(score)
+  return(rscore)
 
 }
 

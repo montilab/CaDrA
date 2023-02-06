@@ -8,8 +8,7 @@ a given scoring method}
 calc_rowscore(
   FS_mat,
   input_score,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
-    "custom_pval", "custom_score"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   alternative = c("less", "greater", "two.sided"),
   weight,
   seed_names = NULL,
@@ -29,11 +28,10 @@ The \code{input_score} object must have names or labels that match the column
 names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
-or \code{"wilcox_pval"} or \code{wilcox_score} or 
+used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
-Default is \code{ks_pval}.}
+or \code{custom} (a user-customized scoring method). 
+Default is \code{ks}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -54,12 +52,13 @@ customized function. Default is \code{NULL}.}
 additional arguments (other than \code{FS} and \code{input_score}) to be passed
 to the \code{custom_function()}. Default is \code{NULL}.}
 
-\item{do_check}{a logical value indicates whether or not to check
-diagnostic messages. Default is \code{TRUE}}
+\item{do_check}{a logical value indicates whether or not to validate if the
+given parameters (FS and input_score) are valid inputs. 
+Default is \code{TRUE}.}
 }
 \value{
-a matrix with one column (score or p_value) containing row-wise 
-directional scores based on a given scoring method
+return a vector of scores ordered from most significant to least
+significant where its labels or names match the row names of FS_mat object
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on

@@ -116,13 +116,6 @@ CaDrA <- function(
   # Check of FS and input_score are valid inputs
   check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
 
-  # Define metric value based on a given scoring method
-  if(length(grep("score", method)) > 0 | method == "revealer"){
-    metric <- "stat"
-  }else{
-    metric <- "pval"
-  }
-
   # Check n_perm
   stopifnot("invalid number of permutations (nperm)"=
               (length(n_perm)==1 && !is.na(n_perm) &&
@@ -143,8 +136,7 @@ CaDrA <- function(
     message("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
 
-  # We use the FS, top N (or search_start), score metric,
-  # scoring method as the key for each cached result
+  # Define the key for each cached result
   key <- list(FS = FS,
               input_score = if(method %in% c("revealer", "custom"))
               { input_score } else { NULL },
@@ -153,7 +145,6 @@ CaDrA <- function(
               custom_parameters = custom_parameters,
               alternative = alternative,
               weight = weight,
-              metric = metric,
               top_N = top_N,
               search_start = search_start,
               search_method = search_method,
@@ -170,7 +161,7 @@ CaDrA <- function(
   # there is already a cached null distribution available
   n_perm <-  as.integer(n_perm)
 
-  if (!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
+  if(!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
 
     if(length(perm_best_scores) == n_perm){
       message("Found ", length(perm_best_scores),
@@ -185,13 +176,13 @@ CaDrA <- function(
       message("LOADING LARGER PERMUTATION SCORES FROM CACHE\n")
     }
 
-  } else{
+  }else{
 
-    if (is.null(perm_best_scores)){
+    if(is.null(perm_best_scores)){
       message("No permutation scores for the specified dataset and ",
               "search parameters were found in cache path\n")
       message("BEGINNING PERMUTATION-BASED TESTINGS\n")
-    } else if (length(perm_best_scores) < n_perm) {
+    }else if (length(perm_best_scores) < n_perm) {
       message("n_perm is set to ", n_perm, " but found only ",
               length(perm_best_scores),
               " cached permutation-based scores for the specified dataset ",
@@ -238,6 +229,7 @@ CaDrA <- function(
                          max_size = max_size,
                          best_score_only = TRUE,
                          do_plot = FALSE,
+                         do_check = FALSE,
                          warning = FALSE) },
       .parallel=parallel,
       .progress=progress) |> unlist()
@@ -251,7 +243,7 @@ CaDrA <- function(
   registerDoParallel(cores = 1) #Return to using just a single core
   
   message("FINISHED\n")
-  message("Time elapsed: ", round((proc.time()-ptm)[3]/60,2), " mins \n\n")
+  message("Time elapsed: ", round((proc.time()-ptm)[3]/60, 2), " mins \n\n")
 
   #########################################################################
 
@@ -273,10 +265,11 @@ CaDrA <- function(
       max_size = max_size,
       best_score_only = TRUE,
       do_plot = FALSE,
+      do_check = FALSE,
       warning = FALSE
     ) |> unlist()
 
-  } else{
+  }else{
 
     message("Using provided value of observed best score...\n\n")
     obs_best_score <- as.numeric(obs_best_score)
@@ -291,25 +284,6 @@ CaDrA <- function(
   #This is just to not return a p-value of 0
   c <- 0
   if(smooth) c <- 1
-
-  if(metric == "pval"){
-
-    # Use negative log transform of returned search score
-    # (either computed above, or passed to the null_ks function
-    # if previously computed)
-    obs_best_score <- -(log(obs_best_score))
-
-    # Use negative log transform on the permuted scores
-    # (either computed above or loaded from Cache)
-    # NOTE: there is a very small chance some signed observed scores (p-values)
-    # are anti-correlated (meaning negative)
-    # To avoid NaNs, we remove these.
-    # Keep in mind this is uncommon and will contribute very few
-    # permutations (n < 10) if running N=1000
-    perm_best_scores <- perm_best_scores[perm_best_scores > 0]
-    perm_best_scores <- -(log(perm_best_scores))
-
-  }
 
   perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/
     (length(perm_best_scores) + c)

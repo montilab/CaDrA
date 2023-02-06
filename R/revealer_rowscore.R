@@ -36,8 +36,9 @@
 #'    assoc_metric = "IC"
 #' )
 #' 
-#' @return a matrix with one column: \code{score}
-#' @import SummarizedExperiment
+#' @return return a vector of scores ordered from most significant to least
+#' significant where its labels or names match the row names of FS_mat object
+#' 
 revealer_rowscore <- function
 (
   FS_mat,
@@ -80,12 +81,14 @@ revealer_rowscore <- function
     )
   })
 
-  # Convert results as matrix
-  # Revealer method only returns  score statistics (no p-values)
-  revealer_mat <- matrix(cmi, nrow=nrow(FS_mat), ncol=1, byrow=TRUE, 
-                         dimnames=list(rownames(FS_mat), "score"))
+  names(cmi) <- rownames(FS_mat)
   
-  return(revealer_mat)
+  # Re-order FS in a decreasing order (from most to least significant)
+  # This comes in handy when doing the top-N evaluation of
+  # the top N 'best' features
+  scores <- cmi[order(cmi, decreasing=TRUE)]
+
+  return(scores)
 
 }
 

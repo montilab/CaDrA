@@ -88,7 +88,7 @@
 CaDrA <- function(
     FS,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom_pval", "custom_score"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),

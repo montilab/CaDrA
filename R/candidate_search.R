@@ -105,7 +105,7 @@ candidate_search <- function(
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
-  
+
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
   # Return a vector of scores that already been ordered from 
@@ -129,58 +129,8 @@ candidate_search <- function(
   
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N)
+  search_feature_index <- check_top_N(rowscore, top_N, search_start, rownames(FS))
   
-  # Check if search_start is given
-  if(is.null(search_start)){
-    
-    if(is.na(top_N) || length(top_N)==0 || top_N <= 0)
-      stop("Please specify a NUMERIC top_N value to evaluate over top N ",
-           "features (top_N must be >= 1).\n")
-    
-    if(top_N > nrow(FS))
-      stop("Please specify a top_N value that is less than the number of ",
-           "features in the FS object.\n")
-    
-    if(top_N > 10)
-      warning("top_N value specified is greater than 10. ",
-              "This may result in a longer search time.\n")
-    
-    # Getting the top N features with the biggest scores
-    top_features <- names(rowscore[seq_len(top_N)])
-    
-    # Start the search with top N features based on their sorted indexes
-    search_feature_index <- sapply(seq_along(top_features), function(f){
-      #f=1;
-      which(rownames(FS) %in% top_features[f])
-    })
-    
-    verbose("Evaluating search over top ", length(search_feature_index), " features\n")
-    
-  }else{
-    
-    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
-      unlist() |>
-      trimws()
-
-    if(!is.na(top_N) && length(top_N) > 0)
-      warning("Since start_search variable is given, ",
-              "evaluating over top_N value will be ignored.\n")
-
-    # User-specified feature names
-    verbose("Starting with specified feature names...\n")
-
-    if(length(search_start) == 0 || any(!search_start %in% rownames(FS)))
-      stop("The provided starting feature does not exist among the row names of FS object.\n\n")
-
-    # Get the index of the search_start strings and start
-    # the search with the defined indexes
-    search_feature_index <- sapply(seq_along(search_start), function(f){
-      #f=1;
-      which(rownames(FS) %in% search_start[f])
-    })
-
-  } 
-
   ## Check the search_method variable ####
   back_search <- ifelse(search_method == "both", TRUE, FALSE)
 
@@ -188,9 +138,8 @@ candidate_search <- function(
   max_size <- as.integer(max_size)
 
   if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(FS))
-    stop("Please specify an integer value specifies a maximum size ",
-         "that a meta-feature can extend to do for a given search ",
-         "(max_size must be >= 1)",
+    stop("Please specify a maximum size that a meta-feature can extend to do ",
+         "for a given search (max_size must be >= 1)",
          "and max_size must be lesser than the number of features in FS\n")
   
   # Check the best_score_only variables
@@ -231,7 +180,7 @@ candidate_search <- function(
     #######################################
 
     verbose("\nBeginning candidate search...\n")
-
+    
     while((best_s > global_best_s | i == 0) &&
           (length(global_best_s_features) < max_size)){
       
@@ -339,7 +288,7 @@ candidate_search <- function(
       # If no improvement (exiting loop)
       if(best_s <= global_best_s)
         verbose("No further improvement in score has been found.")
-        
+      
       # Increment the next loop
       i <- i+1
 
@@ -381,11 +330,13 @@ candidate_search <- function(
   # best_score_only
   if(best_score_only == TRUE){
 
+    # Extract best score from each top N run
     scores_l <- lapply(seq_along(topn_l), function(l){ topn_l[[l]][['score']] })
 
-    # Working with scores for each top N run
+    # Obtain the best scores with its associated feature names
     best_meta_scores <- unlist(scores_l)
 
+    # Fetch the best score with the highest value
     best_score <- best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
 
     return(best_score)

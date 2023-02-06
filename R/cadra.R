@@ -112,9 +112,6 @@ CaDrA <- function(
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
-  
-  # Check of FS and input_score are valid inputs
-  check_data_input(FS = FS, input_score = input_score, do_check=TRUE)
 
   # Check n_perm
   stopifnot("invalid number of permutations (nperm)"=
@@ -291,7 +288,6 @@ CaDrA <- function(
   message("Permutation p-value: ", perm_pval, "\n\n")
 
   ########### END PERMUTATION P-VALUE COMPUTATION ############
-
   perm_res <- list(
     key = key,
     perm_best_scores = perm_best_scores,

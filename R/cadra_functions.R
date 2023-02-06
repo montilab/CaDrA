@@ -102,6 +102,7 @@ prefilter_data <- function(
 check_data_input <- function(
     FS,
     input_score,
+    max_size, 
     do_check = TRUE
 ){
   
@@ -135,30 +136,98 @@ check_data_input <- function(
     stop("input_score must contain a vector of continuous scores ",
          "(with no NAs) where its vector names match the column names of ",
          "the FS object.\n")
-
-  # Make sure the input_score has names or labels that are the
-  # same as the column names of FS object
-  if(is.null(names(input_score)))
-    stop("The input_score object must have names or labels to track ",
-         "the samples by. Please provide unique sample names or labels ",
-         "that match the column names of the FS object.\n")
-  
-  # Make sure the input_score has the same length as number of samples in FS
-  if(length(input_score) != ncol(mat))
-    stop("The input_score must have the same length ",
-         "as the number of columns in FS.\n")
   
   if(any(!names(input_score) == colnames(mat)))
       stop("The input_score object must have names or labels that ",
       "match the exact order of the column names of the FS object.")
 
   # Check if the features have either all 0s or 1s values
-  if(any(rowSums(mat) == 0) || any(rowSums(mat) == ncol(mat)))
+  if(any(rowSums(mat) %in% c(0, ncol(mat)) ))
     stop("The FS object has features that are either all 0s or 1s. ",
          "These features must be removed from the FS object as ",
          "they are uninformative.")
   
 }
+
+
+#' Check top_N value for candidate_search
+#'
+#' Checks top_N value is valid
+#'
+#' @param rowscore a vector of directional scores computed based on a
+#' given scoring method. 
+#' @param top_N an integer specifies the number of features to start the
+#' search over, starting from the top 'N' features in each case. If \code{top_N}
+#' is provided, then \code{search_start} parameter will be ignored. 
+#' @param search_start a list of character strings (separated by commas)
+#' which specifies feature names within the expression set object to start
+#' the search with. If \code{search_start} is provided, then \code{top_N}
+#' parameter will be ignored. Default is \code{NULL}.
+#' @param rownames row names of input SummarizedExperiment object
+#' 
+#' @noRd
+#'
+#' @return a vector of indices of top features to start the search 
+check_top_N <- function(
+    rowscore, top_N, search_start, rownames
+){
+  
+  # Check if search_start is given
+  if(is.null(search_start)){
+    
+    if(is.na(top_N) || length(top_N)==0 || top_N <= 0)
+      stop("Please specify a NUMERIC top_N value to evaluate over top N ",
+           "features (top_N must be >= 1).\n")
+    
+    if(top_N > length(rownames))
+      stop("Please specify a top_N value that is less than the number of ",
+           "features in the FS object.\n")
+    
+    if(top_N > 10)
+      warning("top_N value specified is greater than 10. ",
+              "This may result in a longer search time.\n")
+    
+    # Getting the top N features with the biggest scores
+    top_features <- names(rowscore[seq_len(top_N)])
+    
+    # Start the search with top N features based on their sorted indexes
+    search_feature_index <- sapply(seq_along(top_features), function(f){
+      #f=1;
+      which(rownames %in% top_features[f])
+    })
+    
+    verbose("Evaluating search over top ", length(search_feature_index), " features\n")
+    
+  }else{
+    
+    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
+      unlist() |>
+      trimws()
+    
+    if(!is.na(top_N) && length(top_N) > 0)
+      warning("Since start_search variable is given, ",
+              "evaluating over top_N value will be ignored.\n")
+    
+    # User-specified feature names
+    verbose("Starting with specified feature names...\n")
+    
+    if(length(search_start) == 0 || any(!search_start %in% rownames))
+      stop("The provided starting feature does not exist among the row names of FS object.\n\n")
+    
+    # Get the index of the search_start strings and start
+    # the search with the defined indexes
+    search_feature_index <- sapply(seq_along(search_start), function(f){
+      #f=1;
+      which(rownames %in% search_start[f])
+    })
+    
+  }
+  
+  return(search_feature_index)
+  
+}
+
+
 
 #' ks_test_d_wrap_ wrapper
 #'
@@ -186,38 +255,6 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
   if( n_x != length(y) | length(y) < 1) return (NULL)
 
   res <- .Call(ks_test_d_wrap_,  as.integer(n_x), as.numeric(y), alt_int)
-  res
-
-}
-
-#' ks_genescore wrapper
-#'
-#' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
-#' @param n_x length of ranked list
-#' @param y positions of geneset items in ranked list (ranks)
-#' @param weight a vector of weights
-#' @param alt alternative hypothesis for p-value calculation
-#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-#' Default is \code{less} for left-skewed significance testing.
-#' 
-#' @noRd
-#' @useDynLib CaDrA ks_genescore_wrap_
-#'
-#' @return need a return value here
-ks_genescore_wrap <- function(n_x, y, weight,
-                              alt=c("less", "greater", "two.sided")) {
-
-  if(length(alt) > 0){
-    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
-  } else {
-    alt_int <- 1L
-  }
-
-  # Ensure the right type of input
-  y <- as.integer(y)
-  n_x <- as.integer(n_x)
-  if(length(weight) > 1) weight <- as.numeric(weight)
-  res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
   res
 
 }

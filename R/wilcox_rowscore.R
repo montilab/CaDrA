@@ -22,16 +22,18 @@
 #' 
 #' @examples 
 #' 
-#' # Load library
-#' library(SummarizedExperiment)
-#' 
-#' # Load simulated feature set
-#' data(sim_FS)
+#' mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
+#'                 0,0,1,0,1,0,1,0,0,0,
+#'                 0,0,0,0,1,0,1,0,1,0), nrow=3)
 #'
-#' # Load simulated input scores
-#' data(sim_Scores)
-#' 
-#' wilcox_ks <- wilcox_rowscore(
+#' colnames(mat) <- 1:10
+#' row.names(mat) <- c("TP_1", "TP_2", "TP_3")
+#'
+#' set.seed(42)
+#' input_score = rnorm(n = ncol(mat))
+#' names(input_score) <- colnames(mat)
+#'
+#' wilcox_rs <- wilcox_rowscore(
 #'    FS_mat = assay(sim_FS),
 #'    input_score = sim_Scores,
 #'    alternative = "less",
@@ -70,9 +72,11 @@ wilcox_rowscore <- function
   # for the function to work
   if(is(FS_mat, "matrix")){
     mat <- FS_mat
-  }else{
+  }else if(is(FS_mat, "numeric") | is(FS_mat, "integer")){
     mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
                   dimnames=list(feature_names, names(FS_mat)))
+  }else{
+    stop("FS_mat must be a matrix.")
   }
   
   # Since input_score is already ordered from largest to smallest

@@ -90,7 +90,8 @@ calc_rowscore <- function(
   alternative <- match.arg(alternative)
   
   # Check of FS and input_score are valid inputs
-  if(do_check == TRUE) check_data_input(FS = FS_mat, input_score = input_score, do_check=do_check)
+  if(do_check == TRUE) 
+    check_data_input(FS = FS_mat, input_score = input_score, do_check=do_check)
 
   # Extract method value based on a given method string
   method <- gsub("_score|_pval", "", method)

@@ -25,18 +25,20 @@
 #' 
 #' @examples 
 #' 
-#' # Load library
-#' library(SummarizedExperiment)
-#' 
-#' # Load simulated feature set
-#' data(sim_FS)
+#' mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
+#'                 0,0,1,0,1,0,1,0,0,0,
+#'                 0,0,0,0,1,0,1,0,1,0), nrow=3)
 #'
-#' # Load simulated input scores
-#' data(sim_Scores)
+#' colnames(mat) <- 1:10
+#' row.names(mat) <- c("TP_1", "TP_2", "TP_3")
+#'
+#' set.seed(42)
+#' input_score = rnorm(n = ncol(mat))
+#' names(input_score) <- colnames(mat)
 #' 
 #' ks_rs <- ks_rowscore(
-#'    FS_mat = assay(sim_FS),
-#'    input_score = sim_Scores,
+#'    FS_mat = mat,
+#'    input_score = input_score,
 #'    weight = NULL,
 #'    alternative = "less",
 #'    metric = "pval"
@@ -75,11 +77,13 @@ ks_rowscore <- function
   # for the function to work
   if(is(FS_mat, "matrix")){
     mat <- FS_mat
-  }else{
+  }else if(is(FS_mat, "numeric") | is(FS_mat, "integer")){
     mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
                   dimnames=list(feature_names, names(FS_mat)))
+  }else{
+    stop("FS_mat must be a matrix.")
   }
-
+  
   # Check if weight is provided
   if(length(weight) > 0){
     # Check if weight has any labels or names
@@ -151,4 +155,38 @@ ks_rowscore_calc <- function(
   res <- .Call(ks_genescore_mat_, mat.num, weight, alt_int)
   res
 
+}
+
+
+
+#' ks_genescore wrapper
+#'
+#' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
+#' @param n_x length of ranked list
+#' @param y positions of geneset items in ranked list (ranks)
+#' @param weight a vector of weights
+#' @param alt alternative hypothesis for p-value calculation
+#' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+#' Default is \code{less} for left-skewed significance testing.
+#' 
+#' @noRd
+#' @useDynLib CaDrA ks_genescore_wrap_
+#'
+#' @return a numeric vector of lenght 2 with 2 values: score and p-value
+ks_genescore_wrap <- function(n_x, y, weight,
+                              alt=c("less", "greater", "two.sided")) {
+  
+  if(length(alt) > 0){
+    alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
+  } else {
+    alt_int <- 1L
+  }
+  
+  # Ensure the right type of input
+  y <- as.integer(y)
+  n_x <- as.integer(n_x)
+  if(length(weight) > 1) weight <- as.numeric(weight)
+  res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
+  res
+  
 }

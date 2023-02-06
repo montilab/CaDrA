@@ -20,24 +20,25 @@
 #' 
 #' @examples 
 #'  
-#' # Load library
-#' library(SummarizedExperiment)
+#' mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
+#'                 0,0,1,0,1,0,1,0,0,0,
+#'                 0,0,0,0,1,0,1,0,1,0), nrow=3)
 #' 
-#' # Load simulated feature set
-#' data(sim_FS)
-#'
-#' # Load simulated input scores
-#' data(sim_Scores)
+#' colnames(mat) <- 1:10
+#' row.names(mat) <- c("TP_1", "TP_2", "TP_3")
 #' 
-#' revealer_rs <- revealer_rowscore(
-#'    FS_mat = assay(sim_FS),
-#'    input_score = sim_Scores,
-#'    seed_names = NULL,
-#'    assoc_metric = "IC"
+#' set.seed(42)
+#' input_score = rnorm(n = ncol(mat))
+#' names(input_score) <- colnames(mat)
+#' 
+#' result <- revealer_rowscore(
+#'   FS_mat = mat, 
+#'   input_score = input_score, 
+#'   assoc_metric = "IC"
 #' )
 #' 
+#' 
 #' @return a matrix with one column: \code{score}
-#' @import SummarizedExperiment
 revealer_rowscore <- function
 (
   FS_mat,
@@ -48,6 +49,12 @@ revealer_rowscore <- function
 {
 
   assoc_metric <- match.arg(assoc_metric)
+  
+  # Check if FS_mat is a matrix
+  if(! is(FS_mat, "matrix") ){
+    stop("FS_mat must be a matrix.")
+  }
+  
   
   # Check if seed_names is provided
   if(length(seed_names) == 0){

@@ -91,6 +91,8 @@ prefilter_data <- function(
 #' interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
+#' @param max_size an integer specifies a maximum size that a meta-feature
+#' can extend to do for a given search. Default is \code{7}.
 #' @param do_check a logical value indicates whether or not to validate if the  
 #' given parameters (FS and input_score) are valid inputs. 
 #' Default is \code{TRUE}
@@ -102,6 +104,7 @@ prefilter_data <- function(
 check_data_input <- function(
     FS,
     input_score,
+    max_size, 
     do_check = TRUE
 ){
   

@@ -60,28 +60,23 @@ ks_rowscore <- function
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
-  # Get the feature names before reordering FS by input score
-  feature_names <- rownames(FS_mat)
-  
   # KS is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  FS_mat <- FS_mat[, names(input_score)]
-  
-  # Make sure the FS_mat is matrix after re-ordering
   # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
   # the re-ordering will convert the matrix to a vector form.
   # Hence, we need to convert it back to its matrix form in order 
   # for the function to work
-  if(is(FS_mat, "matrix")){
-    mat <- FS_mat
-  }else if(is(FS_mat, "numeric") | is(FS_mat, "integer")){
+  if(nrow(FS_mat) == 1){
+    # Get the feature and sample names before reordering FS by input score
+    feature_names <- rownames(FS_mat)
+    sample_names <- colnames(FS_mat)
     mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, names(FS_mat)))
+                  dimnames=list(feature_names, sample_names))
   }else{
-    stop("FS_mat must be a matrix.")
+    mat <- FS_mat[, names(input_score)]  
   }
   
   # Check if weight is provided
@@ -109,6 +104,10 @@ ks_rowscore <- function
   # Compute the scores according to the provided metric
   scores <- ifelse(rep(metric, nrow(mat)) %in% "pval", -log(pval), stat)
   names(scores) <- rownames(mat)
+  
+  # Remove scores that are Inf as it is resulted from
+  # taking the -log(0). They are uninformative.
+  scores <- scores[scores != Inf]
   
   # Re-order FS in a decreasing order (from most to least significant)
   # This comes in handy when doing the top-N evaluation of

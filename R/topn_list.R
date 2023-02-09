@@ -2,23 +2,26 @@
 #'
 #' A list of objects returned from \code{candidate_search()} using simulated dataset
 #' \code{FS = sim_FS}, \code{input_score = sim_Scores}, \code{top_N = 7},
-#' \code{method = "ks"}, \code{alternative = "less"}, \code{metric = "pval"},
+#' \code{method = "ks_pval"}, \code{alternative = "less"}, 
 #' \code{search_method = "both"}, \code{max_size = 10},
 #' and \code{best_score_only = FALSE} as inputs to the function.
-#' \code{Note:} \code{max_size} is set to 10 as we would like to account
-#' for the presence of 10 left-skewed
-#' (i.e. true positive or TP) features in the \code{sim_FS} dataset.
+#' \code{NOTE:} \code{max_size} is set to 10 as we would like to account
+#' for the presence of 10 left-skewed (i.e. true positive or TP) features 
+#' in \code{sim_FS} dataset.
 #' 
-#' Over top_N = 7 feature searches, a list of SummarizedExperiment objects, input_score,
-#' along with its corresponding best score, method and metric are returned from each search.
+#' Over top_N = 7 feature searches, a set of meta-features in form of SummarizedExperiment 
+#' object, along with a vector of observed input scores and its corresponding best score 
+#' are returned from each search.
 #'
 #' @docType data
 #'
 #' @usage data(topn_list)
 #'
-#' @format A list of objects returned from \code{candidate_search()} function
-#' containing a set of SummarizedExperiment objects, input_score, corresponding best score,
-#' method and metric used for each top_N search.
+#' @format A list of objects returned from \code{candidate_search()} including 
+#' a set of meta-features in form of SummarizedExperiment objects, 
+#' its observed input_score, and corresponding best score pertaining to each 
+#' top N feature searches.
+#' 
 #' See \code{\link[CaDrA]{candidate_search}} for more information.
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
@@ -31,22 +34,19 @@
 #' # Load pre-computed Top-N list generated for sim_FS and sim_Scores dataset
 #' data(topn_list)
 #'
-#' # For N=1, The result is initiated with the top-scoring starting feature
-#' topn_list[[1]]
-#'
-#' # Fetch the SummarizedExperiment object for the first-best feature
+#' # Fetch the first meta-feature
 #' topn_list[[1]]$feature_set
 #'
-#' # Fetch the SummarizedExperiment object for the second-best feature
+#' # Fetch the second meta-feature
 #' topn_list[[2]]$feature_set
 #'
-#' # Retrieve the result of best scores over top_N = 7 runs
+#' # Retrieve the meta-feature with the best score among top_N = 7 runs
 #' topn_best_meta <- topn_best(topn_list = topn_list)
 #'
 #' # Visualize the best meta-feature using meta_plot() function
 #' meta_plot(topn_best_list = topn_best_meta)
 #'
-#' # Visualize overlap of features across the top_N = 7 using topn_plot() function
+#' # Visualize overlap of meta-features across top_N = 7 using topn_plot() function
 #' topn_plot(topn_list = topn_list)
 #'
 "topn_list"

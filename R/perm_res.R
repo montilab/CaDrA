@@ -1,16 +1,19 @@
-#' Pre-computed permutation results from simulated data \code{sim_FS} 
+#' Pre-computed permutation results for simulated data (\code{sim_FS}) 
 #'
-#' The permutation result returned from \code{CaDrA()} using simulated dataset
-#' (\code{FS = sim_FS}) and pre-simulated input scores
-#' \code{input_score = sim_Scores}
+#' The permutation result returned from \code{CaDrA()} using pre-simulated dataset
+#' (\code{FS = sim_FS}), pre-simulated input scores (\code{input_score = sim_Scores}), 
+#' \code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
+#' \code{search_method = "both"}, \code{max_size = 10},
+#' \code{obs_best_score = NULL} and \code{n_perm = 1000} 
+#' as inputs to the function.
 #'
 #' @docType data
 #'
 #' @usage data(perm_res)
 #'
-#' @format A list of objects returned from \code{CaDrA()} search. The result
-#' contains a list of key parameters that are used to run the
-#' permutation-based testing, a vector of permuted best scores,
+#' @format A list of objects returned from \code{CaDrA()} function. The resulting 
+#' object contains a list of key parameters that was used to run the
+#' permutation-based testing, a vector of permuted best scores for a given n_perm,
 #' an observed best score, and a permuted p-value.
 #'
 #' To visualize the Empirical Null Distribution of the permuted best scores over 
@@ -25,10 +28,11 @@
 #'
 #' @examples
 #'
-#' # Load the pre-computed permutation results
+#' # Load the pre-computed permutation results for sim_FS
 #' data(perm_res)
 #'
-#' # Plot the NULL permutation distribution against the observed best score
+#' # Plot the Empirical Null Distribution of the permuted best scores
+#' # against its observed best score
 #' permutation_plot(perm_res = perm_res)
 #'
 "perm_res"

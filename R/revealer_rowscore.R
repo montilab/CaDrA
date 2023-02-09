@@ -10,7 +10,7 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS_mat object.
-#' @param seed_names one or more features representing known “causes”
+#' @param seed_names a vector of one or more features representing known causes
 #' of activation or features associated with a response of interest.
 #' Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
@@ -51,31 +51,30 @@ revealer_rowscore <- function
 
   assoc_metric <- match.arg(assoc_metric)
   
-  # Check if FS_mat is a matrix
-  if(! is(FS_mat, "matrix") ){
-    stop("FS_mat must be a matrix.")
-  }
-  
-  
   # Check if seed_names is provided
   if(length(seed_names) == 0){
     seed_vector <- as.vector(rep(0, ncol(FS_mat)))
   }else{
+    
+    # Check if seed_names exit among the row names of the FS_mat object 
     if(any(!seed_names %in% rownames(FS_mat)))
-      stop(paste0("The provided seed_names, ",
-                  paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], collapse = ","), ",
-                  do not exist among the row names of the FS_mat object"))
-
+      stop(paste0(
+        "The provided seed_names, ",
+        paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], collapse = ","), 
+        ", do not exist among the row names of the FS_mat object")
+      )
+    
     # Consolidate or summarize one or more seeds into one vector of values
     if(length(seed_names) > 1) {
-      seed_vector <- as.numeric(ifelse(colSums(assay(FS_mat)[seed_names,]) == 0, 0, 1))
+      seed_vector <- as.numeric(ifelse(colSums(FS_mat[seed_names,]) == 0, 0, 1))
     }else{
-      seed_vector <- as.numeric(assay(FS_mat)[seed_names,])
+      seed_vector <- as.numeric(FS_mat[seed_names,])
     }
     
     # Remove the seeds from the binary feature matrix
     locs <- match(seed_names, row.names(FS_mat))
     FS_mat <- FS_mat[-locs,]
+    
   }
   
   # Compute CMI

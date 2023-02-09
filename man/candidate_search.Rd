@@ -34,10 +34,10 @@ The \code{input_score} object must have names or labels that match the column
 names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+\code{"custom"} (a user customized scoring method)). 
 Default is \code{ks_pval}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies
@@ -48,9 +48,10 @@ arguments to be passed to the custom_function(). Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.}
+Default is \code{less} for left-skewed significance testing.
+NOTE: this argument only apply to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
+\item{weight}{if method is \code{ks_score}, specifying a vector 
 of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)

@@ -1,17 +1,24 @@
 #' Top 'N' Plot
 #'
-#' Plots a heatmap representation of overlapping features given a list of
-#' top N features obtained from \code{candidate_search()} results
-#' @param topn_list a list of objects where each list entry is returned from the
-#' \code{candidate_search()} for a given \code{top_N} value.
+#' Generate a heatmap representation of overlapping meta-features across
+#' top N feature searches using \code{candidate_search()} function
+#' @param topn_list a list of objects returned from \code{candidate_search()} 
+#' using simulated dataset \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
+#' \code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
+#' \code{search_method = "both"}, \code{max_size = 10},
+#' and \code{best_score_only = FALSE} as inputs to the function.
+#' 
+#' The resulting list contains a set of meta-features in form of SummarizedExperiment 
+#' object, a vector of observed input scores, and its corresponding best score 
+#' over top N feature searches
 #'
-#' @return a heatmap of the top N evaluation for a given top N search evaluation
+#' @return a heatmap of overlapping meta-features for a given top N feature searches
 #' @examples
 #'
 #' # Load pre-computed Top-N list generated for sim_FS dataset
 #' data(topn_list)
 #'
-#' # Get top N plot
+#' # Get the overlapping top N plot
 #' topn_plot(topn_list = topn_list)
 #'
 #' @export
@@ -28,51 +35,44 @@ topn_plot <- function(
   scores_l <- lapply(seq_along(topn_list),
                      function(l){ topn_list[[l]][['score']] })
 
-  #Get the list of feature names from each FS object
+  # Get the list of feature names from each FS object
   f_list <- lapply(feature_set_l, rownames)
 
+  # Get the union of all features that were returned across all top N runs
   f_union <- Reduce(f = union, f_list)
-  #Get the union of all features that were returned across all top N runs
 
   f_checklist <- lapply(f_list, function(x, ref = f_union){
     return(f_union %in% x)
   })
 
+  # Working with scores for each top N run
+  scores <- unlist(scores_l)
+  
   # Make a matrix indicating which features are found across each top n run
-  m <- do.call(cbind, f_checklist)*1
-
-  #Multiplying by 1 is just to convert boolean values into 1's and 0's
-  rownames(m) <- f_union
-
-  if(ncol(m) >= 2){
-
-    # Working with scores for each top N run
-    s <- unlist(scores_l)
-    colnames(m) <- names(s)
-
-    # Order matrix in increasing order of KS score p-values
-    # Add labels of which rank it was originally,
-    # and what the meta-feature p-value is
-    # Here we take the negative log transform of
-    # the p-value just to avoid 0s (if p-values are too small)
-    # Note that this means the HIGHER the transformed score,
-    # the more significant
-    s.log <- -log(s)
-
-    colnames(m) <- paste(colnames(m), " [", seq(1, ncol(m)), "] ",
-                         round(s.log,3), sep="")
-
-    m <- m[, order(s.log, decreasing = TRUE)]
-    # We order matrix columns in increasing order
-    # of search p-value (i.e. decreasing negative-log p-value)
-
+  mat <- do.call(cbind, f_checklist)*1
+  
+  # Assign row and column names to mat
+  colnames(mat) <- names(scores)
+  rownames(mat) <- f_union  
+  
+  if(ncol(mat) >= 2){
+    
+    # If ncol(mat) > 1, we can order matrix columns in decreasing order
+    mat <- mat[, order(scores, decreasing = TRUE)]
+    
+    # Add the index number and its best score to each of the columns names of mat
+    colnames(mat) <- paste(colnames(mat), " [", seq(1, ncol(mat)), "] ",
+                         round(scores,3), sep="")
+    
+    # Color all the overlapping features as red and others as white
     colcode <-
-      if (all(m == 1)) c("firebrick2", "white") else c("white", "firebrick2")
-
-    verbose("Generating top N overlap heatmap..\n\n")
-
+      if (all(mat == 1)) c("firebrick2", "white") else c("white", "firebrick2")
+    
+    verbose("Generating top N overlap heatmap...\n")
+    
+    # Create the overlapping heatmap
     heatmap.2(
-      x = m,
+      x = mat,
       col = colcode,
       Colv = FALSE,
       dendrogram = "none",
@@ -84,24 +84,23 @@ topn_plot <- function(
       trace = "none",
       sepwidth = c(0.1,0.1),
       sepcolor = "grey90",
-      colsep = seq_len(ncol(m)),
-      rowsep = seq_len(nrow(m))
+      colsep = seq_len(ncol(mat)),
+      rowsep = seq_len(nrow(mat))
     )
-
+    
     legend(
       "topleft",
       legend=c("Present","Absent"),
       fill=c("firebrick2","white"),
       bty="n"
     )
-
-  } else{
-
-    verbose("Cannot plot overlap matrix for N = 1. ",
+    
+  }else{
+    
+    warning("Cannot plot overlap matrix for N = 1. ",
             "Please use a larger N value for top N evaluation visualization.")
-
+    
   }
-
 }
 
 

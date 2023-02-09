@@ -7,22 +7,29 @@
 topn_plot(topn_list)
 }
 \arguments{
-\item{topn_list}{a list of objects where each list entry is returned from the
-\code{candidate_search()} for a given \code{top_N} value.}
+\item{topn_list}{a list of objects returned from \code{candidate_search()} 
+using simulated dataset \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
+\code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
+\code{search_method = "both"}, \code{max_size = 10},
+and \code{best_score_only = FALSE} as inputs to the function.
+
+The resulting list contains a set of meta-features in form of SummarizedExperiment 
+object, a vector of observed input scores, and its corresponding best score 
+over top N feature searches}
 }
 \value{
-a heatmap of the top N evaluation for a given top N search evaluation
+a heatmap of overlapping meta-features for a given top N feature searches
 }
 \description{
-Plots a heatmap representation of overlapping features given a list of
-top N features obtained from \code{candidate_search()} results
+Generate a heatmap representation of overlapping meta-features across
+top N feature searches using \code{candidate_search()} function
 }
 \examples{
 
 # Load pre-computed Top-N list generated for sim_FS dataset
 data(topn_list)
 
-# Get top N plot
+# Get the overlapping top N plot
 topn_plot(topn_list = topn_list)
 
 }

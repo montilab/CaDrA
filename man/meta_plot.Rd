@@ -7,26 +7,28 @@
 meta_plot(topn_best_list, input_score_label = NULL)
 }
 \arguments{
-\item{topn_best_list}{a list of objects where each object entry is one that
-is returned from each \code{candidate_search()} runs for a given starting index.}
+\item{topn_best_list}{a list of objects returned from \code{candidate_search()} 
+corresponding to the search of a set of top N features given by top_N value.
+The topn_best_list contains a list of returned meta-feature set, its corresponding best score, 
+and observed input scores.}
 
 \item{input_score_label}{a label that references to the \code{input_score}
 variable that was used to compute the top N best features. Default is \code{NULL}.}
 }
 \value{
-A plot graphic of observed input scores, a tile plot of the features 
-within the meta-feature set and the enrichment score of the meta-feature set 
-for a given distribution (here, this will correspond to the logical OR 
-of the features)
+a density diagram of observed input scores (sorted from largest to lowest), 
+a tile plot of the top features within the meta-feature set, and a KS enrichment plot 
+of the meta-feature set for a given distribution (here, this will correspond 
+to the logical OR of the features)
 }
 \description{
 By utilizing the top N results obtained from \code{candidate_search()},
-we can find the best meta-features among the top N searches using
+we can find the best meta-feature among the top N searches using
 \code{topn_best()}. \code{meta_plot()} is then used to produce graphics
-including the top meta-features that associated with a molecular phenotype
-of interest, the enrichment scores of the meta-features, and
-lastly, it includes a density diagram of the distribution of the observed
-input scores on the top.
+including a tile plot for the top meta-features that associated with a molecular 
+phenotype of interest (e.g. input_score), the KS enrichment plot of the meta-features, 
+and lastly, a density diagram of the distribution of the observed
+input scores sorted from largest to smallest at the top.
 }
 \examples{
 
@@ -38,7 +40,7 @@ data(topn_list)
 # top N searches
 topn_best_meta <- topn_best(topn_list = topn_list)
 
-# Now we can plot this set of features
+# Now we can plot this set of best meta-feature
 meta_plot(topn_best_list = topn_best_meta)
 
 }

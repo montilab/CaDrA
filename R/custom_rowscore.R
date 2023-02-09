@@ -49,7 +49,7 @@
 #'   
 #'   # Remove scores that are Inf as it is resulted from
 #'   # taking the -log(0). They are uninformative.
-#'   scores <- scores[!scores != Inf]  
+#'   scores <- scores[scores != Inf]  
 #'   
 #'   # Re-order FS_mat in a decreasing order (from most to least significant)
 #'   # This comes in handy when doing the top-N evaluation of
@@ -163,6 +163,8 @@ custom_rowscore <- function
     stop(err)
   })
 
+  print(custom)
+  
   # Make sure custom_function() returns a vector of scores with no NAs
   # where it has labels or feature names that match the row names of FS_mat 
   # (or FS) object

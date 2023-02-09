@@ -127,7 +127,7 @@ customized_rowscore <- function(FS_mat, input_score, alternative="less"){
   
   # Remove scores that are Inf as it is resulted from
   # taking the -log(0). They are uninformative.
-  scores <- scores[!scores != Inf]  
+  scores <- scores[scores != Inf]  
   
   # Re-order FS_mat in a decreasing order (from most to least significant)
   # This comes in handy when doing the top-N evaluation of
@@ -139,9 +139,10 @@ customized_rowscore <- function(FS_mat, input_score, alternative="less"){
 }
 
 # Search for best features using a custom-defined function
-custom_rowscore_result <- custom_rowscore(
+custom_rowscore_result <- calc_rowscore(
   FS_mat = mat,
   input_score = input_score,
+  method = "custom",
   custom_function = customized_rowscore,            
   custom_parameters = NULL  
 )

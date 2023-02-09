@@ -17,10 +17,10 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param method a character string specifies a scoring method that is
-#' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+#' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+#' \code{"custom"} (a user customized scoring method)). 
 #' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the customized function here. Default is \code{NULL}.
@@ -29,7 +29,8 @@
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
+#' NOTE: this argument only apply to KS and Wilcoxon method
+#' @param weight if method is \code{ks_score}, specifying a vector 
 #' of weights will perform a weighted-KS testing. Default is \code{NULL}.
 #' @param search_start a list of character strings (separated by commas)
 #' which specifies feature names within the FS object to start
@@ -80,7 +81,7 @@
 #' )
 #'
 #' @export
-#' @import SummarizedExperiment methods
+#' @import SummarizedExperiment
 candidate_search <- function(
     FS,
     input_score,
@@ -113,7 +114,8 @@ candidate_search <- function(
   # This comes in handy when doing the top-N evaluation of
   # the top N 'best' features
   rowscore <- calc_rowscore(
-    FS_mat = assay(FS),
+    FS = FS,
+    FS_mat = SummarizedExperiment::assay(FS),
     input_score = input_score,
     method = method,
     alternative = alternative,
@@ -121,7 +123,13 @@ candidate_search <- function(
     seed_names = NULL,
     custom_function = custom_function,
     custom_parameters = custom_parameters,
-    do_check = do_check
+    top_N = top_N,
+    search_method = search_method,
+    max_size = max_size,
+    best_score_only = best_score_only,
+    do_plot = do_plot,
+    do_check = do_check,
+    warning = warning
   )
   
   ###### INITIALIZE VARIABLES ###########
@@ -129,7 +137,14 @@ candidate_search <- function(
   
   # Check if top_N is given and is numeric
   top_N <- as.integer(top_N)
-  search_feature_index <- check_top_N(rowscore, top_N, search_start, rownames(FS))
+  
+  # Get the indices of features to start the search
+  search_feature_index <- check_top_N(
+    rowscore = rowscore, 
+    feature_names = rownames(FS),
+    top_N = top_N, 
+    search_start = search_start 
+  )
   
   ## Check the search_method variable ####
   back_search <- ifelse(search_method == "both", TRUE, FALSE)
@@ -141,11 +156,6 @@ candidate_search <- function(
     stop("Please specify a maximum size that a meta-feature can extend to do ",
          "for a given search (max_size must be >= 1)",
          "and max_size must be lesser than the number of features in FS\n")
-  
-  # Check the best_score_only variables
-  if(!best_score_only %in% c(TRUE, FALSE))
-    stop("Please specify a logical value TRUE/FALSE ",
-         "for best_score_only variable.\n")
   
   # Performs the search based on the given indices of the starting best features 
   topn_l <- lapply(seq_along(search_feature_index), function(x){
@@ -163,7 +173,7 @@ candidate_search <- function(
     
     # Fetch the vector corresponding to best score
     # Set this as the initial 'meta-feature'
-    best_meta <- as.numeric(assay(FS)[best_s_index,])
+    best_meta <- as.numeric(SummarizedExperiment::assay(FS)[best_s_index,])
     
     # Counter variable for number of iterations
     i <- 0
@@ -233,7 +243,7 @@ candidate_search <- function(
 
         # Update best_meta based on feature set
         best_meta <- as.numeric(ifelse(
-          colSums(assay(FS)[global_best_s_features,]) == 0, 0, 1))
+          colSums(SummarizedExperiment::assay(FS)[global_best_s_features,]) == 0, 0, 1))
 
       }
 
@@ -246,7 +256,7 @@ candidate_search <- function(
       # Here "*1" is used to convert the boolean back to integer 1's and 0's
       # Notice we remove anything in best_s_index from the original matrix
       # first to form the meta matrix.
-      meta_mat <- base::sweep(assay(FS)[-best_s_index,], 2, best_meta, `|`)*1
+      meta_mat <- base::sweep(SummarizedExperiment::assay(FS)[-best_s_index,], 2, best_meta, `|`)*1
 
       # Check if there are any features that are all 1's generated on
       # taking the union
@@ -381,6 +391,7 @@ candidate_search <- function(
 #' 
 #' @return return the set of features with its current best score that is
 #' better than the existing meta-feature best score
+#' @import SummarizedExperiment
 forward_backward_check <- function
 (
   FS,
@@ -398,7 +409,7 @@ forward_backward_check <- function
   verbose("Iterating over ", length(glob_f), " chosen features...\n")
 
   # Matrix of only global best features so far
-  gmat <- assay(FS[glob_f,])
+  gmat <- SummarizedExperiment::assay(FS[glob_f,])
   rownames(gmat) <- glob_f
 
   # Here, we make a list that should store the features and their
@@ -418,12 +429,11 @@ forward_backward_check <- function
     # This will result in a single vector to compute the scores on
     f_union <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
 
-    # Compute scores for this meta feature
-    # Here we suprress warnings just to avoid messages warning-related single
-    # vector score computation (nrow(mat) < 2)
+    # Here we are getting the union of the meta-features
     u_mat <- matrix(f_union, nrow=1, byrow=TRUE,
                     dimnames=list(c("OR"), colnames(FS)))
     
+    # Compute scores for this meta feature
     rowscore <- calc_rowscore(
       FS_mat = u_mat,
       input_score = input_score,
@@ -441,22 +451,22 @@ forward_backward_check <- function
 
   } # end for loop
 
-  # Obtain best feature index
+  # Obtain index of union meta-feature that gives the best score
   f_best_index <- which.max(f_scores)
 
-  # Obtain best feature score
+  # Obtain best score of the union meta-feature
   f_best_score <- f_scores[f_best_index]
 
-  # Check if any one of the computed scores has a better score than the
-  # entire meta-feature's score
+  # Here, we check if the new meta-feature has a computed best score better than 
+  # the previous meta-feature's score
   if(f_best_score > glob_f_s){
 
     verbose("Found improvement on removing existing feature...\n")
     verbose("New feature set: ", f_names[[f_best_index]], "\n")
     verbose("New global best score: ", f_best_score, "\n")
 
-    # Return the set of features that gave a better score than
-    # the existing best score, and the score as well
+    # Return a set of features that gave a better score than
+    # the existing best score and its new best score as well
     return(list(best_features=f_names[[f_best_index]], best_scores=f_best_score))
 
   } else{

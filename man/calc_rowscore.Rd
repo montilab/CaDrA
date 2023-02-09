@@ -10,11 +10,12 @@ calc_rowscore(
   input_score,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   alternative = c("less", "greater", "two.sided"),
-  weight,
+  weight = NULL,
   seed_names = NULL,
-  custom_function,
-  custom_parameters,
-  do_check = TRUE
+  custom_function = NULL,
+  custom_parameters = NULL,
+  do_check = TRUE,
+  ...
 )
 }
 \arguments{
@@ -35,30 +36,31 @@ Default is \code{ks}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.
-NOTE: \code{Revealer} method only returns score statistics (no p-values).}
+Default is \code{less} for left-skewed significance testing.}
 
 \item{weight}{if method is \code{ks}, specifies a vector of weights
 to perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{seed_names}{one or more features representing known “causes”
+\item{seed_names}{a vector of one or more features representing known “causes”
 of activation or features associated with a response of interest.
-It is used for \code{method = revealer} only.}
+It is used for \code{method = "revealer"} only.}
 
 \item{custom_function}{if method is \code{"custom"}, just pass the name of the
 customized function. Default is \code{NULL}.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
-additional arguments (other than \code{FS} and \code{input_score}) to be passed
-to the \code{custom_function()}. Default is \code{NULL}.}
+additional arguments (excluding \code{FS_mat} and \code{input_score}) to be passed
+to \code{custom_function()}. Default is \code{NULL}.}
 
 \item{do_check}{a logical value indicates whether or not to validate if the
 given parameters (FS and input_score) are valid inputs. 
 Default is \code{TRUE}.}
+
+\item{...}{additional parameters to be passed to the custom_function()}
 }
 \value{
 return a vector of scores ordered from most significant to least
-significant where its labels or names match the row names of FS_mat object
+significant where its labels or names must match the row names of FS_mat object
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on
@@ -66,19 +68,21 @@ a given scoring method
 }
 \examples{
 
-# Load library
-library(SummarizedExperiment)
+mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
+                0,0,1,0,1,0,1,0,0,0,
+                0,0,0,0,1,0,1,0,1,0), nrow=3)
 
-# Load pre-computed feature set
-data(sim_FS)
+colnames(mat) <- 1:10
+row.names(mat) <- c("TP_1", "TP_2", "TP_3")
 
-# Load pre-computed input-score
-data(sim_Scores)
+set.seed(42)
+input_score = rnorm(n = ncol(mat))
+names(input_score) <- colnames(mat)
 
 # Run the ks method
 ks_rowscore_result <- calc_rowscore(
-  FS_mat = assay(sim_FS),
-  input_score = sim_Scores,
+  FS_mat = mat,
+  input_score = input_score,
   method = "ks_pval",
   weight = NULL,
   alternative = "less"
@@ -86,16 +90,16 @@ ks_rowscore_result <- calc_rowscore(
 
 # Run the wilcoxon method
 wilcox_rowscore_result <- calc_rowscore(
-  FS_mat = assay(sim_FS),
-  input_score = sim_Scores,
+  FS_mat = mat,
+  input_score = input_score,
   method = "wilcox_pval",
   alternative = "less"
 )
 
 # Run the revealer method
 revealer_rowscore_result <- calc_rowscore(
-  FS_mat = assay(sim_FS),
-  input_score = sim_Scores,
+  FS_mat = mat,
+  input_score = input_score,
   method = "revealer",
   seed_names = NULL
 )

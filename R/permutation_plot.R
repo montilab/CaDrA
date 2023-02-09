@@ -1,15 +1,13 @@
 
 #' Permutation Best Scores Plot
 #'
-#' Plot the Empirical Null Distribution of Permutation Best Scores based on
-#' a given number of permutations (\code{n_perm})
+#' Plot the Empirical Null Distribution of Permutation Best Scores returned from
+#' CaDrA() function
 #'
-#' @param perm_res a list of objects returned from \code{CaDrA()} function
-#' using the simulated dataset (\code{sim_FS}) and random generated
-#' scores (\code{input_score = sim_Scores}). The returning object contains
-#' a list of key parameters that are used to cache the result of
-#' permutation-based testing, a vector of permuted best scores for a given
-#' \code{n_perm}, an observed best score, and a permutation p-value.
+#' @param perm_res a list of objects returned from \code{CaDrA()} function.
+#' The returning object contains a list of key parameters that are used to run
+#' the permutation-based testing, a vector of permuted best scores for a given 
+#' \code{n_perm}, an observed best score, and a computed permutation p-value.
 #'
 #' @return a density plot
 #' @examples
@@ -40,9 +38,9 @@ permutation_plot <- function(perm_res){
                       round(obs_best_score, 5), sep="")
 
   if(!is.null(top_N)){
-    plot_title <- paste(plot_title,"\n Top N: ", top_N, sep="")
+    plot_title <- paste0(plot_title, "\n Top N: ", top_N)
   }else{
-    plot_title <- paste(plot_title,"\n Seed: ", search_start, sep="")
+    plot_title <- paste0(plot_title, "\n Seed: ", paste0(search_start, collapse=", "))
   }
 
   # Here, let us plot the absolute values of the permutation p-values,

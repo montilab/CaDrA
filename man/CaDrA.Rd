@@ -7,8 +7,7 @@
 CaDrA(
   FS,
   input_score,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
-    "custom_pval", "custom_score"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
@@ -18,8 +17,8 @@ CaDrA(
   search_method = c("both", "forward"),
   max_size = 7,
   n_perm = 1000,
-  smooth = TRUE,
   obs_best_score = NULL,
+  smooth = TRUE,
   plot = TRUE,
   ncores = 1,
   cache_path = NULL,
@@ -33,14 +32,14 @@ and columns represent the samples.}
 
 \item{input_score}{a vector of continuous scores of a molecular phenotype of
 interest such as protein expression, pathway activity, etc.
-The \code{input_score} object must have names or labels that match the column
-names of FS object.}
+NOTE: The \code{input_score} object must have names or labels that match the 
+column names of FS object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+\code{"custom"} (a user customized scoring method)). 
 Default is \code{ks_pval}.}
 
 \item{custom_function}{if method is \code{"custom"}, just pass the name of the
@@ -48,13 +47,14 @@ customized function. Default is \code{NULL}.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
 additional arguments (other than \code{FS} and \code{input_score}) to be passed
-to the \code{custom_function()} . Default is \code{NULL}.}
+to the \code{custom_function()}. Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.}
+Default is \code{less} for left-skewed significance testing.
+NOTE: this argument only apply to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks}, specifies a vector of weights
+\item{weight}{if method is \code{ks_score}, specifies a vector of weights 
 to perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the
@@ -63,7 +63,7 @@ NOTE: If \code{top_N} is provided, then \code{search_start} parameter
 will be ignored.}
 
 \item{search_start}{a list of character strings (separated by commas)
-which specifies feature names within the SummarizedExperiment object to start
+which specifies feature names within the FS object to start
 the search with. If \code{search_start} is provided, then \code{top_N}
 parameter will be ignored. Default is \code{NULL}.}
 
@@ -77,13 +77,13 @@ extend to do for a given search. Default is \code{7}.}
 \item{n_perm}{an integer specifies the number of permutations to perform.
 Default is \code{1000}.}
 
-\item{smooth}{a logical value indicates whether or not to smooth the p-value
-calculation to avoid p-value of 0. Default is \code{TRUE}.}
-
 \item{obs_best_score}{a numeric value corresponding to the best observed
 score. This value is used to compare against the permuted best scores.
 Default is \code{NULL}. If set to NULL, we will compute the observed
 best score based on the given parameters.}
+
+\item{smooth}{a logical value indicates whether or not to smooth the p-value
+calculation to avoid p-value of 0. Default is \code{TRUE}.}
 
 \item{plot}{a logical value indicates whether or not to plot the empirical
 null distribution of the permuted best scores. Default is \code{TRUE}.}

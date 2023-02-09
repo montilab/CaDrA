@@ -7,19 +7,21 @@
 generate_permutations(input_score, n_perm)
 }
 \arguments{
-\item{input_score}{a vector of continuous scores of a molecular phenotype of interest
-such as protein expression, pathway activity, etc.}
+\item{input_score}{a vector of continuous scores of a molecular phenotype of 
+interest such as protein expression, pathway activity, etc.
+NOTE: The \code{input_score} object must have names or labels to track 
+samples by.}
 
 \item{n_perm}{a number of permutations to generate. This determines
 the number of rows in the permutation matrix.}
 }
 \value{
-a matrix of ordered values where each row contains the order of
-a single permuted \code{input_score}.
+a matrix of values where each row contains scores of a single 
+permuted \code{input_score}.
 }
 \description{
-Produces a random permutation score matrix given a vector of sample-specific scores
-representing a phenotypic readout of interest such as protein expression,
+Produces a random permutation score matrix given a vector of sample-specific
+scores representing a phenotypic readout of interest such as protein expression,
 pathway activity, etc.
 }
 \examples{

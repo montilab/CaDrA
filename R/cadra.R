@@ -9,30 +9,31 @@
 #' and columns represent the samples.
 #' @param input_score a vector of continuous scores of a molecular phenotype of
 #' interest such as protein expression, pathway activity, etc.
-#' The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' NOTE: The \code{input_score} object must have names or labels that match the 
+#' column names of FS object.
 #' @param method a character string specifies a scoring method that is
-#' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
+#' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom_pval"} or \code{custom_score} (a user customized scoring method)). 
+#' \code{"custom"} (a user customized scoring method)). 
 #' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, just pass the name of the
 #' customized function. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
 #' additional arguments (other than \code{FS} and \code{input_score}) to be passed
-#' to the \code{custom_function()} . Default is \code{NULL}.
+#' to the \code{custom_function()}. Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param weight if method is \code{ks}, specifies a vector of weights
+#' NOTE: this argument only apply to KS and Wilcoxon method
+#' @param weight if method is \code{ks_score}, specifies a vector of weights 
 #' to perform a weighted-KS testing. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
 #' search over. By default, it starts from the top best feature (top_N = 1).
 #' NOTE: If \code{top_N} is provided, then \code{search_start} parameter
 #' will be ignored.
 #' @param search_start a list of character strings (separated by commas)
-#' which specifies feature names within the SummarizedExperiment object to start
+#' which specifies feature names within the FS object to start
 #' the search with. If \code{search_start} is provided, then \code{top_N}
 #' parameter will be ignored. Default is \code{NULL}.
 #' @param search_method a character string specifies an algorithm to filter out
@@ -48,6 +49,8 @@
 #' score. This value is used to compare against the permuted best scores.
 #' Default is \code{NULL}. If set to NULL, we will compute the observed
 #' best score based on the given parameters.
+#' @param smooth a logical value indicates whether or not to smooth the p-value
+#' calculation to avoid p-value of 0. Default is \code{TRUE}.
 #' @param plot a logical value indicates whether or not to plot the empirical
 #' null distribution of the permuted best scores. Default is \code{TRUE}.
 #' @param ncores an integer specifies the number of cores to perform
@@ -81,7 +84,7 @@
 #' )
 #'
 #' @export
-#' @import SummarizedExperiment R.cache doParallel ggplot2 plyr methods
+#' @import R.cache doParallel ggplot2 plyr methods
 #'
 #' @author Reina Chau
 #'
@@ -98,8 +101,8 @@ CaDrA <- function(
     search_method = c("both", "forward"),
     max_size = 7,
     n_perm = 1000,
-    smooth = TRUE,
     obs_best_score = NULL,
+    smooth = TRUE,
     plot = TRUE,
     ncores = 1,
     cache_path = NULL,
@@ -127,9 +130,9 @@ CaDrA <- function(
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
     message("Using provided cache root path: ", cache_path, "")
-    setCacheRootPath(cache_path)
+    R.cache::setCacheRootPath(cache_path)
   } else{
-    setCacheRootPath()
+    R.cache::setCacheRootPath()
     message("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
 
@@ -149,7 +152,7 @@ CaDrA <- function(
               best_score_only = TRUE)
 
   # Load perm_best_scores with the given key parameters
-  perm_best_scores <- loadCache(key)
+  perm_best_scores <- R.cache::loadCache(key)
 
   # Start the 'clock' to see how long the process takes
   ptm <- proc.time()
@@ -197,7 +200,7 @@ CaDrA <- function(
     progress <- "text"
 
     if(ncores > 1){
-      registerDoParallel(cores = ncores)
+      doParallel::registerDoParallel(cores = ncores)
       parallel <- TRUE
       progress <- "none"
       message("Running tests in parallel...")
@@ -233,11 +236,11 @@ CaDrA <- function(
     
     # Save computed scores to cache
     message("Saving to cache...\n")
-    saveCache(perm_best_scores, key=key, comment="null_scores()")
+    R.cache::saveCache(perm_best_scores, key=key, comment="null_scores()")
     
   } # end caching else statement block
   
-  registerDoParallel(cores = 1) #Return to using just a single core
+  doParallel::registerDoParallel(cores = 1) #Return to using just a single core
   
   message("FINISHED\n")
   message("Time elapsed: ", round((proc.time()-ptm)[3]/60, 2), " mins \n\n")
@@ -268,9 +271,14 @@ CaDrA <- function(
 
   }else{
 
+    # Check obs_best_score
+    stopifnot("invalid observed best score (obs_best_score)"=
+                (length(obs_best_score)==1 && !is.na(obs_best_score) &&
+                   is.numeric(obs_best_score)))
+    
     message("Using provided value of observed best score...\n\n")
     obs_best_score <- as.numeric(obs_best_score)
-
+    
   }
 
   message("Observed score: ", obs_best_score, "\n")

@@ -163,8 +163,6 @@ custom_rowscore <- function
     stop(err)
   })
 
-  print(custom)
-  
   # Make sure custom_function() returns a vector of scores with no NAs
   # where it has labels or feature names that match the row names of FS_mat 
   # (or FS) object

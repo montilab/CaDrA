@@ -112,10 +112,10 @@ names of FS object.</p></dd>
 
 <dt>method</dt>
 <dd><p>a character string specifies a scoring method that is
-used in the search. There are 7 options: (<code>"ks_pval"</code> or <code>ks_score</code>
+used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
 or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-<code>"custom_pval"</code> or <code>custom_score</code> (a user customized scoring method)). 
+<code>"custom"</code> (a user customized scoring method)). 
 Default is <code>ks_pval</code>.</p></dd>
 
 
@@ -132,11 +132,12 @@ arguments to be passed to the custom_function(). Default is <code>NULL</code>.</
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis
 testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.</p></dd>
+Default is <code>less</code> for left-skewed significance testing.
+NOTE: this argument only apply to KS and Wilcoxon method</p></dd>
 
 
 <dt>weight</dt>
-<dd><p>if method is <code>ks_pval</code> or <code>ks_score</code>, specifying a vector 
+<dd><p>if method is <code>ks_score</code>, specifying a vector 
 of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 
 

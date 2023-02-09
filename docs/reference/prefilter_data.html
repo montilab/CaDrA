@@ -86,14 +86,14 @@ and columns represent the samples.</p></dd>
 
 <dt>max_cutoff</dt>
 <dd><p>a numeric value between 0 and 1 describing the absolute
-prevalence of a feature across all samples in the dataset above which the
+prevalence of a feature across all samples in the FS object which the
 feature will be filtered out. Default is 0.6 (feature that occur in
 60 percent or more of the samples will be removed)</p></dd>
 
 
 <dt>min_cutoff</dt>
 <dd><p>a numeric value between 0 and 1 describing the absolute
-prevalence of a feature across all samples in the dataset below which the
+prevalence of a feature across all samples in the FS object which the
 feature will be filtered out. Default is 0.03 (feature that occur in
 3 percent or less of the samples will be removed)</p></dd>
 
@@ -107,8 +107,8 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>An SummarizedExperiment object with only the filtered-in features
-given the filter thresholds specified</p>
+<p>A SummarizedExperiment object with only the filtered-in features
+given the filtered thresholds</p>
     </div>
 
     <div id="ref-examples">
@@ -117,14 +117,14 @@ given the filter thresholds specified</p>
 <span class="r-in"><span><span class="co"># Load pre-computed feature set</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Filter out features having &lt; 3 and &gt; 60% prevalence across all samples</span></span></span>
-<span class="r-in"><span><span class="co"># (default)</span></span></span>
+<span class="r-in"><span><span class="co"># Filter out features having &lt; 3% and &gt; 60% prevalence across all samples</span></span></span>
+<span class="r-in"><span><span class="co"># by (default)</span></span></span>
 <span class="r-in"><span><span class="va">sim_FS_filt1</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span>FS <span class="op">=</span> <span class="va">sim_FS</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Change the min cut-off to 1% prevalence, instead of the default 3%</span></span></span>
+<span class="r-in"><span><span class="co"># Change the min cut-off to 1% prevalence, instead of the default of 3%</span></span></span>
 <span class="r-in"><span><span class="va">sim_FS_filt2</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span>FS <span class="op">=</span> <span class="va">sim_FS</span>, min_cutoff  <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Change the max cut-off to 65% prevalence, instead of the default 60%</span></span></span>
+<span class="r-in"><span><span class="co"># Change the max cut-off to 65% prevalence, instead of the default of 60%</span></span></span>
 <span class="r-in"><span><span class="va">sim_FS_filt3</span> <span class="op">&lt;-</span> <span class="fu">prefilter_data</span><span class="op">(</span>FS <span class="op">=</span> <span class="va">sim_FS</span>, max_cutoff <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

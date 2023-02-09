@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   permutation_based_testing: permutation_based_testing.html
   scoring_functions: scoring_functions.html
-last_built: 2023-02-06T12:20Z
+last_built: 2023-02-09T18:32Z
 urls:
   reference: https://github.com/montilab/CaDrA/reference
   article: https://github.com/montilab/CaDrA/articles

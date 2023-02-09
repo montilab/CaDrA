@@ -79,11 +79,12 @@ a given scoring method</p>
 <span>  <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
 <span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
-<span>  <span class="va">weight</span>,</span>
+<span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">custom_function</span>,</span>
-<span>  <span class="va">custom_parameters</span>,</span>
-<span>  do_check <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  do_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -113,8 +114,7 @@ Default is <code>ks</code>.</p></dd>
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis
 testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.
-NOTE: <code>Revealer</code> method only returns score statistics (no p-values).</p></dd>
+Default is <code>less</code> for left-skewed significance testing.</p></dd>
 
 
 <dt>weight</dt>
@@ -123,9 +123,9 @@ to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>seed_names</dt>
-<dd><p>one or more features representing known “causes”
+<dd><p>a vector of one or more features representing known “causes”
 of activation or features associated with a response of interest.
-It is used for <code>method = revealer</code> only.</p></dd>
+It is used for <code>method = "revealer"</code> only.</p></dd>
 
 
 <dt>custom_function</dt>
@@ -135,8 +135,8 @@ customized function. Default is <code>NULL</code>.</p></dd>
 
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of
-additional arguments (other than <code>FS</code> and <code>input_score</code>) to be passed
-to the <code>custom_function()</code>. Default is <code>NULL</code>.</p></dd>
+additional arguments (excluding <code>FS_mat</code> and <code>input_score</code>) to be passed
+to <code>custom_function()</code>. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>do_check</dt>
@@ -144,90 +144,39 @@ to the <code>custom_function()</code>. Default is <code>NULL</code>.</p></dd>
 given parameters (FS and input_score) are valid inputs. 
 Default is <code>TRUE</code>.</p></dd>
 
+
+<dt>...</dt>
+<dd><p>additional parameters to be passed to the custom_function()</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
 <p>return a vector of scores ordered from most significant to least
-significant where its labels or names match the row names of FS_mat object</p>
+significant where its labels or names must match the row names of FS_mat object</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Load library</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: MatrixGenerics</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: matrixStats</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘MatrixGenerics’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:matrixStats’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colWeightedMeans, colWeightedMedians, colWeightedSds,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowWeightedSds, rowWeightedVars</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: GenomicRanges</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: stats4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocGenerics</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘BiocGenerics’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, mad, sd, var, xtabs</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     pmin.int, rank, rbind, rownames, sapply, setdiff, sort, table,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     tapply, union, unique, unsplit, which.max, which.min</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: S4Vectors</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘S4Vectors’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: IRanges</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: GenomeInfoDb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Welcome to Bioconductor</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     Vignettes contain introductory material; view with</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     'browseVignettes()'. To cite Bioconductor, see</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘Biobase’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:MatrixGenerics’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     rowMedians</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:matrixStats’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     anyMissing, rowMedians</span>
+<span class="r-in"><span><span class="co"># Create a feature matrix</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>, </span></span>
+<span class="r-in"><span>                <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Load pre-computed feature set</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP_1"</span>, <span class="st">"TP_2"</span>, <span class="st">"TP_3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Load pre-computed input-score</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_Scores</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Create a vector of observed input scores</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">input_score</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the ks method</span></span></span>
 <span class="r-in"><span><span class="va">ks_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span></span>
+<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,</span></span>
 <span class="r-in"><span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  alternative <span class="op">=</span> <span class="st">"less"</span></span></span>
@@ -235,19 +184,62 @@ significant where its labels or names match the row names of FS_mat object</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the wilcoxon method</span></span></span>
 <span class="r-in"><span><span class="va">wilcox_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span></span>
+<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"wilcox_pval"</span>,</span></span>
 <span class="r-in"><span>  alternative <span class="op">=</span> <span class="st">"less"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the revealer method</span></span></span>
 <span class="r-in"><span><span class="va">revealer_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span></span>
+<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"revealer"</span>,</span></span>
 <span class="r-in"><span>  seed_names <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A customized function using ks-test function</span></span></span>
+<span class="r-in"><span><span class="va">customized_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS_mat</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="va">ks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">FS_mat</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span></span>
+<span class="r-in"><span>    <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; </span></span>
+<span class="r-in"><span>    <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span></span>
+<span class="r-in"><span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">statistic</span>, <span class="va">res</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Obtain score statistics and p-values from KS method</span></span></span>
+<span class="r-in"><span>  <span class="va">stat</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Compute the -log scores for pval</span></span></span>
+<span class="r-in"><span>  <span class="co"># Make sure scores has names that match the row names of FS_mat object</span></span></span>
+<span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">FS_mat</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Remove scores that are Inf as it is resulted from</span></span></span>
+<span class="r-in"><span>  <span class="co"># taking the -log(0). They are uninformative.</span></span></span>
+<span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">scores</span><span class="op">[</span><span class="va">scores</span> <span class="op">!=</span> <span class="cn">Inf</span><span class="op">]</span>  </span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Re-order FS_mat in a decreasing order (from most to least significant)</span></span></span>
+<span class="r-in"><span>  <span class="co"># This comes in handy when doing the top-N evaluation of</span></span></span>
+<span class="r-in"><span>  <span class="co"># the top N 'best' features</span></span></span>
+<span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">scores</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">scores</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Search for best features using a custom-defined function</span></span></span>
+<span class="r-in"><span><span class="va">custom_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"custom"</span>,</span></span>
+<span class="r-in"><span>  custom_function <span class="op">=</span> <span class="va">customized_rowscore</span>,            </span></span>
+<span class="r-in"><span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>  </span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     TP_1     TP_3     TP_2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.484907 2.402669 0.117783 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -19,9 +19,9 @@ test_that("ks_rowscore returns correct results", {
     alternative = "less"
   )
   
-  testthat::expect_identical(dim(result), c(3L,2L))
+  testthat::expect_identical(length(result), 3L)
   testthat::expect_type(result, "double")
-  testthat::expect_equal(result[,1], c(0.5,-0.6,0.4))
+  testthat::expect_equal(result, c(TP_1=0.5,TP_3=0.4,TP_2=-0.6))
   
   weight <- c(0.5, 0.75, 0.25, 1, 0.5, 0.25, 0.75, 0.5, 0.5, 0 )
   names(weight) <- colnames(mat)
@@ -30,10 +30,11 @@ test_that("ks_rowscore returns correct results", {
     input_score = input_score,
     weight = weight)
   
-  testthat::expect_identical(dim(result), c(3L,2L))
+  testthat::expect_identical(length(result), 3L)
   testthat::expect_type(result, "double")
-  testthat::expect_identical(colnames(result), c("score", "p_value"))
-  testthat::expect_equal(result[2,1], c("score"=0.875))
+  testthat::expect_identical(names(result), c("TP_2", "TP_1", "TP_3"))
+  testthat::expect_equal(round(result,7), 
+                         c(TP_2=0.8750000, TP_1=0.7142857, TP_3=0.6666667))
   
   
 })

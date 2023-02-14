@@ -19,17 +19,12 @@ test_that("custom_rowscore returns correct results", {
     FS_mat = mat, 
     input_score = input_score,
     custom_function = wilcox_rowscore,
-    method = "custom_pval", 
     custom_parameters = list(alternative="less")
   )
   
-  testthat::expect_identical(dim(result), c(3L,2L))
+  testthat::expect_identical(length(result), 3L)
   testthat::expect_type(result, "double")
-  testthat::expect_identical(rownames(result), row.names(mat))
-  testthat::expect_identical(colnames(result), c("score","p_value"))
-  testthat::expect_identical(result[,1], c(TP_1=3,TP_2=13,TP_3=5))
-  testthat::expect_equal(round(result[,2], 3), c(TP_1=0.055, TP_2=0.925, TP_3=0.083) )
-  
+  testthat::expect_identical(result, c(TP_2=13,TP_3=5,TP_1=3))
   
 })
 

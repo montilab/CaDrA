@@ -10,18 +10,19 @@
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS_mat object.
+#' names of \code{FS_mat} object.
 #' @param custom_function a customized function which computes a row-wise 
 #' score for each row of a given binary feature matrix (FS_mat).
-#' NOTE: this function can take FS_mat (or FS) and input_score as input arguments, 
-#' and its final result must return a vector of row-wise scores ordered from 
-#' most significant to least significant where its labels or names matched 
-#' the row names of FS_mat object.
-#' @param custom_parameters a list of additional arguments to be passed to
-#' the custom_function() (excluding \code{FS_mat} and \code{input_score}).
+#' 
+#' NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+#' input arguments, and its final result must return a vector of row-wise scores 
+#' ordered from most significant to least significant where its labels or names 
+#' matched the row names of FS_mat object.
+#' @param custom_parameters a list of additional arguments to be passed to  
+#' custom_function() (excluding \code{FS_mat} (or FS) and \code{input_score}).
 #' Default is NULL.
 #' @param known_parameters a list of known parameters that existed in
-#' the previous environment that can be passed to custom_function() if and only 
+#' the previous function that can be passed to custom_function() if and only 
 #' if they were not provided by custom_parameters. Default is NULL.
 #' 
 #' @noRd
@@ -79,8 +80,9 @@
 #'   custom_parameters = NULL  
 #' )
 #' 
-#' @return return a vector of scores ordered from most significant to least
-#' significant where its labels or names match the row names of FS_mat object
+#' @return return a vector of row-wise scores ordered from most significant 
+#' to least significant where its labels or names match the row names of 
+#' FS_mat object
 #' 
 custom_rowscore <- function
 (

@@ -9,58 +9,72 @@ calc_rowscore(
   FS_mat,
   input_score,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+  custom_function = NULL,
+  custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
   weight = NULL,
   seed_names = NULL,
-  custom_function = NULL,
-  custom_parameters = NULL,
   do_check = TRUE,
+  verb = FALSE,
   ...
 )
 }
 \arguments{
-\item{FS_mat}{a matrix of binary features where 
-rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-and columns represent the samples.}
+\item{FS_mat}{a matrix of binary features where rows represent features of 
+interest (e.g. genes, transcripts, exons, etc...) and columns represent 
+the samples.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
-The \code{input_score} object must have names or labels that match the column
-names of FS object.}
+
+NOTE: \code{input_score} object must have names or labels that match the column
+names of \code{FS_mat} object.}
 
 \item{method}{a character string specifies a scoring method that is
-used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
+used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
+or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-or \code{custom} (a user-customized scoring method). 
-Default is \code{ks}.}
+\code{"custom"} (a customized scoring method)). 
+Default is \code{ks_pval}.}
+
+\item{custom_function}{if method is \code{"custom"}, specifies
+the name of the customized function here. Default is \code{NULL}.
+
+NOTE: custom_function() must take \code{FS_mat} and \code{input_score} 
+as its input arguments, and its final result must return a vector of row-wise 
+scores ordered from most significant to least significant where its labels or 
+names matched the row names of \code{FS_mat} object.}
+
+\item{custom_parameters}{if method is \code{"custom"}, specifies a list of
+additional arguments (excluding \code{FS_mat} and \code{input_score}) to be 
+passed to \code{custom_function}. Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.}
+Default is \code{less} for left-skewed significance testing.
 
-\item{weight}{if method is \code{ks}, specifies a vector of weights
-to perform a weighted-KS testing. Default is \code{NULL}.}
+NOTE: This argument is applied to KS and Wilcoxon method}
+
+\item{weight}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
+vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{seed_names}{a vector of one or more features representing known “causes”
 of activation or features associated with a response of interest.
-It is used for \code{method = "revealer"} only.}
-
-\item{custom_function}{if method is \code{"custom"}, just pass the name of the
-customized function. Default is \code{NULL}.}
-
-\item{custom_parameters}{if method is \code{"custom"}, specifies a list of
-additional arguments (excluding \code{FS_mat} and \code{input_score}) to be passed
-to \code{custom_function()}. Default is \code{NULL}.}
+It is applied for \code{method = "revealer"} only.}
 
 \item{do_check}{a logical value indicates whether or not to validate if the
-given parameters (FS and input_score) are valid inputs. 
+given parameters (\code{FS_mat} and \code{input_score}) are valid inputs. 
 Default is \code{TRUE}.}
 
-\item{...}{additional parameters to be passed to the custom_function()}
+\item{verb}{a logical value indicates whether or not to print the
+diagnostic messages. Default is \code{FALSE}.}
+
+\item{...}{additional parameters to be passed to \code{custom_function}}
 }
 \value{
-return a vector of scores ordered from most significant to least
-significant where its labels or names must match the row names of FS_mat object
+return a vector of row-wise scores ordered from most significant to 
+least significant where its labels or names must match the row names of 
+\code{FS_mat} object
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on

@@ -1,27 +1,32 @@
 #' CaDrA Search
 #'
-#' Performs a permutation-based testing on sample permutation of observed input
-#' scores using \code{candidate_search()} as the main iterative function for
-#' each run.
+#' Perform permutation-based testings on a sample of permuted input scores 
+#' using \code{candidate_search} as the main iterative function for each run.
 #'
 #' @param FS a SummarizedExperiment object containing binary features where
 #' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
 #' and columns represent the samples.
-#' @param input_score a vector of continuous scores of a molecular phenotype of
-#' interest such as protein expression, pathway activity, etc.
-#' NOTE: The \code{input_score} object must have names or labels that match the 
-#' column names of FS object.
+#' @param input_score a vector of continuous scores representing a phenotypic
+#' readout of interest such as protein expression, pathway activity, etc.
+#' 
+#' NOTE: \code{input_score} object must have names or labels that match the column
+#' names of \code{FS} object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom"} (a user customized scoring method)). 
+#' \code{"custom"} (a customized scoring method)). 
 #' Default is \code{ks_pval}.
-#' @param custom_function if method is \code{"custom"}, just pass the name of the
-#' customized function. Default is \code{NULL}.
+#' @param custom_function if method is \code{"custom"}, specifies
+#' the name of the customized function here. Default is \code{NULL}.
+#' 
+#' NOTE: custom_function() must take \code{FS} and \code{input_score} 
+#' as its input arguments, and its final result must return a vector of row-wise 
+#' scores ordered from most significant to least significant where its labels or 
+#' names matched the row names of \code{FS} object.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
-#' additional arguments (other than \code{FS} and \code{input_score}) to be passed
-#' to the \code{custom_function()}. Default is \code{NULL}.
+#' additional arguments (excluding \code{FS} and \code{input_score}) to be 
+#' passed to \code{custom_function}. Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -59,7 +64,7 @@
 #' We recycle these scores instead of re-computing them to save time.
 #' Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 #' for future loading.
-#' @param warning a logical value indicates whether or not to print the
+#' @param verb a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return a list of key parameters that are used to cache the result of
@@ -106,12 +111,13 @@ CaDrA <- function(
     plot = TRUE,
     ncores = 1,
     cache_path = NULL,
-    warning = FALSE
+    verb = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = warning)
+  options(verbose = verb)
 
+  # Match arguments
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
@@ -126,11 +132,10 @@ CaDrA <- function(
               (length(ncores)==1 && !is.na(ncores) &&
                  is.numeric(ncores) && ncores > 0) )
 
-
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
-    message("Using provided cache root path: ", cache_path, "")
     R.cache::setCacheRootPath(cache_path)
+    message("Using provided cache root path: ", cache_path, "")
   } else{
     R.cache::setCacheRootPath()
     message("Setting cache root path as: ", getCacheRootPath(), "\n")
@@ -148,8 +153,7 @@ CaDrA <- function(
               top_N = top_N,
               search_start = search_start,
               search_method = search_method,
-              max_size = max_size,
-              best_score_only = TRUE)
+              max_size = max_size)
 
   # Load perm_best_scores with the given key parameters
   perm_best_scores <- R.cache::loadCache(key)
@@ -165,29 +169,29 @@ CaDrA <- function(
 
     if(length(perm_best_scores) == n_perm){
       message("Found ", length(perm_best_scores),
-              " cached permutation-based scores ",
-              "for the specified dataset and search parameters\n")
-      message("LOADING PERMUTATION SCORES FROM CACHE\n")
+              " permutated scores for the specified dataset",
+              " and search parameters in cache path\n")
+      message("LOADING PERMUTATED SCORES FROM CACHE\n")
     }else{
       message("n_perm is set to ", n_perm, " but found ",
               length(perm_best_scores),
-              " cached permutation-based scores ",
-              "for the specified dataset and search parameters\n")
-      message("LOADING LARGER PERMUTATION SCORES FROM CACHE\n")
+              " permutated scores for the specified dataset",
+              " and search parameters in cache path\n")
+      message("LOADING LARGER PERMUTATED SCORES FROM CACHE\n")
     }
 
   }else{
 
     if(is.null(perm_best_scores)){
-      message("No permutation scores for the specified dataset and ",
+      verbose("No permutated scores for the specified dataset and ",
               "search parameters were found in cache path\n")
-      message("BEGINNING PERMUTATION-BASED TESTINGS\n")
+      verbose("BEGINNING PERMUTATION-BASED TESTINGS\n")
     }else if (length(perm_best_scores) < n_perm) {
-      message("n_perm is set to ", n_perm, " but found only ",
+      verbose("n_perm is set to ", n_perm, " but found only ",
               length(perm_best_scores),
-              " cached permutation-based scores for the specified dataset ",
-              "and search parameters\n")
-      message("RE-COMPUTE PERMUTATION-BASED TESTINGS WITH LARGER NUMBER OF PERMUTATIONS")
+              " permutated scores for the specified dataset",
+              " and search parameters in cache path\n")
+      verbose("RE-COMPUTE PERMUTATION-BASED TESTINGS WITH LARGER NUMBER OF PERMUTATIONS\n")
     }
 
     #######################################################################
@@ -203,53 +207,66 @@ CaDrA <- function(
       doParallel::registerDoParallel(cores = ncores)
       parallel <- TRUE
       progress <- "none"
-      message("Running tests in parallel...")
+      verbose("Running tests in parallel...")
     }
 
     # Generate matrix of permuted input_score
-    perm_labels_matrix <- generate_permutations(input_score = input_score, n_perm = n_perm)
-
+    perm_labels_matrix <- generate_permutations(
+      input_score = input_score, 
+      n_perm = n_perm
+    )
+    
     # Run permutation-based testing
-    perm_best_scores <- plyr::alply(
+    perm_best_scores_l <- plyr::alply(
       perm_labels_matrix,
       1,
       function(x){
-        perm_input_score <- x;
-        names(perm_input_score) <- colnames(perm_labels_matrix);
-        candidate_search(FS = FS,
-                         input_score = perm_input_score,
-                         method = method,
-                         custom_function = custom_function,
-                         custom_parameters = custom_parameters,
-                         alternative = alternative,
-                         weight = weight,
-                         top_N = top_N,
-                         search_start = search_start,
-                         search_method = search_method,
-                         max_size = max_size,
-                         best_score_only = TRUE,
-                         do_plot = FALSE,
-                         do_check = FALSE,
-                         warning = FALSE) },
-      .parallel=parallel,
-      .progress=progress) |> unlist()
+        perm_input_score <- x
+        names(perm_input_score) <- colnames(perm_labels_matrix)
+        best_score <- candidate_search(
+          FS = FS,
+          input_score = perm_input_score,
+          method = method,
+          custom_function = custom_function,
+          custom_parameters = custom_parameters,
+          alternative = alternative,
+          weight = weight,
+          top_N = top_N,
+          search_start = search_start,
+          search_method = search_method,
+          max_size = max_size,
+          best_score_only = TRUE,
+          do_plot = FALSE,
+          do_check = FALSE,
+          verb = FALSE
+        ) 
+        return(best_score)
+      },
+      .parallel = parallel,
+      .progress = progress)
+    
+    # Extract the permuted best scores
+    perm_best_scores <- lapply(
+      seq_along(perm_best_scores_l), 
+      function(l){ perm_best_scores_l[[l]] }) |> unlist()
     
     # Save computed scores to cache
-    message("Saving to cache...\n")
+    verbose("Saving to cache...\n")
     R.cache::saveCache(perm_best_scores, key=key, comment="null_scores()")
     
   } # end caching else statement block
   
-  doParallel::registerDoParallel(cores = 1) #Return to using just a single core
+  # Return to using just a single core
+  doParallel::registerDoParallel(cores = 1)
   
-  message("FINISHED\n")
-  message("Time elapsed: ", round((proc.time()-ptm)[3]/60, 2), " mins \n\n")
+  verbose("FINISHED\n")
+  verbose("Time elapsed: ", round((proc.time()-ptm)[3]/60, 2), " mins \n\n")
 
   #########################################################################
 
   if(is.null(obs_best_score)){
 
-    message("Computing observed best score...\n\n")
+    verbose("Computing observed best score...\n\n")
 
     obs_best_score <- candidate_search(
       FS = FS,
@@ -266,7 +283,7 @@ CaDrA <- function(
       best_score_only = TRUE,
       do_plot = FALSE,
       do_check = FALSE,
-      warning = FALSE
+      verb = FALSE
     ) |> unlist()
 
   }else{
@@ -276,12 +293,12 @@ CaDrA <- function(
                 (length(obs_best_score)==1 && !is.na(obs_best_score) &&
                    is.numeric(obs_best_score)))
     
-    message("Using provided value of observed best score...\n\n")
+    verbose("Using provided value of observed best score...\n\n")
     obs_best_score <- as.numeric(obs_best_score)
     
   }
 
-  message("Observed score: ", obs_best_score, "\n")
+  verbose("Observed score: ", obs_best_score, "\n")
 
   ########### PERMUTATION P-VALUE COMPUTATION ############
 
@@ -293,8 +310,9 @@ CaDrA <- function(
   perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/
     (length(perm_best_scores) + c)
 
-  message("Permutation p-value: ", perm_pval, "\n\n")
-
+  verbose("Permutation p-value: ", perm_pval, "\n")
+  verbose("Number of permutations: ", length(perm_best_scores), "\n")
+  
   ########### END PERMUTATION P-VALUE COMPUTATION ############
   perm_res <- list(
     key = key,

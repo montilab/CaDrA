@@ -19,40 +19,48 @@ candidate_search(
   best_score_only = FALSE,
   do_plot = FALSE,
   do_check = TRUE,
-  warning = FALSE
+  verb = FALSE
 )
 }
 \arguments{
 \item{FS}{a SummarizedExperiment class object from SummarizedExperiment package
-where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
+where rows represent features of interest (e.g. genes, transcripts, exons, etc.) 
 and columns represent the samples. The assay of FS contains binary (1/0) values 
-indicating the presence/absence of ‘omics’ features.}
+indicating the presence/absence of omics features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
-The \code{input_score} object must have names or labels that match the column
-names of FS object.}
+
+NOTE: \code{input_score} object must have names or labels that match the column
+names of \code{FS} object.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a user customized scoring method)). 
+\code{"custom"} (a customized scoring method)). 
 Default is \code{ks_pval}.}
 
 \item{custom_function}{if method is \code{"custom"}, specifies
-the customized function here. Default is \code{NULL}.}
+the name of the customized function here. Default is \code{NULL}.
+
+NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+input arguments, and its final result must return a vector of row-wise scores 
+ordered from most significant to least significant where its labels or names 
+matched the row names of FS_mat (or FS) object.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
-arguments to be passed to the custom_function(). Default is \code{NULL}.}
+additional arguments (excluding \code{FS_mat} (or FS) and \code{input_score}) 
+to be passed to the custom_function(). Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
-NOTE: this argument only apply to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_score}, specifying a vector 
-of weights will perform a weighted-KS testing. Default is \code{NULL}.}
+NOTE: This argument is applied to KS and Wilcoxon method}
+
+\item{weight}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
+vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)
 which specifies feature names within the FS object to start
@@ -71,28 +79,30 @@ out the best features (\code{"forward"} or \code{"both"}). Default is
 \item{max_size}{an integer specifies a maximum size that a meta-feature
 can extend to do for a given search. Default is \code{7}.}
 
-\item{best_score_only}{a logical value indicates whether or not the
-function should return only the score corresponding to the search results.
+\item{best_score_only}{a logical value indicates whether or not to return 
+the best score corresponding to each top N searches ONLY.
 Default is \code{FALSE}.}
 
 \item{do_plot}{a logical value indicates whether or not to plot the
-resulting meta-feature matrix. NOTE: plot can only be produced if resulting
-meta-feature matrix contains more than 1 feature
-(e.g. length(search_start) > 1  or top_N > 1). Default is \code{FALSE}.}
+overlapping features of the resulting meta-feature matrix. 
+
+NOTE: plot can only be produced if the resulting meta-feature matrix contains 
+more than 1 feature (e.g. length(search_start) > 1 or top_N > 1). 
+Default is \code{FALSE}.}
 
 \item{do_check}{a logical value indicates whether or not to validate if the
 given parameters (FS and input_score) are valid inputs. 
 Default is \code{TRUE}.}
 
-\item{warning}{a logical value indicates whether or not to print the
+\item{verb}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, the function
-returns a list object with the score corresponding to the union of the
-search meta-feature. If \code{best_score_only} is set to \code{FALSE},
-a list containing the FS object (pertaining to the returned meta-feature)
-as well as its corresponding score and observed input scores are returned.
+If \code{best_score_only} is set to \code{TRUE}, the function will
+return a list of objects containing ONLY the best score of the union 
+meta-feature matrix for each top N searches. If \code{best_score_only} is set
+to \code{FALSE}, a list of objects containing the returned meta-feature matrix,
+as well as its corresponding best score and observed input scores are returned.
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether

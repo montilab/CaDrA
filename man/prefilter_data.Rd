@@ -4,7 +4,7 @@
 \alias{prefilter_data}
 \title{Pre-filter features}
 \usage{
-prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03, warning = FALSE)
+prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03, verb = FALSE)
 }
 \arguments{
 \item{FS}{a SummarizedExperiment object containing binary features where
@@ -21,7 +21,7 @@ prevalence of a feature across all samples in the FS object which the
 feature will be filtered out. Default is 0.03 (feature that occur in
 3 percent or less of the samples will be removed)}
 
-\item{warning}{a logical value indicates whether or not to print the
+\item{verb}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{

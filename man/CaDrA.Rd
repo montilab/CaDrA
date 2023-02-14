@@ -22,7 +22,7 @@ CaDrA(
   plot = TRUE,
   ncores = 1,
   cache_path = NULL,
-  warning = FALSE
+  verb = FALSE
 )
 }
 \arguments{
@@ -30,24 +30,30 @@ CaDrA(
 rows represent features of interest (e.g. genes, transcripts, exons, etc...)
 and columns represent the samples.}
 
-\item{input_score}{a vector of continuous scores of a molecular phenotype of
-interest such as protein expression, pathway activity, etc.
-NOTE: The \code{input_score} object must have names or labels that match the 
-column names of FS object.}
+\item{input_score}{a vector of continuous scores representing a phenotypic
+readout of interest such as protein expression, pathway activity, etc.
+
+NOTE: \code{input_score} object must have names or labels that match the column
+names of \code{FS} object.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a user customized scoring method)). 
+\code{"custom"} (a customized scoring method)). 
 Default is \code{ks_pval}.}
 
-\item{custom_function}{if method is \code{"custom"}, just pass the name of the
-customized function. Default is \code{NULL}.}
+\item{custom_function}{if method is \code{"custom"}, specifies
+the name of the customized function here. Default is \code{NULL}.
+
+NOTE: custom_function() must take \code{FS} and \code{input_score} 
+as its input arguments, and its final result must return a vector of row-wise 
+scores ordered from most significant to least significant where its labels or 
+names matched the row names of \code{FS} object.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
-additional arguments (other than \code{FS} and \code{input_score}) to be passed
-to the \code{custom_function()}. Default is \code{NULL}.}
+additional arguments (excluding \code{FS} and \code{input_score}) to be 
+passed to \code{custom_function}. Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -96,7 +102,7 @@ We recycle these scores instead of re-computing them to save time.
 Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 for future loading.}
 
-\item{warning}{a logical value indicates whether or not to print the
+\item{verb}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
@@ -105,9 +111,8 @@ permutation-based testing, a vector of permuted best scores for a given
 \code{n_perm}, an observed best score, and a permutation p-value.
 }
 \description{
-Performs a permutation-based testing on sample permutation of observed input
-scores using \code{candidate_search()} as the main iterative function for
-each run.
+Perform permutation-based testings on a sample of permuted input scores 
+using \code{candidate_search} as the main iterative function for each run.
 }
 \examples{
 

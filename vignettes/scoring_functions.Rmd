@@ -162,7 +162,7 @@ customized_rowscore <- function(FS_mat, input_score, alternative){
 custom_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "custom",                           # Use custom scoring function
+  method = "custom",                                # Use custom scoring function
   custom_function = customized_rowscore,            # Use a customized scoring function
   custom_parameters = list(alternative = "less"),   # Additional parameters to pass to custom_function
   search_method = "both",                           # Apply both forward and backward search

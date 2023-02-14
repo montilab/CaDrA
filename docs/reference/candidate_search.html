@@ -90,7 +90,7 @@ package.</p>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  warning <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verb <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,16 +98,16 @@ package.</p>
     <h2>Arguments</h2>
     <dl><dt>FS</dt>
 <dd><p>a SummarizedExperiment class object from SummarizedExperiment package
-where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
+where rows represent features of interest (e.g. genes, transcripts, exons, etc.) 
 and columns represent the samples. The assay of FS contains binary (1/0) values 
-indicating the presence/absence of ‘omics’ features.</p></dd>
+indicating the presence/absence of omics features.</p></dd>
 
 
 <dt>input_score</dt>
 <dd><p>a vector of continuous scores representing a phenotypic
-readout of interest such as protein expression, pathway activity, etc.
-The <code>input_score</code> object must have names or labels that match the column
-names of FS object.</p></dd>
+readout of interest such as protein expression, pathway activity, etc.</p>
+<p>NOTE: <code>input_score</code> object must have names or labels that match the column
+names of <code>FS</code> object.</p></dd>
 
 
 <dt>method</dt>
@@ -115,30 +115,35 @@ names of FS object.</p></dd>
 used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
 or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-<code>"custom"</code> (a user customized scoring method)). 
+<code>"custom"</code> (a customized scoring method)). 
 Default is <code>ks_pval</code>.</p></dd>
 
 
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies
-the customized function here. Default is <code>NULL</code>.</p></dd>
+the name of the customized function here. Default is <code>NULL</code>.</p>
+<p>NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+input arguments, and its final result must return a vector of row-wise scores 
+ordered from most significant to least significant where its labels or names 
+matched the row names of FS_mat (or FS) object.</p></dd>
 
 
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of
-arguments to be passed to the custom_function(). Default is <code>NULL</code>.</p></dd>
+additional arguments (excluding <code>FS_mat</code> (or FS) and <code>input_score</code>) 
+to be passed to the custom_function(). Default is <code>NULL</code>.</p></dd>
 
 
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis
 testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.
-NOTE: this argument only apply to KS and Wilcoxon method</p></dd>
+Default is <code>less</code> for left-skewed significance testing.</p>
+<p>NOTE: This argument is applied to KS and Wilcoxon method</p></dd>
 
 
 <dt>weight</dt>
-<dd><p>if method is <code>ks_score</code>, specifying a vector 
-of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+<dd><p>if method is <code>ks_score</code> or <code>ks_pval</code>, specifying a 
+vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>search_start</dt>
@@ -167,16 +172,17 @@ can extend to do for a given search. Default is <code>7</code>.</p></dd>
 
 
 <dt>best_score_only</dt>
-<dd><p>a logical value indicates whether or not the
-function should return only the score corresponding to the search results.
+<dd><p>a logical value indicates whether or not to return 
+the best score corresponding to each top N searches ONLY.
 Default is <code>FALSE</code>.</p></dd>
 
 
 <dt>do_plot</dt>
 <dd><p>a logical value indicates whether or not to plot the
-resulting meta-feature matrix. NOTE: plot can only be produced if resulting
-meta-feature matrix contains more than 1 feature
-(e.g. length(search_start) &gt; 1  or top_N &gt; 1). Default is <code>FALSE</code>.</p></dd>
+overlapping features of the resulting meta-feature matrix.</p>
+<p>NOTE: plot can only be produced if the resulting meta-feature matrix contains 
+more than 1 feature (e.g. length(search_start) &gt; 1 or top_N &gt; 1). 
+Default is <code>FALSE</code>.</p></dd>
 
 
 <dt>do_check</dt>
@@ -185,7 +191,7 @@ given parameters (FS and input_score) are valid inputs.
 Default is <code>TRUE</code>.</p></dd>
 
 
-<dt>warning</dt>
+<dt>verb</dt>
 <dd><p>a logical value indicates whether or not to print the
 diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 
@@ -194,11 +200,11 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>If <code>best_score_only</code> is set to <code>TRUE</code>, the function
-returns a list object with the score corresponding to the union of the
-search meta-feature. If <code>best_score_only</code> is set to <code>FALSE</code>,
-a list containing the FS object (pertaining to the returned meta-feature)
-as well as its corresponding score and observed input scores are returned.</p>
+<p>If <code>best_score_only</code> is set to <code>TRUE</code>, the function will
+return a list of objects containing ONLY the best score of the union 
+meta-feature matrix for each top N searches. If <code>best_score_only</code> is set
+to <code>FALSE</code>, a list of objects containing the returned meta-feature matrix,
+as well as its corresponding best score and observed input scores are returned.</p>
     </div>
     <div id="details">
     <h2>Details</h2>

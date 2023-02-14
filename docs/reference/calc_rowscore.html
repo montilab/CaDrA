@@ -78,12 +78,13 @@ a given scoring method</p>
 <span>  <span class="va">FS_mat</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
+<span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  do_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verb <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -91,70 +92,82 @@ a given scoring method</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>FS_mat</dt>
-<dd><p>a matrix of binary features where 
-rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-and columns represent the samples.</p></dd>
+<dd><p>a matrix of binary features where rows represent features of 
+interest (e.g. genes, transcripts, exons, etc...) and columns represent 
+the samples.</p></dd>
 
 
 <dt>input_score</dt>
 <dd><p>a vector of continuous scores representing a phenotypic
-readout of interest such as protein expression, pathway activity, etc.
-The <code>input_score</code> object must have names or labels that match the column
-names of FS object.</p></dd>
+readout of interest such as protein expression, pathway activity, etc.</p>
+<p>NOTE: <code>input_score</code> object must have names or labels that match the column
+names of <code>FS_mat</code> object.</p></dd>
 
 
 <dt>method</dt>
 <dd><p>a character string specifies a scoring method that is
-used in the search. There are 4 options: (<code>"ks"</code> or <code>"wilcox"</code> or
+used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
+or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-or <code>custom</code> (a user-customized scoring method). 
-Default is <code>ks</code>.</p></dd>
+<code>"custom"</code> (a customized scoring method)). 
+Default is <code>ks_pval</code>.</p></dd>
+
+
+<dt>custom_function</dt>
+<dd><p>if method is <code>"custom"</code>, specifies
+the name of the customized function here. Default is <code>NULL</code>.</p>
+<p>NOTE: custom_function() must take <code>FS_mat</code> and <code>input_score</code> 
+as its input arguments, and its final result must return a vector of row-wise 
+scores ordered from most significant to least significant where its labels or 
+names matched the row names of <code>FS_mat</code> object.</p></dd>
+
+
+<dt>custom_parameters</dt>
+<dd><p>if method is <code>"custom"</code>, specifies a list of
+additional arguments (excluding <code>FS_mat</code> and <code>input_score</code>) to be 
+passed to <code>custom_function</code>. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>alternative</dt>
 <dd><p>a character string specifies an alternative hypothesis
 testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.</p></dd>
+Default is <code>less</code> for left-skewed significance testing.</p>
+<p>NOTE: This argument is applied to KS and Wilcoxon method</p></dd>
 
 
 <dt>weight</dt>
-<dd><p>if method is <code>ks</code>, specifies a vector of weights
-to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+<dd><p>if method is <code>ks_score</code> or <code>ks_pval</code>, specifying a 
+vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>seed_names</dt>
 <dd><p>a vector of one or more features representing known “causes”
 of activation or features associated with a response of interest.
-It is used for <code>method = "revealer"</code> only.</p></dd>
-
-
-<dt>custom_function</dt>
-<dd><p>if method is <code>"custom"</code>, just pass the name of the
-customized function. Default is <code>NULL</code>.</p></dd>
-
-
-<dt>custom_parameters</dt>
-<dd><p>if method is <code>"custom"</code>, specifies a list of
-additional arguments (excluding <code>FS_mat</code> and <code>input_score</code>) to be passed
-to <code>custom_function()</code>. Default is <code>NULL</code>.</p></dd>
+It is applied for <code>method = "revealer"</code> only.</p></dd>
 
 
 <dt>do_check</dt>
 <dd><p>a logical value indicates whether or not to validate if the
-given parameters (FS and input_score) are valid inputs. 
+given parameters (<code>FS_mat</code> and <code>input_score</code>) are valid inputs. 
 Default is <code>TRUE</code>.</p></dd>
 
 
+<dt>verb</dt>
+<dd><p>a logical value indicates whether or not to print the
+diagnostic messages. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>additional parameters to be passed to the custom_function()</p></dd>
+<dd><p>additional parameters to be passed to <code>custom_function</code></p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>return a vector of scores ordered from most significant to least
-significant where its labels or names must match the row names of FS_mat object</p>
+<p>return a vector of row-wise scores ordered from most significant to 
+least significant where its labels or names must match the row names of 
+<code>FS_mat</code> object</p>
     </div>
 
     <div id="ref-examples">

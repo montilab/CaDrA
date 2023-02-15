@@ -15,7 +15,7 @@ calc_rowscore(
   weight = NULL,
   seed_names = NULL,
   do_check = TRUE,
-  verb = FALSE,
+  verbose = FALSE,
   ...
 )
 }
@@ -66,7 +66,7 @@ It is applied for \code{method = "revealer"} only.}
 given parameters (\code{FS_mat} and \code{input_score}) are valid inputs. 
 Default is \code{TRUE}.}
 
-\item{verb}{a logical value indicates whether or not to print the
+\item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 
 \item{...}{additional parameters to be passed to \code{custom_function}}

@@ -19,7 +19,7 @@ candidate_search(
   best_score_only = FALSE,
   do_plot = FALSE,
   do_check = TRUE,
-  verb = FALSE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -94,7 +94,7 @@ Default is \code{FALSE}.}
 given parameters (FS and input_score) are valid inputs. 
 Default is \code{TRUE}.}
 
-\item{verb}{a logical value indicates whether or not to print the
+\item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{

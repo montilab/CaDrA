@@ -65,7 +65,7 @@
 #' @param do_check a logical value indicates whether or not to validate if the  
 #' given parameters (FS and input_score) are valid inputs. 
 #' Default is \code{TRUE}.
-#' @param verb a logical value indicates whether or not to print the
+#' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return If \code{best_score_only} is set to \code{TRUE}, the function will
@@ -107,11 +107,11 @@ candidate_search <- function(
     best_score_only = FALSE,
     do_plot = FALSE,
     do_check = TRUE,
-    verb = FALSE
+    verbose = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = verb)
+  options(verbose = verbose)
 
   # Match arguments
   method <- match.arg(method)
@@ -134,7 +134,7 @@ candidate_search <- function(
     weight = weight,
     seed_names = NULL,
     do_check = do_check,
-    verb = verb,
+    verbose = verbose,
     FS = FS,
     search_start = search_start,
     top_N = top_N,
@@ -297,7 +297,7 @@ candidate_search <- function(
         weight = weight,
         seed_names = NULL,
         do_check = FALSE,
-        verb = FALSE,
+        verbose = FALSE,
         FS = SummarizedExperiment::SummarizedExperiment(assays=meta_mat),
         search_start = search_start,
         top_N = top_N,
@@ -472,7 +472,7 @@ forward_backward_check <- function
       weight = weight,
       seed_names = NULL,
       do_check = FALSE,
-      verb = FALSE,
+      verbose = FALSE,
       FS = SummarizedExperiment::SummarizedExperiment(assays=u_mat),
       ...
     )

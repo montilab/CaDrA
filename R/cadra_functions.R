@@ -28,7 +28,7 @@ verbose <- function(...){
 #' 3 percent or less of the samples will be removed)
 #' @return A SummarizedExperiment object with only the filtered-in features
 #' given the filtered thresholds
-#' @param verb a logical value indicates whether or not to print the
+#' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #' @examples
 #'
@@ -51,11 +51,11 @@ prefilter_data <- function(
     FS,
     max_cutoff = 0.6,
     min_cutoff = 0.03,
-    verb = FALSE
+    verbose = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = verb)
+  options(verbose = verbose)
   
   # Check if FS is a SummarizedExperiment class object
   if(!is(FS, "SummarizedExperiment"))

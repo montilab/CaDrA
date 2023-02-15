@@ -39,7 +39,7 @@
 #' @param do_check a logical value indicates whether or not to validate if the  
 #' given parameters (\code{FS_mat} and \code{input_score}) are valid inputs. 
 #' Default is \code{TRUE}.
-#' @param verb a logical value indicates whether or not to print the
+#' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #' @param ... additional parameters to be passed to \code{custom_function}
 #' 
@@ -139,12 +139,12 @@ calc_rowscore <- function(
     weight = NULL,
     seed_names = NULL,
     do_check = TRUE,
-    verb = FALSE,
+    verbose = FALSE,
     ...
 ){
 
   # Set up verbose option
-  options(verbose = verb)
+  options(verbose = verbose)
   
   # Match arguments
   method <- match.arg(method)
@@ -169,7 +169,7 @@ calc_rowscore <- function(
   # that can be passed to custom_function()
   known_parameters <- list(method = method, alternative = alternative, 
                            weight = weight, seed_names = seed_names, 
-                           do_check = do_check, verb = verb, ...)
+                           do_check = do_check, verbose = verbose, ...)
   
   # Select the appropriate method to compute row-wise directional scores
   rscore <- switch(

@@ -64,7 +64,7 @@
 #' We recycle these scores instead of re-computing them to save time.
 #' Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 #' for future loading.
-#' @param verb a logical value indicates whether or not to print the
+#' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return a list of key parameters that are used to cache the result of
@@ -111,11 +111,11 @@ CaDrA <- function(
     plot = TRUE,
     ncores = 1,
     cache_path = NULL,
-    verb = FALSE
+    verbose = FALSE
 ){
 
   # Set up verbose option
-  options(verbose = verb)
+  options(verbose = verbose)
 
   # Match arguments
   method <- match.arg(method)
@@ -238,7 +238,7 @@ CaDrA <- function(
           best_score_only = TRUE,
           do_plot = FALSE,
           do_check = FALSE,
-          verb = FALSE
+          verbose = FALSE
         ) 
         return(best_score)
       },
@@ -283,7 +283,7 @@ CaDrA <- function(
       best_score_only = TRUE,
       do_plot = FALSE,
       do_check = FALSE,
-      verb = FALSE
+      verbose = FALSE
     ) |> unlist()
 
   }else{

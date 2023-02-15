@@ -22,7 +22,7 @@ CaDrA(
   plot = TRUE,
   ncores = 1,
   cache_path = NULL,
-  verb = FALSE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -102,7 +102,7 @@ We recycle these scores instead of re-computing them to save time.
 Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
 for future loading.}
 
-\item{verb}{a logical value indicates whether or not to print the
+\item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{

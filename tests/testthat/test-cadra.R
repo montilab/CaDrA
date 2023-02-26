@@ -28,19 +28,20 @@ test_that("CaDrA returns expected result for ks algorithm",{
   )
   
   
-  testthat::expect_identical(length(result), 4L)
+  testthat::expect_length(result, 4L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
-              c("key","perm_best_scores","obs_best_score","perm_pval"))
+  testthat::expect_named(result, 
+            c("key","perm_best_scores","obs_best_score","perm_pval"))
+
   testthat::expect_type(result$key, "list")
-  testthat::expect_identical(length(result$key), 11L)
-  testthat::expect_identical(names(result$key), 
+  testthat::expect_length(result$key, 11L)
+  testthat::expect_named(result$key, 
              c("FS", "input_score", "method", "custom_function", 
                "custom_parameters", "alternative", "weight", "top_N",
                "search_start", "search_method", "max_size"))
   testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
   
-  testthat::expect_identical(length(result$perm_best_scores), 10L)
+  testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,5), 
                          c("TN_84"=14.98937,
                            "TN_694"=16.90042,
@@ -77,19 +78,19 @@ test_that("CaDrA returns expected result for ks algorithm",{
     cache_path = NULL
   )
   
-  testthat::expect_identical(length(result), 4L)
+  testthat::expect_length(result, 4L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
+  testthat::expect_named(result, 
                              c("key","perm_best_scores","obs_best_score","perm_pval"))
   testthat::expect_type(result$key, "list")
-  testthat::expect_identical(length(result$key), 11L)
-  testthat::expect_identical(names(result$key), 
+  testthat::expect_length(result$key, 11L)
+  testthat::expect_named(result$key, 
                              c("FS", "input_score", "method", "custom_function", 
                                "custom_parameters", "alternative", "weight", "top_N",
                                "search_start", "search_method", "max_size"))
   testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
   
-  testthat::expect_identical(length(result$perm_best_scores), 10L)
+  testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,2), 
                          c("TN_641"=0.97,
                            "TN_738"=0.99,
@@ -138,19 +139,19 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
   )
   
   
-  testthat::expect_identical(length(result), 4L)
+  testthat::expect_length(result, 4L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
-                             c("key","perm_best_scores","obs_best_score","perm_pval"))
+  testthat::expect_named(result, 
+            c("key","perm_best_scores","obs_best_score","perm_pval"))
   testthat::expect_type(result$key, "list")
-  testthat::expect_identical(length(result$key), 11L)
-  testthat::expect_identical(names(result$key), 
-                             c("FS", "input_score", "method", "custom_function", 
-                               "custom_parameters", "alternative", "weight", "top_N",
-                               "search_start", "search_method", "max_size"))
+  testthat::expect_length(result$key, 11L)
+  testthat::expect_named(result$key, 
+            c("FS", "input_score", "method", "custom_function", 
+              "custom_parameters", "alternative", "weight", "top_N",
+              "search_start", "search_method", "max_size"))
   testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
   
-  testthat::expect_identical(length(result$perm_best_scores), 10L)
+  testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,5), 
                          c("TN_674"=25.40974,
                            "TN_651"=29.96859,
@@ -188,19 +189,19 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
   )
   
   
-  testthat::expect_identical(length(result), 4L)
+  testthat::expect_length(result, 4L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
-                             c("key","perm_best_scores","obs_best_score","perm_pval"))
+  testthat::expect_named(result, 
+            c("key","perm_best_scores","obs_best_score","perm_pval"))
   testthat::expect_type(result$key, "list")
-  testthat::expect_identical(length(result$key), 11L)
-  testthat::expect_identical(names(result$key), 
-                             c("FS", "input_score", "method", "custom_function", 
-                               "custom_parameters", "alternative", "weight", "top_N",
-                               "search_start", "search_method", "max_size"))
+  testthat::expect_length(result$key, 11L)
+  testthat::expect_named(result$key, 
+            c("FS", "input_score", "method", "custom_function", 
+              "custom_parameters", "alternative", "weight", "top_N",
+              "search_start", "search_method", "max_size"))
   testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
   
-  testthat::expect_identical(length(result$perm_best_scores), 10L)
+  testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(result$perm_best_scores, 
                          c("TN_446"=2154,
                            "TN_441"=2121,
@@ -248,19 +249,19 @@ test_that("CaDrA returns expected result for Revealer algorithm",{
   )
   
   
-  testthat::expect_identical(length(result), 4L)
+  testthat::expect_length(result, 4L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
-                             c("key","perm_best_scores","obs_best_score","perm_pval"))
+  testthat::expect_named(result, 
+            c("key","perm_best_scores","obs_best_score","perm_pval"))
   testthat::expect_type(result$key, "list")
-  testthat::expect_identical(length(result$key), 11L)
-  testthat::expect_identical(names(result$key), 
-                             c("FS", "input_score", "method", "custom_function", 
-                               "custom_parameters", "alternative", "weight", "top_N",
-                               "search_start", "search_method", "max_size"))
+  testthat::expect_length(result$key, 11L)
+  testthat::expect_named(result$key, 
+            c("FS", "input_score", "method", "custom_function", 
+              "custom_parameters", "alternative", "weight", "top_N",
+              "search_start", "search_method", "max_size"))
   testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
   
-  testthat::expect_identical(length(result$perm_best_scores), 10L)
+  testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,7), 
                          c("TN_607"=0.6187632,
                            "TN_651"=0.6875289,

@@ -77,7 +77,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   m_plot <- ggplot(data=var_d,
                    aes(x=.data$sample, y=.data$measure, group=1)) +
     geom_area(alpha=0.6, fill="deepskyblue4",
-              linetype=1, linewidth=0.5, color="black") +
+              linetype=1,  color="black") +
     scale_y_continuous(expand = c(0,0)) +
     scale_x_discrete(expand = c(0,0)) +
     theme_classic() +

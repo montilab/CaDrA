@@ -22,7 +22,7 @@ test_that("custom_rowscore returns correct results", {
     custom_parameters = list(alternative="less")
   )
   
-  testthat::expect_identical(length(result), 3L)
+  testthat::expect_length(result, 3L)
   testthat::expect_type(result, "double")
   testthat::expect_identical(result, c(TP_2=13,TP_3=5,TP_1=3))
   

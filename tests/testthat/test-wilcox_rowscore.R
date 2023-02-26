@@ -19,7 +19,7 @@ test_that("wilcox_rowscore returns correct results", {
     alternative = "less"
   )
   
-  testthat::expect_identical(length(result), 3L)
+  testthat::expect_length(result, 3L)
   testthat::expect_type(result, "double")
   testthat::expect_identical(result, c(TP_2=13,TP_3=5,TP_1=3))
   
@@ -70,7 +70,7 @@ test_that("wilcox_score returns correct results", {
   mu = 0
   
   result <- wilcox_score(x=x, y=y, mu=mu)
-  expect_identical( names(result), c("score.W", "p_value" ))
+  expect_named(result, c("score.W", "p_value" ))
   expect_equal( result[1], c("score.W"=7.0) )
   
   expect_equal( result[2], 

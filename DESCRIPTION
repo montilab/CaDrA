@@ -28,21 +28,21 @@ Packaged: 2022-11-20 18:35:45 UTC;
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Imports: 
-    SummarizedExperiment,
-    doParallel,
-    plyr,
-    ggplot2,
-    grid,
-    gplots,
-    gtable,
-    R.cache,
-    reshape2,
-    stats,
-    methods,
-    MASS,
-    misc3d,
-    ppcor,
-    graphics
+  doParallel, 
+  ggplot2,
+  gplots,
+  graphics, 
+  grid, 
+  gtable,
+  MASS, 
+  methods,
+  misc3d,
+  plyr,
+  ppcor, 
+  R.cache,
+  reshape2,
+  stats, 
+  SummarizedExperiment 
 Suggests: 
     BiocStyle,
     devtools,

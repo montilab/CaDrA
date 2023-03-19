@@ -43,9 +43,9 @@
 #' diagnostic messages. Default is \code{FALSE}.
 #' @param ... additional parameters to be passed to \code{custom_function}
 #' 
-#' @return return a vector of row-wise scores ordered from most significant to 
-#' least significant where its labels or names must match the row names of 
-#' \code{FS_mat} object
+#' @return return a vector of row-wise scores where it is ordered from most
+#' significant to least significant (e.g. from highest to lowest values) 
+#' where its labels or names must match the row names of \code{FS_mat} object
 #' 
 #' @examples
 #' 
@@ -172,7 +172,7 @@ calc_rowscore <- function(
                            do_check = do_check, verbose = verbose, ...)
   
   # Select the appropriate method to compute row-wise directional scores
-  rscore <- switch(
+  rscores <- switch(
     method,
     ks = ks_rowscore(
       FS_mat = FS_mat,
@@ -201,8 +201,17 @@ calc_rowscore <- function(
       known_parameters = known_parameters
     )
   )
+  
+  # Remove scores that are Inf as it is resulted from
+  # taking the -log(0). They are uninformative.
+  rscores <- rscores[rscores != Inf]
+  
+  # Re-order FS in a decreasing order (from most to least significant)
+  # This comes in handy when doing the top-N evaluation of
+  # the top N 'best' features
+  rscores <- rscores[order(rscores, decreasing=TRUE)]
 
-  return(rscore)
+  return(rscores)
 
 }
 

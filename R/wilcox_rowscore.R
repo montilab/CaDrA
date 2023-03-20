@@ -40,8 +40,8 @@
 #'    metric = "pval"
 #' )
 #'
-#' @return return a vector of scores ordered from most significant to least
-#' significant where its labels or names match the row names of FS_mat object
+#' @return return a vector of row-wise scores where its labels or names 
+#' must match the row names of \code{FS_mat} object
 #' 
 wilcox_rowscore <- function
 (
@@ -60,26 +60,14 @@ wilcox_rowscore <- function
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
-  # the re-ordering will convert the matrix to a vector form.
-  # Hence, we need to convert it back to its matrix form in order 
-  # for the function to work
-  if(nrow(FS_mat) == 1){
-    # Get the feature and sample names before reordering FS by input score
-    feature_names <- rownames(FS_mat)
-    sample_names <- colnames(FS_mat)
-    mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, sample_names))
-  }else{
-    mat <- FS_mat[, names(input_score)]  
-  }
+  FS_mat <- FS_mat[, names(input_score), drop=FALSE]  
   
   # Since input_score is already ordered from largest to smallest
   # We can assign ranks as 1:N (N: number of samples)
-  ranks <- seq(1, ncol(mat))
+  ranks <- seq(1, ncol(FS_mat))
 
   # Compute the wilcox rank sum statitic and p-value per row in the matrix
-  wilcox <- apply(X=mat, MARGIN=1, function(x){
+  wilcox <- apply(X=FS_mat, MARGIN=1, function(x){
     wilcox_score(
       x = ranks[which(x==1)],
       y = ranks[which(x==0)],
@@ -92,17 +80,8 @@ wilcox_rowscore <- function
   pval <- wilcox[2,]
 
   # Compute the scores according to the provided metric
-  scores <- ifelse(rep(metric, nrow(mat)) %in% "pval", -log(pval), stat)
-  names(scores) <- rownames(mat)
-  
-  # Remove scores that are Inf as it is resulted from
-  # taking the -log(0). They are uninformative.
-  scores <- scores[scores != Inf]
-  
-  # Re-order FS in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  scores <- scores[order(scores, decreasing=TRUE)]
+  scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(FS_mat)
   
   return(scores)
   

@@ -26,17 +26,17 @@ test_that("candidate_search returns expected result ",{
     max_size = 7, 
     best_score_only = FALSE
   )
-  testthat::expect_identical(length(result), 1L)
+  testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(length(result[[1]]), 3L)
+  testthat::expect_length(result[[1]], 3L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
-  testthat::expect_identical(length(result[[1]][[2]]), 100L)
+  testthat::expect_length(result[[1]][[2]], 100L)
   testthat::expect_equal(round(result[[1]][[2]][c(1:3, 100)],9),
                          c("1"=2.187332993, "2"=2.168955965, 
                            "3"=2.050084686, "100"=-2.309168876))
   
-  testthat::expect_identical(length(result[[1]][[3]]), 1L)
+  testthat::expect_length(result[[1]][[3]], 1L)
   testthat::expect_equal(round(result[[1]][[3]],5), c("TN_716"=14.90173))
   
 
@@ -53,17 +53,17 @@ test_that("candidate_search returns expected result ",{
     best_score_only = FALSE
   )
   
-  testthat::expect_identical(length(result), 1L)
+  testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(length(result[[1]]), 3L)
+  testthat::expect_length(result[[1]], 3L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
-  testthat::expect_identical(length(result[[1]][[2]]), 100L)
+  testthat::expect_length(result[[1]][[2]], 100L)
   testthat::expect_equal(round(result[[1]][[2]][c(1:3, 100)],6),
                          c("1"=2.187333, "2"=2.168956, 
                            "3"=2.050085, "100"=-2.309169))
   
-  testthat::expect_identical(length(result[[1]][[3]]), 1L)
+  testthat::expect_length(result[[1]][[3]], 1L)
   testthat::expect_equal(round(result[[1]][[3]],5), c("TP_9"=27.75113))
   
   
@@ -82,17 +82,17 @@ test_that("candidate_search returns expected result ",{
       best_score_only = FALSE
     )
   )
-  testthat::expect_identical(length(result), 1L)
+  testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_identical(length(result[[1]]), 3L)
+  testthat::expect_length(result[[1]], 3L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
-  testthat::expect_identical(length(result[[1]][[2]]), 100L)
+  testthat::expect_length(result[[1]][[2]], 100L)
   testthat::expect_equal(round(result[[1]][[2]][c(1:3, 100)],6),
                          c("1"=2.187333, "2"=2.168956, 
                            "3"=2.050085, "100"=-2.309169))
   
-  testthat::expect_identical(length(result[[1]][[3]]), 1L)
+  testthat::expect_length(result[[1]][[3]], 1L)
   testthat::expect_equal(round(result[[1]][[3]],5), c("TN_716"=0.68911))
   
 

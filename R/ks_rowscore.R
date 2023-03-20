@@ -44,8 +44,8 @@
 #'    metric = "pval"
 #' )
 #'
-#' @return return a vector of scores ordered from most significant to least
-#' significant where its labels or names match the row names of FS_mat object
+#' @return return a vector of row-wise scores where its labels or names 
+#' must match the row names of \code{FS_mat} object
 #' 
 ks_rowscore <- function
 (
@@ -65,19 +65,7 @@ ks_rowscore <- function
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  # NOTE: In case nrow(FS_mat) = 1, which used in forward_backward_check(),
-  # the re-ordering will convert the matrix to a vector form.
-  # Hence, we need to convert it back to its matrix form in order 
-  # for the function to work
-  if(nrow(FS_mat) == 1){
-    # Get the feature and sample names before reordering FS by input score
-    feature_names <- rownames(FS_mat)
-    sample_names <- colnames(FS_mat)
-    mat <- matrix(t(FS_mat), nrow=1, byrow=TRUE,
-                  dimnames=list(feature_names, sample_names))
-  }else{
-    mat <- FS_mat[, names(input_score)]  
-  }
+  FS_mat <- FS_mat[, names(input_score), drop=FALSE]  
   
   # Check if weight is provided
   if(length(weight) > 0){
@@ -95,25 +83,16 @@ ks_rowscore <- function
   alt_int <- switch(alternative, two.sided=0L, less=1L, greater=-1L, 1L)
 
   # Compute the ks statistic and p-value per row in the matrix
-  ks <- .Call(ks_genescore_mat_, mat, weight, alt_int)
+  ks <- .Call(ks_genescore_mat_, FS_mat, weight, alt_int)
 
   # Obtain score statistics and p-values from KS method
   stat <- ks[1,]
   pval <- ks[2,]
   
   # Compute the scores according to the provided metric
-  scores <- ifelse(rep(metric, nrow(mat)) %in% "pval", -log(pval), stat)
-  names(scores) <- rownames(mat)
-  
-  # Remove scores that are Inf as it is resulted from
-  # taking the -log(0). They are uninformative.
-  scores <- scores[scores != Inf]
-  
-  # Re-order FS in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  scores <- scores[order(scores, decreasing=TRUE)]
-  
+  scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(FS_mat)
+
   return(scores)
   
 }

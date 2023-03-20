@@ -72,9 +72,9 @@ diagnostic messages. Default is \code{FALSE}.}
 \item{...}{additional parameters to be passed to \code{custom_function}}
 }
 \value{
-return a vector of row-wise scores ordered from most significant to 
-least significant where its labels or names must match the row names of 
-\code{FS_mat} object
+return a vector of row-wise scores where it is ordered from most
+significant to least significant (e.g. from highest to lowest values) 
+where its labels or names must match the row names of \code{FS_mat} object
 }
 \description{
 Calculate row-wise scores of a given binary feature set based on

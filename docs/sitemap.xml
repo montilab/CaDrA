@@ -1,84 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/montilab/CaDrA/404.html</loc>
+    <loc>/404.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/LICENSE-text.html</loc>
+    <loc>/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/articles/index.html</loc>
+    <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/articles/permutation_based_testing.html</loc>
+    <loc>/articles/permutation_based_testing.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/articles/scoring_functions.html</loc>
+    <loc>/articles/scoring_functions.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/authors.html</loc>
+    <loc>/authors.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/index.html</loc>
+    <loc>/index.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/news/index.html</loc>
+    <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/news/news-0.99.html</loc>
+    <loc>/reference/BRCA_GISTIC_MUT_SIG.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/BRCA_GISTIC_MUT_SIG.html</loc>
+    <loc>/reference/CCLE_MUT_SCNA.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CCLE_MUT_SCNA.html</loc>
+    <loc>/reference/CTNBB1_reporter.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CTNBB1_reporter.html</loc>
+    <loc>/reference/CaDrA.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/CaDrA.html</loc>
+    <loc>/reference/TAZYAP_BRCA_ACTIVITY.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/TAZYAP_BRCA_ACTIVITY.html</loc>
+    <loc>/reference/calc_rowscore.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/calc_rowscore.html</loc>
+    <loc>/reference/candidate_search.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/candidate_search.html</loc>
+    <loc>/reference/generate_permutations.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/generate_permutations.html</loc>
+    <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/index.html</loc>
+    <loc>/reference/meta_plot.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/meta_plot.html</loc>
+    <loc>/reference/perm_res.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/perm_res.html</loc>
+    <loc>/reference/permutation_plot.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/permutation_plot.html</loc>
+    <loc>/reference/prefilter_data.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/prefilter_data.html</loc>
+    <loc>/reference/sim_FS.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/sim_FS.html</loc>
+    <loc>/reference/sim_Scores.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/sim_Scores.html</loc>
+    <loc>/reference/topn_best.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/topn_best.html</loc>
+    <loc>/reference/topn_list.html</loc>
   </url>
   <url>
-    <loc>https://github.com/montilab/CaDrA/reference/topn_list.html</loc>
-  </url>
-  <url>
-    <loc>https://github.com/montilab/CaDrA/reference/topn_plot.html</loc>
+    <loc>/reference/topn_plot.html</loc>
   </url>
 </urlset>

@@ -19,7 +19,7 @@ test_that("revealer_rowscore returns correct results", {
     assoc_metric = "IC"
   )
   
-  testthat::expect_identical(length(result), 3L)
+  testthat::expect_length(result, 3L)
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
@@ -30,7 +30,7 @@ test_that("revealer_rowscore returns correct results", {
     input_score = input_score, 
     assoc_metric = "COR"
   )
-  testthat::expect_identical(length(result), 3L)
+  testthat::expect_length(result, 3L)
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
@@ -86,7 +86,7 @@ test_that("revealer_score returns correct results", {
     assoc_metric = "IC")
   
   testthat::expect_type(result, "double")
-  testthat::expect_identical(names(result), "score")
+  testthat::expect_named(result, "score")
   testthat::expect_equal(round(result, 7), c(score=0.4400776) )
   
   
@@ -121,7 +121,7 @@ test_that("mutual_inf_v2 returns correct results", {
     y = y))
   
   testthat::expect_type(result, "list")
-  testthat::expect_identical(names(result), 
+  testthat::expect_named(result, 
                              c("MI", "SMI", "HXY", "HX", "HY", "NMI", "IC") )
   
   testthat::expect_equal(round(result$MI, 5), 1.11879 )

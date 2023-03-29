@@ -33,8 +33,8 @@ and columns represent the samples.}
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
 
-NOTE: \code{input_score} object must have names or labels that match the column
-names of \code{FS} object.}
+NOTE: \code{input_score} object must have names or labels that match 
+the column names of \code{FS} object.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}

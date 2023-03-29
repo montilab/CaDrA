@@ -7,17 +7,22 @@
 meta_plot(topn_best_list, input_score_label = NULL)
 }
 \arguments{
-\item{topn_best_list}{a list of objects returned from \code{candidate_search()} 
+\item{topn_best_list}{a list of objects returned from 
+\code{candidate_search()} 
 corresponding to the search of a set of top N features given by top_N value.
-The topn_best_list contains a list of returned meta-feature set, its corresponding best score, 
+The topn_best_list contains a list of returned meta-feature set, 
+its corresponding best score, 
 and observed input scores.}
 
 \item{input_score_label}{a label that references to the \code{input_score}
-variable that was used to compute the top N best features. Default is \code{NULL}.}
+variable that was used to compute the top N best features. 
+Default is \code{NULL}.}
 }
 \value{
-a density diagram of observed input scores (sorted from largest to lowest), 
-a tile plot of the top features within the meta-feature set, and a KS enrichment plot 
+a density diagram of observed input scores 
+(sorted from largest to lowest), 
+a tile plot of the top features within the meta-feature set, 
+and a KS enrichment plot 
 of the meta-feature set for a given distribution (here, this will correspond 
 to the logical OR of the features)
 }
@@ -25,8 +30,9 @@ to the logical OR of the features)
 By utilizing the top N results obtained from \code{candidate_search()},
 we can find the best meta-feature among the top N searches using
 \code{topn_best()}. \code{meta_plot()} is then used to produce graphics
-including a tile plot for the top meta-features that associated with a molecular 
-phenotype of interest (e.g. input_score), the KS enrichment plot of the meta-features, 
+including a tile plot for the top meta-features that associated with  
+a molecular phenotype of interest (e.g. input_score), 
+the KS enrichment plot of the meta-features, 
 and lastly, a density diagram of the distribution of the observed
 input scores sorted from largest to smallest at the top.
 }

@@ -7,8 +7,8 @@
 \format{
 A list of objects returned from \code{CaDrA} function. The resulting 
 object contains a list of key parameters that was used to run the
-permutation-based testing, a vector of permuted best scores for a given n_perm,
-an observed best score, and a permuted p-value.
+permutation-based testing, a vector of permuted best scores for 
+a given n_perm, an observed best score, and a permuted p-value.
 
 To visualize the Empirical Null Distribution of the permuted best scores over 
 n_perm iterations, just pass the resulting list to \code{permutation_plot}.
@@ -19,8 +19,10 @@ See \code{permutation_plot} for more details.
 data(perm_res)
 }
 \description{
-The permutation result returned from \code{CaDrA()} using pre-simulated dataset
-(\code{FS = sim_FS}), pre-simulated input scores (\code{input_score = sim_Scores}), 
+The permutation result returned from \code{CaDrA()} 
+using pre-simulated dataset
+(\code{FS = sim_FS}), pre-simulated input scores 
+(\code{input_score = sim_Scores}), 
 \code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
 \code{search_method = "both"}, \code{max_size = 10},
 \code{obs_best_score = NULL} and \code{n_perm = 1000} 

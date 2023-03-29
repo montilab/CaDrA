@@ -16,7 +16,8 @@ See \code{\link[CaDrA]{candidate_search}} for more information.
 data(topn_list)
 }
 \description{
-A list of objects returned from \code{candidate_search()} using simulated dataset
+A list of objects returned from \code{candidate_search()} 
+using simulated dataset
 \code{FS = sim_FS}, \code{input_score = sim_Scores}, \code{top_N = 7},
 \code{method = "ks_pval"}, \code{alternative = "less"}, 
 \code{search_method = "both"}, \code{max_size = 10},
@@ -26,9 +27,10 @@ for the presence of 10 left-skewed (i.e. true positive or TP) features
 in \code{sim_FS} dataset.
 }
 \details{
-Over top_N = 7 feature searches, a set of meta-features in form of SummarizedExperiment 
-object, along with a vector of observed input scores and its corresponding best score 
-are returned from each search.
+Over top_N = 7 feature searches, a set of meta-features in form 
+of SummarizedExperiment 
+object, along with a vector of observed input scores and 
+its corresponding best score are returned from each search.
 }
 \examples{
 
@@ -47,7 +49,8 @@ topn_best_meta <- topn_best(topn_list = topn_list)
 # Visualize the best meta-feature using meta_plot() function
 meta_plot(topn_best_list = topn_best_meta)
 
-# Visualize overlap of meta-features across top_N = 7 using topn_plot() function
+# Visualize overlap of meta-features across top_N = 7 
+using topn_plot() function
 topn_plot(topn_list = topn_list)
 
 }

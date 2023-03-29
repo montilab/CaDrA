@@ -125,3 +125,7 @@ CaDrA::topn_plot(topn_res)
 sessionInfo()
 ```
 
+## (5) Acknowledgements
+
+This project is funded in part by the [NIH/NIDCR](https://www.nidcr.nih.gov/) (3R01DE030350-01A1S1, R01DE031831), [Find the Cause Breast Cancer Foundation](https://findthecausebcf.org), and [NIH/NIA](https://www.nia.nih.gov/) (UH3 AG064704).
+

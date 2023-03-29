@@ -11,15 +11,15 @@
 #'
 #' @usage data(perm_res)
 #'
-#' @format A list of objects returned from \code{CaDrA()} function. The resulting 
+#' @format A list of objects returned from \code{CaDrA} function. The resulting 
 #' object contains a list of key parameters that was used to run the
 #' permutation-based testing, a vector of permuted best scores for a given n_perm,
 #' an observed best score, and a permuted p-value.
 #'
 #' To visualize the Empirical Null Distribution of the permuted best scores over 
-#' n_perm iterations, just pass the resulting list to \code{permutation_plot()}.
+#' n_perm iterations, just pass the resulting list to \code{permutation_plot}.
 #' 
-#' See \code{permutation_plot()} for more details.
+#' See \code{permutation_plot} for more details.
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2017) CaDrA: A computational framework for performing

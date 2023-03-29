@@ -7,7 +7,7 @@
 \format{
 An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
 containing an assay of 16,873 rows (features) and 951 columns (samples)
-see \code{?SummarizedExperiment} for more details.
+see \code{SummarizedExperiment} for more details.
 }
 \usage{
 data(BRCA_GISTIC_MUT_SIG)

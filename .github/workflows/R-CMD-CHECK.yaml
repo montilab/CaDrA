@@ -3,6 +3,10 @@
 on:
   push:
     branches: master
+    paths-ignore:
+      - '**.Rmd'
+      - 'R/**'
+      - '.gitignore'
   pull_request:
     branches: master
   release:
@@ -16,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     # Only restrict concurrency for non-PR jobs
     concurrency:
-      group: rcmdcheck-${{ github.event_name != 'pull_request' }}
+      group: rcmdcheck-${{ github.event_name != 'pull_request' || github.run_id }}
       cancel-in-progress: true
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

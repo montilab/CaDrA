@@ -37,8 +37,8 @@
 #'   assoc_metric = "IC"
 #' )
 #' 
-#' @return return a vector of scores ordered from most significant to least
-#' significant where its labels or names match the row names of FS_mat object
+#' @return return a vector of row-wise scores where its labels or names 
+#' must match the row names of \code{FS_mat} object
 #' 
 revealer_rowscore <- function
 (
@@ -89,12 +89,7 @@ revealer_rowscore <- function
 
   names(cmi) <- rownames(FS_mat)
   
-  # Re-order FS in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  scores <- cmi[order(cmi, decreasing=TRUE)]
-
-  return(scores)
+  return(cmi)
 
 }
 

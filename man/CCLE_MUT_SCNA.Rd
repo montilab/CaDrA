@@ -7,7 +7,7 @@
 \format{
 An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
 containing a matrix of 17,723 rows (features) and 82 columns (samples).
-See \code{?SummarizedExperiment} for more details.
+See \code{SummarizedExperiment} for more details.
 }
 \usage{
 data(CCLE_MUT_SCNA)

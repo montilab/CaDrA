@@ -80,9 +80,8 @@
 #'   custom_parameters = NULL  
 #' )
 #' 
-#' @return return a vector of row-wise scores ordered from most significant 
-#' to least significant where its labels or names match the row names of 
-#' FS_mat object
+#' @return return a vector of row-wise scores where its labels or names 
+#' must match the row names of \code{FS_mat} object
 #' 
 custom_rowscore <- function
 (
@@ -171,8 +170,8 @@ custom_rowscore <- function
   if(length(custom) == 0 || any(!is.numeric(custom)) || any(is.na(custom)) || 
      is.null(names(custom)) || any(!names(custom) %in% rownames(FS_mat)))
     stop("The custom_function must return a vector of continuous scores ",
-         "(with no NAs) where it contains feature names or labels that match ",
-         "the row names (or feature names) of FS_mat object.\n")
+         "(with no NAs) where its feature names or labels must match ",
+         "the row names of FS_mat object.\n")
   
   return(custom)
   

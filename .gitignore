@@ -2,9 +2,6 @@
 .git
 .project
 
-# github actions
-.github
-
 # History files
 .Rhistory
 .Rapp.history

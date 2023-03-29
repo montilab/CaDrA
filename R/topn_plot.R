@@ -8,11 +8,13 @@
 #' \code{search_method = "both"}, \code{max_size = 10},
 #' and \code{best_score_only = FALSE} as inputs to the function.
 #' 
-#' The resulting list contains a set of meta-features in form of SummarizedExperiment 
-#' object, a vector of observed input scores, and its corresponding best score 
+#' The resulting list contains a set of meta-features in form of 
+#' SummarizedExperiment  object, a vector of observed input scores, 
+#' and its corresponding best score 
 #' over top N feature searches
 #'
-#' @return a heatmap of overlapping meta-features for a given top N feature searches
+#' @return a heatmap of overlapping meta-features for 
+#' a given top N feature searches
 #' @examples
 #'
 #' # Load pre-computed Top-N list generated for sim_FS dataset
@@ -60,7 +62,7 @@ topn_plot <- function(
     # If ncol(mat) > 1, we can order matrix columns in decreasing order
     mat <- mat[, order(scores, decreasing = TRUE)]
     
-    # Add the index number and its best score to each of the columns names of mat
+    # Add index number and its best score to each of the columns names of mat
     colnames(mat) <- paste(colnames(mat), " [", seq(1, ncol(mat)), "] ",
                          round(scores,3), sep="")
     

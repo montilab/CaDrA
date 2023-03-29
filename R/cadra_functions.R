@@ -89,10 +89,11 @@ prefilter_data <- function(
 #' of omics features.
 #' @param input_score a vector of continuous scores of a molecular phenotype of
 #' interest such as protein expression, pathway activity, etc.
-#' NOTE: The \code{input_score} object must have names or labels that match the column
-#' names of FS object.
+#' NOTE: The \code{input_score} object must have names or labels that 
+#' match the column names of FS object.
 #' @param do_check a logical value indicates whether or not to validate if the  
-#' given parameters (FS and input_score) are valid inputs. Default is \code{TRUE}
+#' given parameters (FS and input_score) are valid inputs. 
+#' Default is \code{TRUE}
 #' 
 #' @noRd
 #' 
@@ -179,11 +180,12 @@ check_data_input <- function(
 #' @param top_N an integer specifies the number of features to start the
 #' search over (e.g. starting from the top 'N' features with the best scores). 
 #' Default is 1.
-#' If \code{top_N} is provided, then \code{search_start} parameter will be ignored. 
+#' If \code{top_N} is provided, then \code{search_start} parameter 
+#' will be ignored. 
 #' @param search_start a list of character strings (separated by commas)
 #' which specify a list of feature names to start the search with. 
-#' If \code{search_start} is provided, then \code{top_N} parameter will be ignored. 
-#' Default is \code{NULL}.
+#' If \code{search_start} is provided, then \code{top_N} parameter 
+#' will be ignored. Default is \code{NULL}.
 #' 
 #' @noRd
 #' 
@@ -213,10 +215,11 @@ check_data_input <- function(
 #'  feature_names = rownames(sim_FS)
 #' )
 #'
-#' @return If top_N is given, a vector of indices of top N features with the best
-#' scores will be returned and used to start the candidate_search() with. 
-#' Otherwise, the candidate_search() will start the search with a list of indices 
-#' of features defined in search_start.
+#' @return If top_N is given, a vector of indices of top N features with 
+#' the best scores will be returned and used to start the candidate_search() 
+#' with. 
+#' Otherwise, the candidate_search() will start the search with a list of  
+#' indices of features defined in search_start.
 check_top_N <- function(
     rowscore, 
     feature_names,
@@ -248,7 +251,8 @@ check_top_N <- function(
       which(feature_names == top_features[f])
     }) |> unlist()
     
-    verbose("Evaluating search over top ", length(search_feature_index), " features\n")
+    verbose("Evaluating search over top ", length(search_feature_index), 
+            " features\n")
     
   }else{
     
@@ -265,7 +269,8 @@ check_top_N <- function(
     
     if(length(search_start) == 0 || any(!search_start %in% feature_names))
       stop("The provided starting features: ", 
-           paste0(search_start[which(!search_start %in% feature_names)], collapse=", "),
+           paste0(search_start[which(!search_start %in% feature_names)], 
+                  collapse=", "),
            " does not exist among the row names of FS object.\n")
     
     # Get the index of the search_start strings
@@ -316,8 +321,8 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
 #' Random permutation matrix generator
 #'
 #' Produces a random permutation score matrix given a vector of sample-specific
-#' scores representing a phenotypic readout of interest such as protein expression,
-#' pathway activity, etc.
+#' scores representing a phenotypic readout of interest such as protein 
+#' expression, pathway activity, etc.
 #' @param input_score a vector of continuous scores of a molecular phenotype of 
 #' interest such as protein expression, pathway activity, etc.
 #' NOTE: The \code{input_score} object must have names or labels to track 

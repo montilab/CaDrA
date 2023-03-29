@@ -4,19 +4,25 @@
 #' By utilizing the top N results obtained from \code{candidate_search()},
 #' we can find the best meta-feature among the top N searches using
 #' \code{topn_best()}. \code{meta_plot()} is then used to produce graphics
-#' including a tile plot for the top meta-features that associated with a molecular 
-#' phenotype of interest (e.g. input_score), the KS enrichment plot of the meta-features, 
+#' including a tile plot for the top meta-features that associated with  
+#' a molecular phenotype of interest (e.g. input_score), 
+#' the KS enrichment plot of the meta-features, 
 #' and lastly, a density diagram of the distribution of the observed
 #' input scores sorted from largest to smallest at the top.
-#' @param topn_best_list a list of objects returned from \code{candidate_search()} 
+#' @param topn_best_list a list of objects returned from 
+#' \code{candidate_search()} 
 #' corresponding to the search of a set of top N features given by top_N value.
-#' The topn_best_list contains a list of returned meta-feature set, its corresponding best score, 
+#' The topn_best_list contains a list of returned meta-feature set, 
+#' its corresponding best score, 
 #' and observed input scores.
 #' @param input_score_label a label that references to the \code{input_score}
-#' variable that was used to compute the top N best features. Default is \code{NULL}.
+#' variable that was used to compute the top N best features. 
+#' Default is \code{NULL}.
 #'
-#' @return a density diagram of observed input scores (sorted from largest to lowest), 
-#' a tile plot of the top features within the meta-feature set, and a KS enrichment plot 
+#' @return a density diagram of observed input scores 
+#' (sorted from largest to lowest), 
+#' a tile plot of the top features within the meta-feature set, 
+#' and a KS enrichment plot 
 #' of the meta-feature set for a given distribution (here, this will correspond 
 #' to the logical OR of the features)
 #' @examples
@@ -220,11 +226,14 @@ stacked_gtable_max <- function(...){
 
 #' KS Enrichment Plot
 #'
-#' An enrichment plot of a sum statistic across a given meta-feature using KS method. 
-#' The x and y-axis data for the KS enrichment plot can be returned from ks_plot_coordinates()
+#' An enrichment plot of a sum statistic across a given meta-feature 
+#' using KS method. 
+#' The x and y-axis data for the KS enrichment plot can be returned 
+#' from ks_plot_coordinates()
 #' @param df a data frame object with columns 'X' and 'Y' containing the
 #' x, y coordinates for the KS enrichment plot
-#' @return A graphic of enrichment scores for a given distribution using KS method
+#' @return A graphic of enrichment scores for a given distribution 
+#' using KS method
 #' 
 #' @noRd
 #'
@@ -307,7 +316,8 @@ ks_plot <- function(df){
 #' @noRd
 #'
 #' @return return a data frame with x, y coordinates to pass to ks_plot()
-ks_plot_coordinates <- function(n_x, y, weight, alt=c("less", "greater", "two.sided")){
+ks_plot_coordinates <- function(n_x, y, weight, 
+                                alt=c("less", "greater", "two.sided")){
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)

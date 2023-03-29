@@ -9,8 +9,8 @@
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
-#' NOTE: \code{input_score} object must have names or labels that match the column
-#' names of \code{FS} object.
+#' NOTE: \code{input_score} object must have names or labels that match 
+#' the column names of \code{FS} object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
@@ -96,7 +96,8 @@
 CaDrA <- function(
     FS,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
+               "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
@@ -191,7 +192,8 @@ CaDrA <- function(
               length(perm_best_scores),
               " permutated scores for the specified dataset",
               " and search parameters in cache path\n")
-      verbose("RE-COMPUTE PERMUTATION-BASED TESTINGS WITH LARGER NUMBER OF PERMUTATIONS\n")
+      verbose("RE-COMPUTE PERMUTATION-BASED TESTINGS ",
+              "WITH LARGER NUMBER OF PERMUTATIONS\n")
     }
 
     #######################################################################

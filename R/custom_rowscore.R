@@ -133,10 +133,12 @@ custom_rowscore <- function
     custom_parameters[
       which(!names(custom_parameters) %in% names(req_args))],
     known_parameters[
-      which(!names(known_parameters) %in% c(names(req_args), names(custom_parameters)))]
+      which(!names(known_parameters) %in% c(names(req_args), 
+                                            names(custom_parameters)))]
   )
   
-  # Extract a list of custom_function() parameters that existed in combined variables
+  # Extract a list of custom_function() parameters that existed in 
+  # combined variables
   included_parameters <- combined_parameters[
     which(names(combined_parameters) %in% names(custom_args))] 
   
@@ -144,7 +146,8 @@ custom_rowscore <- function
   excluded_parameters <- custom_args[
     which(!names(custom_args) %in% names(combined_parameters))]
   
-  # If some parameters are excluded, check to see if that argument has a default value
+  # If some parameters are excluded, 
+  # check to see if that argument has a default value
   # Finally, return all necessarily arguments to be passed to custom_function()
   all_parameters <- c(
     included_parameters, 

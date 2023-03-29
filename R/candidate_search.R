@@ -3,20 +3,21 @@
 #'
 #' Performs heuristic search on a set of binary features to determine whether
 #' there are features whose union is more skewed (enriched at the extremes)
-#' than either features alone. This is the main functionality of the \code{CaDrA}
-#' package. 
+#' than either features alone. This is the main functionality of 
+#' the \code{CaDrA} package. 
 #' 
 #' NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
 #' \code{candidate_search()} function
-#' @param FS a SummarizedExperiment class object from SummarizedExperiment package
-#' where rows represent features of interest (e.g. genes, transcripts, exons, etc.) 
-#' and columns represent the samples. The assay of FS contains binary (1/0) values 
+#' @param FS a SummarizedExperiment class object from SummarizedExperiment 
+#' package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values 
 #' indicating the presence/absence of omics features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
-#' NOTE: \code{input_score} object must have names or labels that match the column
-#' names of \code{FS} object.
+#' NOTE: \code{input_score} object must have names or labels that match the 
+#' column names of \code{FS} object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
@@ -71,8 +72,9 @@
 #' @return If \code{best_score_only} is set to \code{TRUE}, the function will
 #' return a list of objects containing ONLY the best score of the union 
 #' meta-feature matrix for each top N searches. If \code{best_score_only} is set
-#' to \code{FALSE}, a list of objects containing the returned meta-feature matrix,
-#' as well as its corresponding best score and observed input scores are returned.
+#' to \code{FALSE}, a list of objects containing the returned meta-feature 
+#' matrix, as well as its corresponding best score and observed input scores 
+#' are returned.
 #' 
 #' @examples
 #'
@@ -95,7 +97,8 @@
 candidate_search <- function(
     FS,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
+               "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
@@ -164,7 +167,8 @@ candidate_search <- function(
   ## Check the max_size variable ####
   max_size <- as.integer(max_size)
 
-  if(is.na(max_size) || length(max_size)==0 || max_size <= 0 || max_size > nrow(FS))
+  if(is.na(max_size) || length(max_size)==0 || 
+     max_size <= 0 || max_size > nrow(FS))
     stop("Please specify a maximum size that a meta-feature can extend to do ",
          "for a given search (max_size must be >= 1)",
          "and max_size must be lesser than the number of features in FS\n")
@@ -260,7 +264,8 @@ candidate_search <- function(
 
         # Update best_meta based on feature set
         best_meta <- as.numeric(ifelse(
-          colSums(SummarizedExperiment::assay(FS)[global_best_s_features,]) == 0, 0, 1))
+          colSums(SummarizedExperiment::assay(FS)[global_best_s_features,]) == 
+            0, 0, 1))
 
       }
 
@@ -273,7 +278,8 @@ candidate_search <- function(
       # Here "*1" is used to convert the boolean back to integer 1's and 0's
       # Notice we remove anything in best_s_index from the original matrix
       # first to form the meta matrix.
-      meta_mat <- base::sweep(SummarizedExperiment::assay(FS)[-best_s_index,], 2, best_meta, `|`)*1
+      meta_mat <- base::sweep(SummarizedExperiment::assay(FS)[-best_s_index,], 
+                              2, best_meta, `|`)*1
 
       # Check if there are any features that are all 1s generated from
       # taking the union between the matrix
@@ -332,7 +338,8 @@ candidate_search <- function(
 
     verbose("\n\nFinished!\n\n")
     verbose("Number of iterations covered: ", i, "\n")
-    verbose("Best score attained over ", i , " iterations: ", global_best_s, "\n")
+    verbose("Best score attained over ", i , 
+            " iterations: ", global_best_s, "\n")
 
     if(length(global_best_s_features) == 1)
       verbose("No meta-feature that improves the enrichment was found\n")
@@ -373,23 +380,25 @@ candidate_search <- function(
     best_meta_scores <- unlist(scores_l)
 
     # Fetch the best score with the highest value
-    best_score <- best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
+    best_score <-best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
 
     return(best_score)
 
   }
 
-  # By Default, the function returns the top N candidate search results as a list of lists
+  # By Default, the function returns the top N candidate search results as 
+  # a list of lists
   return(topn_l)
 
 }
 
 
 # Performance backward selection
-#' @param FS a SummarizedExperiment class object from SummarizedExperiment package
-#' where rows represent features of interest (e.g. genes, transcripts, exons, etc...) 
-#' and columns represent the samples. The assay of FS contains binary (1/0) values 
-#' indicating the presence/absence of ‘omics’ features.
+#' @param FS a SummarizedExperiment class object from SummarizedExperiment 
+#' package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) 
+#' and columns represent the samples. The assay of FS contains binary (1/0)  
+#' values indicating the presence/absence of ‘omics’ features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
@@ -405,8 +414,9 @@ candidate_search <- function(
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying a vector 
-#' of weights will perform a weighted-KS testing. Default is \code{NULL}.
+#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying  
+#' a vector of weights will perform a weighted-KS testing. Default is 
+#' \code{NULL}.
 #' @param glob_f a vector containing the features (or row names) whose
 #' union gives the best score (so far) in the search.
 #' Feature names should match those of the provided FS object
@@ -498,7 +508,8 @@ forward_backward_check <- function
 
     # Return a set of features that gave a better score than
     # the existing best score and its new best score as well
-    return(list(best_features=f_names[[f_best_index]], best_scores=f_best_score))
+    return(list(best_features=f_names[[f_best_index]], 
+                best_scores=f_best_score))
 
   }else{
 

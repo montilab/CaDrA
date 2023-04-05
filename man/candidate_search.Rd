@@ -23,16 +23,17 @@ candidate_search(
 )
 }
 \arguments{
-\item{FS}{a SummarizedExperiment class object from SummarizedExperiment package
-where rows represent features of interest (e.g. genes, transcripts, exons, etc.) 
-and columns represent the samples. The assay of FS contains binary (1/0) values 
+\item{FS}{a SummarizedExperiment class object from SummarizedExperiment 
+package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
+The assay of FS contains binary (1/0) values 
 indicating the presence/absence of omics features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
 
-NOTE: \code{input_score} object must have names or labels that match the column
-names of \code{FS} object.}
+NOTE: \code{input_score} object must have names or labels that match the 
+column names of \code{FS} object.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
@@ -101,14 +102,15 @@ diagnostic messages. Default is \code{FALSE}.}
 If \code{best_score_only} is set to \code{TRUE}, the function will
 return a list of objects containing ONLY the best score of the union 
 meta-feature matrix for each top N searches. If \code{best_score_only} is set
-to \code{FALSE}, a list of objects containing the returned meta-feature matrix,
-as well as its corresponding best score and observed input scores are returned.
+to \code{FALSE}, a list of objects containing the returned meta-feature 
+matrix, as well as its corresponding best score and observed input scores 
+are returned.
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether
 there are features whose union is more skewed (enriched at the extremes)
-than either features alone. This is the main functionality of the \code{CaDrA}
-package.
+than either features alone. This is the main functionality of 
+the \code{CaDrA} package.
 }
 \details{
 NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended

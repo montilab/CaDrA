@@ -13,12 +13,14 @@ using simulated dataset \code{FS = sim_FS}, \code{input_score = sim_Scores},
 \code{search_method = "both"}, \code{max_size = 10},
 and \code{best_score_only = FALSE} as inputs to the function.
 
-The resulting list contains a set of meta-features in form of SummarizedExperiment 
-object, a vector of observed input scores, and its corresponding best score 
+The resulting list contains a set of meta-features in form of 
+SummarizedExperiment  object, a vector of observed input scores, 
+and its corresponding best score 
 over top N feature searches}
 }
 \value{
-a heatmap of overlapping meta-features for a given top N feature searches
+a heatmap of overlapping meta-features for 
+a given top N feature searches
 }
 \description{
 Generate a heatmap representation of overlapping meta-features across

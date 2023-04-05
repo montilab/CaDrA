@@ -27,8 +27,8 @@ the samples.}
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
 
-NOTE: \code{input_score} object must have names or labels that match the column
-names of \code{FS_mat} object.}
+NOTE: \code{input_score} object must have names or labels that match the 
+column names of \code{FS_mat} object.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
@@ -58,8 +58,8 @@ NOTE: This argument is applied to KS and Wilcoxon method}
 \item{weight}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
 vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
-\item{seed_names}{a vector of one or more features representing known “causes”
-of activation or features associated with a response of interest.
+\item{seed_names}{a vector of one or more features representing known 
+“causes” of activation or features associated with a response of interest.
 It is applied for \code{method = "revealer"} only.}
 
 \item{do_check}{a logical value indicates whether or not to validate if the

@@ -60,7 +60,8 @@ revealer_rowscore <- function
     if(any(!seed_names %in% rownames(FS_mat)))
       stop(paste0(
         "The provided seed_names, ",
-        paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], collapse = ","), 
+        paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], 
+               collapse = ","), 
         ", do not exist among the row names of the FS_mat object")
       )
     
@@ -97,7 +98,8 @@ revealer_rowscore <- function
 
 
 
-#' Compute Conditional Mutual Information of x and y given z from \code{REVEALER}
+#' Compute Conditional Mutual Information of x and y given z from 
+#' \code{REVEALER}
 #'
 #' @param x a vector of continuous values of
 #' a given functional response of interest
@@ -168,7 +170,8 @@ cond_assoc <-  function(x, y, z, metric) {
 # Computes the conditional mutual information x, y | z
 cond_mutual_inf <- function(x, y, z,
                             n.grid=25,
-                            delta = 0.25*c(MASS::bcv(x), MASS::bcv(y), MASS::bcv(z))) {
+                            delta = 0.25*c(MASS::bcv(x), MASS::bcv(y), 
+                                           MASS::bcv(z))) {
 
   # Computes the Conditional mutual information:
   # I(X, Y | X) = H(X, Z) + H(Y, Z) - H(X, Y, Z) - H(Z)
@@ -227,7 +230,8 @@ cond_mutual_inf <- function(x, y, z,
 }
 
 # Computes the Mutual Information/Information Coefficient IC(x, y)
-mutual_inf_v2 <- function(x, y, n.grid=25, delta = c(MASS::bcv(x), MASS::bcv(y))) {
+mutual_inf_v2 <- function(x, y, n.grid=25, 
+                          delta = c(MASS::bcv(x), MASS::bcv(y))) {
 
   # Computes the Mutual Information/Information Coefficient IC(x, y)
   #

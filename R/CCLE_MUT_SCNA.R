@@ -1,14 +1,16 @@
 #' Genomic Data from CCLE MUT + SCNA
 #'
-#' A SummarizedExperiment object consists of 17,723 genomic features across 82 samples.
+#' A SummarizedExperiment object consists of 17,723 genomic features across 
+#' 82 samples.
 #'
 #' @docType data
 #'
 #' @usage data(CCLE_MUT_SCNA)
 #'
-#' @format An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
+#' @format An object of class \code{SummarizedExperiment} from 
+#' \code{SummarizedExperiment} package
 #' containing a matrix of 17,723 rows (features) and 82 columns (samples).
-#' See \code{?SummarizedExperiment} for more details.
+#' See \code{SummarizedExperiment} for more details.
 #'
 #' @references Kim, J., Botvinnik, O., Abudayyeh, O. et al.
 #' Characterizing genomic alterations in cancer by complementary functional

@@ -21,8 +21,8 @@ permuted \code{input_score}.
 }
 \description{
 Produces a random permutation score matrix given a vector of sample-specific
-scores representing a phenotypic readout of interest such as protein expression,
-pathway activity, etc.
+scores representing a phenotypic readout of interest such as protein 
+expression, pathway activity, etc.
 }
 \examples{
 

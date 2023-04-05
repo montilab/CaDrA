@@ -5,15 +5,17 @@
 \alias{BRCA_GISTIC_MUT_SIG}
 \title{Genomic Data from TCGA BRCA MUT + GISTIC}
 \format{
-An object of class \code{SummarizedExperiment} from \code{SummarizedExperiment} package
+An object of class \code{SummarizedExperiment} from 
+\code{SummarizedExperiment} package
 containing an assay of 16,873 rows (features) and 951 columns (samples)
-see \code{?SummarizedExperiment} for more details.
+see \code{SummarizedExperiment} for more details.
 }
 \usage{
 data(BRCA_GISTIC_MUT_SIG)
 }
 \description{
-A SummarizedExperiment object consists of 16,873 genomic features across 951 samples.
+A SummarizedExperiment object consists of 16,873 genomic features 
+across 951 samples.
 }
 \references{
 Kartha VK, Kern JG, Sebastiani P, Zhang L,

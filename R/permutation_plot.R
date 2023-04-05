@@ -40,7 +40,8 @@ permutation_plot <- function(perm_res){
   if(!is.null(top_N)){
     plot_title <- paste0(plot_title, "\n Top N: ", top_N)
   }else{
-    plot_title <- paste0(plot_title, "\n Seed: ", paste0(search_start, collapse=", "))
+    plot_title <- paste0(plot_title, "\n Seed: ", 
+                         paste0(search_start, collapse=", "))
   }
 
   # Here, let us plot the absolute values of the permutation p-values,

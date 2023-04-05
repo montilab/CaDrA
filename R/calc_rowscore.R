@@ -8,8 +8,8 @@
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
-#' NOTE: \code{input_score} object must have names or labels that match the column
-#' names of \code{FS_mat} object.
+#' NOTE: \code{input_score} object must have names or labels that match the 
+#' column names of \code{FS_mat} object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
@@ -33,8 +33,8 @@
 #' NOTE: This argument is applied to KS and Wilcoxon method
 #' @param weight if method is \code{ks_score} or \code{ks_pval}, specifying a 
 #' vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
-#' @param seed_names a vector of one or more features representing known “causes”
-#' of activation or features associated with a response of interest.
+#' @param seed_names a vector of one or more features representing known 
+#' “causes” of activation or features associated with a response of interest.
 #' It is applied for \code{method = "revealer"} only.
 #' @param do_check a logical value indicates whether or not to validate if the  
 #' given parameters (\code{FS_mat} and \code{input_score}) are valid inputs. 
@@ -132,7 +132,8 @@
 calc_rowscore <- function(
     FS_mat,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
+               "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,   
     alternative = c("less", "greater", "two.sided"),

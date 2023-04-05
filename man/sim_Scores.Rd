@@ -5,7 +5,10 @@
 \alias{sim_Scores}
 \title{Simulated Input Scores}
 \format{
-
+A vector of continuous scores randomly generated 
+from \code{rnorm(n=ncol(sim_FS), mean=0, sd=1)} with \code{set.seed(123)} 
+based on the number of samples in the
+simulated dataset (sim_FS)
 }
 \usage{
 \code{data(sim_Scores)}

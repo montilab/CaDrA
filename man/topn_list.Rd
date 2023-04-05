@@ -50,7 +50,7 @@ topn_best_meta <- topn_best(topn_list = topn_list)
 meta_plot(topn_best_list = topn_best_meta)
 
 # Visualize overlap of meta-features across top_N = 7 
-using topn_plot() function
+# using topn_plot() function
 topn_plot(topn_list = topn_list)
 
 }

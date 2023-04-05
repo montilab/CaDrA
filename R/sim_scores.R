@@ -7,7 +7,7 @@
 #'
 #' @docType data
 #'
-#' @usage \code{data(sim_Scores)}
+#' @usage data(sim_Scores)
 #'
 #' @format A vector of continuous scores randomly generated 
 #' from \code{rnorm(n=ncol(sim_FS), mean=0, sd=1)} with \code{set.seed(123)} 

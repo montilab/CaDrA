@@ -11,7 +11,7 @@ based on the number of samples in the
 simulated dataset (sim_FS)
 }
 \usage{
-\code{data(sim_Scores)}
+data(sim_Scores)
 }
 \description{
 A simulated vector of continuous scores generated from 

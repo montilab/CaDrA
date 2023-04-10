@@ -131,6 +131,9 @@ cadra_result <- CaDrA(
   ncores = 1, cache_path = NULL
 )
 
+# Close all open connections
+closeAllConnections()
+
 }
 \author{
 Reina Chau

@@ -88,6 +88,9 @@
 #'   ncores = 1, cache_path = NULL
 #' )
 #'
+#' # Close all open connections
+#' closeAllConnections()
+#' 
 #' @export
 #' @import R.cache doParallel ggplot2 plyr methods
 #'

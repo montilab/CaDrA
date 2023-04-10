@@ -23,7 +23,7 @@ test_that("revealer_rowscore returns correct results", {
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
-                         c(TP_1=0.4573207, TP_3=0.3867053, TP_2=-0.4266714) )
+                         c(TP_1=0.4573207, TP_2=-0.4266714, TP_3=0.3867053 ) )
   
   result <- revealer_rowscore(
     FS_mat = mat, 
@@ -34,7 +34,7 @@ test_that("revealer_rowscore returns correct results", {
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
-                         c(TP_1=0.5924383, TP_3=0.5067436, TP_2=-0.3985206) )
+                         c(TP_1=0.5924383, TP_2=-0.3985206, TP_3=0.5067436 ) )
   
   
 })

@@ -56,7 +56,7 @@ permutation_plot <- function(perm_res){
     )
 
   g <- g + geom_vline(xintercept = obs_best_score, linetype = "longdash",
-                      linewidth = 1.5, colour = "red") +
+                      colour = "red") +   # linewidth = 1.5
     labs(
       title = plot_title,
       x = "Score",

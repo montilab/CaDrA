@@ -280,7 +280,8 @@ ks_plot <- function(df){
 
   g <- g +
     #geom_line(size=1.25,colour="blueviolet")+
-    geom_line(linewidth=1.25, colour="darkgoldenrod1") +
+    geom_line(colour="darkgoldenrod1") +
+    #geom_line(linewidth=1.25, colour="darkgoldenrod1") +
     geom_hline(yintercept=0, linetype=2) +
     # Katia: adding ".data" to avoid a warning during check:
     # no visible binding for global variable

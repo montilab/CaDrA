@@ -85,9 +85,14 @@ ks_rowscore <- function
   # Compute the ks statistic and p-value per row in the matrix
   ks <- .Call(ks_genescore_mat_, FS_mat, weight, alt_int)
 
-  # Obtain score statistics and p-values from KS method
+  # Obtain score statistics from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   stat <- ks[1,]
+
+  # Obtain p-values from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- ks[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
   
   # Compute the scores according to the provided metric
   scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)

@@ -203,10 +203,6 @@ calc_rowscore <- function(
     )
   )
   
-  # Remove scores that are Inf as it is resulted from
-  # taking the -log(0). They are uninformative.
-  rscores <- rscores[rscores != Inf]
-  
   # Re-order FS in a decreasing order (from most to least significant)
   # This comes in handy when doing the top-N evaluation of
   # the top N 'best' features

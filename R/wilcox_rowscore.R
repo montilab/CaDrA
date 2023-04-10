@@ -75,9 +75,14 @@ wilcox_rowscore <- function
     )
   })
   
-  # Obtain score statistics and p-values from Wilcox method
+  # Obtain score statistics from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   stat <- wilcox[1,]
+  
+  # Obtain p-values from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- wilcox[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
 
   # Compute the scores according to the provided metric
   scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)

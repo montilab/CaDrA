@@ -9,5 +9,5 @@ test_that("meta_plot works", {
 
   # Now we can plot this set of best meta-feature
   expect_silent(  meta_plot(topn_best_list = topn_best_meta))
-  
+
 })

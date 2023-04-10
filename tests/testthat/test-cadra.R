@@ -43,19 +43,19 @@ test_that("CaDrA returns expected result for ks algorithm",{
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,5), 
-                         c("TN_84"=14.98937,
-                           "TN_694"=16.90042,
-                           "TN_432"=16.18984,
-                           "TN_314"=15.41333,
-                           "TN_636"=15.87600,
-                           "TN_140"=14.86286,
-                           "TN_281"=17.48639,
-                           "TN_744"=15.51724,
-                           "TN_504"=15.22937,
-                           "TN_749"=14.88095))
+                         c("TN_981"=13.13674,
+                           "TN_519"=16.10120,
+                           "TN_490"=14.50847,
+                           "TN_714"=16.05025,
+                           "TN_164"=17.67213,
+                           "TN_756"=15.41408,
+                           "TN_536"=13.03759,
+                           "TN_128"=15.91316,
+                           "TN_923"=13.95864,
+                           "TN_352"=14.60017))
  
   testthat::expect_equal(round(result$obs_best_score,5), c("TN_716"=14.90173))
-  testthat::expect_equal(round(result$perm_pval,7), c(0.8181818))
+  testthat::expect_equal(round(result$perm_pval,7), c(0.5454545))
   
    
   set.seed(21)

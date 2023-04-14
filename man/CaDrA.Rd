@@ -122,6 +122,9 @@ data(sim_FS)
 # Load pre-computed input-score
 data(sim_Scores)
 
+# Set seed for permutation
+set.seed(21)
+
 # Define additional parameters and start the function
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 

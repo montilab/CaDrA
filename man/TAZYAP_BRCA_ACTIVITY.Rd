@@ -12,6 +12,9 @@ cohorts can be found in \code{BRCA_GISTIC_MUT_SIG} dataset.
 \usage{
 data(TAZYAP_BRCA_ACTIVITY)
 }
+\value{
+a vector of continuous scores
+}
 \description{
 A vector of continuous scores represents oncogenic YAP/TAZ activity
 in human breast carcinomas

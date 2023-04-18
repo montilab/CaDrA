@@ -6,8 +6,8 @@
 #' than either features alone. This is the main functionality of 
 #' the \code{CaDrA} package. 
 #' 
-#' NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
-#' \code{candidate_search()} function
+#' NOTE: The legacy function \code{topn_eval} is equivalent to the recommended
+#' \code{candidate_search} function
 #' @param FS a SummarizedExperiment class object from SummarizedExperiment 
 #' package where rows represent features of interest 
 #' (e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
@@ -27,13 +27,13 @@
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the name of the customized function here. Default is \code{NULL}.
 #' 
-#' NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+#' NOTE: \code{custom_function} must take FS_mat (or FS) and input_score as its
 #' input arguments, and its final result must return a vector of row-wise scores 
 #' ordered from most significant to least significant where its labels or names 
 #' matched the row names of FS_mat (or FS) object.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
 #' additional arguments (excluding \code{FS_mat} (or FS) and \code{input_score}) 
-#' to be passed to the custom_function(). Default is \code{NULL}.
+#' to be passed to the \code{custom_function}. Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -410,7 +410,7 @@ candidate_search <- function(
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
-#' arguments to be passed to the custom_function(). Default is \code{NULL}.
+#' arguments to be passed to the \code{custom_function}. Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -422,7 +422,7 @@ candidate_search <- function(
 #' Feature names should match those of the provided FS object
 #' @param glob_f_s a vector of scores corresponding to the union of the 
 #' specified vector of features
-#' @param ... additional parameters to be passed to the custom_function() 
+#' @param ... additional parameters to be passed to the \code{custom_function} 
 #' 
 #' @noRd
 #' 

@@ -20,7 +20,7 @@
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the name of the customized function here. Default is \code{NULL}.
 #' 
-#' NOTE: custom_function() must take \code{FS} and \code{input_score} 
+#' NOTE: \code{custom_function} must take \code{FS} and \code{input_score} 
 #' as its input arguments, and its final result must return a vector of row-wise 
 #' scores ordered from most significant to least significant where its labels or 
 #' names matched the row names of \code{FS} object.

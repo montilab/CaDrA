@@ -45,14 +45,14 @@ Default is \code{ks_pval}.}
 \item{custom_function}{if method is \code{"custom"}, specifies
 the name of the customized function here. Default is \code{NULL}.
 
-NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+NOTE: \code{custom_function} must take FS_mat (or FS) and input_score as its
 input arguments, and its final result must return a vector of row-wise scores 
 ordered from most significant to least significant where its labels or names 
 matched the row names of FS_mat (or FS) object.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
 additional arguments (excluding \code{FS_mat} (or FS) and \code{input_score}) 
-to be passed to the custom_function(). Default is \code{NULL}.}
+to be passed to the \code{custom_function}. Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -113,8 +113,8 @@ than either features alone. This is the main functionality of
 the \code{CaDrA} package.
 }
 \details{
-NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
-\code{candidate_search()} function
+NOTE: The legacy function \code{topn_eval} is equivalent to the recommended
+\code{candidate_search} function
 }
 \examples{
 

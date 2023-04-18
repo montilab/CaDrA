@@ -7,7 +7,7 @@
 topn_plot(topn_list)
 }
 \arguments{
-\item{topn_list}{a list of objects returned from \code{candidate_search()} 
+\item{topn_list}{a list of objects returned from \code{candidate_search} 
 using simulated dataset \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
 \code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
 \code{search_method = "both"}, \code{max_size = 10},
@@ -24,7 +24,7 @@ a given top N feature searches
 }
 \description{
 Generate a heatmap representation of overlapping meta-features across
-top N feature searches using \code{candidate_search()} function
+top N feature searches using \code{candidate_search} function
 }
 \examples{
 

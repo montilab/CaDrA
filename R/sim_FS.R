@@ -19,7 +19,9 @@
 #' indicating the presence/absence of the feature in the samples.
 #' 
 #' See \code{?SummarizedExperiment} for more details.
-#'
+#' 
+#' @return a SummarizedExperiment object
+#' 
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2019) CaDrA: A computational framework for performing
 #' candidate driver analyses using binary genomic features.

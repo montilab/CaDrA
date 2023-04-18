@@ -17,6 +17,9 @@ See \code{?SummarizedExperiment} for more details.
 \usage{
 data(sim_FS)
 }
+\value{
+a SummarizedExperiment object
+}
 \description{
 A simulated SummarizedExperiment object that comprises of 1000 genomic
 features (rows) and 100 sample profiles (columns).

@@ -1,6 +1,6 @@
 #' Pre-computed permutation results for simulated data (\code{sim_FS}) 
 #'
-#' The permutation result returned from \code{CaDrA()} 
+#' The permutation result returned from \code{CaDrA} 
 #' using pre-simulated dataset
 #' (\code{FS = sim_FS}), pre-simulated input scores 
 #' (\code{input_score = sim_Scores}), 
@@ -22,6 +22,8 @@
 #' n_perm iterations, just pass the resulting list to \code{permutation_plot}.
 #' 
 #' See \code{permutation_plot} for more details.
+#'
+#' @return a list of objects returned from \code{CaDrA} function
 #'
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2017) CaDrA: A computational framework for performing

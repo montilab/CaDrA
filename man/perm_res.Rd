@@ -18,8 +18,11 @@ See \code{permutation_plot} for more details.
 \usage{
 data(perm_res)
 }
+\value{
+a list of objects returned from \code{CaDrA} function
+}
 \description{
-The permutation result returned from \code{CaDrA()} 
+The permutation result returned from \code{CaDrA} 
 using pre-simulated dataset
 (\code{FS = sim_FS}), pre-simulated input scores 
 (\code{input_score = sim_Scores}), 

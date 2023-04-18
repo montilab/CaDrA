@@ -12,7 +12,7 @@ verbose <- function(...){
 
 #' Pre-filter features
 #'
-#' Pre-filter a dataset prior running \code{candidate_search()} to avoid
+#' Pre-filter a dataset prior running \code{candidate_search} to avoid
 #' testing features that are too prevalent or too sparse across samples in
 #' the dataset
 #' @param FS a SummarizedExperiment object containing binary features where

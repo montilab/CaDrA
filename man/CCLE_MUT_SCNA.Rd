@@ -13,6 +13,9 @@ See \code{SummarizedExperiment} for more details.
 \usage{
 data(CCLE_MUT_SCNA)
 }
+\value{
+a SummarizedExperiment object
+}
 \description{
 A SummarizedExperiment object consists of 17,723 genomic features across 
 82 samples.

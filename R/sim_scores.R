@@ -13,7 +13,9 @@
 #' from \code{rnorm(n=ncol(sim_FS), mean=0, sd=1)} with \code{set.seed(123)} 
 #' based on the number of samples in the
 #' simulated dataset (sim_FS)
-#'
+#' 
+#' @return a vector of continuous scores
+#' 
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2019) CaDrA: A computational framework for performing
 #' candidate driver analyses using binary genomic features.

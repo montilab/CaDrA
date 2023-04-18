@@ -8,7 +8,7 @@ meta_plot(topn_best_list, input_score_label = NULL)
 }
 \arguments{
 \item{topn_best_list}{a list of objects returned from 
-\code{candidate_search()} 
+\code{candidate_search} 
 corresponding to the search of a set of top N features given by top_N value.
 The topn_best_list contains a list of returned meta-feature set, 
 its corresponding best score, 
@@ -27,9 +27,9 @@ of the meta-feature set for a given distribution (here, this will correspond
 to the logical OR of the features)
 }
 \description{
-By utilizing the top N results obtained from \code{candidate_search()},
+By utilizing the top N results obtained from \code{candidate_search},
 we can find the best meta-feature among the top N searches using
-\code{topn_best()}. \code{meta_plot()} is then used to produce graphics
+\code{topn_best}. \code{meta_plot} is then used to produce graphics
 including a tile plot for the top meta-features that associated with  
 a molecular phenotype of interest (e.g. input_score), 
 the KS enrichment plot of the meta-features, 

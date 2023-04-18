@@ -2,10 +2,10 @@
 #' Top 'N' Best Meta-Features
 #'
 #' Take the resulting list of meta-features returned from 
-#' \code{candidate_search()}
+#' \code{candidate_search}
 #' and fetch the meta-feature with the best score
 #' @param topn_list A nested list of objects that is returned 
-#' from \code{candidate_search()}
+#' from \code{candidate_search}
 #' by setting \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
 #' \code{top_N = 7},
 #' \code{method = "ks_pval"}, \code{alternative = "less"}, 

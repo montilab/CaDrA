@@ -13,6 +13,9 @@ associated with this sample cohorts can be found in
 \usage{
 data(CTNBB1_reporter)
 }
+\value{
+a vector of continuous scores
+}
 \description{
 A vector of continuous scores represents the activation of B-catenin across
 multiple cancer cell lines

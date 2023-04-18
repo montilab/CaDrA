@@ -29,7 +29,7 @@ A SummarizedExperiment object with only the filtered-in features
 given the filtered thresholds
 }
 \description{
-Pre-filter a dataset prior running \code{candidate_search()} to avoid
+Pre-filter a dataset prior running \code{candidate_search} to avoid
 testing features that are too prevalent or too sparse across samples in
 the dataset
 }

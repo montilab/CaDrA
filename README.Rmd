@@ -9,8 +9,9 @@ title: CaDrA
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(fig.path="./man/figures/", message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
-library(devtools)
-load_all(".")
+library(CaDrA)
+# library(devtools)
+# load_all(".")
 ```
 
 <!-- badges: start -->

@@ -8,11 +8,11 @@
 #' 
 #' NOTE: The legacy function \code{topn_eval} is equivalent to the recommended
 #' \code{candidate_search} function
-#' @param FS a SummarizedExperiment class object from SummarizedExperiment 
-#' package where rows represent features of interest 
-#' (e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
-#' The assay of FS contains binary (1/0) values 
-#' indicating the presence/absence of omics features.
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of omics features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
@@ -69,12 +69,15 @@
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
-#' @return If \code{best_score_only} is set to \code{TRUE}, the function will
-#' return a list of objects containing ONLY the best score of the union 
-#' meta-feature matrix for each top N searches. If \code{best_score_only} is set
-#' to \code{FALSE}, a list of objects containing the returned meta-feature 
-#' matrix, as well as its corresponding best score and observed input scores 
-#' are returned.
+#' @return If \code{best_score_only = TRUE}, the heuristic search will return 
+#' the best feature whose its union meta-feature matrix has the highest score 
+#' among the \code{top_N} feature searches.
+#' If \code{best_score_only = FALSE}, a list of objects pertaining to 
+#' \code{top_N} feature searches are returned. For each top_N feature search,
+#' the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+#' (\code{feature_set}), (2) its observed input scores (\code{input_score}), 
+#' and lastly, its corresponding best score pertaining to the union meta-feature
+#' matrix (\code{score}).
 #' 
 #' @examples
 #'
@@ -120,7 +123,7 @@ candidate_search <- function(
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
-
+  
   # Select the appropriate method to compute scores based on
   # skewness of a given binary matrix
   # Return a vector of scores that already been ordered from 
@@ -128,25 +131,32 @@ candidate_search <- function(
   # This comes in handy when doing the top-N evaluation of
   # the top N 'best' features
   rowscore <- calc_rowscore(
-    FS_mat = SummarizedExperiment::assay(FS),
+    FS = FS,
     input_score = input_score,
     method = method,
     custom_function = custom_function,
     custom_parameters = custom_parameters,   
     alternative = alternative,
     weight = weight,
-    seed_names = NULL,
-    do_check = do_check,
-    verbose = verbose,
-    FS = FS,
     search_start = search_start,
     top_N = top_N,
     search_method = search_method,
     max_size = max_size,
     best_score_only = best_score_only,
-    do_plot = do_plot
+    do_plot = do_plot,
+    do_check = do_check,
+    verbose = verbose
   )
   
+  # Retrieve the original class object of feature set 
+  # If FS is a matrix, convert it to SummarizedExperiment object
+  if(is(FS, "SummarizedExperiment")){
+    FS_class <- "SummarizedExperiment"
+  }else{
+    FS_class <- "matrix"
+    FS <- SummarizedExperiment::SummarizedExperiment(assays=FS)
+  }
+
   ###### INITIALIZE VARIABLES ###########
   #######################################
   
@@ -242,20 +252,23 @@ candidate_search <- function(
 
         backward_search_results <- forward_backward_check(
           FS = FS,
+          FS_class = FS_class,
           input_score = input_score,
           method = method,
           custom_function = custom_function,
-          custom_parameters = custom_parameters,
+          custom_parameters = custom_parameters,   
           alternative = alternative,
           weight = weight,
-          glob_f = global_best_s_features,     
-          glob_f_s = global_best_s,  
           search_start = search_start,
           top_N = top_N,
           search_method = search_method,
           max_size = max_size,
           best_score_only = best_score_only,
-          do_plot = do_plot       
+          do_plot = do_plot,
+          do_check = FALSE,  # MAKE SURE DO_CHECK IS SILENCE HERE
+          verbose = FALSE,   # MAKE SURE VERBOSE IS SILENCE HERE  
+          glob_f = global_best_s_features,     
+          glob_f_s = global_best_s         
         )
         
         # Update globlal features, scores
@@ -290,27 +303,33 @@ candidate_search <- function(
                 "will be removed before progressing...\n")
         meta_mat <- meta_mat[rowSums(meta_mat) != ncol(meta_mat),]
       }
+      
+      # If the class of FS is originally a SummarizedExperiment object
+      # Convert the union matrix to SummarizedExperiment
+      if(FS_class == "SummarizedExperiment"){
+        meta_FS <- SummarizedExperiment::SummarizedExperiment(assays=meta_mat)
+      }else{
+        meta_FS <- meta_mat
+      }
 
       # With the newly formed 'meta-feature' matrix, 
       # compute row-wise directional scores
       meta_rowscore <- calc_rowscore(
-        FS_mat = meta_mat,
+        FS = meta_FS,
         input_score = input_score,
         method = method,
         custom_function = custom_function,
-        custom_parameters = custom_parameters,       
+        custom_parameters = custom_parameters,   
         alternative = alternative,
         weight = weight,
-        seed_names = NULL,
-        do_check = FALSE,
-        verbose = FALSE,
-        FS = SummarizedExperiment::SummarizedExperiment(assays=meta_mat),
         search_start = search_start,
         top_N = top_N,
         search_method = search_method,
         max_size = max_size,
         best_score_only = best_score_only,
-        do_plot = do_plot
+        do_plot = do_plot,
+        do_check = FALSE,  # MAKE SURE DO_CHECK IS SILENCE HERE
+        verbose = FALSE,   # MAKE SURE VERBOSE IS SILENCE HERE  
       )
       
       # Get the first best score from already ordered meta-scores
@@ -380,7 +399,7 @@ candidate_search <- function(
     best_meta_scores <- unlist(scores_l)
 
     # Fetch the best score with the highest value
-    best_score <-best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
+    best_score <- best_meta_scores[order(best_meta_scores, decreasing = TRUE)][1]
 
     return(best_score)
 
@@ -399,6 +418,7 @@ candidate_search <- function(
 #' (e.g. genes, transcripts, exons, etc...) 
 #' and columns represent the samples. The assay of FS contains binary (1/0)  
 #' values indicating the presence/absence of ‘omics’ features.
+#' @param FS_class the class object from feature set  
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
@@ -428,10 +448,12 @@ candidate_search <- function(
 #' 
 #' @return return the set of features with its current best score that is
 #' better than the existing meta-feature best score
+#' 
 #' @import SummarizedExperiment
 forward_backward_check <- function
 (
   FS,
+  FS_class,
   input_score,
   method,
   custom_function,
@@ -466,24 +488,28 @@ forward_backward_check <- function
     # Take leave-one-out union of features from matrix
     # This will result in a single vector to compute the scores on
     f_union <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
-
+    
     # Here we are getting the union of the meta-features
     u_mat <- matrix(f_union, nrow=1, byrow=TRUE,
                     dimnames=list(c("OR"), colnames(FS)))
     
+    # If the class of FS is originally a SummarizedExperiment object
+    # Convert the union matrix to SummarizedExperiment
+    if(FS_class == "SummarizedExperiment"){
+      u_FS <- SummarizedExperiment::SummarizedExperiment(assays=u_mat)
+    }else{
+      u_FS <- u_mat
+    }
+    
     # Compute scores for this meta feature
     u_rowscore <- calc_rowscore(
-      FS_mat = u_mat,
+      FS = u_FS,
       input_score = input_score,
       method = method,
       custom_function = custom_function,
       custom_parameters = custom_parameters,     
       alternative = alternative,
       weight = weight,
-      seed_names = NULL,
-      do_check = FALSE,
-      verbose = FALSE,
-      FS = SummarizedExperiment::SummarizedExperiment(assays=u_mat),
       ...
     )
 

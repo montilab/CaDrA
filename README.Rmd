@@ -9,26 +9,24 @@ title: CaDrA
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(fig.path="./man/figures/", message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
-library(CaDrA)
-# library(devtools)
-# load_all(".")
+library(devtools)
+load_all(".")
 ```
 
 <!-- badges: start -->
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
 <!-- badges: end -->
   
-Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
+**Ca**ndidate **Dr**ivers **A**nalysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 
 **CaDrA** is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest. 
 
 The main function takes two inputs:
 
-i) A binary multi-omics dataset represented as a **SummarizedExperiment** class object (where the rows are 1/0 vectors indicating the presence/absence of 'omics' features such as somatic mutations, copy number alterations, epigenetic marks, etc., and the columns represent the samples)
+i) A binary multi-omics dataset, which can be represented as a matrix of binary features or a **SummarizedExperiment** class object where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features (e.g. somatic mutations, copy number alterations, epigenetic marks, etc.), and the columns are the samples.
+ii) A molecular phenotype of interest, which can be represented as a vector of continuous scores (e.g. protein expression, pathway activity, etc.)
 
-ii) A molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.). 
-
-Based on this input, **CaDrA** implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
+Based on these two inputs, **CaDrA** implements a forward/backward search algorithm to find a set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
 
 For more information, please see the associated manuscript [Kartha et al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 

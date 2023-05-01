@@ -132,27 +132,26 @@ See `?custom_rowscore` for more details
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS_mat, input_score, alternative){
+customized_rowscore <- function(FS, input_score, alternative="less"){
   
-  ks <- apply(FS_mat, 1, function(r){ 
+  ks <- apply(SummarizedExperiment::assay(FS), 1, function(r){ 
     x = input_score[which(r==1)]; 
     y = input_score[which(r==0)];
     res <- ks.test(x, y, alternative=alternative)
     return(c(res$statistic, res$p.value))
   })
   
-   # Obtain score statistics and p-values from KS method
+  # Obtain score statistics and p-values from KS method
   stat <- ks[1,]
+  
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- ks[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
   
   # Compute the -log scores for pval
+  # Make sure scores has names that match the row names of FS object
   scores <- -log(pval)
-  names(scores) <- rownames(FS_mat)
-  
-  # Re-order FS in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  scores <- scores[order(scores, decreasing=TRUE)]
+  names(scores) <- rownames(FS)
   
   return(scores)
   
@@ -164,7 +163,7 @@ custom_topn_l <- CaDrA::candidate_search(
   input_score = sim_Scores,
   method = "custom",                                # Use custom scoring function
   custom_function = customized_rowscore,            # Use a customized scoring function
-  custom_parameters = list(alternative = "less"),   # Additional parameters to pass to custom_function
+  custom_parameters = NULL,                         # Additional parameters to pass to custom_function
   search_method = "both",                           # Apply both forward and backward search
   top_N = 3,                                        # Evaluate top 3 starting points for the search
   max_size = 7,                                     # Allow at most 7 features in meta-feature matrix

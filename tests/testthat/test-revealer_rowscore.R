@@ -14,7 +14,7 @@ test_that("revealer_rowscore returns correct results", {
   names(input_score) <- colnames(mat)
   
   result <- revealer_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score, 
     assoc_metric = "IC"
   )
@@ -26,7 +26,7 @@ test_that("revealer_rowscore returns correct results", {
                          c(TP_1=0.4573207, TP_2=-0.4266714, TP_3=0.3867053 ) )
   
   result <- revealer_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score, 
     assoc_metric = "COR"
   )
@@ -42,10 +42,10 @@ test_that("revealer_rowscore returns correct results", {
 ## --------------------------------------------------- ##
 test_that("revealer_rowscore issues error messages when needed", {
   
-  FS_mat <-  data.frame(a = rnorm(10), b = rnorm (10) )
+  FS <-  data.frame(a = rnorm(10), b = rnorm (10) )
   set.seed(42)
-  input_score <- rnorm(n = ncol(FS_mat))
-  names(input_score) <- colnames(FS_mat)
+  input_score <- rnorm(n = ncol(FS))
+  names(input_score) <- colnames(FS)
   
   
   mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
@@ -60,7 +60,7 @@ test_that("revealer_rowscore issues error messages when needed", {
   names(input_score) <- colnames(mat)
   seed_names <- as.character(1:10)
   expect_error( revealer_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score, 
     seed_names = seed_names,
     assoc_metric = "IC")

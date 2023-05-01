@@ -39,7 +39,7 @@ test_that("CaDrA returns expected result for ks algorithm",{
              c("FS", "input_score", "method", "custom_function", 
                "custom_parameters", "alternative", "weight", "top_N",
                "search_start", "search_method", "max_size"))
-  testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
+  testthat::expect_type(result$key$FS, "double")
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,5), 
@@ -88,7 +88,7 @@ test_that("CaDrA returns expected result for ks algorithm",{
                              c("FS", "input_score", "method", "custom_function", 
                                "custom_parameters", "alternative", "weight", "top_N",
                                "search_start", "search_method", "max_size"))
-  testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
+  testthat::expect_type(result$key$FS, "double")
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,2), 
@@ -149,7 +149,7 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
             c("FS", "input_score", "method", "custom_function", 
               "custom_parameters", "alternative", "weight", "top_N",
               "search_start", "search_method", "max_size"))
-  testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
+  testthat::expect_type(result$key$FS, "double")
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,5), 
@@ -199,7 +199,7 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
             c("FS", "input_score", "method", "custom_function", 
               "custom_parameters", "alternative", "weight", "top_N",
               "search_start", "search_method", "max_size"))
-  testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
+  testthat::expect_type(result$key$FS, "double")
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(result$perm_best_scores, 
@@ -259,7 +259,7 @@ test_that("CaDrA returns expected result for Revealer algorithm",{
             c("FS", "input_score", "method", "custom_function", 
               "custom_parameters", "alternative", "weight", "top_N",
               "search_start", "search_method", "max_size"))
-  testthat::expect_s4_class(result$key$FS, "SummarizedExperiment")
+  testthat::expect_type(result$key$FS, "double")
   
   testthat::expect_length(result$perm_best_scores, 10L)
   testthat::expect_equal(round(result$perm_best_scores,7), 

@@ -23,11 +23,11 @@ candidate_search(
 )
 }
 \arguments{
-\item{FS}{a SummarizedExperiment class object from SummarizedExperiment 
-package where rows represent features of interest 
-(e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
-The assay of FS contains binary (1/0) values 
-indicating the presence/absence of omics features.}
+\item{FS}{a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of omics features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
@@ -99,12 +99,15 @@ Default is \code{TRUE}.}
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, the function will
-return a list of objects containing ONLY the best score of the union 
-meta-feature matrix for each top N searches. If \code{best_score_only} is set
-to \code{FALSE}, a list of objects containing the returned meta-feature 
-matrix, as well as its corresponding best score and observed input scores 
-are returned.
+If \code{best_score_only = TRUE}, the heuristic search will return 
+the best feature whose its union meta-feature matrix has the highest score 
+among the \code{top_N} feature searches.
+If \code{best_score_only = FALSE}, a list of objects pertaining to 
+\code{top_N} feature searches are returned. For each top_N feature search,
+the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+(\code{feature_set}), (2) its observed input scores (\code{input_score}), 
+and lastly, its corresponding best score pertaining to the union meta-feature
+matrix (\code{score}).
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether

@@ -7,7 +7,7 @@ test_that("check_top_N returns expected result ",{
   set.seed(21)
   
   rowscore <- calc_rowscore(
-    FS_mat = SummarizedExperiment::assay(sim_FS),
+    FS = SummarizedExperiment::assay(sim_FS),
     input_score = sim_Scores,
     method = "ks_pval",
     alternative = "less",

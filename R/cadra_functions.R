@@ -26,10 +26,12 @@ verbose <- function(...){
 #' prevalence of a feature across all samples in the FS object which the
 #' feature will be filtered out. Default is 0.03 (feature that occur in
 #' 3 percent or less of the samples will be removed)
-#' @return A SummarizedExperiment object with only the filtered-in features
-#' given the filtered thresholds
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
+#' 
+#' @return A SummarizedExperiment object with only the filtered-in features
+#' given the filtered thresholds
+#' 
 #' @examples
 #'
 #' # Load pre-computed feature set
@@ -82,68 +84,61 @@ prefilter_data <- function(
 
 #' Checks if feature set and input scores are valid dataset
 #'
-#' @param FS a matrix of binary features or a SummarizedExperiment class object 
-#' from SummarizedExperiment package where rows represent features of interest 
-#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
-#' The assay of FS contains binary (1/0) values indicating the presence/absence 
-#' of omics features.
+#' @param FS_mat a matrix of binary features where rows represent features of 
+#' interest (e.g. genes, transcripts, exons, etc...) and columns represent 
+#' the samples. 
 #' @param input_score a vector of continuous scores of a molecular phenotype of
 #' interest such as protein expression, pathway activity, etc.
 #' NOTE: The \code{input_score} object must have names or labels that 
-#' match the column names of FS object.
+#' match the column names of FS_mat object.
 #' @param do_check a logical value indicates whether or not to validate if the  
-#' given parameters (FS and input_score) are valid inputs. 
+#' given parameters (FS_mat and input_score) are valid inputs. 
 #' Default is \code{TRUE}
-#' 
+#'
 #' @noRd
 #' 
 #' @examples 
 #' 
-#' # Load pre-computed feature set
-#' data(sim_FS)
-#'
-#' # Load pre-computed input-score
-#' data(sim_Scores)
+#' # Create a feature matrix
+#' FS_mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
+#'                 0,0,1,0,1,0,1,0,0,0,
+#'                 0,0,0,0,1,0,1,0,1,0), nrow=3)
+#' 
+#' colnames(FS_mat) <- 1:10
+#' row.names(FS_mat) <- c("TP_1", "TP_2", "TP_3")
+#' 
+#' # Create a vector of observed input scores
+#' set.seed(42)
+#' input_score = rnorm(n = ncol(FS_mat))
+#' names(input_score) <- colnames(FS_mat)
 #'
 #' check_data_input(
-#'  FS = sim_FS,
-#'  input_score = sim_Scores
+#'  FS_mat = FS_mat,
+#'  input_score = input_score
 #' )
 #' 
-#' @return a filtered feature set and input scores with overlapping samples
-#' @import SummarizedExperiment
+#' @return If do_check=FALSE, return NULL, otherwise, check if FS_mat and 
+#' input_score are valid inputs 
 check_data_input <- function(
-    FS,
+    FS_mat,
     input_score,
     do_check = TRUE
 ){
   
   if(do_check == FALSE) return(NULL)
-  
-  # Check if FS is a matrix or a SummarizedExperiment class object
-  if(!is(FS, "SummarizedExperiment") && !is(FS, "matrix"))
-    stop("'FS' must be a matrix or a SummarizedExperiment class object
-         from SummarizedExperiment package")
-  
-  # Retrieve the feature binary matrix
-  if(is(FS, "SummarizedExperiment")){
-    mat <- as.matrix(SummarizedExperiment::assay(FS))
-  }else{
-    mat <- FS
-  }
-  
+
   # Check if the matrix has only binary 0 or 1 values
-  if(length(mat) == 0 || any(!mat %in% c(0,1)) || any(is.na(mat)))
-    stop("FS object must contain binary values 0s or 1s (no empty values).")
+  if(length(FS_mat) == 0 || any(!FS_mat %in% c(0,1)))
+    stop("FS object must contain binary values 0s or 1s.")
   
   # Make sure the FS object has row names for features tracking
-  if(is.null(rownames(mat)))
+  if(is.null(rownames(FS_mat)))
     stop("The FS object does not have row names to ",
          "track features by. Please provide unique features or row names ",
          "for the FS object.\n")
   
   # Make sure the FS object has row names for features tracking
-  if(is.null(colnames(mat)))
+  if(is.null(colnames(FS_mat)))
     stop("The FS object does not have column names to ",
          "track samples by. Please provide unique sample names ",
          "for the FS object.\n")
@@ -153,13 +148,13 @@ check_data_input <- function(
   # the column names of the FS object
   if(length(input_score) == 0 || any(!is.numeric(input_score)) || 
      any(is.na(input_score)) || is.null(names(input_score)) ||
-     any(!names(input_score) %in% colnames(mat)))
+     any(!names(input_score) %in% colnames(FS_mat)))
     stop("input_score must contain a vector of continuous scores ",
          "(with no NAs), and its vector names or labels must match the column ",
          "names of the FS object.\n")
   
   # Check if the features have either all 0s or 1s values
-  if(any(rowSums(mat) %in% c(0, ncol(mat)) ))
+  if(any(rowSums(FS_mat) %in% c(0, ncol(FS_mat)) ))
     stop("The FS object has features that are either all 0s or 1s. ",
          "These features must be removed from the FS object as ",
          "they are uninformative.")
@@ -219,7 +214,7 @@ check_data_input <- function(
 #' the best scores will be returned and used to start the candidate_search() 
 #' with. 
 #' Otherwise, the candidate_search() will start the search with a list of  
-#' indices of features defined in search_start.
+#' indices of starting features defined in search_start.
 check_top_N <- function(
     rowscore, 
     feature_names,
@@ -329,6 +324,7 @@ ks_test_double_wrap <- function(n_x, y, alt=c("less", "greater", "two.sided")) {
 #' samples by.
 #' @param n_perm a number of permutations to generate. This determines
 #' the number of rows in the permutation matrix.
+#' 
 #' @return a matrix of values where each row contains scores of a single 
 #' permuted \code{input_score}.
 #'

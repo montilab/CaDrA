@@ -14,7 +14,7 @@ test_that("wilcox_rowscore returns correct results", {
   names(input_score) <- colnames(mat)
   
   result <- wilcox_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score, 
     alternative = "less"
   )
@@ -28,13 +28,13 @@ test_that("wilcox_rowscore returns correct results", {
 ## --------------------------------------------------- ##
 test_that("wilcox_rowscore issues error messages when needed", {
   
-  FS_mat <-  data.frame(a = rnorm(10), b = rnorm (10) )
+  FS <-  data.frame(a = rnorm(10), b = rnorm (10) )
   set.seed(42)
-  input_score = rnorm(n = ncol(FS_mat))
-  names(input_score) <- colnames(FS_mat)
+  input_score = rnorm(n = ncol(FS))
+  names(input_score) <- colnames(FS)
   
   expect_error( wilcox_rowscore(
-    FS_mat = FS_mat,  
+    FS = FS,  
     input_score = input_score)
   )
   

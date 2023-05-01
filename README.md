@@ -6,8 +6,8 @@ CaDrA
 <!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
 <!-- badges: end -->
 
-Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of
-Functional Signatures
+**Ca**ndidate **Dr**ivers **A**nalysis: Multi-Omic Search for Candidate
+Drivers of Functional Signatures
 
 **CaDrA** is an R package that supports a heuristic search framework
 aimed at identifying candidate drivers of a molecular phenotype of
@@ -15,18 +15,17 @@ interest.
 
 The main function takes two inputs:
 
-1)  A binary multi-omics dataset represented as a
-    **SummarizedExperiment** class object (where the rows are 1/0
-    vectors indicating the presence/absence of ‘omics’ features such as
-    somatic mutations, copy number alterations, epigenetic marks, etc.,
-    and the columns represent the samples)
+1)  A binary multi-omics dataset, which can be represented as a matrix
+    of binary features or a **SummarizedExperiment** class object where
+    the rows are 1/0 vectors indicating the presence/absence of ‘omics’
+    features (e.g. somatic mutations, copy number alterations,
+    epigenetic marks, etc.), and the columns are the samples.
+2)  A molecular phenotype of interest, which can be represented as a
+    vector of continuous scores (e.g. protein expression, pathway
+    activity, etc.)
 
-2)  A molecular phenotype represented as a vector of continuous scores
-    (sample-specific scores representing a phenotypic readout of
-    interest, such as protein expression, pathway activity, etc.).
-
-Based on this input, **CaDrA** implements a forward/backward search
-algorithm to find the set of features that together is maximally
+Based on these two inputs, **CaDrA** implements a forward/backward
+search algorithm to find a set of features that together is maximally
 associated with the observed input scores, based on one of several
 scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual
 Information*, *Wilcoxon*, *custom-defined scoring function*), making it
@@ -148,7 +147,7 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.3                testthat_3.1.6             
+ [1] CaDrA_0.99.5                testthat_3.1.6             
  [3] devtools_2.4.5              usethis_2.1.6              
  [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
  [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.4        

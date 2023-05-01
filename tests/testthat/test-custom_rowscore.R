@@ -16,7 +16,7 @@ test_that("custom_rowscore returns correct results", {
   
   
   result <- custom_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score,
     custom_function = wilcox_rowscore,
     custom_parameters = list(alternative="less")
@@ -45,7 +45,7 @@ test_that("custom_rowscore issues error messages when needed", {
 
   # error if custom function is not given 
   expect_error( custom_rowscore(
-      FS_mat = mat, 
+      FS = mat, 
       input_score = input_score,
       custom_function = "wilcox_rowscore",
       method = "custom_pval", 
@@ -54,24 +54,24 @@ test_that("custom_rowscore issues error messages when needed", {
   
   # error if custom parameters are not given in a list
   expect_error( custom_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score,
     custom_function = custom_function,
     method = "custom_pval", 
     custom_parameters = c(alternative="less") )
   )
   
-  # error if function does not have "FS_mat" and "input_list" arguments
-  err_function <- function(FS_mat){ return(0)}
+  # error if function does not have "FS" and "input_list" arguments
+  err_function <- function(FS){ return(0)}
   expect_error( custom_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score,
     custom_function = err_function,
     method = "custom_pval")
   )
   err_function <- function(input_score){ return(0)}
   expect_error( custom_rowscore(
-    FS_mat = mat, 
+    FS = mat, 
     input_score = input_score,
     custom_function = err_function,
     method = "custom_pval")

@@ -2,9 +2,9 @@
 #' Permutation Best Scores Plot
 #'
 #' Plot the Empirical Null Distribution of Permutation Best Scores returned from
-#' CaDrA() function
+#' \code{CaDrA} function
 #'
-#' @param perm_res a list of objects returned from \code{CaDrA()} function.
+#' @param perm_res a list of objects returned from \code{CaDrA} function.
 #' The returning object contains a list of key parameters that are used to run
 #' the permutation-based testing, a vector of permuted best scores for a given 
 #' \code{n_perm}, an observed best score, and a computed permutation p-value.
@@ -56,7 +56,7 @@ permutation_plot <- function(perm_res){
     )
 
   g <- g + geom_vline(xintercept = obs_best_score, linetype = "longdash",
-                      size = 1.5, colour = "red") +
+                      colour = "red") +   # linewidth = 1.5
     labs(
       title = plot_title,
       x = "Score",

@@ -11,7 +11,9 @@
 #' activity across 82 cancer cell lines. The mutation and copy number 
 #' associated with this sample cohorts can be found in 
 #' \code{CCLE_MUT_SCNA} dataset.
-#'
+#' 
+#' @return a vector of continuous scores
+#' 
 #' @references Kim, J., Botvinnik, O., Abudayyeh, O. et al.
 #' Characterizing genomic alterations in cancer by complementary
 #' functional associations.

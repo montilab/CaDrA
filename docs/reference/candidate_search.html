@@ -20,7 +20,7 @@ the CaDrA package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
       </span>
     </div>
 
@@ -94,11 +94,11 @@ the <code>CaDrA</code> package.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>FS</dt>
-<dd><p>a SummarizedExperiment class object from SummarizedExperiment 
-package where rows represent features of interest 
-(e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
-The assay of FS contains binary (1/0) values 
-indicating the presence/absence of omics features.</p></dd>
+<dd><p>a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of omics features.</p></dd>
 
 
 <dt>input_score</dt>
@@ -120,7 +120,7 @@ Default is <code>ks_pval</code>.</p></dd>
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies
 the name of the customized function here. Default is <code>NULL</code>.</p>
-<p>NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+<p>NOTE: <code>custom_function</code> must take FS_mat (or FS) and input_score as its
 input arguments, and its final result must return a vector of row-wise scores 
 ordered from most significant to least significant where its labels or names 
 matched the row names of FS_mat (or FS) object.</p></dd>
@@ -129,7 +129,7 @@ matched the row names of FS_mat (or FS) object.</p></dd>
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of
 additional arguments (excluding <code>FS_mat</code> (or FS) and <code>input_score</code>) 
-to be passed to the custom_function(). Default is <code>NULL</code>.</p></dd>
+to be passed to the <code>custom_function</code>. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>alternative</dt>
@@ -198,17 +198,20 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>If <code>best_score_only</code> is set to <code>TRUE</code>, the function will
-return a list of objects containing ONLY the best score of the union 
-meta-feature matrix for each top N searches. If <code>best_score_only</code> is set
-to <code>FALSE</code>, a list of objects containing the returned meta-feature 
-matrix, as well as its corresponding best score and observed input scores 
-are returned.</p>
+<p>If <code>best_score_only = TRUE</code>, the heuristic search will return 
+the best feature whose its union meta-feature matrix has the highest score 
+among the <code>top_N</code> feature searches.
+If <code>best_score_only = FALSE</code>, a list of objects pertaining to 
+<code>top_N</code> feature searches are returned. For each top_N feature search,
+the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+(<code>feature_set</code>), (2) its observed input scores (<code>input_score</code>), 
+and lastly, its corresponding best score pertaining to the union meta-feature
+matrix (<code>score</code>).</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>NOTE: The legacy function <code>topn_eval()</code> is equivalent to the recommended
-<code>candidate_search()</code> function</p>
+    <p>NOTE: The legacy function <code>topn_eval</code> is equivalent to the recommended
+<code>candidate_search</code> function</p>
     </div>
 
     <div id="ref-examples">

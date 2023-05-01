@@ -5,7 +5,7 @@
 \alias{topn_list}
 \title{Top-N Results for Simulated Data (\code{sim_FS})}
 \format{
-A list of objects returned from \code{candidate_search()} including 
+A list of objects returned from \code{candidate_search} including 
 a set of meta-features in form of SummarizedExperiment objects, 
 its observed input_score, and corresponding best score pertaining to each 
 top N feature searches.
@@ -15,8 +15,11 @@ See \code{\link[CaDrA]{candidate_search}} for more information.
 \usage{
 data(topn_list)
 }
+\value{
+a list of objects returned from \code{candidate_search}function
+}
 \description{
-A list of objects returned from \code{candidate_search()} 
+A list of objects returned from \code{candidate_search} 
 using simulated dataset
 \code{FS = sim_FS}, \code{input_score = sim_Scores}, \code{top_N = 7},
 \code{method = "ks_pval"}, \code{alternative = "less"}, 
@@ -46,11 +49,11 @@ topn_list[[2]]$feature_set
 # Retrieve the meta-feature with the best score among top_N = 7 runs
 topn_best_meta <- topn_best(topn_list = topn_list)
 
-# Visualize the best meta-feature using meta_plot() function
+# Visualize the best meta-feature using meta_plot function
 meta_plot(topn_best_list = topn_best_meta)
 
 # Visualize overlap of meta-features across top_N = 7 
-# using topn_plot() function
+# using topn_plot function
 topn_plot(topn_list = topn_list)
 
 }

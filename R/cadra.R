@@ -3,9 +3,11 @@
 #' Perform permutation-based testings on a sample of permuted input scores 
 #' using \code{candidate_search} as the main iterative function for each run.
 #'
-#' @param FS a SummarizedExperiment object containing binary features where
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-#' and columns represent the samples.
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of omics features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
@@ -20,7 +22,7 @@
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the name of the customized function here. Default is \code{NULL}.
 #' 
-#' NOTE: custom_function() must take \code{FS} and \code{input_score} 
+#' NOTE: \code{custom_function} must take \code{FS} and \code{input_score} 
 #' as its input arguments, and its final result must return a vector of row-wise 
 #' scores ordered from most significant to least significant where its labels or 
 #' names matched the row names of \code{FS} object.
@@ -67,19 +69,36 @@
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
-#' @return a list of key parameters that are used to cache the result of
-#' permutation-based testing, a vector of permuted best scores for a given
-#' \code{n_perm}, an observed best score, and a permutation p-value.
+#' @return a list of 4 objects: \code{key}, \code{perm_best_scores}, 
+#' \code{obs_best_score}, \code{perm_pval}
+#' \code{key}: a list of parameters that are used to cache the 
+#' result of the permutation-based testing. This is useful as the
+#' permuted scores are recycled to save time for future loading.
+#' \code{perm_best_scores}: a vector of permuted best scores obtained 
+#' by performing \code{candidate_search} over (\code{n_perm}) iterations of 
+#' permuted input scores.
+#' \code{obs_best_score}: the observed best score is calculated by performing
+#' \code{candidate_search} on the given dataset and parameters. This value is 
+#' later used to compare against the permuted best scores 
+#' (\code{perm_best_scores}).
+#' \code{perm_pval}: a permutation-based p-value obtained by calculating
+#' sum(perm_best_scores > obs_best_score)/n_perm
 #'
 #' @examples
 #'
+#'\donttest{
+#' 
 #' # Load pre-computed feature set
 #' data(sim_FS)
 #'
 #' # Load pre-computed input-score
 #' data(sim_Scores)
-#'
+#' 
+#' # Set seed for permutation
+#' set.seed(21)
+#' 
 #' # Define additional parameters and start the function
+#' # DONNOT RUN as this would take some time
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
 #'   weight = NULL, alternative = "less", top_N = 1,
@@ -87,11 +106,11 @@
 #'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
 #' )
-#'
+#' 
+#'}
+#' 
 #' @export
-#' @import R.cache doParallel ggplot2 plyr methods
-#'
-#' @author Reina Chau
+#' @import R.cache doParallel ggplot2 plyr methods SummarizedExperiment
 #'
 CaDrA <- function(
     FS,
@@ -141,7 +160,13 @@ CaDrA <- function(
     R.cache::setCacheRootPath()
     message("Setting cache root path as: ", getCacheRootPath(), "\n")
   }
-
+  
+  # Retrieve the original class object of feature set 
+  # If FS is a SummarizedExperiment, convert it to a matrix object
+  # used its matrix form as a default caching key
+  if(is(FS, "SummarizedExperiment"))
+    FS <- SummarizedExperiment::assay(FS)
+  
   # Define the key for each cached result
   key <- list(FS = FS,
               input_score = if(method %in% c("revealer", "custom"))
@@ -155,7 +180,7 @@ CaDrA <- function(
               search_start = search_start,
               search_method = search_method,
               max_size = max_size)
-
+  
   # Load perm_best_scores with the given key parameters
   perm_best_scores <- R.cache::loadCache(key)
 

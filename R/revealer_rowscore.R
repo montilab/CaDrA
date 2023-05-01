@@ -3,13 +3,13 @@
 #'
 #' Compute conditional mutual information of \code{x} and \code{y}
 #' given \code{z} for each row of a given binary feature matrix
-#' @param FS_mat a matrix of binary features where 
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-#' and columns represent the samples.
+#' @param FS a matrix of binary features where rows represent features of 
+#' interest (e.g. genes, transcripts, exons, etc...) and columns represent 
+#' the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS_mat object.
+#' names of FS object.
 #' @param seed_names a vector of one or more features representing known causes
 #' of activation or features associated with a response of interest.
 #' Default is NULL.
@@ -32,17 +32,17 @@
 #' names(input_score) <- colnames(mat)
 #' 
 #' revealer_rs <- revealer_rowscore(
-#'   FS_mat = mat, 
+#'   FS = mat, 
 #'   input_score = input_score, 
 #'   assoc_metric = "IC"
 #' )
 #' 
 #' @return return a vector of row-wise scores where its labels or names 
-#' must match the row names of \code{FS_mat} object
+#' must match the row names of \code{FS} object
 #' 
 revealer_rowscore <- function
 (
-  FS_mat,
+  FS,
   input_score,
   seed_names = NULL,
   assoc_metric = c("IC", "COR")
@@ -53,33 +53,33 @@ revealer_rowscore <- function
   
   # Check if seed_names is provided
   if(length(seed_names) == 0){
-    seed_vector <- as.vector(rep(0, ncol(FS_mat)))
+    seed_vector <- as.vector(rep(0, ncol(FS)))
   }else{
     
-    # Check if seed_names exit among the row names of the FS_mat object 
-    if(any(!seed_names %in% rownames(FS_mat)))
+    # Check if seed_names exit among the row names of the FS object 
+    if(any(!seed_names %in% rownames(FS)))
       stop(paste0(
         "The provided seed_names, ",
-        paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], 
+        paste0(seed_names[which(!seed_names %in% rownames(FS))], 
                collapse = ","), 
-        ", do not exist among the row names of the FS_mat object")
+        ", do not exist among the row names of the FS object")
       )
     
     # Consolidate or summarize one or more seeds into one vector of values
     if(length(seed_names) > 1) {
-      seed_vector <- as.numeric(ifelse(colSums(FS_mat[seed_names,]) == 0, 0, 1))
+      seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
     }else{
-      seed_vector <- as.numeric(FS_mat[seed_names,])
+      seed_vector <- as.numeric(FS[seed_names,])
     }
     
     # Remove the seeds from the binary feature matrix
-    locs <- match(seed_names, row.names(FS_mat))
-    FS_mat <- FS_mat[-locs,]
+    locs <- match(seed_names, row.names(FS))
+    FS <- FS[-locs,]
     
   }
   
   # Compute CMI
-  cmi <- apply(X=FS_mat, MARGIN=1, function(x){
+  cmi <- apply(X=FS, MARGIN=1, function(x){
     revealer_score(
       x = input_score,
       y = x,
@@ -88,7 +88,7 @@ revealer_rowscore <- function
     )
   })
 
-  names(cmi) <- rownames(FS_mat)
+  names(cmi) <- rownames(FS)
   
   return(cmi)
 

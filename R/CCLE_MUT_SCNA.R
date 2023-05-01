@@ -11,7 +11,9 @@
 #' \code{SummarizedExperiment} package
 #' containing a matrix of 17,723 rows (features) and 82 columns (samples).
 #' See \code{SummarizedExperiment} for more details.
-#'
+#' 
+#' @return a SummarizedExperiment object
+#' 
 #' @references Kim, J., Botvinnik, O., Abudayyeh, O. et al.
 #' Characterizing genomic alterations in cancer by complementary functional
 #' associations. Nat Biotechnol 34, 539–546 (2016).

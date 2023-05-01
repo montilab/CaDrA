@@ -13,6 +13,9 @@ see \code{SummarizedExperiment} for more details.
 \usage{
 data(BRCA_GISTIC_MUT_SIG)
 }
+\value{
+a SummarizedExperiment object
+}
 \description{
 A SummarizedExperiment object consists of 16,873 genomic features 
 across 951 samples.

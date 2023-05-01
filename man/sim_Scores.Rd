@@ -13,6 +13,9 @@ simulated dataset (sim_FS)
 \usage{
 data(sim_Scores)
 }
+\value{
+a vector of continuous scores
+}
 \description{
 A simulated vector of continuous scores generated from 
 \code{rnorm(n=ncol(sim_FS), mean=0, sd=1)} with \code{set.seed(123)} 

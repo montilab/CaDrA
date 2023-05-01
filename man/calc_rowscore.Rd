@@ -6,7 +6,7 @@
 a given scoring method}
 \usage{
 calc_rowscore(
-  FS_mat,
+  FS,
   input_score,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   custom_function = NULL,
@@ -20,9 +20,11 @@ calc_rowscore(
 )
 }
 \arguments{
-\item{FS_mat}{a matrix of binary features where rows represent features of 
-interest (e.g. genes, transcripts, exons, etc...) and columns represent 
-the samples.}
+\item{FS}{a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of omics features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
@@ -40,7 +42,7 @@ Default is \code{ks_pval}.}
 \item{custom_function}{if method is \code{"custom"}, specifies
 the name of the customized function here. Default is \code{NULL}.
 
-NOTE: custom_function() must take \code{FS_mat} and \code{input_score} 
+NOTE: \code{custom_function} must take \code{FS_mat} and \code{input_score} 
 as its input arguments, and its final result must return a vector of row-wise 
 scores ordered from most significant to least significant where its labels or 
 names matched the row names of \code{FS_mat} object.}
@@ -97,7 +99,7 @@ names(input_score) <- colnames(mat)
 
 # Run the ks method
 ks_rowscore_result <- calc_rowscore(
-  FS_mat = mat,
+  FS = mat,
   input_score = input_score,
   method = "ks_pval",
   weight = NULL,
@@ -106,7 +108,7 @@ ks_rowscore_result <- calc_rowscore(
 
 # Run the wilcoxon method
 wilcox_rowscore_result <- calc_rowscore(
-  FS_mat = mat,
+  FS = mat,
   input_score = input_score,
   method = "wilcox_pval",
   alternative = "less"
@@ -114,16 +116,16 @@ wilcox_rowscore_result <- calc_rowscore(
 
 # Run the revealer method
 revealer_rowscore_result <- calc_rowscore(
-  FS_mat = mat,
+  FS = mat,
   input_score = input_score,
   method = "revealer",
   seed_names = NULL
 )
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS_mat, input_score, alternative="less"){
+customized_rowscore <- function(FS, input_score, alternative="less"){
   
-  ks <- apply(FS_mat, 1, function(r){ 
+  ks <- apply(FS, 1, function(r){ 
     x = input_score[which(r==1)]; 
     y = input_score[which(r==0)];
     res <- ks.test(x, y, alternative=alternative)
@@ -132,21 +134,15 @@ customized_rowscore <- function(FS_mat, input_score, alternative="less"){
   
   # Obtain score statistics and p-values from KS method
   stat <- ks[1,]
+  
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- ks[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
   
   # Compute the -log scores for pval
-  # Make sure scores has names that match the row names of FS_mat object
+  # Make sure scores has names that match the row names of FS object
   scores <- -log(pval)
-  names(scores) <- rownames(FS_mat)
-  
-  # Remove scores that are Inf as it is resulted from
-  # taking the -log(0). They are uninformative.
-  scores <- scores[scores != Inf]  
-  
-  # Re-order FS_mat in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  scores <- scores[order(scores, decreasing=TRUE)]
+  names(scores) <- rownames(FS)
   
   return(scores)
   
@@ -154,7 +150,7 @@ customized_rowscore <- function(FS_mat, input_score, alternative="less"){
 
 # Search for best features using a custom-defined function
 custom_rowscore_result <- calc_rowscore(
-  FS_mat = mat,
+  FS = mat,
   input_score = input_score,
   method = "custom",
   custom_function = customized_rowscore,            

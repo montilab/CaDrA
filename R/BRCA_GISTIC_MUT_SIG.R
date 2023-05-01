@@ -11,7 +11,9 @@
 #' \code{SummarizedExperiment} package
 #' containing an assay of 16,873 rows (features) and 951 columns (samples)
 #' see \code{SummarizedExperiment} for more details.
-#'
+#' 
+#' @return a SummarizedExperiment object
+#' 
 #' @references Kartha VK, Kern JG, Sebastiani P, Zhang L,
 #' Varelas X, Monti S (2019) CaDrA: A computational framework for performing
 #' candidate driver analyses using binary genomic features.

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
       </span>
     </div>
 
@@ -86,27 +86,35 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<p>Candidate Drivers Analysis: Multi-Omic Search for Candidate Drivers of Functional Signatures</p>
+<div class="section level1">
+<div class="page-header"><h1 id="cadra">CaDrA<a class="anchor" aria-label="anchor" href="#cadra"></a>
+</h1></div>
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
+<!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
+<!-- badges: end -->
+<p><strong>Ca</strong>ndidate <strong>Dr</strong>ivers <strong>A</strong>nalysis: Multi-Omic Search for Candidate Drivers of Functional Signatures</p>
 <p><strong>CaDrA</strong> is an R package that supports a heuristic search framework aimed at identifying candidate drivers of a molecular phenotype of interest.</p>
 <p>The main function takes two inputs:</p>
 <ol style="list-style-type: decimal">
-<li><p>A binary multi-omics dataset represented as a <strong>SummarizedExperiment</strong> class object (where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features such as somatic mutations, copy number alterations, epigenetic marks, etc., and the columns represent the samples)</p></li>
-<li><p>A molecular phenotype represented as a vector of continuous scores (sample-specific scores representing a phenotypic readout of interest, such as protein expression, pathway activity, etc.).</p></li>
+<li>A binary multi-omics dataset, which can be represented as a matrix of binary features or a <strong>SummarizedExperiment</strong> class object where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features (e.g. somatic mutations, copy number alterations, epigenetic marks, etc.), and the columns are the samples.</li>
+<li>A molecular phenotype of interest, which can be represented as a vector of continuous scores (e.g. protein expression, pathway activity, etc.)</li>
 </ol>
-<p>Based on this input, <strong>CaDrA</strong> implements a forward/backward search algorithm to find the set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (<em>Kolmogorov-Smirnov</em>, <em>Conditional Mutual Information</em>, <em>Wilcoxon</em>, <em>custom-defined scoring function</em>), making it useful to find complementary omics features likely driving the input molecular phenotype.</p>
+<p>Based on these two inputs, <strong>CaDrA</strong> implements a forward/backward search algorithm to find a set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (<em>Kolmogorov-Smirnov</em>, <em>Conditional Mutual Information</em>, <em>Wilcoxon</em>, <em>custom-defined scoring function</em>), making it useful to find complementary omics features likely driving the input molecular phenotype.</p>
 <p>For more information, please see the associated manuscript <a href="https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full" class="external-link">Kartha et al. (2019)</a></p>
 <div class="section level2">
 <h2 id="id_1-installation">(1) Installation<a class="anchor" aria-label="anchor" href="#id_1-installation"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"montilab/CaDrA"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"montilab/CaDrA"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="id_2-quickstart">(2) Quickstart<a class="anchor" aria-label="anchor" href="#id_2-quickstart"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/" class="external-link">CaDrA</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="id_3-cadra-query-of-brca-yaptaz-activity">(3) CaDrA Query of BRCA YAP/TAZ Activity<a class="anchor" aria-label="anchor" href="#id_3-cadra-query-of-brca-yaptaz-activity"></a>
@@ -114,123 +122,141 @@
 <div class="section level3">
 <h3 id="i-load--format-data-inputs">(i) Load &amp; Format Data Inputs<a class="anchor" aria-label="anchor" href="#i-load--format-data-inputs"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Read in BRCA GISTIC+Mutation object</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BRCA_GISTIC_MUT_SIG)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> BRCA_GISTIC_MUT_SIG</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Read in input score</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(TAZYAP_BRCA_ACTIVITY)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> TAZYAP_BRCA_ACTIVITY</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Samples to keep based on the overlap between the two inputs</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">names</span>(input_score), <span class="fu">colnames</span>(eset_mut_scna))</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> eset_mut_scna[,overlap]</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> input_score[overlap]</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Binarize FS to only have 0's and 1's</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(eset_mut_scna)[<span class="fu">assay</span>(eset_mut_scna) <span class="sc">&gt;</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Pre-filter FS based on occurrence frequency</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>eset_mut_scna_flt <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">prefilter_data</span>(</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_cutoff =</span> <span class="fl">0.6</span>,  <span class="co"># max event frequency (60%)</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_cutoff =</span> <span class="fl">0.03</span>  <span class="co"># min event frequency (3%)</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co">## Read in BRCA GISTIC+Mutation object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BRCA_GISTIC_MUT_SIG</span><span class="op">)</span></span>
+<span><span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">BRCA_GISTIC_MUT_SIG</span></span>
+<span></span>
+<span><span class="co">## Read in input score</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">TAZYAP_BRCA_ACTIVITY</span><span class="op">)</span></span>
+<span><span class="va">input_score</span> <span class="op">&lt;-</span> <span class="va">TAZYAP_BRCA_ACTIVITY</span></span>
+<span></span>
+<span><span class="co">## Samples to keep based on the overlap between the two inputs</span></span>
+<span><span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">eset_mut_scna</span> <span class="op">&lt;-</span> <span class="va">eset_mut_scna</span><span class="op">[</span>,<span class="va">overlap</span><span class="op">]</span></span>
+<span><span class="va">input_score</span> <span class="op">&lt;-</span> <span class="va">input_score</span><span class="op">[</span><span class="va">overlap</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">## Binarize FS to only have 0's and 1's</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">eset_mut_scna</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<span></span>
+<span><span class="co">## Pre-filter FS based on occurrence frequency</span></span>
+<span><span class="va">eset_mut_scna_flt</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/prefilter_data.html">prefilter_data</a></span><span class="op">(</span></span>
+<span>  FS <span class="op">=</span> <span class="va">eset_mut_scna</span>,</span>
+<span>  max_cutoff <span class="op">=</span> <span class="fl">0.6</span>,  <span class="co"># max event frequency (60%)</span></span>
+<span>  min_cutoff <span class="op">=</span> <span class="fl">0.03</span>  <span class="co"># min event frequency (3%)</span></span>
+<span><span class="op">)</span>  </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="ii-run-cadra">(ii) Run CaDrA<a class="anchor" aria-label="anchor" href="#ii-run-cadra"></a>
 </h3>
 <p>Here, we repeat the candidate search starting from each of the top ‘N’ features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs).</p>
 <p>IMPORTANT NOTE: The legacy function <code>topn_eval()</code> is equivalent to the recommended <code><a href="reference/candidate_search.html">candidate_search()</a></code> function</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>topn_res <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">candidate_search</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna_flt,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">input_score =</span> input_score,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> <span class="cn">NULL</span>,               <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">alternative =</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">search_method =</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">top_N =</span> <span class="dv">7</span>,                   <span class="co"># Evaluate top 7 starting points for each search</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_size =</span> <span class="dv">7</span>,                <span class="co"># Maximum size a meta-feature matrix can extend to</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">do_plot =</span> <span class="cn">FALSE</span>,             <span class="co"># Plot after finding the best features</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">best_score_only =</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature set, observed input scores and calculated best score</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
+<span>  FS <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,</span>
+<span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
+<span>  weight <span class="op">=</span> <span class="cn">NULL</span>,               <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
+<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
+<span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for each search</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Maximum size a meta-feature matrix can extend to</span></span>
+<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># Plot after finding the best features</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature set, observed input scores and calculated best score</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="iii-visualize-best-results">(iii) Visualize Best Results<a class="anchor" aria-label="anchor" href="#iii-visualize-best-results"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fetch the meta-feature set corresponding to its best scores over top N features searches</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>topn_best_meta <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">topn_best</span>(topn_res)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the best results with the meta-feature plot</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">meta_plot</span>(<span class="at">topn_best_list =</span> topn_best_meta, <span class="at">input_score_label =</span> <span class="st">"YAP/TAZ Activity"</span>)</span></code></pre></div>
-<p><img src="./reference/figures/visualize.best-1.png"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co">## Fetch the meta-feature set corresponding to its best scores over top N features searches</span></span>
+<span><span class="va">topn_best_meta</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_best.html">topn_best</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Visualize the best results with the meta-feature plot</span></span>
+<span><span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">topn_best_meta</span>, input_score_label <span class="op">=</span> <span class="st">"YAP/TAZ Activity"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="./reference/figures/visualize.best-1.png"><!-- --></p>
 </div>
 <div class="section level3">
 <h3 id="iv-summarize-top-n-results">(iv) Summarize Top N Results<a class="anchor" aria-label="anchor" href="#iv-summarize-top-n-results"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate results across top N features you started from</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">topn_plot</span>(topn_res) </span></code></pre></div>
-<p><img src="./reference/figures/summarize-1.png"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Evaluate results across top N features you started from</span></span>
+<span><span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/topn_plot.html">topn_plot</a></span><span class="op">(</span><span class="va">topn_res</span><span class="op">)</span> </span></code></pre></div>
+<p><img src="./reference/figures/summarize-1.png"><!-- --></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="id_4-sessioninfo">(4) SessionInfo<a class="anchor" aria-label="anchor" href="#id_4-sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">2.3</span> (<span class="dv">2023-03-15</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span><span class="fu">gnu</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> Ubuntu <span class="dv">22</span>.<span class="fl">04.2</span> LTS</span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">2.2</span> (<span class="dv">2022-10-31</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>apple<span class="sc">-</span><span class="fu">darwin17.0</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> macOS Big Sur ... <span class="fl">10.16</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Matrix products<span class="sc">:</span> default</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libblas.so<span class="fl">.3</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libopenblasp<span class="sc">-</span>r0.<span class="dv">3</span>.<span class="fl">20.</span>so</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRblas.<span class="fl">0.</span>dylib</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>Library<span class="sc">/</span>Frameworks<span class="sc">/</span>R.framework<span class="sc">/</span>Versions<span class="sc">/</span><span class="fl">4.2</span><span class="sc">/</span>Resources<span class="sc">/</span>lib<span class="sc">/</span>libRlapack.dylib</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>locale<span class="sc">:</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] LC_CTYPE<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NUMERIC<span class="ot">=</span>C           LC_TIME<span class="ot">=</span>C.UTF<span class="dv">-8</span>       </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] LC_COLLATE<span class="ot">=</span>C.UTF<span class="dv">-8</span>     LC_MONETARY<span class="ot">=</span>C.UTF<span class="dv">-8</span>    LC_MESSAGES<span class="ot">=</span>C.UTF<span class="dv">-8</span>   </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] LC_PAPER<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NAME<span class="ot">=</span>C              LC_ADDRESS<span class="ot">=</span>C          </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] LC_TELEPHONE<span class="ot">=</span>C         LC_MEASUREMENT<span class="ot">=</span>C.UTF<span class="dv">-8</span> LC_IDENTIFICATION<span class="ot">=</span>C   </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_0.<span class="fl">99.2</span>                SummarizedExperiment_1.<span class="fl">28.0</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] Biobase_2.<span class="fl">58.0</span>              GenomicRanges_1.<span class="fl">50.2</span>       </span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] GenomeInfoDb_1.<span class="fl">34.9</span>         IRanges_2.<span class="fl">32.0</span>             </span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] S4Vectors_0.<span class="fl">36.2</span>            BiocGenerics_0.<span class="fl">44.0</span>        </span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] MatrixGenerics_1.<span class="fl">10.0</span>       matrixStats_0.<span class="fl">63.0</span>         </span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] Rcpp_1.<span class="fl">0.10</span>            lattice_0<span class="fl">.20</span><span class="dv">-45</span>        gtools_3.<span class="fl">9.4</span>          </span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] digest_0.<span class="fl">6.31</span>          foreach_1.<span class="fl">5.2</span>          utf8_1.<span class="fl">2.3</span>            </span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] R6_2.<span class="fl">5.1</span>               plyr_1.<span class="fl">8.8</span>             evaluate_0<span class="fl">.20</span>         </span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] highr_0<span class="fl">.10</span>             ggplot2_3.<span class="fl">4.1</span>          pillar_1.<span class="fl">9.0</span>          </span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] gplots_3.<span class="fl">1.3</span>           zlibbioc_1.<span class="fl">44.0</span>        rlang_1.<span class="fl">1.0</span>           </span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>[<span class="dv">16</span>] misc3d_0<span class="fl">.9</span><span class="dv">-1</span>           R.utils_2.<span class="fl">12.2</span>         R.oo_1.<span class="fl">25.0</span>           </span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>[<span class="dv">19</span>] Matrix_1<span class="fl">.5</span><span class="dv">-3</span>           rmarkdown_2<span class="fl">.21</span>         labeling_0.<span class="fl">4.2</span>        </span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>[<span class="dv">22</span>] stringr_1.<span class="fl">5.0</span>          RCurl_1<span class="fl">.98-1.12</span>        munsell_0.<span class="fl">5.0</span>         </span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>[<span class="dv">25</span>] DelayedArray_0.<span class="fl">24.0</span>    compiler_4.<span class="fl">2.3</span>         xfun_0<span class="fl">.38</span>             </span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>[<span class="dv">28</span>] pkgconfig_2.<span class="fl">0.3</span>        htmltools_0.<span class="fl">5.5</span>        tcltk_4.<span class="fl">2.3</span>           </span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>[<span class="dv">31</span>] tibble_3.<span class="fl">2.1</span>           GenomeInfoDbData_1.<span class="fl">2.9</span> ppcor_1<span class="fl">.1</span>             </span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">34</span>] codetools_0<span class="fl">.2</span><span class="dv">-19</span>       fansi_1.<span class="fl">0.4</span>            withr_2.<span class="fl">5.0</span>           </span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>[<span class="dv">37</span>] MASS_7<span class="fl">.3-58.2</span>          bitops_1<span class="fl">.0</span><span class="dv">-7</span>           R.methodsS3_1.<span class="fl">8.2</span>     </span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>[<span class="dv">40</span>] grid_4.<span class="fl">2.3</span>             gtable_0.<span class="fl">3.3</span>           lifecycle_1.<span class="fl">0.3</span>       </span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>[<span class="dv">43</span>] magrittr_2.<span class="fl">0.3</span>         scales_1.<span class="fl">2.1</span>           KernSmooth_2<span class="fl">.23</span><span class="dv">-20</span>    </span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>[<span class="dv">46</span>] cli_3.<span class="fl">6.1</span>              stringi_1.<span class="fl">7.12</span>         farver_2.<span class="fl">1.1</span>          </span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>[<span class="dv">49</span>] XVector_0.<span class="fl">38.0</span>         reshape2_1.<span class="fl">4.4</span>         doParallel_1.<span class="fl">0.17</span>     </span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>[<span class="dv">52</span>] vctrs_0.<span class="fl">6.1</span>            iterators_1.<span class="fl">0.14</span>       tools_4.<span class="fl">2.3</span>           </span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>[<span class="dv">55</span>] R.cache_0.<span class="fl">16.0</span>         glue_1.<span class="fl">6.2</span>             parallel_4.<span class="fl">2.3</span>        </span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>[<span class="dv">58</span>] fastmap_1.<span class="fl">1.1</span>          yaml_2.<span class="fl">3.7</span>             colorspace_2<span class="fl">.1</span><span class="dv">-0</span>      </span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>[<span class="dv">61</span>] caTools_1.<span class="fl">18.2</span>         knitr_1<span class="fl">.42</span>            </span></code></pre></div>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] en_US.UTF<span class="dv">-8</span><span class="sc">/</span>en_US.UTF<span class="dv">-8</span><span class="sc">/</span>en_US.UTF<span class="dv">-8</span><span class="sc">/</span>C<span class="sc">/</span>en_US.UTF<span class="dv">-8</span><span class="sc">/</span>en_US.UTF<span class="dv">-8</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_0.<span class="fl">99.5</span>                testthat_3.<span class="fl">1.6</span>             </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">1.6</span>              </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] SummarizedExperiment_1.<span class="fl">28.0</span> Biobase_2.<span class="fl">58.0</span>             </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] GenomicRanges_1.<span class="fl">50.2</span>        GenomeInfoDb_1.<span class="fl">34.4</span>        </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] IRanges_2.<span class="fl">32.0</span>              S4Vectors_0.<span class="fl">36.1</span>           </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] BiocGenerics_0.<span class="fl">44.0</span>         MatrixGenerics_1.<span class="fl">10.0</span>      </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] matrixStats_0.<span class="fl">63.0</span>         </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] bitops_1<span class="fl">.0</span><span class="dv">-7</span>           fs_1.<span class="fl">5.2</span>               doParallel_1.<span class="fl">0.17</span>     </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] rprojroot_2.<span class="fl">0.3</span>        R.cache_0.<span class="fl">16.0</span>         tools_4.<span class="fl">2.2</span>           </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] profvis_0.<span class="fl">3.7</span>          utf8_1.<span class="fl">2.2</span>             R6_2.<span class="fl">5.1</span>              </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] KernSmooth_2<span class="fl">.23</span><span class="dv">-20</span>     DBI_1.<span class="fl">1.3</span>              colorspace_2<span class="fl">.0</span><span class="dv">-3</span>      </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] urlchecker_1.<span class="fl">0.1</span>       withr_2.<span class="fl">5.0</span>            tidyselect_1.<span class="fl">2.0</span>      </span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>[<span class="dv">16</span>] prettyunits_1.<span class="fl">1.1</span>      processx_3.<span class="fl">8.0</span>         compiler_4.<span class="fl">2.2</span>        </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>[<span class="dv">19</span>] cli_3.<span class="fl">4.1</span>              desc_1.<span class="fl">4.2</span>             DelayedArray_0.<span class="fl">24.0</span>   </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>[<span class="dv">22</span>] labeling_0.<span class="fl">4.2</span>         caTools_1.<span class="fl">18.2</span>         scales_1.<span class="fl">2.1</span>          </span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>[<span class="dv">25</span>] callr_3.<span class="fl">7.3</span>            stringr_1.<span class="fl">5.0</span>          digest_0.<span class="fl">6.31</span>         </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>[<span class="dv">28</span>] R.utils_2.<span class="fl">12.2</span>         rmarkdown_2<span class="fl">.19</span>         XVector_0.<span class="fl">38.0</span>        </span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>[<span class="dv">31</span>] pkgconfig_2.<span class="fl">0.3</span>        htmltools_0.<span class="fl">5.4</span>        sessioninfo_1.<span class="fl">2.2</span>     </span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>[<span class="dv">34</span>] highr_0<span class="fl">.9</span>              fastmap_1.<span class="fl">1.0</span>          htmlwidgets_1.<span class="fl">6.0</span>     </span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">37</span>] rlang_1.<span class="fl">0.6</span>            rstudioapi_0<span class="fl">.14</span>        shiny_1.<span class="fl">7.4</span>           </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>[<span class="dv">40</span>] farver_2.<span class="fl">1.1</span>           generics_0.<span class="fl">1.3</span>         gtools_3.<span class="fl">9.4</span>          </span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>[<span class="dv">43</span>] R.oo_1.<span class="fl">25.0</span>            dplyr_1.<span class="fl">0.10</span>           RCurl_1<span class="fl">.98-1.9</span>        </span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>[<span class="dv">46</span>] magrittr_2.<span class="fl">0.3</span>         GenomeInfoDbData_1.<span class="fl">2.9</span> Matrix_1<span class="fl">.5</span><span class="dv">-3</span>          </span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>[<span class="dv">49</span>] Rcpp_1.<span class="fl">0.9</span>             munsell_0.<span class="fl">5.0</span>          fansi_1.<span class="fl">0.3</span>           </span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>[<span class="dv">52</span>] R.methodsS3_1.<span class="fl">8.2</span>      lifecycle_1.<span class="fl">0.3</span>        stringi_1.<span class="fl">7.8</span>         </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>[<span class="dv">55</span>] yaml_2.<span class="fl">3.6</span>             brio_1.<span class="fl">1.3</span>             MASS_7<span class="fl">.3-58.1</span>         </span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>[<span class="dv">58</span>] zlibbioc_1.<span class="fl">44.0</span>        plyr_1.<span class="fl">8.8</span>             pkgbuild_1.<span class="fl">4.0</span>        </span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>[<span class="dv">61</span>] gplots_3.<span class="fl">1.3</span>           misc3d_0<span class="fl">.9</span><span class="dv">-1</span>           grid_4.<span class="fl">2.2</span>            </span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>[<span class="dv">64</span>] parallel_4.<span class="fl">2.2</span>         promises_1.<span class="dv">2</span>.<span class="fl">0.1</span>       ppcor_1<span class="fl">.1</span>             </span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>[<span class="dv">67</span>] crayon_1.<span class="fl">5.2</span>           miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>         lattice_0<span class="fl">.20</span><span class="dv">-45</span>       </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>[<span class="dv">70</span>] knitr_1<span class="fl">.41</span>             ps_1.<span class="fl">7.2</span>               pillar_1.<span class="fl">8.1</span>          </span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>[<span class="dv">73</span>] tcltk_4.<span class="fl">2.2</span>            reshape2_1.<span class="fl">4.4</span>         codetools_0<span class="fl">.2</span><span class="dv">-18</span>      </span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>[<span class="dv">76</span>] pkgload_1.<span class="fl">3.2</span>          glue_1.<span class="fl">6.2</span>             evaluate_0<span class="fl">.19</span>         </span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>[<span class="dv">79</span>] remotes_2.<span class="fl">4.2</span>          vctrs_0.<span class="fl">5.1</span>            httpuv_1.<span class="fl">6.7</span>          </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>[<span class="dv">82</span>] foreach_1.<span class="fl">5.2</span>          gtable_0.<span class="fl">3.1</span>           purrr_0.<span class="fl">3.5</span>           </span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>[<span class="dv">85</span>] assertthat_0.<span class="fl">2.1</span>       cachem_1.<span class="fl">0.6</span>           ggplot2_3.<span class="fl">4.0</span>         </span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>[<span class="dv">88</span>] xfun_0<span class="fl">.35</span>              mime_0<span class="fl">.12</span>              xtable_1<span class="fl">.8</span><span class="dv">-4</span>          </span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>[<span class="dv">91</span>] later_1.<span class="fl">3.0</span>            tibble_3.<span class="fl">1.8</span>           iterators_1.<span class="fl">0.14</span>      </span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>[<span class="dv">94</span>] memoise_2.<span class="fl">0.1</span>          ellipsis_0.<span class="fl">3.2</span>        </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="id_5-acknowledgements">(5) Acknowledgements<a class="anchor" aria-label="anchor" href="#id_5-acknowledgements"></a>
 </h2>
 <p>This project is funded in part by the <a href="https://www.nidcr.nih.gov/" class="external-link">NIH/NIDCR</a> (3R01DE030350-01A1S1, R01DE031831), <a href="https://findthecausebcf.org" class="external-link">Find the Cause Breast Cancer Foundation</a>, and <a href="https://www.nia.nih.gov/" class="external-link">NIH/NIA</a> (UH3 AG064704).</p>
 </div>
-
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

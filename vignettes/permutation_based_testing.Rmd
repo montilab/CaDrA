@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r, include=FALSE, messages=FALSE, warnings=FALSE}
-knitr::opts_chunk$set(message=FALSE, comment="")
+knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
 library(CaDrA)
 ```
@@ -63,17 +63,17 @@ ks_candidate <- CaDrA::candidate_search(
 ```{r ks.meta.plot}
 
 # Extract the best meta-feature result
-topn_best_meta <- topn_best(topn_list = ks_candidate)
+topn_best_meta <- CaDrA::topn_best(topn_list = ks_candidate)
 
 # Visualize meta-feature result
-meta_plot(topn_best_list = topn_best_meta)
+CaDrA::meta_plot(topn_best_list = topn_best_meta)
 
 ```
 
 # Permutation-based testing
 
-```r
 
+```r
 ks_perm_res <- CaDrA::CaDrA(
   FS = sim_FS, 
   input_score = sim_Scores, 
@@ -87,16 +87,13 @@ ks_perm_res <- CaDrA::CaDrA(
   plot = FALSE,                # We will plot later
   ncores = 1                   # Number of cores to perform parallelization
 )
-
 ```
 
 # Visualize permutation result
 
 ```r
-
 # Visualize permutation results
 permutation_plot(perm_res = ks_perm_res)
-
 ```
 
 ![](ks_permutation_plot.png)

@@ -3,13 +3,13 @@
 #'
 #' Compute directional KS scores for each row of a given binary feature matrix
 #'
-#' @param FS_mat a matrix of binary features where 
+#' @param FS a matrix of binary features where 
 #' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
 #' and columns represent the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS_mat object.
+#' names of FS object.
 #' @param weight a vector of weights to perform a \code{weighted-KS} test.
 #' Default is \code{NULL}. If not NULL, \code{weight} must have labels or names
 #' that match labels of \code{input_score}.
@@ -37,7 +37,7 @@
 #' names(input_score) <- colnames(mat)
 #' 
 #' ks_rs <- ks_rowscore(
-#'    FS_mat = mat,
+#'    FS = mat,
 #'    input_score = input_score,
 #'    weight = NULL,
 #'    alternative = "less",
@@ -45,11 +45,11 @@
 #' )
 #'
 #' @return return a vector of row-wise scores where its labels or names 
-#' must match the row names of \code{FS_mat} object
+#' must match the row names of \code{FS} object
 #' 
 ks_rowscore <- function
 (
-  FS_mat,
+  FS,
   input_score,
   weight = NULL,
   alternative = c("less", "greater", "two.sided"),
@@ -65,7 +65,7 @@ ks_rowscore <- function
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  FS_mat <- FS_mat[, names(input_score), drop=FALSE]  
+  FS <- FS[, names(input_score), drop=FALSE]  
   
   # Check if weight is provided
   if(length(weight) > 0){
@@ -83,15 +83,20 @@ ks_rowscore <- function
   alt_int <- switch(alternative, two.sided=0L, less=1L, greater=-1L, 1L)
 
   # Compute the ks statistic and p-value per row in the matrix
-  ks <- .Call(ks_genescore_mat_, FS_mat, weight, alt_int)
+  ks <- .Call(ks_genescore_mat_, FS, weight, alt_int)
 
-  # Obtain score statistics and p-values from KS method
+  # Obtain score statistics from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   stat <- ks[1,]
+
+  # Obtain p-values from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- ks[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
   
   # Compute the scores according to the provided metric
-  scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)
-  names(scores) <- rownames(FS_mat)
+  scores <- ifelse(rep(metric, nrow(FS)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(FS)
 
   return(scores)
   

@@ -7,7 +7,7 @@
 permutation_plot(perm_res)
 }
 \arguments{
-\item{perm_res}{a list of objects returned from \code{CaDrA()} function.
+\item{perm_res}{a list of objects returned from \code{CaDrA} function.
 The returning object contains a list of key parameters that are used to run
 the permutation-based testing, a vector of permuted best scores for a given 
 \code{n_perm}, an observed best score, and a computed permutation p-value.}
@@ -17,7 +17,7 @@ a density plot
 }
 \description{
 Plot the Empirical Null Distribution of Permutation Best Scores returned from
-CaDrA() function
+\code{CaDrA} function
 }
 \examples{
 

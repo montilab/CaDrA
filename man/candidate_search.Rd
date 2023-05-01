@@ -23,11 +23,11 @@ candidate_search(
 )
 }
 \arguments{
-\item{FS}{a SummarizedExperiment class object from SummarizedExperiment 
-package where rows represent features of interest 
-(e.g. genes, transcripts, exons, etc.)  and columns represent the samples. 
-The assay of FS contains binary (1/0) values 
-indicating the presence/absence of omics features.}
+\item{FS}{a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of omics features.}
 
 \item{input_score}{a vector of continuous scores representing a phenotypic
 readout of interest such as protein expression, pathway activity, etc.
@@ -45,14 +45,14 @@ Default is \code{ks_pval}.}
 \item{custom_function}{if method is \code{"custom"}, specifies
 the name of the customized function here. Default is \code{NULL}.
 
-NOTE: custom_function() must take FS_mat (or FS) and input_score as its
+NOTE: \code{custom_function} must take FS_mat (or FS) and input_score as its
 input arguments, and its final result must return a vector of row-wise scores 
 ordered from most significant to least significant where its labels or names 
 matched the row names of FS_mat (or FS) object.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
 additional arguments (excluding \code{FS_mat} (or FS) and \code{input_score}) 
-to be passed to the custom_function(). Default is \code{NULL}.}
+to be passed to the \code{custom_function}. Default is \code{NULL}.}
 
 \item{alternative}{a character string specifies an alternative hypothesis
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -99,12 +99,15 @@ Default is \code{TRUE}.}
 diagnostic messages. Default is \code{FALSE}.}
 }
 \value{
-If \code{best_score_only} is set to \code{TRUE}, the function will
-return a list of objects containing ONLY the best score of the union 
-meta-feature matrix for each top N searches. If \code{best_score_only} is set
-to \code{FALSE}, a list of objects containing the returned meta-feature 
-matrix, as well as its corresponding best score and observed input scores 
-are returned.
+If \code{best_score_only = TRUE}, the heuristic search will return 
+the best feature whose its union meta-feature matrix has the highest score 
+among the \code{top_N} feature searches.
+If \code{best_score_only = FALSE}, a list of objects pertaining to 
+\code{top_N} feature searches are returned. For each top_N feature search,
+the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+(\code{feature_set}), (2) its observed input scores (\code{input_score}), 
+and lastly, its corresponding best score pertaining to the union meta-feature
+matrix (\code{score}).
 }
 \description{
 Performs heuristic search on a set of binary features to determine whether
@@ -113,8 +116,8 @@ than either features alone. This is the main functionality of
 the \code{CaDrA} package.
 }
 \details{
-NOTE: The legacy function \code{topn_eval()} is equivalent to the recommended
-\code{candidate_search()} function
+NOTE: The legacy function \code{topn_eval} is equivalent to the recommended
+\code{candidate_search} function
 }
 \examples{
 

@@ -20,7 +20,7 @@ a given scoring method"><!-- mathjax --><script src="https://cdnjs.cloudflare.co
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@ a given scoring method</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_rowscore</span><span class="op">(</span></span>
-<span>  <span class="va">FS_mat</span>,</span>
+<span>  <span class="va">FS</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -88,10 +88,12 @@ a given scoring method</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>FS_mat</dt>
-<dd><p>a matrix of binary features where rows represent features of 
-interest (e.g. genes, transcripts, exons, etc...) and columns represent 
-the samples.</p></dd>
+    <dl><dt>FS</dt>
+<dd><p>a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of omics features.</p></dd>
 
 
 <dt>input_score</dt>
@@ -113,7 +115,7 @@ Default is <code>ks_pval</code>.</p></dd>
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies
 the name of the customized function here. Default is <code>NULL</code>.</p>
-<p>NOTE: custom_function() must take <code>FS_mat</code> and <code>input_score</code> 
+<p>NOTE: <code>custom_function</code> must take <code>FS_mat</code> and <code>input_score</code> 
 as its input arguments, and its final result must return a vector of row-wise 
 scores ordered from most significant to least significant where its labels or 
 names matched the row names of <code>FS_mat</code> object.</p></dd>
@@ -185,7 +187,7 @@ where its labels or names must match the row names of <code>FS_mat</code> object
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the ks method</span></span></span>
 <span class="r-in"><span><span class="va">ks_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">mat</span>,</span></span>
 <span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,</span></span>
 <span class="r-in"><span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
@@ -194,7 +196,7 @@ where its labels or names must match the row names of <code>FS_mat</code> object
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the wilcoxon method</span></span></span>
 <span class="r-in"><span><span class="va">wilcox_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">mat</span>,</span></span>
 <span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"wilcox_pval"</span>,</span></span>
 <span class="r-in"><span>  alternative <span class="op">=</span> <span class="st">"less"</span></span></span>
@@ -202,16 +204,16 @@ where its labels or names must match the row names of <code>FS_mat</code> object
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the revealer method</span></span></span>
 <span class="r-in"><span><span class="va">revealer_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">mat</span>,</span></span>
 <span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"revealer"</span>,</span></span>
 <span class="r-in"><span>  seed_names <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A customized function using ks-test function</span></span></span>
-<span class="r-in"><span><span class="va">customized_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS_mat</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">customized_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  </span></span>
-<span class="r-in"><span>  <span class="va">ks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">FS_mat</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span></span>
+<span class="r-in"><span>  <span class="va">ks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">FS</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span></span>
 <span class="r-in"><span>    <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; </span></span>
 <span class="r-in"><span>    <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span></span>
 <span class="r-in"><span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span></span>
@@ -220,21 +222,15 @@ where its labels or names must match the row names of <code>FS_mat</code> object
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span>  <span class="co"># Obtain score statistics and p-values from KS method</span></span></span>
 <span class="r-in"><span>  <span class="va">stat</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="co"># Change values of 0 to the machine lowest value to avoid taking -log(0)</span></span></span>
 <span class="r-in"><span>  <span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="va">pval</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">pval</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmin</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span>  <span class="co"># Compute the -log scores for pval</span></span></span>
-<span class="r-in"><span>  <span class="co"># Make sure scores has names that match the row names of FS_mat object</span></span></span>
+<span class="r-in"><span>  <span class="co"># Make sure scores has names that match the row names of FS object</span></span></span>
 <span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">FS_mat</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  </span></span>
-<span class="r-in"><span>  <span class="co"># Remove scores that are Inf as it is resulted from</span></span></span>
-<span class="r-in"><span>  <span class="co"># taking the -log(0). They are uninformative.</span></span></span>
-<span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">scores</span><span class="op">[</span><span class="va">scores</span> <span class="op">!=</span> <span class="cn">Inf</span><span class="op">]</span>  </span></span>
-<span class="r-in"><span>  </span></span>
-<span class="r-in"><span>  <span class="co"># Re-order FS_mat in a decreasing order (from most to least significant)</span></span></span>
-<span class="r-in"><span>  <span class="co"># This comes in handy when doing the top-N evaluation of</span></span></span>
-<span class="r-in"><span>  <span class="co"># the top N 'best' features</span></span></span>
-<span class="r-in"><span>  <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">scores</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">scores</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
@@ -242,7 +238,7 @@ where its labels or names must match the row names of <code>FS_mat</code> object
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Search for best features using a custom-defined function</span></span></span>
 <span class="r-in"><span><span class="va">custom_rowscore_result</span> <span class="op">&lt;-</span> <span class="fu">calc_rowscore</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS_mat <span class="op">=</span> <span class="va">mat</span>,</span></span>
+<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">mat</span>,</span></span>
 <span class="r-in"><span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"custom"</span>,</span></span>
 <span class="r-in"><span>  custom_function <span class="op">=</span> <span class="va">customized_rowscore</span>,            </span></span>

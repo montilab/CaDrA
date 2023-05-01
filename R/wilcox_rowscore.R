@@ -4,13 +4,13 @@
 #' Compute directional Wilcoxon rank sum score for each row of a
 #' given binary feature matrix
 #'
-#' @param FS_mat a matrix of binary features where 
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc...)
-#' and columns represent the samples.
+#' @param FS a matrix of binary features where rows represent features of 
+#' interest (e.g. genes, transcripts, exons, etc...) and columns represent 
+#' the samples.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
-#' names of FS_mat object.
+#' names of FS object.
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
@@ -34,18 +34,18 @@
 #' names(input_score) <- colnames(mat)
 #'
 #' wilcox_rs <- wilcox_rowscore(
-#'    FS_mat = mat,
+#'    FS = mat,
 #'    input_score = input_score,
 #'    alternative = "less",
 #'    metric = "pval"
 #' )
 #'
 #' @return return a vector of row-wise scores where its labels or names 
-#' must match the row names of \code{FS_mat} object
+#' must match the row names of \code{FS} object
 #' 
 wilcox_rowscore <- function
 (
-  FS_mat,
+  FS,
   input_score,
   alternative = c("less", "greater", "two.sided"),
   metric = c("stat", "pval")
@@ -60,14 +60,14 @@ wilcox_rowscore <- function
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  FS_mat <- FS_mat[, names(input_score), drop=FALSE]  
+  FS<- FS[, names(input_score), drop=FALSE]  
   
   # Since input_score is already ordered from largest to smallest
   # We can assign ranks as 1:N (N: number of samples)
-  ranks <- seq(1, ncol(FS_mat))
+  ranks <- seq(1, ncol(FS))
 
   # Compute the wilcox rank sum statitic and p-value per row in the matrix
-  wilcox <- apply(X=FS_mat, MARGIN=1, function(x){
+  wilcox <- apply(X=FS, MARGIN=1, function(x){
     wilcox_score(
       x = ranks[which(x==1)],
       y = ranks[which(x==0)],
@@ -75,13 +75,18 @@ wilcox_rowscore <- function
     )
   })
   
-  # Obtain score statistics and p-values from Wilcox method
+  # Obtain score statistics from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   stat <- wilcox[1,]
+  
+  # Obtain p-values from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- wilcox[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
 
   # Compute the scores according to the provided metric
-  scores <- ifelse(rep(metric, nrow(FS_mat)) %in% "pval", -log(pval), stat)
-  names(scores) <- rownames(FS_mat)
+  scores <- ifelse(rep(metric, nrow(FS)) %in% "pval", -log(pval), stat)
+  names(scores) <- rownames(FS)
   
   return(scores)
   

@@ -8,7 +8,7 @@ topn_best(topn_list)
 }
 \arguments{
 \item{topn_list}{A nested list of objects that is returned 
-from \code{candidate_search()}
+from \code{candidate_search}
 by setting \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
 \code{top_N = 7},
 \code{method = "ks_pval"}, \code{alternative = "less"}, 
@@ -24,7 +24,7 @@ its corresponding best score,  and observed input scores
 }
 \description{
 Take the resulting list of meta-features returned from 
-\code{candidate_search()}
+\code{candidate_search}
 and fetch the meta-feature with the best score
 }
 \examples{

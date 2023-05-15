@@ -16,27 +16,27 @@ MU <- 0  # mean of independent variables
 PATH <- file.path(".")
 do_save <- TRUE
 
-## Xc --> Zc <-- Yc (to test ccc_1d)
+## Xc --> Zc <-- Yc (to test cc_1d and ccc_1d)
 ## all continuous
 set.seed(123)
 Xc <- rnorm(N, mean = MU, sd = SD)
 Yc <- rnorm(N, mean = MU, sd = SD)
 Zc_XcYc <- rnorm(N, mean = Xc + Yc, sd = SD)
 
-## Xc --> Zc <-- Yc,Wc (to test ccc_2d)
+## Xc --> Zc <-- Yc,Wc (to test cc_2d and ccc_2d)
 ## all continuous
 Wc <- rnorm(N, mean = MU, sd = SD)
 Zc_XcYcWc <- rnorm(N, mean = Xc + Yc + Wc, sd = SD)
 
 ## Xd --> Zc <-- Yd
-## continuous child, discrete parents (to test cdd_1d)
+## continuous child, discrete parents (to test cd_1d and cdd_1d)
 set.seed(456)
 Xd <- sample(c(0, 1), size = N, replace = TRUE)
 Yd <- sample(c(0, 1), size = N, replace = TRUE)
 Zc_XdYd <- rnorm(N, mean = Xd + Yd, sd = SD)
 
 ## Xd --> Zc <-- Yd,Wd
-## continuous child, discrete parents (to test cdd_2d)
+## continuous child, discrete parents (to test cd_2d and cdd_2d)
 Wd <- sample(c(0, 1), size = N, replace = TRUE)
 Zc_XdYdWd <- rnorm(N, mean = Xd + Yd + Wd, sd = SD)
 

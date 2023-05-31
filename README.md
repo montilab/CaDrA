@@ -1,10 +1,12 @@
-CaDrA
-================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- badges: start -->
-<!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
-<!-- badges: end -->
+
+# CaDrA
+
+![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg)
+![Gitter](https://img.shields.io/gitter/room/montilab/cadra) ![GitHub
+issues](https://img.shields.io/github/issues/montilab/cadra) ![GitHub
+last commit](https://img.shields.io/github/last-commit/montilab/cadra)
 
 **Ca**ndidate **Dr**ivers **A**nalysis: Multi-Omic Search for Candidate
 Drivers of Functional Signatures
@@ -131,63 +133,55 @@ CaDrA::topn_plot(topn_res)
 
 ``` r
 sessionInfo()
-R version 4.2.2 (2022-10-31)
-Platform: x86_64-apple-darwin17.0 (64-bit)
-Running under: macOS Big Sur ... 10.16
+R version 4.3.0 (2023-04-21)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Ventura 13.3.1
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/New_York
+tzcode source: internal
 
 attached base packages:
 [1] stats4    stats     graphics  grDevices utils     datasets  methods  
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.5                testthat_3.1.6             
- [3] devtools_2.4.5              usethis_2.1.6              
- [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
- [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.4        
- [9] IRanges_2.32.0              S4Vectors_0.36.1           
-[11] BiocGenerics_0.44.0         MatrixGenerics_1.10.0      
-[13] matrixStats_0.63.0         
+ [1] CaDrA_0.99.5                SummarizedExperiment_1.30.1
+ [3] Biobase_2.60.0              GenomicRanges_1.52.0       
+ [5] GenomeInfoDb_1.36.0         IRanges_2.34.0             
+ [7] S4Vectors_0.38.1            BiocGenerics_0.46.0        
+ [9] MatrixGenerics_1.12.0       matrixStats_0.63.0         
 
 loaded via a namespace (and not attached):
- [1] bitops_1.0-7           fs_1.5.2               doParallel_1.0.17     
- [4] rprojroot_2.0.3        R.cache_0.16.0         tools_4.2.2           
- [7] profvis_0.3.7          utf8_1.2.2             R6_2.5.1              
-[10] KernSmooth_2.23-20     DBI_1.1.3              colorspace_2.0-3      
-[13] urlchecker_1.0.1       withr_2.5.0            tidyselect_1.2.0      
-[16] prettyunits_1.1.1      processx_3.8.0         compiler_4.2.2        
-[19] cli_3.4.1              desc_1.4.2             DelayedArray_0.24.0   
-[22] labeling_0.4.2         caTools_1.18.2         scales_1.2.1          
-[25] callr_3.7.3            stringr_1.5.0          digest_0.6.31         
-[28] R.utils_2.12.2         rmarkdown_2.19         XVector_0.38.0        
-[31] pkgconfig_2.0.3        htmltools_0.5.4        sessioninfo_1.2.2     
-[34] highr_0.9              fastmap_1.1.0          htmlwidgets_1.6.0     
-[37] rlang_1.0.6            rstudioapi_0.14        shiny_1.7.4           
-[40] farver_2.1.1           generics_0.1.3         gtools_3.9.4          
-[43] R.oo_1.25.0            dplyr_1.0.10           RCurl_1.98-1.9        
-[46] magrittr_2.0.3         GenomeInfoDbData_1.2.9 Matrix_1.5-3          
-[49] Rcpp_1.0.9             munsell_0.5.0          fansi_1.0.3           
-[52] R.methodsS3_1.8.2      lifecycle_1.0.3        stringi_1.7.8         
-[55] yaml_2.3.6             brio_1.1.3             MASS_7.3-58.1         
-[58] zlibbioc_1.44.0        plyr_1.8.8             pkgbuild_1.4.0        
-[61] gplots_3.1.3           misc3d_0.9-1           grid_4.2.2            
-[64] parallel_4.2.2         promises_1.2.0.1       ppcor_1.1             
-[67] crayon_1.5.2           miniUI_0.1.1.1         lattice_0.20-45       
-[70] knitr_1.41             ps_1.7.2               pillar_1.8.1          
-[73] tcltk_4.2.2            reshape2_1.4.4         codetools_0.2-18      
-[76] pkgload_1.3.2          glue_1.6.2             evaluate_0.19         
-[79] remotes_2.4.2          vctrs_0.5.1            httpuv_1.6.7          
-[82] foreach_1.5.2          gtable_0.3.1           purrr_0.3.5           
-[85] assertthat_0.2.1       cachem_1.0.6           ggplot2_3.4.0         
-[88] xfun_0.35              mime_0.12              xtable_1.8-4          
-[91] later_1.3.0            tibble_3.1.8           iterators_1.0.14      
-[94] memoise_2.0.1          ellipsis_0.3.2        
+ [1] gtable_0.3.3            xfun_0.39               ggplot2_3.4.2          
+ [4] caTools_1.18.2          lattice_0.21-8          vctrs_0.6.2            
+ [7] tools_4.3.0             bitops_1.0-7            generics_0.1.3         
+[10] parallel_4.3.0          tibble_3.2.1            fansi_1.0.4            
+[13] highr_0.10              pkgconfig_2.0.3         R.oo_1.25.0            
+[16] Matrix_1.5-4            KernSmooth_2.23-21      lifecycle_1.0.3        
+[19] GenomeInfoDbData_1.2.10 R.cache_0.16.0          farver_2.1.1           
+[22] compiler_4.3.0          stringr_1.5.0           gplots_3.1.3           
+[25] munsell_0.5.0           codetools_0.2-19        misc3d_0.9-1           
+[28] htmltools_0.5.5         RCurl_1.98-1.12         yaml_2.3.7             
+[31] pillar_1.9.0            crayon_1.5.2            MASS_7.3-60            
+[34] R.utils_2.12.2          DelayedArray_0.26.3     iterators_1.0.14       
+[37] foreach_1.5.2           gtools_3.9.4            tidyselect_1.2.0       
+[40] digest_0.6.31           stringi_1.7.12          dplyr_1.1.2            
+[43] reshape2_1.4.4          labeling_0.4.2          fastmap_1.1.1          
+[46] grid_4.3.0              colorspace_2.1-0        cli_3.6.1              
+[49] magrittr_2.0.3          S4Arrays_1.0.4          utf8_1.2.3             
+[52] withr_2.5.0             scales_1.2.1            rmarkdown_2.21         
+[55] XVector_0.40.0          R.methodsS3_1.8.2       evaluate_0.21          
+[58] knitr_1.42              tcltk_4.3.0             doParallel_1.0.17      
+[61] rlang_1.1.1             Rcpp_1.0.10             glue_1.6.2             
+[64] ppcor_1.1               rstudioapi_0.14         R6_2.5.1               
+[67] plyr_1.8.8              zlibbioc_1.46.0        
 ```
 
 ## (5) Acknowledgements

@@ -129,8 +129,6 @@ using \code{candidate_search} as the main iterative function for each run.
 }
 \examples{
 
-\donttest{
-
 # Load pre-computed feature set
 data(sim_FS)
 
@@ -141,7 +139,6 @@ data(sim_Scores)
 set.seed(21)
 
 # Define additional parameters and start the function
-# DONNOT RUN as this would take some time
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
   weight = NULL, alternative = "less", top_N = 1,
@@ -149,7 +146,5 @@ cadra_result <- CaDrA(
   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )
-
-}
 
 }

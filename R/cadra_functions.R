@@ -366,6 +366,7 @@ generate_permutations <- function(
   # Create permutation matrix
   perm <- matrix(NA, nrow=n_perm, ncol=n)
   colnames(perm) <- names(input_score)
+  rownames(perm) <- 1:n_perm
 
   # Sample the input scores
   for(i in seq_len(n_perm)){
@@ -379,4 +380,3 @@ generate_permutations <- function(
   return(perm)
 
 }
-

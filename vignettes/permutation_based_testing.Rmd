@@ -74,6 +74,9 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta)
 
 
 ```r
+# Set seed for permutation
+set.seed(123)
+
 ks_perm_res <- CaDrA::CaDrA(
   FS = sim_FS, 
   input_score = sim_Scores, 
@@ -83,9 +86,9 @@ ks_perm_res <- CaDrA::CaDrA(
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Repeat the search with the top N features
   max_size = 10,               # Allow at most 10 features in the meta-feature matrix
-  n_perm = 1000,               # Number of permutations
+  n_perm = 10,               # Number of permutations to perform
   plot = FALSE,                # We will plot later
-  ncores = 1                   # Number of cores to perform parallelization
+  ncores = 4                  # Number of cores to perform parallelization
 )
 ```
 

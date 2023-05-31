@@ -85,8 +85,6 @@
 #' sum(perm_best_scores > obs_best_score)/n_perm
 #'
 #' @examples
-#'
-#'\donttest{
 #' 
 #' # Load pre-computed feature set
 #' data(sim_FS)
@@ -98,7 +96,6 @@
 #' set.seed(21)
 #' 
 #' # Define additional parameters and start the function
-#' # DONNOT RUN as this would take some time
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
 #'   weight = NULL, alternative = "less", top_N = 1,
@@ -106,8 +103,6 @@
 #'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
 #' )
-#' 
-#'}
 #' 
 #' @export
 #' @import R.cache doParallel ggplot2 plyr methods SummarizedExperiment
@@ -133,25 +128,25 @@ CaDrA <- function(
     cache_path = NULL,
     verbose = FALSE
 ){
-
+  
   # Set up verbose option
   options(verbose = verbose)
-
+  
   # Match arguments
   method <- match.arg(method)
   alternative <- match.arg(alternative)
   search_method <- match.arg(search_method)
-
+  
   # Check n_perm
   stopifnot("invalid number of permutations (nperm)"=
               (length(n_perm)==1 && !is.na(n_perm) &&
                  is.numeric(n_perm) && n_perm > 0) )
-
+  
   # Check ncores
   stopifnot("invalid number of CPU cores (ncores)"=
               (length(ncores)==1 && !is.na(ncores) &&
                  is.numeric(ncores) && ncores > 0) )
-
+  
   ####### CACHE CHECKING #######
   if(!is.null(cache_path)){
     R.cache::setCacheRootPath(cache_path)
@@ -183,31 +178,31 @@ CaDrA <- function(
   
   # Load perm_best_scores with the given key parameters
   perm_best_scores <- R.cache::loadCache(key)
-
+  
   # Start the 'clock' to see how long the process takes
   ptm <- proc.time()
-
+  
   # Check if, given the dataset and search-specific parameters,
   # there is already a cached null distribution available
   n_perm <-  as.integer(n_perm)
-
+  
   if(!is.null(perm_best_scores) & (length(perm_best_scores) >= n_perm)){
-
+    
     if(length(perm_best_scores) == n_perm){
-      message("Found ", length(perm_best_scores),
+      verbose("Found ", length(perm_best_scores),
               " permutated scores for the specified dataset",
               " and search parameters in cache path\n")
-      message("LOADING PERMUTATED SCORES FROM CACHE\n")
+      verbose("LOADING PERMUTATED SCORES FROM CACHE\n")
     }else{
-      message("n_perm is set to ", n_perm, " but found ",
+      verbose("n_perm is set to ", n_perm, " but found ",
               length(perm_best_scores),
               " permutated scores for the specified dataset",
               " and search parameters in cache path\n")
-      message("LOADING LARGER PERMUTATED SCORES FROM CACHE\n")
+      verbose("LOADING LARGER PERMUTATED SCORES FROM CACHE\n")
     }
-
+    
   }else{
-
+    
     if(is.null(perm_best_scores)){
       verbose("No permutated scores for the specified dataset and ",
               "search parameters were found in cache path\n")
@@ -220,23 +215,23 @@ CaDrA <- function(
       verbose("RE-COMPUTE PERMUTATION-BASED TESTINGS ",
               "WITH LARGER NUMBER OF PERMUTATIONS\n")
     }
-
+    
     #######################################################################
-
+    
     # Check ncores
     ncores <-  as.integer(ncores)
-
+    
     # Sets up the parallel backend which will be utilized by Plyr.
     parallel <- FALSE
     progress <- "text"
-
+    
     if(ncores > 1){
       doParallel::registerDoParallel(cores = ncores)
       parallel <- TRUE
       progress <- "none"
       verbose("Running tests in parallel...")
     }
-
+    
     # Generate matrix of permuted input_score
     perm_labels_matrix <- generate_permutations(
       input_score = input_score, 
@@ -248,8 +243,10 @@ CaDrA <- function(
       perm_labels_matrix,
       1,
       function(x){
+      
         perm_input_score <- x
         names(perm_input_score) <- colnames(perm_labels_matrix)
+        
         best_score <- candidate_search(
           FS = FS,
           input_score = perm_input_score,
@@ -267,7 +264,9 @@ CaDrA <- function(
           do_check = FALSE,
           verbose = FALSE
         ) 
+        
         return(best_score)
+        
       },
       .parallel = parallel,
       .progress = progress)
@@ -288,13 +287,13 @@ CaDrA <- function(
   
   verbose("FINISHED\n")
   verbose("Time elapsed: ", round((proc.time()-ptm)[3]/60, 2), " mins \n\n")
-
+  
   #########################################################################
-
+  
   if(is.null(obs_best_score)){
-
+    
     verbose("Computing observed best score...\n\n")
-
+    
     obs_best_score <- candidate_search(
       FS = FS,
       input_score = input_score,
@@ -312,9 +311,9 @@ CaDrA <- function(
       do_check = FALSE,
       verbose = FALSE
     ) |> unlist()
-
+    
   }else{
-
+    
     # Check obs_best_score
     stopifnot("invalid observed best score (obs_best_score)"=
                 (length(obs_best_score)==1 && !is.na(obs_best_score) &&
@@ -324,19 +323,19 @@ CaDrA <- function(
     obs_best_score <- as.numeric(obs_best_score)
     
   }
-
+  
   verbose("Observed score: ", obs_best_score, "\n")
-
+  
   ########### PERMUTATION P-VALUE COMPUTATION ############
-
+  
   #Add a smoothing factor of 1 if smooth is specified
   #This is just to not return a p-value of 0
   c <- 0
   if(smooth) c <- 1
-
+  
   perm_pval <- (sum(perm_best_scores > obs_best_score) + c)/
     (length(perm_best_scores) + c)
-
+  
   verbose("Permutation p-value: ", perm_pval, "\n")
   verbose("Number of permutations: ", length(perm_best_scores), "\n")
   
@@ -347,12 +346,17 @@ CaDrA <- function(
     obs_best_score = obs_best_score,
     perm_pval = perm_pval
   )
-
+  
   # If plot = TRUE, produce the permutation plot
   if(plot == TRUE){
     permutation_plot(perm_res = perm_res)
   }
-
+  
   return(perm_res)
-
+  
 }
+
+
+
+
+

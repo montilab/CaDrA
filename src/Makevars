@@ -1,0 +1,3 @@
+# set compilation flags
+PKG_CXXFLAGS = -I../inst/include/ -I../inst/include/eigen3/ -DNDEBUG -DEIGEN_NO_DEBUG -DEIGEN_MAX_CPP_VER=14 
+CXX_STD = CXX14

@@ -50,6 +50,23 @@ reference:
   - '`BRCA_GISTIC_MUT_SIG`'
   - '`TAZYAP_BRCA_ACTIVITY`'
 
+home:
+  sidebar: 
+    structure: [cadra_github_links, cadra_github_issues, web_portal_links, related_github_repo, citation, authors]
+    components:
+      cadra_github_links:
+        title: Browse source code
+        text: https://github.com/montilab/CaDrA   
+      cadra_github_issues:
+        title: Report a bug
+        text: https://github.com/montilab/CaDrA/issues  
+      web_portal_links:
+        title: Visit web portal
+        text: https://cadra.bu.edu/
+      related_github_repo:
+        title: Related repo
+        text: https://github.com/montilab/CaDrA.shiny 
+        
 navbar:
   title: "CaDrA"
   left:

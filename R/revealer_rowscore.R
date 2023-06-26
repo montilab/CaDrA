@@ -78,15 +78,18 @@ revealer_rowscore <- function
     
   }
   
-  # Compute CMI
-  cmi <- apply(X=FS, MARGIN=1, function(x){
-    revealer_score(
-      x = input_score,
-      y = x,
-      z = seed_vector,
-      assoc_metric = assoc_metric
-    )
-  })
+  # # Compute CMI
+  # cmi <- apply(X=FS, MARGIN=1, function(x){
+  #   revealer_score(
+  #     x = input_score,
+  #     y = x,
+  #     z = seed_vector,
+  #     assoc_metric = assoc_metric
+  #   )
+  #})
+  
+  Z <- matrix(replicate(nrow(FS),seed_vector),nrow=nrow(FS))
+  cmi <- cond_mutual_inf_ccc_mat(input_score, t(FS), t(Z))                #(x, M, Z)
 
   names(cmi) <- rownames(FS)
   

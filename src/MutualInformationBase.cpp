@@ -87,14 +87,14 @@ double MutualInformationBase::sum_digamma_from_neighbors(MapArrayConst &vec, con
 }
 
 
-// A wrapper for R's digamma function.
+// A wrapper for R's digamma function. This wrapper exists because
+// the initial development was done using a standalone C++ program
+// that used the Boost library's digamma function.
 double MutualInformationBase::digamma_f(const double x) const {
     return digamma(x) ;
 }
 
-// placeholders
-double MutualInformationBase::compute_c(){ return 0.0 ;}
-double MutualInformationBase::compute_d(){ return 0.0 ; }
-
+// placeholder
+double MutualInformationBase::compute(){ return 0.0 ;}
 
 } // CaDrA

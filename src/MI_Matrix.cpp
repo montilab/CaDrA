@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "MutualInformation.h"
+#include "MutualInformationDiscrete.h"
 #include "CondMutualInformation.h"
 
 int mutual_inf_cc_vec(const double *input_x, const double *input_y, const int n_elems,  
@@ -37,7 +38,7 @@ int mutual_inf_cc_vec(const double *input_x, const double *input_y, const int n_
     // any copies.
     CaDrA::MapArrayConst x_eig(input_x,n_elems) ;
     CaDrA::MapArrayConst y_eig(input_y,n_elems) ;
-    *mi = mut_inf.compute_c(x_eig, y_eig);
+    *mi = mut_inf.compute(x_eig, y_eig);
     return 0 ;
 }
 
@@ -50,13 +51,13 @@ int mutual_inf_cd_vec(const double *input_x, const int *input_y, const int n_ele
     // n_elems - N
     // mi - the return value. Must be pre-allocated to size 1!!
     // k - the neighborhood size. 3 is the recommended number.
-    CaDrA::MutualInformation mut_inf(k) ;
+    CaDrA::MutualInformationDiscrete mut_inf(k) ;
 
     // Convert to Eigen arrays
     CaDrA::MapArrayConst x_eig(input_x,n_elems) ;
     CaDrA::MapArrayIConst y_eig(input_y,n_elems) ;
 
-    mi[0] = mut_inf.compute_d(x_eig, y_eig);
+    mi[0] = mut_inf.compute(x_eig, y_eig);
     return 0 ;
 }
 
@@ -71,7 +72,7 @@ int cond_mutual_inf_vec(const double *input_x,  const double *input_y, const dou
     CaDrA::MapArrayConst x_eig(input_x,n_elems) ;
     CaDrA::MapArrayConst y_eig(input_y,n_elems) ;
     CaDrA::MapArrayConst z_eig(input_z,n_elems) ;
-    mi[0] = mut_inf.compute_c(x_eig, y_eig, z_eig);
+    mi[0] = mut_inf.compute(x_eig, y_eig, z_eig);
     return 0 ;
 }
 

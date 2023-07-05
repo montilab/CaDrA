@@ -31,10 +31,7 @@ namespace CaDrA {
         virtual ~CondMutualInformation() ;
         
         // Compute conditional mutual information of 3 continuous variables
-        virtual double compute_c(const ArrayXd &x, const ArrayXd& y, const ArrayXd& z) ;
-
-        // Compute conditional mutual information of a continuous variable and two discrete variables
-        virtual double compute_d(const ArrayXd &x, const ArrayXi& y, const ArrayXi& z) ;
+        virtual double compute(const ArrayXd &x, const ArrayXd& y, const ArrayXd& z) ;
 
     protected:
 

@@ -46,9 +46,8 @@ namespace CaDrA {
         // Computation functions. Tag with _c and _d for continuous
         // and discrete forms...the compiler is giving complaints about
         // overloads and this is the easy way out.
-        virtual double compute_c() ;
-        virtual double compute_d() ;
-        
+        virtual double compute() ;
+
     protected:
         int m_k ;
         // Scale and noise-ify vectors

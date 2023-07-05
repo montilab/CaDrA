@@ -24,7 +24,7 @@ CondMutualInformation::CondMutualInformation(const int mK) : MutualInformationBa
 
 CondMutualInformation::~CondMutualInformation() {}
 
-double CondMutualInformation::compute_c(const ArrayXd &x, const ArrayXd& y, const ArrayXd& z) {
+double CondMutualInformation::compute(const ArrayXd &x, const ArrayXd& y, const ArrayXd& z) {
   // This implements the CMI algorithm described in: https://doi.org/10.1016/j.eswa.2012.05.014
   // 
   // Alkiviadis Tsimpiris, Ioannis Vlachos, Dimitris Kugiumtzis,
@@ -45,16 +45,15 @@ double CondMutualInformation::compute_c(const ArrayXd &x, const ArrayXd& y, cons
   tmp_mat.col(1) = scale(y) ;
   tmp_mat.col(2) = scale(z) ;
   
-  // Map the double array pointer to an Eigen vector without a copy.
-  MapArrayConst x_scale(tmp_mat.col(0).data(), N) ;
-  MapArrayConst y_scale(tmp_mat.col(1).data(), N) ;
-  MapArrayConst z_scale(tmp_mat.col(2).data(), N) ;
-  
   // Calculating the distances also calculates the number of neighbors, so
   // calc_distances2 returns both.
   vector<double> dists = calc_distances3d(N, tmp_mat).first ;
   
-  // Get the digamma_f values...
+  // Get the digamma_f values...These take single vector arguments
+  // so map the 3D temp array without a copy.
+  MapArrayConst x_scale(tmp_mat.col(0).data(), N) ;
+  MapArrayConst y_scale(tmp_mat.col(1).data(), N) ;
+  MapArrayConst z_scale(tmp_mat.col(2).data(), N) ;
   double xz_digamma_sum = sum_digamma_from_neighbors(x_scale, z_scale, dists) ;
   double yz_digamma_sum = sum_digamma_from_neighbors(y_scale, z_scale, dists) ;
   double z_digamma_sum = MutualInformationBase::sum_digamma_from_neighbors(z_scale, dists) ;
@@ -62,18 +61,9 @@ double CondMutualInformation::compute_c(const ArrayXd &x, const ArrayXd& y, cons
   // mutual info computation
   double mi = digamma_f(m_k)- (xz_digamma_sum + yz_digamma_sum - z_digamma_sum) / N;
   
-  return std::max(0.0,std::min(mi,1.0)) ;
+  // Can't return less than 0.
+  return std::max(0.0,mi) ;
 }
-
-double CondMutualInformation::compute_d(const ArrayXd &x, const ArrayXi& y, const ArrayXi& z) {
-  // Implement conditional mutual information between continuous x and discrete y & z.
-  // Convert the y & z arrays over to double precision, call the
-  // cond_mutual_information_ccc function.
-  ArrayXd y_dbl = y.cast<double>() ;
-  ArrayXd z_dbl = z.cast<double>() ;
-  return compute_c(x, y_dbl, z_dbl) ;
-}
-
 
 double CondMutualInformation::sum_digamma_from_neighbors(MapArrayConst &vec1, MapArrayConst &vec2, const vector<double> &dists) {
   // Sum of digamma_f functions over neighbor counts for 2D.

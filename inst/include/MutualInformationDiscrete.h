@@ -2,8 +2,8 @@
 // Created by bgregor on 11/1/22.
 //
 
-#ifndef REVEALER_MUTUALINFORMATION_H
-#define REVEALER_MUTUALINFORMATION_H
+#ifndef REVEALER_MUTUALINFORMATIONDISCRETE_H
+#define REVEALER_MUTUALINFORMATIONDISCRETE_H
 
 #include <eigen3/Eigen/Core>
 #include <vector>
@@ -18,21 +18,20 @@ using namespace std ;
 namespace CaDrA {
  
 
-class MutualInformation : public MutualInformationBase {
+class MutualInformationDiscrete : public MutualInformationBase {
   // Methods to compute mutual information for
   // continuous and discrete variables.
 public:
   // Constructor
   // Initialize with a neighbor size.
-  MutualInformation(const int k) ;
-  MutualInformation() = delete ;
+  MutualInformationDiscrete(const int k) ;
+  MutualInformationDiscrete() = delete ;
   
   // Destructor
-  virtual ~MutualInformation() ;
+  virtual ~MutualInformationDiscrete() ;
   
-  //  Computes the Mutual Information of 2 continuous variables.
-  virtual double compute(const ArrayXd &x, const ArrayXd& y) ;
- 
+  //  Computes the Mutual Information of a continuous and a discrete variable
+  virtual double compute(const ArrayXd &x, const ArrayXi& y) ;
   
 protected:
   // Calculate distances and nearest neighbors in 2D.
@@ -41,4 +40,4 @@ protected:
 
 } // CaDrA
 
-#endif //REVEALER_MUTUALINFORMATION_H
+#endif //REVEALER_MUTUALINFORMATIONDISCRETE_H

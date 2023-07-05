@@ -89,7 +89,12 @@ revealer_rowscore <- function
   #})
   
   Z <- matrix(replicate(nrow(FS),seed_vector),nrow=nrow(FS))
-  cmi <- cond_mutual_inf_ccc_mat(input_score, t(FS), t(Z))                #(x, M, Z)
+  
+  # first time
+  #cmi <- mutual_inf_cc_mat(input_score, t(FS))  # 
+  
+  # second time
+  #cmi <- cond_mutual_inf_ccc_mat(input_score, t(FS) - t(Z), t(Z))                #(x, M, Z)
 
   names(cmi) <- rownames(FS)
   

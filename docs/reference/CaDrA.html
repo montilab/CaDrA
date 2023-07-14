@@ -18,7 +18,7 @@ using candidate_search as the main iterative function for each run."><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.7</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@ using <code>candidate_search</code> as the main iterative function for each run.
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
-<span>  weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  search_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  search_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"forward"</span><span class="op">)</span>,</span>
@@ -138,7 +138,7 @@ Default is <code>less</code> for left-skewed significance testing.
 NOTE: this argument only apply to KS and Wilcoxon method</p></dd>
 
 
-<dt>weight</dt>
+<dt>weights</dt>
 <dd><p>if method is <code>ks_score</code>, specifies a vector of weights 
 to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
 
@@ -216,12 +216,12 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 
 
 <p><code>key</code>: a list of parameters that are used to cache the 
-result of the permutation-based testing. This is useful as the
+results of the permutation-based testing. This is useful as the
 permuted scores are recycled to save time for future loading.
 <code>perm_best_scores</code>: a vector of permuted best scores obtained 
-by performing <code>candidate_search</code> over (<code>n_perm</code>) iterations of 
-permuted input scores.
-<code>obs_best_score</code>: the observed best score is calculated by performing
+by performing <code>candidate_search</code> over <code>n_perm</code> iterations of 
+the permuted input scores.
+<code>obs_best_score</code>: the observed best score obtained by performing
 <code>candidate_search</code> on the given dataset and parameters. This value is 
 later used to compare against the permuted best scores 
 (<code>perm_best_scores</code>).
@@ -244,7 +244,7 @@ sum(perm_best_scores &gt; obs_best_score)/n_perm</p>
 <span class="r-in"><span><span class="co"># Define additional parameters and start the function</span></span></span>
 <span class="r-in"><span><span class="va">cadra_result</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  FS <span class="op">=</span> <span class="va">sim_FS</span>, input_score <span class="op">=</span> <span class="va">sim_Scores</span>, method <span class="op">=</span> <span class="st">"ks_pval"</span>, </span></span>
-<span class="r-in"><span>  weight <span class="op">=</span> <span class="cn">NULL</span>, alternative <span class="op">=</span> <span class="st">"less"</span>, top_N <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  weights <span class="op">=</span> <span class="cn">NULL</span>, alternative <span class="op">=</span> <span class="st">"less"</span>, top_N <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  search_start <span class="op">=</span> <span class="cn">NULL</span>, search_method <span class="op">=</span> <span class="st">"both"</span>, max_size <span class="op">=</span> <span class="fl">7</span>, </span></span>
 <span class="r-in"><span>  n_perm <span class="op">=</span> <span class="fl">10</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, smooth <span class="op">=</span> <span class="cn">TRUE</span>, obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  ncores <span class="op">=</span> <span class="fl">1</span>, cache_path <span class="op">=</span> <span class="cn">NULL</span></span></span>

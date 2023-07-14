@@ -91,6 +91,9 @@ prefilter_data <- function(
 #' interest such as protein expression, pathway activity, etc.
 #' NOTE: The \code{input_score} object must have names or labels that 
 #' match the column names of FS_mat object.
+#' @param seed_names a vector of one or more features representing known causes
+#' of activation or features associated with a response of interest.
+#' Default is NULL.
 #' @param do_check a logical value indicates whether or not to validate if the  
 #' given parameters (FS_mat and input_score) are valid inputs. 
 #' Default is \code{TRUE}
@@ -112,9 +115,11 @@ prefilter_data <- function(
 #' input_score = rnorm(n = ncol(FS_mat))
 #' names(input_score) <- colnames(FS_mat)
 #'
+#' # Check data inputs
 #' check_data_input(
 #'  FS_mat = FS_mat,
-#'  input_score = input_score
+#'  input_score = input_score,
+#'  seed_names = NULL
 #' )
 #' 
 #' @return If do_check=FALSE, return NULL, otherwise, check if FS_mat and 
@@ -122,6 +127,7 @@ prefilter_data <- function(
 check_data_input <- function(
     FS_mat,
     input_score,
+    seed_names = NULL,
     do_check = TRUE
 ){
   
@@ -158,6 +164,12 @@ check_data_input <- function(
     stop("The FS object has features that are either all 0s or 1s. ",
          "These features must be removed from the FS object as ",
          "they are uninformative.")
+  
+  if(length(seed_names) > 0 && any(!seed_names %in% rownames(FS_mat)))
+    stop("The provided feature(s): ", 
+         paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], 
+                collapse=", "),
+         " do(es) not exist among the row names of the FS object.\n")
   
 }
 
@@ -200,7 +212,7 @@ check_data_input <- function(
 #'  input_score = sim_Scores,
 #'  method = "ks_pval",
 #'  alternative = "less",
-#'  weight = NULL
+#'  weights = NULL
 #' )
 #' 
 #' top_N_index <- check_top_N(
@@ -211,10 +223,10 @@ check_data_input <- function(
 #' )
 #'
 #' @return If top_N is given, a vector of indices of top N features with 
-#' the best scores will be returned and used to start the candidate_search() 
-#' with. 
-#' Otherwise, the candidate_search() will start the search with a list of  
-#' indices of starting features defined in search_start.
+#' their corresponding best scores will be returned. These features will later 
+#' use to start the candidate_search() with. Otherwise, the candidate_search() 
+#' will start the heuristic search with a list of indices of starting features 
+#' defined in search_start.
 check_top_N <- function(
     rowscore, 
     feature_names,
@@ -251,28 +263,28 @@ check_top_N <- function(
     
   }else{
     
-    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
-      unlist() |>
-      trimws()
-    
     if(!is.na(top_N) && length(top_N) > 0)
       warning("Since search_start variable is given, ",
               "evaluating over top_N value will be ignored.\n")
     
-    # User-specified feature names
-    verbose("Starting with specified feature names...\n")
+    search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
+      unlist() |>
+      trimws()
     
     if(length(search_start) == 0 || any(!search_start %in% feature_names))
-      stop("The provided starting features: ", 
+      stop("The provided starting feature(s): ", 
            paste0(search_start[which(!search_start %in% feature_names)], 
                   collapse=", "),
-           " does not exist among the row names of FS object.\n")
+           " do(es) not exist among the row names of the FS object.\n")
     
     # Get the index of the search_start strings
     search_feature_index <- lapply(seq_along(search_start), function(f){
       #f=1;
       which(feature_names == search_start[f])
     }) |> unlist()
+    
+    # User-specified feature names
+    verbose("Starting with specified feature names...\n")
     
   }
   
@@ -366,7 +378,6 @@ generate_permutations <- function(
   # Create permutation matrix
   perm <- matrix(NA, nrow=n_perm, ncol=n)
   colnames(perm) <- names(input_score)
-  rownames(perm) <- 1:n_perm
 
   # Sample the input scores
   for(i in seq_len(n_perm)){

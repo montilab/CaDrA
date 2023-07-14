@@ -11,8 +11,8 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param seed_names a vector of one or more features representing known causes
-#' of activation or features associated with a response of interest.
-#' Default is NULL.
+#' of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param weights a vector of weights to perform a \code{weighted-KS} test.
 #' Default is \code{NULL}. If not NULL, \code{weights} must have labels or names
 #' that match labels of \code{input_score}.

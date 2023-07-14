@@ -11,9 +11,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param seed_names a vector of one or more features representing known causes
-#' of activation or features associated with a response of interest.
-#' Default is NULL.
+#' @param seed_names a vector of one or more features representing known 
+#' causes of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.

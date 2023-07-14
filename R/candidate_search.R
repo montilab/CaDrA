@@ -266,7 +266,7 @@ candidate_search <- function(
         best_score_only = best_score_only,
         do_plot = do_plot,
         do_check = FALSE,  # MAKE SURE DO_CHECK IS SILENCE HERE
-        verbose = FALSE,   # MAKE SURE VERBOSE IS SILENCE HERE  
+        verbose = FALSE    # MAKE SURE VERBOSE IS SILENCE HERE  
       )
       
       # The scores are already ordered from highest to lowest significant
@@ -449,7 +449,7 @@ forward_backward_check <- function
       custom_function = custom_function,
       custom_parameters = custom_parameters,     
       alternative = alternative,
-      weights = weights,
+      weights = weights, 
       ...
     )
 

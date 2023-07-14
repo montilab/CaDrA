@@ -11,6 +11,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
+#' @param seed_names a vector of one or more features representing known causes
+#' of activation or features associated with a response of interest.
+#' Default is NULL.
 #' @param alternative a character string specifies an alternative
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or
 #' \code{"less"}). Default is \code{less} for left-skewed significance testing.
@@ -36,6 +39,7 @@
 #' wilcox_rs <- wilcox_rowscore(
 #'    FS = mat,
 #'    input_score = input_score,
+#'    seed_names = NULL,
 #'    alternative = "less",
 #'    metric = "pval"
 #' )
@@ -47,6 +51,7 @@ wilcox_rowscore <- function
 (
   FS,
   input_score,
+  seed_names = NULL,
   alternative = c("less", "greater", "two.sided"),
   metric = c("stat", "pval")
 )
@@ -55,12 +60,37 @@ wilcox_rowscore <- function
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
+  # Check if seed_names is provided
+  if(!is.null(seed_names)){
+    # Taking the union across the known seed features
+    if(length(seed_names) > 1) {
+      seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
+    }else{
+      seed_vector <- as.numeric(FS[seed_names,])
+    }
+    
+    # Remove the seeds from the binary feature matrix
+    # and taking logical OR btw the remaining features with the seed vector
+    locs <- match(seed_names, row.names(FS))
+    FS <- base::sweep(FS[-locs,], 2, seed_vector, `|`)*1
+    
+    # Check if there are any features that are all 1s generated from
+    # taking the union between the matrix
+    # We cannot compute statistics for such features and thus they need
+    # to be filtered out
+    if(any(rowSums(FS) == ncol(FS))){
+      warning("Features with all 1s generated from taking the matrix union ",
+              "will be removed before progressing...\n")
+      FS <- FS[rowSums(FS) != ncol(FS),]
+    }
+  }
+  
   # Wilcox is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
   
   # Re-order the matrix based on the order of input_score
-  FS<- FS[, names(input_score), drop=FALSE]  
+  FS <- FS[, names(input_score), drop=FALSE]  
   
   # Since input_score is already ordered from largest to smallest
   # We can assign ranks as 1:N (N: number of samples)

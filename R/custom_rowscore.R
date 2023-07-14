@@ -13,6 +13,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of \code{FS} object.
+#' @param seed_names a vector of one or more features representing known causes
+#' of activation or features associated with a response of interest.
+#' Default is NULL.
 #' @param custom_function a customized function which computes a row-wise 
 #' score for each row of a given binary feature set (FS).
 #' 
@@ -76,16 +79,17 @@
 #'   custom_parameters = NULL  
 #' )
 #' 
-#' @return return a vector of row-wise scores where its labels or names 
+#' @return return a vector of row-wise positive scores where its labels or names 
 #' must match the row names of \code{FS} object
 #' 
 custom_rowscore <- function
 (
   FS,
   input_score,
+  seed_names = NULL,
   custom_function,
   custom_parameters = NULL,
-  known_parameters = NULL
+  ...
 )
 {
   
@@ -116,12 +120,20 @@ custom_rowscore <- function
     stop("custom_function() must take 'input_score' ",
          "as one of its arguments (required).")
   
+  # Check if custom_function() requires 'seed_names' as its argument
+  if(!"seed_names" %in% names(custom_args))
+    stop("custom_function() must take 'seed_names' ",
+         "as one of its arguments (required).")
+  
   ## Create a list with only the required variables 
-  req_args <- list(FS=FS, input_score=input_score)
+  req_args <- list(FS=FS, input_score=input_score, seed_names=seed_names)
+  
+  # Obtain additional parameters
+  known_parameters <- list(...)
   
   # Combine custom_parameters, required variables, and a list of 
   # known parameters together 
-  # However, we must exclude FS, input_score from custom_parameters and 
+  # However, we must exclude FS, input_score from custom_parameters 
   # excluding FS, input_score, and custom_parameters from known parameters 
   # as they would be redundant
   combined_parameters <- c(

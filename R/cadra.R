@@ -33,7 +33,7 @@
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' NOTE: this argument only apply to KS and Wilcoxon method
-#' @param weight if method is \code{ks_score}, specifies a vector of weights 
+#' @param weights if method is \code{ks_score}, specifies a vector of weights 
 #' to perform a weighted-KS testing. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
 #' search over. By default, it starts from the top best feature (top_N = 1).
@@ -72,12 +72,12 @@
 #' @return a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 #' \code{obs_best_score}, \code{perm_pval}
 #' \code{key}: a list of parameters that are used to cache the 
-#' result of the permutation-based testing. This is useful as the
+#' results of the permutation-based testing. This is useful as the
 #' permuted scores are recycled to save time for future loading.
 #' \code{perm_best_scores}: a vector of permuted best scores obtained 
-#' by performing \code{candidate_search} over (\code{n_perm}) iterations of 
-#' permuted input scores.
-#' \code{obs_best_score}: the observed best score is calculated by performing
+#' by performing \code{candidate_search} over \code{n_perm} iterations of 
+#' the permuted input scores.
+#' \code{obs_best_score}: the observed best score obtained by performing
 #' \code{candidate_search} on the given dataset and parameters. This value is 
 #' later used to compare against the permuted best scores 
 #' (\code{perm_best_scores}).
@@ -98,7 +98,7 @@
 #' # Define additional parameters and start the function
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
-#'   weight = NULL, alternative = "less", top_N = 1,
+#'   weights = NULL, alternative = "less", top_N = 1,
 #'   search_start = NULL, search_method = "both", max_size = 7, 
 #'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
@@ -115,7 +115,7 @@ CaDrA <- function(
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
-    weight = NULL,
+    weights = NULL,
     top_N = 1,
     search_start = NULL,
     search_method = c("both", "forward"),
@@ -170,7 +170,7 @@ CaDrA <- function(
               custom_function = custom_function,
               custom_parameters = custom_parameters,
               alternative = alternative,
-              weight = weight,
+              weights = weights,
               top_N = top_N,
               search_start = search_start,
               search_method = search_method,
@@ -254,7 +254,7 @@ CaDrA <- function(
           custom_function = custom_function,
           custom_parameters = custom_parameters,
           alternative = alternative,
-          weight = weight,
+          weights = weights,
           top_N = top_N,
           search_start = search_start,
           search_method = search_method,
@@ -301,7 +301,7 @@ CaDrA <- function(
       custom_function = custom_function,
       custom_parameters = custom_parameters,
       alternative = alternative,
-      weight = weight,
+      weights = weights,
       top_N = top_N,
       search_start = search_start,
       search_method = search_method,

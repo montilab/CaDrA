@@ -11,7 +11,10 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' 
 #' NOTE: \code{input_score} object must have names or labels that match the 
-#' column names of \code{FS_mat} object.
+#' column names of \code{FS} object.
+#' @param seed_names a vector of one or more features representing known 
+#' “causes” of activation or features associated with a response of interest.
+#' It is applied for \code{method = "revealer"} only.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
@@ -21,33 +24,30 @@
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the name of the customized function here. Default is \code{NULL}.
 #' 
-#' NOTE: \code{custom_function} must take \code{FS_mat} and \code{input_score} 
+#' NOTE: \code{custom_function} must take \code{FS} and \code{input_score} 
 #' as its input arguments, and its final result must return a vector of row-wise 
 #' scores ordered from most significant to least significant where its labels or 
-#' names matched the row names of \code{FS_mat} object.
+#' names matched the row names of \code{FS} object.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
-#' additional arguments (excluding \code{FS_mat} and \code{input_score}) to be 
+#' additional arguments (excluding \code{FS} and \code{input_score}) to be 
 #' passed to \code{custom_function}. Default is \code{NULL}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' 
 #' NOTE: This argument is applied to KS and Wilcoxon method
-#' @param weight if method is \code{ks_score} or \code{ks_pval}, specifying a 
+#' @param weights if method is \code{ks_score} or \code{ks_pval}, specifying a 
 #' vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
-#' @param seed_names a vector of one or more features representing known 
-#' “causes” of activation or features associated with a response of interest.
-#' It is applied for \code{method = "revealer"} only.
 #' @param do_check a logical value indicates whether or not to validate if the  
-#' given parameters (\code{FS_mat} and \code{input_score}) are valid inputs. 
+#' given parameters (\code{FS} and \code{input_score}) are valid inputs. 
 #' Default is \code{TRUE}.
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #' @param ... additional parameters to be passed to \code{custom_function}
 #' 
-#' @return return a vector of row-wise scores where it is ordered from most
-#' significant to least significant (e.g. from highest to lowest values) 
-#' where its labels or names must match the row names of \code{FS_mat} object
+#' @return return a vector of row-wise positive scores where it is ordered from 
+#' most significant to least significant (e.g. from highest to lowest values) 
+#' and its labels or names must match the row names of \code{FS} object
 #' 
 #' @examples
 #' 
@@ -68,8 +68,9 @@
 #' ks_rowscore_result <- calc_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
+#'   seed_names = NULL,
 #'   method = "ks_pval",
-#'   weight = NULL,
+#'   weights = NULL,
 #'   alternative = "less"
 #' )
 #'
@@ -77,6 +78,7 @@
 #' wilcox_rowscore_result <- calc_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
+#'   seed_names = NULL,
 #'   method = "wilcox_pval",
 #'   alternative = "less"
 #' )
@@ -90,7 +92,7 @@
 #' )
 #' 
 #' # A customized function using ks-test function
-#' customized_rowscore <- function(FS, input_score, alternative="less"){
+#' customized_rowscore <- function(FS, input_score, seed_names = NULL, alternative="less"){
 #'   
 #'   ks <- apply(FS, 1, function(r){ 
 #'     x = input_score[which(r==1)]; 
@@ -119,6 +121,7 @@
 #' custom_rowscore_result <- calc_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
+#'   seed_names = NULL,
 #'   method = "custom",
 #'   custom_function = customized_rowscore,            
 #'   custom_parameters = NULL  
@@ -129,13 +132,13 @@
 calc_rowscore <- function(
     FS,
     input_score,
+    seed_names = NULL,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
                "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,   
     alternative = c("less", "greater", "two.sided"),
-    weight = NULL,
-    seed_names = NULL,
+    weights = NULL,
     do_check = TRUE,
     verbose = FALSE,
     ...
@@ -162,8 +165,9 @@ calc_rowscore <- function(
   
   # Check if FS and input_score are valid inputs
   if(do_check == TRUE) 
-    check_data_input(FS_mat = FS_mat, input_score = input_score, do_check = do_check)
-
+    check_data_input(FS_mat = FS_mat, input_score = input_score, 
+                     seed_names = seed_names, do_check = do_check)
+  
   # Define metric value based on a given scoring method
   if(length(grep("score", method)) > 0){
     metric <- "stat"
@@ -175,25 +179,21 @@ calc_rowscore <- function(
   # based on a given method string
   method <- gsub("_score|_pval", "", method)
   
-  # Create a list of known arguments (excluding FS_mat and input_score)
-  # that can be passed to custom_function()
-  known_parameters <- list(method = method, alternative = alternative, 
-                           weight = weight, seed_names = seed_names, 
-                           do_check = do_check, verbose = verbose, ...)
-  
   # Select the appropriate method to compute row-wise directional scores
   rscores <- switch(
     method,
     ks = ks_rowscore(
       FS = FS_mat,
       input_score = input_score,
-      weight = weight,
+      seed_names = seed_names,
+      weights = weights,
       alternative = alternative,
       metric = metric
     ),
     wilcox = wilcox_rowscore(
       FS = FS_mat,
       input_score = input_score,
+      seed_names = seed_names,
       alternative = alternative,
       metric = metric
     ),
@@ -206,9 +206,14 @@ calc_rowscore <- function(
     custom = custom_rowscore(
       FS = FS,
       input_score = input_score,
+      seed_names = seed_names,
       custom_function = custom_function,
       custom_parameters = custom_parameters,
-      known_parameters = known_parameters
+      method = method, 
+      alternative = alternative, 
+      weights = weights, 
+      do_check = do_check, 
+      verbose = verbose
     )
   )
   

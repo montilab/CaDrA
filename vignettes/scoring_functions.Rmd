@@ -10,7 +10,8 @@ vignette: >
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
-library(CaDrA)
+library(devtools)
+load_all()
 ```
 
 The **CaDrA** package currently provides four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
@@ -57,7 +58,7 @@ ks_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weight = NULL,               # If weight is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
@@ -132,9 +133,34 @@ See `?custom_rowscore` for more details
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS, input_score, alternative="less"){
+customized_rowscore <- function(FS, input_score, seed_names=NULL, alternative="less"){
   
-  ks <- apply(SummarizedExperiment::assay(FS), 1, function(r){ 
+  # Check if seed_names is provided
+  if(!is.null(seed_names)){
+    # Taking the union across the known seed features
+    if(length(seed_names) > 1) {
+      seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
+    }else{
+      seed_vector <- as.numeric(FS[seed_names,])
+    }
+    
+    # Remove the seeds from the binary feature matrix
+    # and taking logical OR btw the remaining features with the seed vector
+    locs <- match(seed_names, row.names(FS))
+    FS <- base::sweep(FS[-locs,], 2, seed_vector, `|`)*1
+    
+    # Check if there are any features that are all 1s generated from
+    # taking the union between the matrix
+    # We cannot compute statistics for such features and thus they need
+    # to be filtered out
+    if(any(rowSums(FS) == ncol(FS))){
+      warning("Features with all 1s generated from taking the matrix union ",
+              "will be removed before progressing...\n")
+      FS <- FS[rowSums(FS) != ncol(FS),]
+    }
+  }
+  
+  ks <- apply(FS, 1, function(r){ 
     x = input_score[which(r==1)]; 
     y = input_score[which(r==0)];
     res <- ks.test(x, y, alternative=alternative)
@@ -159,7 +185,7 @@ customized_rowscore <- function(FS, input_score, alternative="less"){
 
 # Search for best features using a custom-defined function
 custom_topn_l <- CaDrA::candidate_search(
-  FS = sim_FS,
+  FS = SummarizedExperiment::assay(sim_FS),
   input_score = sim_Scores,
   method = "custom",                                # Use custom scoring function
   custom_function = customized_rowscore,            # Use a customized scoring function

@@ -89,7 +89,7 @@ topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weight = NULL,               # If weights is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for each search

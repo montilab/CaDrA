@@ -55,30 +55,18 @@ revealer_rowscore <- function
   if(length(seed_names) == 0){
     seed_vector <- as.vector(rep(0, ncol(FS)))
   }else{
-    
-    # Check if seed_names exit among the row names of the FS object 
-    if(any(!seed_names %in% rownames(FS)))
-      stop(paste0(
-        "The provided seed_names, ",
-        paste0(seed_names[which(!seed_names %in% rownames(FS))], 
-               collapse = ","), 
-        ", do not exist among the row names of the FS object")
-      )
-    
-    # Consolidate or summarize one or more seeds into one vector of values
+    # Taking the union across the known seed features
     if(length(seed_names) > 1) {
       seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
     }else{
       seed_vector <- as.numeric(FS[seed_names,])
     }
-    
     # Remove the seeds from the binary feature matrix
     locs <- match(seed_names, row.names(FS))
     FS <- FS[-locs,]
-    
   }
   
-  # Compute CMI
+  # Compute CMI given known seed features
   cmi <- apply(X=FS, MARGIN=1, function(x){
     revealer_score(
       x = input_score,

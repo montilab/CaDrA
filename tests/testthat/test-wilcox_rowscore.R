@@ -1,7 +1,6 @@
 
 test_that("wilcox_rowscore returns correct results", {
   
-  
   mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
                   0,0,1,0,1,0,1,0,0,0,
                   0,0,0,0,1,0,1,0,1,0), nrow=3)
@@ -38,7 +37,6 @@ test_that("wilcox_rowscore issues error messages when needed", {
     input_score = input_score)
   )
   
-  
 })
 
 
@@ -56,7 +54,6 @@ test_that("wilcox_score issues correct errors", {
   mu = 0
   expect_error( wilcox_score(x=c(), y, mu) )
   expect_error( wilcox_score(x=x, y=c(), mu) )
-  
   
 })
   

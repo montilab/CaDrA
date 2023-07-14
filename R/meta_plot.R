@@ -51,7 +51,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   input_score <- obs_input_score[order(obs_input_score, decreasing = TRUE)]
   
   # Re-order the matrix based on the order of input_score
-  feature_set <- best_feature_set[,names(input_score)]
+  feature_set <- best_feature_set[, names(input_score), drop=FALSE]
     
   # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
   # Get the input score label
@@ -96,7 +96,11 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     )
   
   # Extract the feature binary matrix
-  mat <- as.matrix(SummarizedExperiment::assay(feature_set))
+  if(is(feature_set, "SummarizedExperiment")){
+    mat <- SummarizedExperiment::assay(feature_set)
+  }else{
+    mat <- feature_set
+  } 
   
   # Add on the OR function of all the returned entries
   or <- ifelse(colSums(mat)==0, 0, 1)
@@ -109,7 +113,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   enrichment_dat <- ks_plot_coordinates(
     n_x = length(or),
     y = which(or==1),
-    weight = NULL,
+    weights = NULL,
     alt = "less"
   )
   
@@ -264,7 +268,7 @@ stacked_gtable_max <- function(...){
 #' ks_enrichment_coordinates <- ks_plot_coordinates(
 #'    n_x = length(or),
 #'    y = which(or==1),
-#'    weight = NULL,
+#'    weights = NULL,
 #'    alt = "less"
 #' )
 #'
@@ -308,7 +312,7 @@ ks_plot <- function(df){
 #' which will later used to generate the enrichment plot
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
-#' @param weight a vector of weights
+#' @param weights a vector of weights
 #' @param alt alternative hypothesis for p-value calculation
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -317,7 +321,7 @@ ks_plot <- function(df){
 #' @noRd
 #'
 #' @return return a data frame with x, y coordinates to pass to ks_plot()
-ks_plot_coordinates <- function(n_x, y, weight, 
+ks_plot_coordinates <- function(n_x, y, weights, 
                                 alt=c("less", "greater", "two.sided")){
   
   if(length(alt) > 0){
@@ -327,7 +331,7 @@ ks_plot_coordinates <- function(n_x, y, weight,
   }
   y <- as.integer(y)
   n_x <- as.integer(n_x)
-  res <- .Call(ks_plot_wrap_, n_x, y, weight, alt_int)
+  res <- .Call(ks_plot_wrap_, n_x, y, weights, alt_int)
   res <- res[!is.na(res$X), ]
   res
   

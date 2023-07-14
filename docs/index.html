@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Candidate Driver Analysis • CaDrA</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -39,38 +39,41 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.7</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="index.html">Home</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    Docs
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="articles/scoring_functions.html">Scoring Functions</a>
     </li>
     <li>
-      <a href="articles/scoring_functions.html">Scoring Functions</a>
+      <a href="articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="news/index.html">Changelog</a>
+  <a href="reference/index.html">Reference</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/montilab/CaDrA/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
+  <a href="news/index.html">Change Log</a>
+</li>
+<li>
+  <a href="https://github.com/montilab/CaDrA">
+    <span class="fa fa-github"></span>
      
   </a>
 </li>
@@ -110,7 +113,7 @@
 <h2 id="id_2-quickstart">(2) Quickstart<a class="anchor" aria-label="anchor" href="#id_2-quickstart"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/" class="external-link">CaDrA</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -256,24 +259,33 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
-<h2 data-toc-skip>Links</h2>
+    <div class="browse-source-code">
+<h2 data-toc-skip>Browse source code</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.bioconductor.org/packages/CaDrA" class="external-link">View on Bioconductor</a></li>
-<li><a href="https://github.com/montilab/CaDrA/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/montilab/CaDrA/issues" class="external-link">Report a bug</a></li>
+<li><p><a href="https://github.com/montilab/CaDrA" class="uri">https://github.com/montilab/CaDrA</a></p></li>
 </ul>
 </div>
 
-<div class="license">
-<h2 data-toc-skip>License</h2>
+<div class="report-a-bug">
+<h2 data-toc-skip>Report a bug</h2>
 <ul class="list-unstyled">
-<li>
-<a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a> + file <a href="LICENSE-text.html">LICENSE</a>
-</li>
+<li><p><a href="https://github.com/montilab/CaDrA/issues" class="uri">https://github.com/montilab/CaDrA/issues</a></p></li>
 </ul>
 </div>
 
+<div class="visit-web-portal">
+<h2 data-toc-skip>Visit web portal</h2>
+<ul class="list-unstyled">
+<li><p><a href="https://cadra.bu.edu/" class="external-link uri">https://cadra.bu.edu/</a></p></li>
+</ul>
+</div>
+
+<div class="related-repo">
+<h2 data-toc-skip>Related repo</h2>
+<ul class="list-unstyled">
+<li><p><a href="https://github.com/montilab/CaDrA.shiny" class="uri">https://github.com/montilab/CaDrA.shiny</a></p></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
@@ -285,14 +297,16 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Reina Chau <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3012-1404" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Katia Bulekova <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1560-2146" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Vinay Kartha <br><small class="roles"> Author </small>  </li>
-<li>Stefano Monti <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-9376-0660" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://github.com/RC-88" class="external-link">Reina Chau</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3012-1404" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://github.com/katgit" class="external-link">Katia Bulekova</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-1560-2146" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a> <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-9376-0660" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
-
-
 
   </div>
 </div>
@@ -300,7 +314,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Reina Chau, Katia Bulekova, Vinay Kartha, Stefano Monti.</p>
+<p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -34,9 +34,23 @@ For more information, please see the associated manuscript [Kartha et al. (2019)
 
 ## (1) Installation
 
+- Using `devtools` package
+
 ```r
 library(devtools)
 devtools::install_github("montilab/CaDrA")
+```
+
+- Using `BiocManager` package
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("CaDrA")
 ```
 
 ## (2) Quickstart

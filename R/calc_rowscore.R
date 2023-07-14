@@ -13,8 +13,8 @@
 #' NOTE: \code{input_score} object must have names or labels that match the 
 #' column names of \code{FS} object.
 #' @param seed_names a vector of one or more features representing known 
-#' “causes” of activation or features associated with a response of interest.
-#' It is applied for \code{method = "revealer"} only.
+#' causes of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
@@ -213,7 +213,8 @@ calc_rowscore <- function(
       alternative = alternative, 
       weights = weights, 
       do_check = do_check, 
-      verbose = verbose
+      verbose = verbose,
+      ...
     )
   )
   

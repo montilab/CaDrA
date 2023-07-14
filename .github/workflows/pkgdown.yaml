@@ -2,12 +2,12 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: 'gh-pages'
+    branches: gh-pages
     paths: 
       - '.github/workflows/pkgdown.yaml'
       - '_pkgdown.yml'
   pull_request:
-    branches: 'gh-pages'
+    branches: gh-pages
   workflow_dispatch:
   
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -53,3 +53,4 @@ jobs:
           branch: gh-pages
           folder: .
           clean: false
+

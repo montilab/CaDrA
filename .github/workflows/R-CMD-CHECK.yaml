@@ -1,0 +1,47 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [master, devel]
+    paths-ignore:
+      - '**.Rmd'
+      - 'R/**'
+      - '.gitignore'
+  pull_request:
+    branches: [master, devel]
+  release:
+    types: [published]
+  workflow_dispatch:
+      
+name: rcmdcheck
+
+jobs:
+  rcmdcheck:
+    runs-on: ubuntu-latest
+    # Only restrict concurrency for non-PR jobs
+    concurrency:
+      group: rcmdcheck-${{ github.event_name != 'pull_request' || github.run_id }}
+      cancel-in-progress: true
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Run R-CMD-CHECK
+        if: github.event_name != 'pull_request'
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran", "--no-tests", "--no-examples")'
+        env:
+          _R_CHECK_FORCE_SUGGESTS_: false
+          _R_CHECK_CRAN_INCOMING_REMOTE_: false
+          DISPLAY: 99.0

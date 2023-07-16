@@ -15,9 +15,11 @@ verbose <- function(...){
 #' Pre-filter a dataset prior running \code{candidate_search} to avoid
 #' testing features that are too prevalent or too sparse across samples in
 #' the dataset
-#' @param FS a SummarizedExperiment object containing binary features where
-#' rows represent features of interest (e.g. genes, transcripts, exons, etc.)
-#' and columns represent the samples.
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of ‘omics’ features.
 #' @param max_cutoff a numeric value between 0 and 1 describing the absolute
 #' prevalence of a feature across all samples in the FS object which the
 #' feature will be filtered out. Default is 0.6 (feature that occur in
@@ -59,26 +61,48 @@ prefilter_data <- function(
   # Set up verbose option
   options(verbose = verbose)
   
-  # Check if FS is a SummarizedExperiment class object
-  if(!is(FS, "SummarizedExperiment"))
-    stop("'FS' must be SummarizedExperiment class object
+  # Check if FS is a matrix or a SummarizedExperiment class object
+  if(!is(FS, "SummarizedExperiment") && !is(FS, "matrix"))
+    stop("'FS' must be a matrix or a SummarizedExperiment class object
          from SummarizedExperiment package")
+  
+  # Retrieve the binary feature matrix
+  if(is(FS, "SummarizedExperiment")){
+    FS_mat <- SummarizedExperiment::assay(FS)
+  }else{
+    FS_mat <- FS
+  }
+  
+  # Check if FS must contain at least one row feature with binary values 0s or 1s
+  if(nrow(FS_mat) == 0 || any(!FS_mat %in% c(0,1)))
+    stop("FS object must contain at least one row feature with 
+         binary values 0s or 1s.")
   
   # Compute the frequency of feature occurrence across all samples
   # (i.e. fraction of samples having the feature)
-  frac <- round(rowSums(SummarizedExperiment::assay(FS))/ncol(FS), 2)
-
+  frac <- round(rowSums(FS_mat)/ncol(FS_mat), 2)
+  
   verbose("Pre-filtering features...\n")
   verbose("Removing features having < ", min_cutoff*100, "% and > ",
           max_cutoff*100, "% occurence in sample set\n")
-
-  FS <- FS[ (frac >= min_cutoff) & (frac <= max_cutoff) , ]
-
-  verbose(nrow(FS), " features retained out of ", length(frac),
-          " supplied features in the FS object\n")
-
-  return(FS)
-
+  
+  FS_mat <- FS_mat[(frac >= min_cutoff) & (frac <= max_cutoff), , drop=FALSE]
+  
+  if(nrow(FS_mat) > 0){
+    verbose(nrow(FS_mat), " features retained out of ", length(frac),
+            " supplied features in the FS object\n")
+    # If the class of FS is originally a SummarizedExperiment object
+    # Convert the matrix to SummarizedExperiment
+    # This makes sure the original class of FS object does not change 
+    if(is(FS, "SummarizedExperiment")){
+      FS_mat <- SummarizedExperiment::SummarizedExperiment(assays=FS_mat)
+    }  
+    return(FS_mat)
+  }else{
+    stop("Zero feature retained out of ", length(frac), 
+         " supplied features in the FS object.")
+  }
+  
 }
 
 
@@ -91,7 +115,7 @@ prefilter_data <- function(
 #' interest such as protein expression, pathway activity, etc.
 #' NOTE: The \code{input_score} object must have names or labels that 
 #' match the column names of FS_mat object.
-#' @param seed_names a vector of one or more features representing known causes
+#' @param meta_feature a vector of one or more features representing known causes
 #' of activation or features associated with a response of interest.
 #' Default is NULL.
 #' @param do_check a logical value indicates whether or not to validate if the  
@@ -119,7 +143,7 @@ prefilter_data <- function(
 #' check_data_input(
 #'  FS_mat = FS_mat,
 #'  input_score = input_score,
-#'  seed_names = NULL
+#'  meta_feature = NULL
 #' )
 #' 
 #' @return If do_check=FALSE, return NULL, otherwise, check if FS_mat and 
@@ -127,15 +151,16 @@ prefilter_data <- function(
 check_data_input <- function(
     FS_mat,
     input_score,
-    seed_names = NULL,
+    meta_feature = NULL,
     do_check = TRUE
 ){
   
   if(do_check == FALSE) return(NULL)
 
-  # Check if the matrix has only binary 0 or 1 values
-  if(length(FS_mat) == 0 || any(!FS_mat %in% c(0,1)))
-    stop("FS object must contain binary values 0s or 1s.")
+  # Check if FS must contain at least one row feature with binary values 0s or 1s
+  if(nrow(FS_mat) == 0 || any(!FS_mat %in% c(0,1)))
+    stop("FS object must contain at least one row feature with 
+         binary values 0s or 1s.")
   
   # Make sure the FS object has row names for features tracking
   if(is.null(rownames(FS_mat)))
@@ -165,9 +190,9 @@ check_data_input <- function(
          "These features must be removed from the FS object as ",
          "they are uninformative.")
   
-  if(length(seed_names) > 0 && any(!seed_names %in% rownames(FS_mat)))
-    stop("The provided feature(s): ", 
-         paste0(seed_names[which(!seed_names %in% rownames(FS_mat))], 
+  if(length(meta_feature) > 0 && any(!meta_feature %in% rownames(FS_mat)))
+    stop("The provided meta feature(s): ", 
+         paste0(meta_feature[which(!meta_feature %in% rownames(FS_mat))], 
                 collapse=", "),
          " do(es) not exist among the row names of the FS object.\n")
   

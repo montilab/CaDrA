@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scoring Functions • CaDrA</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,41 +33,38 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.7</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">Home</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Docs
+    Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/scoring_functions.html">Scoring Functions</a>
+      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
+      <a href="../articles/scoring_functions.html">Scoring Functions</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="../news/index.html">Change Log</a>
-</li>
-<li>
-  <a href="https://github.com/montilab/CaDrA">
-    <span class="fa fa-github"></span>
+  <a href="https://github.com/montilab/CaDrA/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -87,7 +84,7 @@
       <h1 data-toc-skip>Scoring Functions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/montilab/CaDrA/blob/HEAD/vignettes/scoring_functions.Rmd"><code>vignettes/scoring_functions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/montilab/CaDrA/blob/HEAD/vignettes/scoring_functions.Rmd" class="external-link"><code>vignettes/scoring_functions.Rmd</code></a></small>
       <div class="hidden name"><code>scoring_functions.Rmd</code></div>
 
     </div>
@@ -116,7 +113,7 @@ recommended <code><a href="../reference/candidate_search.html">candidate_search(
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/" class="external-link">CaDrA</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-required-datasets">Load required datasets<a class="anchor" aria-label="anchor" href="#load-required-datasets"></a>
@@ -223,21 +220,24 @@ expression, pathway activity, etc.)</li>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># A customized function using ks-test function</span></span>
-<span><span class="va">customized_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">seed_names</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">customized_ks_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">meta_feature</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span>
 <span>   </span>
-<span>   <span class="co"># Check if seed_names is provided</span></span>
-<span>   <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">seed_names</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>     <span class="co"># Taking the union across the known seed features</span></span>
-<span>     <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">seed_names</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>       <span class="va">seed_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">seed_names</span>,<span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>   <span class="co"># Check if meta_feature is provided</span></span>
+<span>   <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>     <span class="co"># Getting the position of the known meta features</span></span>
+<span>     <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">meta_feature</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
+<span>     </span>
+<span>     <span class="co"># Taking the union across the known meta features</span></span>
+<span>     <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>       <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span>     <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
-<span>       <span class="va">seed_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">seed_names</span>,<span class="op">]</span><span class="op">)</span></span>
+<span>       <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span></span>
 <span>     <span class="op">}</span></span>
 <span>      </span>
-<span>     <span class="co"># Remove the seeds from the binary feature matrix</span></span>
-<span>     <span class="co"># and taking logical OR btw the remaining features with the seed vector</span></span>
-<span>     <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">seed_names</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
-<span>     <span class="va">FS</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="op">-</span><span class="va">locs</span>,<span class="op">]</span>, <span class="fl">2</span>, <span class="va">seed_vector</span>, <span class="va">`|`</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
+<span>     <span class="co"># Remove the meta features from the binary feature matrix</span></span>
+<span>     <span class="co"># and taking logical OR btw the remaining features with the meta vector</span></span>
+<span>     <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">meta_feature</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
+<span>     <span class="va">FS</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="op">-</span><span class="va">locs</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>, <span class="fl">2</span>, <span class="va">meta_vector</span>, <span class="va">`|`</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
 <span>      </span>
 <span>     <span class="co"># Check if there are any features that are all 1s generated from</span></span>
 <span>     <span class="co"># taking the union between the matrix</span></span>
@@ -246,7 +246,7 @@ expression, pathway activity, etc.)</li>
 <span>     <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>       <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"Features with all 1s generated from taking the matrix union "</span>,</span>
 <span>               <span class="st">"will be removed before progressing...\n"</span><span class="op">)</span></span>
-<span>       <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">!=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span>,<span class="op">]</span></span>
+<span>       <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">!=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></span>
 <span>     <span class="op">}</span></span>
 <span>   <span class="op">}</span></span>
 <span>    </span>
@@ -287,7 +287,7 @@ expression, pathway activity, etc.)</li>
 <span>  FS <span class="op">=</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"custom"</span>,                                <span class="co"># Use custom scoring function</span></span>
-<span>  custom_function <span class="op">=</span> <span class="va">customized_rowscore</span>,            <span class="co"># Use a customized scoring function</span></span>
+<span>  custom_function <span class="op">=</span> <span class="va">customized_ks_rowscore</span>,         <span class="co"># Use a customized scoring function</span></span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,                         <span class="co"># Additional parameters to pass to custom_function</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,                           <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                                        <span class="co"># Evaluate top 3 starting points for the search</span></span>
@@ -387,7 +387,7 @@ expression, pathway activity, etc.)</li>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/RC-88" class="external-link">Reina Chau</a>, <a href="https://github.com/katgit" class="external-link">Katia Bulekova</a>, <a href="https://github.com/vkartha" class="external-link">Vinay Kartha</a>, <a href="https://github.com/tetomonti" class="external-link">Stefano Monti</a>.</p>
+<p>Developed by Reina Chau, Katia Bulekova, Vinay Kartha, Stefano Monti.</p>
 </div>
 
 <div class="pkgdown">

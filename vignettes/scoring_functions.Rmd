@@ -133,21 +133,24 @@ See `?custom_rowscore` for more details
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS, input_score, seed_names=NULL, alternative="less"){
+customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less"){
    
-   # Check if seed_names is provided
-   if(!is.null(seed_names)){
-     # Taking the union across the known seed features
-     if(length(seed_names) > 1) {
-       seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
+   # Check if meta_feature is provided
+   if(!is.null(meta_feature)){
+     # Getting the position of the known meta features
+     locs <- match(meta_feature, row.names(FS))
+     
+     # Taking the union across the known meta features
+     if(length(meta_feature) > 1) {
+       meta_vector <- as.numeric(ifelse(colSums(FS[meta_feature,]) == 0, 0, 1))
      }else{
-       seed_vector <- as.numeric(FS[seed_names,])
+       meta_vector <- as.numeric(FS[meta_feature,])
      }
       
-     # Remove the seeds from the binary feature matrix
-     # and taking logical OR btw the remaining features with the seed vector
-     locs <- match(seed_names, row.names(FS))
-     FS <- base::sweep(FS[-locs,], 2, seed_vector, `|`)*1
+     # Remove the meta features from the binary feature matrix
+     # and taking logical OR btw the remaining features with the meta vector
+     locs <- match(meta_feature, row.names(FS))
+     FS <- base::sweep(FS[-locs, , drop=FALSE], 2, meta_vector, `|`)*1
       
      # Check if there are any features that are all 1s generated from
      # taking the union between the matrix
@@ -156,7 +159,7 @@ customized_rowscore <- function(FS, input_score, seed_names=NULL, alternative="l
      if(any(rowSums(FS) == ncol(FS))){
        warning("Features with all 1s generated from taking the matrix union ",
                "will be removed before progressing...\n")
-       FS <- FS[rowSums(FS) != ncol(FS),]
+       FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
      }
    }
     
@@ -197,7 +200,7 @@ custom_topn_l <- CaDrA::candidate_search(
   FS = SummarizedExperiment::assay(sim_FS),
   input_score = sim_Scores,
   method = "custom",                                # Use custom scoring function
-  custom_function = customized_rowscore,            # Use a customized scoring function
+  custom_function = customized_ks_rowscore,         # Use a customized scoring function
   custom_parameters = NULL,                         # Additional parameters to pass to custom_function
   search_method = "both",                           # Apply both forward and backward search
   top_N = 3,                                        # Evaluate top 3 starting points for the search

@@ -8,7 +8,7 @@ a given scoring method}
 calc_rowscore(
   FS,
   input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
@@ -32,7 +32,7 @@ readout of interest such as protein expression, pathway activity, etc.
 NOTE: \code{input_score} object must have names or labels that match the 
 column names of \code{FS} object.}
 
-\item{seed_names}{a vector of one or more features representing known 
+\item{meta_feature}{a vector of one or more features representing known 
 causes of activation or features associated with a response of interest, 
 \code{e.g. input_score}. Default is NULL.}
 
@@ -101,7 +101,7 @@ names(input_score) <- colnames(mat)
 ks_rowscore_result <- calc_rowscore(
   FS = mat,
   input_score = input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   method = "ks_pval",
   weights = NULL,
   alternative = "less"
@@ -111,7 +111,7 @@ ks_rowscore_result <- calc_rowscore(
 wilcox_rowscore_result <- calc_rowscore(
   FS = mat,
   input_score = input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   method = "wilcox_pval",
   alternative = "less"
 )
@@ -121,12 +121,47 @@ revealer_rowscore_result <- calc_rowscore(
   FS = mat,
   input_score = input_score,
   method = "revealer",
-  seed_names = NULL
+  meta_feature = NULL
 )
 
 # A customized function using ks-test function
-customized_rowscore <- function(FS, input_score, seed_names = NULL, alternative="less"){
+customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less"){
   
+  # Check if meta_feature is provided
+  if(!is.null(meta_feature)){
+    # Getting the position of the known meta features
+    locs <- match(meta_feature, row.names(FS))
+    
+    # Taking the union across the known meta features
+    if(length(locs) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
+    }else{
+      meta_vector <- as.numeric(FS[locs,])
+    }
+     
+    # Remove the meta features from the binary feature matrix
+    # and taking logical OR btw the remaining features with the meta vector
+    FS <- base::sweep(FS[-locs, , drop=FALSE], 2, meta_vector, `|`)*1
+     
+    # Check if there are any features that are all 1s generated from
+    # taking the union between the matrix
+    # We cannot compute statistics for such features and thus they need
+    # to be filtered out
+    if(any(rowSums(FS) == ncol(FS))){
+      warning("Features with all 1s generated from taking the matrix union ",
+              "will be removed before progressing...\n")
+      FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
+    }
+  }
+   
+  # KS is a ranked-based method
+  # So we need to sort input_score from highest to lowest values
+  input_score <- sort(input_score, decreasing=TRUE)
+   
+  # Re-order the matrix based on the order of input_score
+  FS <- FS[, names(input_score), drop=FALSE]  
+  
+  # Compute the scores using the KS method
   ks <- apply(FS, 1, function(r){ 
     x = input_score[which(r==1)]; 
     y = input_score[which(r==0)];
@@ -134,14 +169,15 @@ customized_rowscore <- function(FS, input_score, seed_names = NULL, alternative=
     return(c(res$statistic, res$p.value))
   })
   
-  # Obtain score statistics and p-values from KS method
+  # Obtain score statistics
   stat <- ks[1,]
   
-  # Change values of 0 to the machine lowest value to avoid taking -log(0)
+  # Obtain p-values and change values of 0 to the machine lowest value 
+  # to avoid taking -log(0)
   pval <- ks[2,]
   pval[which(pval == 0)] <- .Machine$double.xmin
   
-  # Compute the -log scores for pval
+  # Compute the -log(pval)
   # Make sure scores has names that match the row names of FS object
   scores <- -log(pval)
   names(scores) <- rownames(FS)
@@ -154,9 +190,9 @@ customized_rowscore <- function(FS, input_score, seed_names = NULL, alternative=
 custom_rowscore_result <- calc_rowscore(
   FS = mat,
   input_score = input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   method = "custom",
-  custom_function = customized_rowscore,            
+  custom_function = customized_ks_rowscore,            
   custom_parameters = NULL  
 )
 

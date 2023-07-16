@@ -7,9 +7,11 @@
 prefilter_data(FS, max_cutoff = 0.6, min_cutoff = 0.03, verbose = FALSE)
 }
 \arguments{
-\item{FS}{a SummarizedExperiment object containing binary features where
-rows represent features of interest (e.g. genes, transcripts, exons, etc.)
-and columns represent the samples.}
+\item{FS}{a matrix of binary features or a SummarizedExperiment class object 
+from SummarizedExperiment package where rows represent features of interest 
+(e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+The assay of FS contains binary (1/0) values indicating the presence/absence 
+of ‘omics’ features.}
 
 \item{max_cutoff}{a numeric value between 0 and 1 describing the absolute
 prevalence of a feature across all samples in the FS object which the

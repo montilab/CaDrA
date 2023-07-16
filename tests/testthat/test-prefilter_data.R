@@ -15,7 +15,7 @@ test_that("prefilter_data returns expected result ",{
   result <- prefilter_data(FS = sim_FS)
   
   testthat::expect_s4_class(result, "SummarizedExperiment")
-  expect_identical(dim(assays(result)$exprs), c(883L, 100L))
+  expect_identical(dim(SummarizedExperiment::assay(result)), c(883L, 100L))
   
 })
 

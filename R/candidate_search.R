@@ -38,7 +38,7 @@
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' 
-#' NOTE: This argument is applied to KS and Wilcoxon method
+#' NOTE: This argument is ONLY applied to KS and Wilcoxon method
 #' @param weights if method is \code{ks_score} or \code{ks_pval}, specifying a 
 #' vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
 #' @param search_start a list of character strings (separated by commas)
@@ -133,7 +133,7 @@ candidate_search <- function(
   rowscore <- calc_rowscore(
     FS = FS,
     input_score = input_score,
-    seed_names = NULL,
+    meta_feature = NULL,
     method = method,
     custom_function = custom_function,
     custom_parameters = custom_parameters,   
@@ -172,7 +172,7 @@ candidate_search <- function(
   if(is.na(max_size) || length(max_size)==0 || 
      max_size <= 0 || max_size > nrow(FS))
     stop("Please specify a maximum size that a meta-feature can extend to do ",
-         "for a given search (max_size must be >= 1)",
+         "for a given search (max_size must be >= 1) ",
          "and max_size must be lesser than the number of features in FS.\n")
   
   # Performs the search based on the given indices of the starting best features 
@@ -198,7 +198,7 @@ candidate_search <- function(
 
     # Vector of features in the (growing) obtained meta-feature.
     # Begin with just the starting feature
-    global_best_s_features <- c()
+    global_best_s_features <- best_feature
 
     ###### BEGIN ITERATIONS ###############
     #######################################
@@ -206,7 +206,8 @@ candidate_search <- function(
     verbose("\nBeginning candidate search...\n")
     
     while((best_s > global_best_s | i == 0) &&
-          (length(global_best_s_features) < max_size)){
+          (length(global_best_s_features) < max_size) && 
+          (length(global_best_s_features) < nrow(FS))){
       
       verbose("Iteration number: ", (i+1), "\n")
       verbose("Global best score: ", global_best_s, "\n")
@@ -215,7 +216,9 @@ candidate_search <- function(
       # Update scores and feature set since entry into the
       # loop means there is an improvement (iteration > 0)
       global_best_s <- best_s
-      global_best_s_features <- c(global_best_s_features, best_feature)
+      
+      # Update feature set
+      if(i > 0) global_best_s_features <- c(global_best_s_features, best_feature)
       
       verbose("Current feature set: ", global_best_s_features, "\n")
       
@@ -249,11 +252,11 @@ candidate_search <- function(
         
       }
       
-      # Compute row-wise directional scores given known features
+      # Compute row-wise directional scores given known meta features
       meta_rowscore <- calc_rowscore(
         FS = FS,
         input_score = input_score,
-        seed_names = global_best_s_features,
+        meta_feature = global_best_s_features,
         method = method,
         custom_function = custom_function,
         custom_parameters = custom_parameters,   
@@ -269,25 +272,27 @@ candidate_search <- function(
         verbose = FALSE    # MAKE SURE VERBOSE IS SILENCE HERE  
       )
       
-      # The scores are already ordered from highest to lowest significant
-      # Thus, the first score is the most significant best score 
-      best_s <- meta_rowscore[1]
+      # If there is a meta score, update the value
+      if(length(meta_rowscore) > 0){
+        # The scores are already ordered from highest to lowest significant
+        # Thus, the first score is the most significant best score 
+        best_s <- meta_rowscore[1]
+        # Get feature name of the first best score
+        best_feature <- names(best_s)
+      }
       
-      # Get feature name of the first best score
-      best_feature <- names(best_s)
-
       # If no improvement (exiting loop)
-      if(best_s <= global_best_s){
-        verbose("No further improvement in score has been found.")
-      }else{
+      if(best_s > global_best_s){
         verbose("Feature that produced best score in combination ",
                 "with previous meta-feature: ", best_feature)
         verbose("Score: ", best_s)
+      }else{
+        verbose("No further improvement in score has been found.")
       }
       
       # Increment the next loop
       i <- i+1
-
+      
     } ######### End of while loop
 
     verbose("\n\nFinished!\n\n")
@@ -348,12 +353,11 @@ candidate_search <- function(
 
 
 # Performance backward selection
-#' @param FS a SummarizedExperiment class object from SummarizedExperiment 
-#' package where rows represent features of interest 
-#' (e.g. genes, transcripts, exons, etc...) 
-#' and columns represent the samples. The assay of FS contains binary (1/0)  
-#' values indicating the presence/absence of ‘omics’ features.
-#' @param FS_class the class object from feature set  
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of ‘omics’ features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
@@ -432,8 +436,8 @@ forward_backward_check <- function
                     dimnames=list(c("OR"), colnames(FS)))
     
     # If the class of FS is originally a SummarizedExperiment object
-    # Convert the union matrix to SummarizedExperiment
-    # This makes sure custom function will receive its original FS object 
+    # Convert the matrix to SummarizedExperiment
+    # This makes sure the original class of FS object does not change 
     if(is(FS, "SummarizedExperiment")){
       u_FS <- SummarizedExperiment::SummarizedExperiment(assays=u_mat)
     }else{
@@ -444,7 +448,7 @@ forward_backward_check <- function
     u_rowscore <- calc_rowscore(
       FS = u_FS,
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       method = method,
       custom_function = custom_function,
       custom_parameters = custom_parameters,     

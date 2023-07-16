@@ -17,6 +17,7 @@ test_that("revealer_rowscore returns correct results", {
   result <- revealer_rowscore(
     FS = mat, 
     input_score = input_score, 
+    meta_feature = NULL,
     assoc_metric = "IC"
   )
   
@@ -24,12 +25,12 @@ test_that("revealer_rowscore returns correct results", {
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
-                         c(TP_1=0.4573207, TP_2=-0.4266714, TP_3=0.3867053 ) )
+                         c(TP_1=0.4573207, TP_2=-0.4266714, TP_3=0.3867053))
   
   result <- revealer_rowscore(
     FS = mat, 
     input_score = input_score, 
-    seed_names = NULL,
+    meta_feature = NULL,
     assoc_metric = "COR"
   )
   
@@ -37,43 +38,7 @@ test_that("revealer_rowscore returns correct results", {
   testthat::expect_type(result, "double")
   testthat::expect_identical(sort(names(result)), sort(row.names(mat)))
   testthat::expect_equal(round(result, 7), 
-                         c(TP_1=0.5924383, TP_2=-0.3985206, TP_3=0.5067436 ) )
-  
-})
-
-## --------------------------------------------------- ##
-test_that("revealer_rowscore issues error messages when needed", {
-  
-  FS <-  data.frame(a = rnorm(10), b = rnorm (10) )
-  
-  # Set seed
-  set.seed(42)
-  
-  input_score <- rnorm(n = ncol(FS))
-  names(input_score) <- colnames(FS)
-  
-  mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
-                  0,0,1,0,1,0,1,0,0,0,
-                  0,0,0,0,1,0,1,0,1,0), nrow=3)
-  
-  colnames(mat) <- paste0("COL_", 1:10)
-  row.names(mat) <- c("TP_1", "TP_2", "TP_3")
-  
-  # Set seed
-  set.seed(42)
-  
-  input_score <- rnorm(n = ncol(mat))
-  names(input_score) <- colnames(mat)
-  seed_names <- as.character(1:10)
-  
-  expect_error( 
-    revealer_rowscore(
-      FS = mat, 
-      input_score = input_score, 
-      seed_names = seed_names,
-      assoc_metric = "IC"
-    )
-  )
+                         c(TP_1=0.5924383, TP_2=-0.3985206, TP_3=0.5067436))
   
 })
 
@@ -85,12 +50,12 @@ test_that("revealer_score returns correct results", {
   
   input_score <- rnorm(n = 10)
   x <- c(1,0,1,0,0,0,0,0,1,0)
-  seed_vector <- rep(0, 10)
+  meta_vector <- rep(0, 10)
     
   result <- revealer_score(
     x = input_score,
     y = x,
-    z = seed_vector,
+    z = meta_vector,
     assoc_metric = "IC"
   )
   
@@ -133,7 +98,8 @@ test_that("mutual_inf_v2 returns correct results", {
   result <- suppressWarnings(
     mutual_inf_v2(
       x = x,
-      y = y)
+      y = y
+    )
   )
   
   testthat::expect_type(result, "list")

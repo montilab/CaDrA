@@ -13,7 +13,7 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of \code{FS} object.
-#' @param seed_names a vector of one or more features representing known 
+#' @param meta_feature a vector of one or more features representing known 
 #' causes of activation or features associated with a response of interest, 
 #' \code{e.g. input_score}. Default is NULL.
 #' @param custom_function a customized function which computes a row-wise 
@@ -33,21 +33,23 @@
 #' @examples 
 #' 
 #' # A customized function using ks-test function
-#' customized_rowscore <- function(FS, input_score, seed_names=NULL, alternative="less"){
+#' customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less"){
 #'   
-#'   # Check if seed_names is provided
-#'   if(!is.null(seed_names)){
-#'     # Taking the union across the known seed features
-#'     if(length(seed_names) > 1) {
-#'       seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
+#'   # Check if meta_feature is provided
+#'   if(!is.null(meta_feature)){
+#'     # Getting the position of the known meta features
+#'     locs <- match(meta_feature, row.names(FS))
+#'
+#'     # Taking the union across the known meta features
+#'     if(length(locs) > 1) {
+#'       meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
 #'     }else{
-#'       seed_vector <- as.numeric(FS[seed_names,])
+#'       meta_vector <- as.numeric(FS[locs,])
 #'     }
 #'      
-#'     # Remove the seeds from the binary feature matrix
-#'     # and taking logical OR btw the remaining features with the seed vector
-#'     locs <- match(seed_names, row.names(FS))
-#'     FS <- base::sweep(FS[-locs,], 2, seed_vector, `|`)*1
+#'     # Remove the meta features from the binary feature matrix
+#'     # and taking logical OR btw the remaining features with the meta vector
+#'     FS <- base::sweep(FS[-locs,], 2, meta_vector, `|`)*1
 #'      
 #'     # Check if there are any features that are all 1s generated from
 #'     # taking the union between the matrix
@@ -56,7 +58,7 @@
 #'     if(any(rowSums(FS) == ncol(FS))){
 #'       warning("Features with all 1s generated from taking the matrix union ",
 #'               "will be removed before progressing...\n")
-#'       FS <- FS[rowSums(FS) != ncol(FS),]
+#'       FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
 #'     }
 #'   }
 #'    
@@ -107,8 +109,8 @@
 #' custom_rs <- custom_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
-#'   seed_names = NULL,
-#'   custom_function = customized_rowscore,            
+#'   meta_feature = NULL,
+#'   custom_function = customized_ks_rowscore,            
 #'   custom_parameters = NULL  
 #' )
 #' 
@@ -119,7 +121,7 @@ custom_rowscore <- function
 (
   FS,
   input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   custom_function,
   custom_parameters = NULL,
   ...
@@ -153,13 +155,13 @@ custom_rowscore <- function
     stop("custom_function() must take 'input_score' ",
          "as one of its arguments (required).")
   
-  # Check if custom_function() requires 'seed_names' as its argument
-  if(!"seed_names" %in% names(custom_args))
-    stop("custom_function() must take 'seed_names' ",
+  # Check if custom_function() requires 'meta_feature' as its argument
+  if(!"meta_feature" %in% names(custom_args))
+    stop("custom_function() must take 'meta_feature' ",
          "as one of its arguments (required).")
   
   ## Create a list with only the required variables 
-  req_parameters <- list(FS=FS, input_score=input_score, seed_names=seed_names)
+  req_parameters <- list(FS=FS, input_score=input_score, meta_feature=meta_feature)
   
   # Obtain additional parameters
   additional_parameters <- list(...)

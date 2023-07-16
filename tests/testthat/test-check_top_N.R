@@ -9,7 +9,7 @@ test_that("check_top_N returns expected result ",{
   rowscore <- calc_rowscore(
     FS = SummarizedExperiment::assay(sim_FS),
     input_score = sim_Scores,
-    seed_names = NULL,
+    meta_feature = NULL,
     method = "ks_pval",
     alternative = "less",
     weights = NULL

@@ -58,7 +58,7 @@ to be passed to the \code{custom_function}. Default is \code{NULL}.}
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
 
-NOTE: This argument is applied to KS and Wilcoxon method}
+NOTE: This argument is ONLY applied to KS and Wilcoxon method}
 
 \item{weights}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
 vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}

@@ -16,7 +16,7 @@ test_that("custom_rowscore returns correct results", {
   result <- custom_rowscore(
     FS = mat, 
     input_score = input_score,
-    seed_names = NULL,
+    meta_feature = NULL,
     custom_function = wilcox_rowscore,
     custom_parameters = list(alternative="less")
   )
@@ -47,7 +47,7 @@ test_that("custom_rowscore issues error messages when needed", {
     custom_rowscore(
       FS = mat, 
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       custom_function = "wilcox_rowscore",
       method = "custom_pval", 
       custom_parameters = list(alternative="less") 
@@ -59,32 +59,32 @@ test_that("custom_rowscore issues error messages when needed", {
     custom_rowscore(
       FS = mat, 
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       custom_function = custom_function,
       method = "custom_pval", 
       custom_parameters = c(alternative="less")
     )
   )
   
-  # error if function does not have "input_score" and "seed_names" arguments
+  # error if function does not have "input_score" and "meta_feature" arguments
   err_function <- function(FS){ return(0)}
   expect_error( 
     custom_rowscore(
       FS = mat, 
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       custom_function = err_function,
       method = "custom_pval"
     )
   )
   
-  # error if function does not have "FS" and "seed_names" arguments
+  # error if function does not have "FS" and "meta_feature" arguments
   err_function <- function(input_score){ return(0)}
   expect_error( 
     custom_rowscore(
       FS = mat, 
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       custom_function = err_function,
       method = "custom_pval"
     )

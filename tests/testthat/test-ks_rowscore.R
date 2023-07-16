@@ -15,7 +15,7 @@ test_that("ks_rowscore returns correct results", {
   result <- ks_rowscore(
     FS = mat, 
     input_score = input_score, 
-    seed_names = NULL,
+    meta_feature = NULL,
     alternative = "less"
   )
   
@@ -28,7 +28,7 @@ test_that("ks_rowscore returns correct results", {
   result <- ks_rowscore(
     FS = mat,  
     input_score = input_score,
-    seed_names = NULL,
+    meta_feature = NULL,
     weights = weights
   )
   
@@ -52,7 +52,7 @@ test_that("ks_rowscore issues error messages when needed", {
     ks_rowscore(
       FS = FS,  
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
     )
   )
   
@@ -71,7 +71,7 @@ test_that("ks_rowscore issues error messages when needed", {
     ks_rowscore(
       FS = mat,  
       input_score = input_score,
-      seed_names = NULL,
+      meta_feature = NULL,
       weights = weights
     )
   )

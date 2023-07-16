@@ -39,9 +39,23 @@ al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
+- Using `devtools` package
+
 ``` r
 library(devtools)
 devtools::install_github("montilab/CaDrA")
+```
+
+- Using `BiocManager` package
+
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("CaDrA")
 ```
 
 ## (2) Quickstart
@@ -149,7 +163,7 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.6                testthat_3.1.8             
+ [1] CaDrA_0.99.7                testthat_3.1.8             
  [3] devtools_2.4.5              usethis_2.2.0              
  [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
  [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.9        

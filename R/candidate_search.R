@@ -217,8 +217,8 @@ candidate_search <- function(
       # loop means there is an improvement (iteration > 0)
       global_best_s <- best_s
       
-      if(i > 0)
-        global_best_s_features <- c(global_best_s_features, best_feature)
+      # Update feature set
+      if(i > 0) global_best_s_features <- c(global_best_s_features, best_feature)
       
       verbose("Current feature set: ", global_best_s_features, "\n")
       

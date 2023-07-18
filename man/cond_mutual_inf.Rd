@@ -6,13 +6,7 @@
 The input Y and conditional input Z can be vectors or matrices. If Y and Z
 are discrete then they must be numeric or integer valued.}
 \usage{
-cond_mutual_inf(
-  x,
-  y,
-  z,
-  n.grid = 25,
-  delta = 0.25 * c(MASS::bcv(x), MASS::bcv(y), MASS::bcv(z))
-)
+cond_mutual_inf(x, Y, Z, k = 3L)
 }
 \arguments{
 \item{x}{vector of size N.}

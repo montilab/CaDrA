@@ -7,7 +7,7 @@
 candidate_search(
   FS,
   input_score,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "knnmi", "custom"),
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
@@ -38,7 +38,7 @@ column names of \code{FS} object.}
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
-\code{"revealer"} (conditional mutual information from REVEALER) or
+\code{"knnmi"} (conditional mutual information) or
 \code{"custom"} (a customized scoring method)). 
 Default is \code{ks_pval}.}
 

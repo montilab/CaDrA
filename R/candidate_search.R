@@ -21,7 +21,7 @@
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
-#' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"knnmi"} (conditional mutual information) or
 #' \code{"custom"} (a customized scoring method)). 
 #' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, specifies
@@ -101,7 +101,7 @@ candidate_search <- function(
     FS,
     input_score,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
-               "revealer", "custom"),
+               "knnmi", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
@@ -364,7 +364,7 @@ candidate_search <- function(
 #' names of FS object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 4 options: (\code{"ks"} or \code{"wilcox"} or
-#' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"knnmi"} (conditional mutual information) or
 #' \code{"custom"} (a user customized scoring method)). Default is \code{ks}.
 #' @param custom_function if method is \code{"custom"}, specifies
 #' the customized function here. Default is \code{NULL}.

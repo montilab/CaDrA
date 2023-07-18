@@ -38,8 +38,8 @@
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' 
-#' NOTE: This argument is applied to KS and Wilcoxon method
-#' @param weight if method is \code{ks_score} or \code{ks_pval}, specifying a 
+#' NOTE: This argument is ONLY applied to KS and Wilcoxon method
+#' @param weights if method is \code{ks_score} or \code{ks_pval}, specifying a 
 #' vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
 #' @param search_start a list of character strings (separated by commas)
 #' which specifies feature names within the FS object to start
@@ -90,7 +90,7 @@
 #' # Define additional parameters and run the function
 #' candidate_search_result <- candidate_search(
 #'   FS = sim_FS, input_score = sim_Scores, 
-#'   method = "ks_pval", alternative = "less", weight = NULL, 
+#'   method = "ks_pval", alternative = "less", weights = NULL, 
 #'   search_start = NULL, top_N = 3, search_method = "both",
 #'   max_size = 7, best_score_only = FALSE
 #' )
@@ -105,7 +105,7 @@ candidate_search <- function(
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
-    weight = NULL,
+    weights = NULL,
     search_start = NULL,
     top_N = 1,
     search_method = c("both", "forward"),
@@ -133,11 +133,12 @@ candidate_search <- function(
   rowscore <- calc_rowscore(
     FS = FS,
     input_score = input_score,
+    meta_feature = NULL,
     method = method,
     custom_function = custom_function,
     custom_parameters = custom_parameters,   
     alternative = alternative,
-    weight = weight,
+    weights = weights,
     search_start = search_start,
     top_N = top_N,
     search_method = search_method,
@@ -148,15 +149,6 @@ candidate_search <- function(
     verbose = verbose
   )
   
-  # Retrieve the original class object of feature set 
-  # If FS is a matrix, convert it to SummarizedExperiment object
-  if(is(FS, "SummarizedExperiment")){
-    FS_class <- "SummarizedExperiment"
-  }else{
-    FS_class <- "matrix"
-    FS <- SummarizedExperiment::SummarizedExperiment(assays=FS)
-  }
-
   ###### INITIALIZE VARIABLES ###########
   #######################################
   
@@ -180,8 +172,8 @@ candidate_search <- function(
   if(is.na(max_size) || length(max_size)==0 || 
      max_size <= 0 || max_size > nrow(FS))
     stop("Please specify a maximum size that a meta-feature can extend to do ",
-         "for a given search (max_size must be >= 1)",
-         "and max_size must be lesser than the number of features in FS\n")
+         "for a given search (max_size must be >= 1) ",
+         "and max_size must be lesser than the number of features in FS.\n")
   
   # Performs the search based on the given indices of the starting best features 
   topn_l <- lapply(seq_along(search_feature_index), function(x){
@@ -197,10 +189,6 @@ candidate_search <- function(
     verbose("Top Feature ", x, ": ", start_feature, "\n")
     verbose("Score: ", best_s, "\n")
     
-    # Fetch the vector corresponding to best score
-    # Set this as the initial 'meta-feature'
-    best_meta <- as.numeric(SummarizedExperiment::assay(FS)[best_s_index,])
-    
     # Counter variable for number of iterations
     i <- 0
     
@@ -210,7 +198,7 @@ candidate_search <- function(
 
     # Vector of features in the (growing) obtained meta-feature.
     # Begin with just the starting feature
-    global_best_s_features <- c()
+    global_best_s_features <- best_feature
 
     ###### BEGIN ITERATIONS ###############
     #######################################
@@ -218,47 +206,34 @@ candidate_search <- function(
     verbose("\nBeginning candidate search...\n")
     
     while((best_s > global_best_s | i == 0) &&
-          (length(global_best_s_features) < max_size)){
+          (length(global_best_s_features) < max_size) && 
+          (length(global_best_s_features) < nrow(FS))){
       
       verbose("Iteration number: ", (i+1), "\n")
       verbose("Global best score: ", global_best_s, "\n")
       verbose("Previous score: ", best_s, "\n")
-
+      
       # Update scores and feature set since entry into the
       # loop means there is an improvement (iteration > 0)
       global_best_s <- best_s
-      global_best_s_features <- c(global_best_s_features, best_feature)
-
+      
+      # Update feature set
+      if(i > 0) global_best_s_features <- c(global_best_s_features, best_feature)
+      
       verbose("Current feature set: ", global_best_s_features, "\n")
-
-      if(i != 0){
-
-        verbose("Found feature that improves score!\n")
-
-        # Update the new best meta feature (from meta mat)
-        best_meta <- meta_mat[hit_best_s_index,]
-
-        # Add that index to the group of indices to be excluded
-        # for subsequent checks
-        # Here we go off the rownames in the original matrix to
-        # find which index to exclude from the FS in subsequent iterations
-        best_s_index <- c(best_s_index, which(rownames(FS) == best_feature))
-
-      }
-
+      
       # Perform a backward check on the list of existing features and
       # update global scores/feature lists accordingly
       if(length(global_best_s_features) > 3 & back_search == TRUE){
-
+        
         backward_search_results <- forward_backward_check(
           FS = FS,
-          FS_class = FS_class,
           input_score = input_score,
           method = method,
           custom_function = custom_function,
           custom_parameters = custom_parameters,   
           alternative = alternative,
-          weight = weight,
+          weights = weights,
           search_start = search_start,
           top_N = top_N,
           search_method = search_method,
@@ -274,54 +249,19 @@ candidate_search <- function(
         # Update globlal features, scores
         global_best_s_features <- backward_search_results[["best_features"]]
         global_best_s <- backward_search_results[["best_scores"]]
-
-        # Update best_meta based on feature set
-        best_meta <- as.numeric(ifelse(
-          colSums(SummarizedExperiment::assay(FS)[global_best_s_features,]) == 
-            0, 0, 1))
-
-      }
-
-      # Take the OR function between that feature and all
-      # other features to see which gives the best score
-      # Keep in mind, the number of rows in meta_mat keeps reducing by one
-      # each time we find a hit that improves the score
-      verbose("Forming meta-feature matrix with all other features in dataset.")
-
-      # Here "*1" is used to convert the boolean back to integer 1's and 0's
-      # Notice we remove anything in best_s_index from the original matrix
-      # first to form the meta matrix.
-      meta_mat <- base::sweep(SummarizedExperiment::assay(FS)[-best_s_index,], 
-                              2, best_meta, `|`)*1
-
-      # Check if there are any features that are all 1s generated from
-      # taking the union between the matrix
-      # We cannot compute statistics for such features and they thus need
-      # to be filtered out
-      if(any(rowSums(meta_mat) == ncol(meta_mat))){
-        warning("Features with all 1s generated from taking the matrix union ",
-                "will be removed before progressing...\n")
-        meta_mat <- meta_mat[rowSums(meta_mat) != ncol(meta_mat),]
+        
       }
       
-      # If the class of FS is originally a SummarizedExperiment object
-      # Convert the union matrix to SummarizedExperiment
-      if(FS_class == "SummarizedExperiment"){
-        meta_FS <- SummarizedExperiment::SummarizedExperiment(assays=meta_mat)
-      }else{
-        meta_FS <- meta_mat
-      }
-
-      # With the newly formed 'meta-feature' matrix, 
-      # compute row-wise directional scores
+      # Compute row-wise directional scores given known meta features
       meta_rowscore <- calc_rowscore(
-        FS = meta_FS,
+        FS = FS,
         input_score = input_score,
+        meta_feature = global_best_s_features,
         method = method,
         custom_function = custom_function,
         custom_parameters = custom_parameters,   
         alternative = alternative,
-        weight = weight,
+        weights = weights,
         search_start = search_start,
         top_N = top_N,
         search_method = search_method,
@@ -329,30 +269,30 @@ candidate_search <- function(
         best_score_only = best_score_only,
         do_plot = do_plot,
         do_check = FALSE,  # MAKE SURE DO_CHECK IS SILENCE HERE
-        verbose = FALSE,   # MAKE SURE VERBOSE IS SILENCE HERE  
+        verbose = FALSE    # MAKE SURE VERBOSE IS SILENCE HERE  
       )
       
-      # Get the first best score from already ordered meta-scores
-      best_s <- meta_rowscore[1]
-
-      # Get feature name of the first best score
-      best_feature <- names(best_s)
-
+      # If there is a meta score, update the value
+      if(length(meta_rowscore) > 0){
+        # The scores are already ordered from highest to lowest significant
+        # Thus, the first score is the most significant best score 
+        best_s <- meta_rowscore[1]
+        # Get feature name of the first best score
+        best_feature <- names(best_s)
+      }
+      
       # If no improvement (exiting loop)
-      if(best_s <= global_best_s){
-        verbose("No further improvement in score has been found.")
-      }else{
+      if(best_s > global_best_s){
         verbose("Feature that produced best score in combination ",
                 "with previous meta-feature: ", best_feature)
         verbose("Score: ", best_s)
-        
-        # Get the best hit index from meta-feature matrix
-        hit_best_s_index <- which(rownames(meta_mat) == best_feature)
+      }else{
+        verbose("No further improvement in score has been found.")
       }
       
       # Increment the next loop
       i <- i+1
-
+      
     } ######### End of while loop
 
     verbose("\n\nFinished!\n\n")
@@ -413,12 +353,11 @@ candidate_search <- function(
 
 
 # Performance backward selection
-#' @param FS a SummarizedExperiment class object from SummarizedExperiment 
-#' package where rows represent features of interest 
-#' (e.g. genes, transcripts, exons, etc...) 
-#' and columns represent the samples. The assay of FS contains binary (1/0)  
-#' values indicating the presence/absence of ‘omics’ features.
-#' @param FS_class the class object from feature set  
+#' @param FS a matrix of binary features or a SummarizedExperiment class object 
+#' from SummarizedExperiment package where rows represent features of interest 
+#' (e.g. genes, transcripts, exons, etc...) and columns represent the samples. 
+#' The assay of FS contains binary (1/0) values indicating the presence/absence 
+#' of ‘omics’ features.
 #' @param input_score a vector of continuous scores representing a phenotypic
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
@@ -434,7 +373,7 @@ candidate_search <- function(
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param weight if method is \code{ks_pval} or \code{ks_score}, specifying  
+#' @param weights if method is \code{ks_pval} or \code{ks_score}, specifying  
 #' a vector of weights will perform a weighted-KS testing. Default is 
 #' \code{NULL}.
 #' @param glob_f a vector containing the features (or row names) whose
@@ -453,13 +392,12 @@ candidate_search <- function(
 forward_backward_check <- function
 (
   FS,
-  FS_class,
   input_score,
   method,
   custom_function,
   custom_parameters,  
   alternative,
-  weight,
+  weights,
   glob_f,
   glob_f_s,
   ...
@@ -468,9 +406,12 @@ forward_backward_check <- function
   verbose("Performing backward search...\n")
   verbose("Iterating over ", length(glob_f), " chosen features...\n")
 
-  # Matrix of only global best features so far
-  gmat <- SummarizedExperiment::assay(FS[glob_f,])
-  rownames(gmat) <- glob_f
+  # Retrieve binary feature matrix of only global best features so far
+  if(is(FS, "SummarizedExperiment")){
+    gmat <- SummarizedExperiment::assay(FS)[glob_f,]
+  }else{
+    gmat <- FS[glob_f,]
+  }  
 
   # Here, we make a list that should store the features and their
   # corresponding meta-feature score for each leave-one-out run
@@ -479,14 +420,15 @@ forward_backward_check <- function
 
   # We want to see if leaving anyone feature out improves the overall
   # meta-feature score
-  # Here we only consider previous features in the meta-feature to remove
+  # Here we only consider previous features in the meta-feature matrix
   # (i.e. not the last one which was just added)
   for(n in seq_len(length(glob_f)-1)){
     #n=1;
+    # Store features to list
     f_names[[n]] <- glob_f[-n]
-
-    # Take leave-one-out union of features from matrix
-    # This will result in a single vector to compute the scores on
+    
+    # Take the leave-one-out union of features will result in a single 
+    # vector to compute the scores on
     f_union <- ifelse(colSums(gmat[-n,]) == 0, 0, 1)
     
     # Here we are getting the union of the meta-features
@@ -494,25 +436,29 @@ forward_backward_check <- function
                     dimnames=list(c("OR"), colnames(FS)))
     
     # If the class of FS is originally a SummarizedExperiment object
-    # Convert the union matrix to SummarizedExperiment
-    if(FS_class == "SummarizedExperiment"){
+    # Convert the matrix to SummarizedExperiment
+    # This makes sure the original class of FS object does not change 
+    if(is(FS, "SummarizedExperiment")){
       u_FS <- SummarizedExperiment::SummarizedExperiment(assays=u_mat)
     }else{
       u_FS <- u_mat
     }
     
-    # Compute scores for this meta feature
+    # Compute row scores for this meta feature
     u_rowscore <- calc_rowscore(
       FS = u_FS,
       input_score = input_score,
+      meta_feature = NULL,
       method = method,
       custom_function = custom_function,
       custom_parameters = custom_parameters,     
       alternative = alternative,
-      weight = weight,
+      weights = weights, 
       ...
     )
 
+    # The scores are already ordered from highest to lowest significant
+    # Thus, the first score is the most significant best score 
     # Store score to list
     f_scores <- c(f_scores, u_rowscore[1])
 
@@ -528,7 +474,7 @@ forward_backward_check <- function
   # the previous meta-feature's score
   if(f_best_score > glob_f_s){
 
-    verbose("Found improvement on removing existing feature...\n")
+    verbose("Found improvement on removing existing features...\n")
     verbose("New feature set: ", f_names[[f_best_index]], "\n")
     verbose("New global best score: ", f_best_score, "\n")
 
@@ -540,7 +486,7 @@ forward_backward_check <- function
   }else{
 
     # Don't change anything. Return the existing
-    # best set of features and the corresponding score
+    # best set of features and its corresponding score
     return(list(best_features=glob_f, best_scores=glob_f_s))
 
   }

@@ -20,12 +20,13 @@ test_that("candidate_search returns expected result ",{
     input_score = sim_Scores, 
     method = "ks_pval", 
     alternative = "less", 
-    weight = NULL, 
+    weights = NULL, 
     search_start = NULL, 
     search_method = "both", 
     max_size = 7, 
     best_score_only = FALSE
   )
+  
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
   testthat::expect_length(result[[1]], 3L)
@@ -46,7 +47,7 @@ test_that("candidate_search returns expected result ",{
     input_score = sim_Scores, 
     method = "wilcox_pval",
     alternative = "less", 
-    weight = NULL, 
+    weights = NULL, 
     search_start = NULL, 
     search_method = "both",
     max_size = 7, 
@@ -66,8 +67,6 @@ test_that("candidate_search returns expected result ",{
   testthat::expect_length(result[[1]][[3]], 1L)
   testthat::expect_equal(round(result[[1]][[3]],5), c("TP_9"=27.75113))
   
-  
-  
   # Run candidate_search with revealer method
   result <- suppressWarnings(
     candidate_search(
@@ -75,28 +74,27 @@ test_that("candidate_search returns expected result ",{
       input_score = sim_Scores, 
       method = "revealer",
       alternative = "less", 
-      weight = NULL,
+      weights = NULL,
       search_start = NULL,
       search_method = "both", 
       max_size = 7,
       best_score_only = FALSE
     )
   )
+  
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
   testthat::expect_length(result[[1]], 3L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
-  testthat::expect_equal(round(result[[1]][[2]][c(1:3, 100)],6),
+  testthat::expect_equal(round(result[[1]][[2]][c(1:3, 100)], 6),
                          c("1"=2.187333, "2"=2.168956, 
                            "3"=2.050085, "100"=-2.309169))
   
   testthat::expect_length(result[[1]][[3]], 1L)
-  testthat::expect_equal(round(result[[1]][[3]],5), c("TN_716"=0.68911))
-  
+  testthat::expect_equal(round(result[[1]][[3]], 5), c("TN_716"=0.30734))
 
-  
 })
 
 

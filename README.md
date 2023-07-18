@@ -22,7 +22,7 @@ The main function takes two inputs:
     the rows are 1/0 vectors indicating the presence/absence of ‘omics’
     features (e.g. somatic mutations, copy number alterations,
     epigenetic marks, etc.), and the columns are the samples.
-2)  A molecular phenotype of interest, which can be represented as a
+2)  A molecular phenotype of interest which can be represented as a
     vector of continuous scores (e.g. protein expression, pathway
     activity, etc.)
 
@@ -39,9 +39,23 @@ al. (2019)](https://www.frontiersin.org/articles/10.3389/fgene.2019.00121/full)
 
 ## (1) Installation
 
+- Using `devtools` package
+
 ``` r
 library(devtools)
 devtools::install_github("montilab/CaDrA")
+```
+
+- Using `BiocManager` package
+
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("CaDrA")
 ```
 
 ## (2) Quickstart
@@ -88,7 +102,7 @@ features and report the combined results as a heatmap (to summarize the
 number of times each feature is selected across repeated runs).
 
 IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the
-recommended `candidate_search()` function
+new recommended `candidate_search()` function
 
 ``` r
 
@@ -96,7 +110,7 @@ topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weight = NULL,               # If weights is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for each search
@@ -133,55 +147,62 @@ CaDrA::topn_plot(topn_res)
 
 ``` r
 sessionInfo()
-R version 4.3.0 (2023-04-21)
-Platform: x86_64-apple-darwin20 (64-bit)
-Running under: macOS Ventura 13.3.1
+R version 4.2.3 (2023-03-15)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur ... 10.16
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
-LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-
-time zone: America/New_York
-tzcode source: internal
 
 attached base packages:
 [1] stats4    stats     graphics  grDevices utils     datasets  methods  
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.5                SummarizedExperiment_1.30.1
- [3] Biobase_2.60.0              GenomicRanges_1.52.0       
- [5] GenomeInfoDb_1.36.0         IRanges_2.34.0             
- [7] S4Vectors_0.38.1            BiocGenerics_0.46.0        
- [9] MatrixGenerics_1.12.0       matrixStats_0.63.0         
+ [1] CaDrA_0.99.7                testthat_3.1.8             
+ [3] devtools_2.4.5              usethis_2.2.0              
+ [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
+ [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.9        
+ [9] IRanges_2.32.0              S4Vectors_0.36.2           
+[11] BiocGenerics_0.44.0         MatrixGenerics_1.10.0      
+[13] matrixStats_1.0.0          
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.3            xfun_0.39               ggplot2_3.4.2          
- [4] caTools_1.18.2          lattice_0.21-8          vctrs_0.6.2            
- [7] tools_4.3.0             bitops_1.0-7            generics_0.1.3         
-[10] parallel_4.3.0          tibble_3.2.1            fansi_1.0.4            
-[13] highr_0.10              pkgconfig_2.0.3         R.oo_1.25.0            
-[16] Matrix_1.5-4            KernSmooth_2.23-21      lifecycle_1.0.3        
-[19] GenomeInfoDbData_1.2.10 R.cache_0.16.0          farver_2.1.1           
-[22] compiler_4.3.0          stringr_1.5.0           gplots_3.1.3           
-[25] munsell_0.5.0           codetools_0.2-19        misc3d_0.9-1           
-[28] htmltools_0.5.5         RCurl_1.98-1.12         yaml_2.3.7             
-[31] pillar_1.9.0            crayon_1.5.2            MASS_7.3-60            
-[34] R.utils_2.12.2          DelayedArray_0.26.3     iterators_1.0.14       
-[37] foreach_1.5.2           gtools_3.9.4            tidyselect_1.2.0       
-[40] digest_0.6.31           stringi_1.7.12          dplyr_1.1.2            
-[43] reshape2_1.4.4          labeling_0.4.2          fastmap_1.1.1          
-[46] grid_4.3.0              colorspace_2.1-0        cli_3.6.1              
-[49] magrittr_2.0.3          S4Arrays_1.0.4          utf8_1.2.3             
-[52] withr_2.5.0             scales_1.2.1            rmarkdown_2.21         
-[55] XVector_0.40.0          R.methodsS3_1.8.2       evaluate_0.21          
-[58] knitr_1.42              tcltk_4.3.0             doParallel_1.0.17      
-[61] rlang_1.1.1             Rcpp_1.0.10             glue_1.6.2             
-[64] ppcor_1.1               rstudioapi_0.14         R6_2.5.1               
-[67] plyr_1.8.8              zlibbioc_1.46.0        
+ [1] bitops_1.0-7           fs_1.6.2               doParallel_1.0.17     
+ [4] rprojroot_2.0.3        R.cache_0.16.0         tools_4.2.3           
+ [7] profvis_0.3.8          utf8_1.2.3             R6_2.5.1              
+[10] KernSmooth_2.23-21     colorspace_2.1-0       urlchecker_1.0.1      
+[13] withr_2.5.0            tidyselect_1.2.0       prettyunits_1.1.1     
+[16] processx_3.8.1         compiler_4.2.3         cli_3.6.1             
+[19] desc_1.4.2             DelayedArray_0.24.0    labeling_0.4.2        
+[22] caTools_1.18.2         scales_1.2.1           callr_3.7.3           
+[25] stringr_1.5.0          digest_0.6.31          R.utils_2.12.2        
+[28] rmarkdown_2.22         XVector_0.38.0         pkgconfig_2.0.3       
+[31] htmltools_0.5.5        sessioninfo_1.2.2      highr_0.10            
+[34] fastmap_1.1.1          htmlwidgets_1.6.2      rlang_1.1.1           
+[37] rstudioapi_0.14        shiny_1.7.4            farver_2.1.1          
+[40] generics_0.1.3         gtools_3.9.4           R.oo_1.25.0           
+[43] dplyr_1.1.2            RCurl_1.98-1.12        magrittr_2.0.3        
+[46] GenomeInfoDbData_1.2.9 Matrix_1.5-4.1         Rcpp_1.0.10           
+[49] munsell_0.5.0          fansi_1.0.4            R.methodsS3_1.8.2     
+[52] lifecycle_1.0.3        stringi_1.7.12         yaml_2.3.7            
+[55] brio_1.1.3             MASS_7.3-60            zlibbioc_1.44.0       
+[58] plyr_1.8.8             pkgbuild_1.4.1         gplots_3.1.3          
+[61] grid_4.2.3             misc3d_0.9-1           parallel_4.2.3        
+[64] promises_1.2.0.1       ppcor_1.1              crayon_1.5.2          
+[67] miniUI_0.1.1.1         lattice_0.21-8         knitr_1.43            
+[70] ps_1.7.5               pillar_1.9.0           tcltk_4.2.3           
+[73] reshape2_1.4.4         codetools_0.2-19       pkgload_1.3.2         
+[76] glue_1.6.2             evaluate_0.21          remotes_2.4.2         
+[79] vctrs_0.6.2            httpuv_1.6.11          foreach_1.5.2         
+[82] gtable_0.3.3           purrr_1.0.1            cachem_1.0.8          
+[85] ggplot2_3.4.2          xfun_0.39              mime_0.12             
+[88] xtable_1.8-4           later_1.3.1            tibble_3.2.1          
+[91] iterators_1.0.14       memoise_2.0.1          ellipsis_0.3.2        
 ```
 
 ## (5) Acknowledgements

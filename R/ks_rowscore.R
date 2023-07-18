@@ -10,8 +10,11 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param weight a vector of weights to perform a \code{weighted-KS} test.
-#' Default is \code{NULL}. If not NULL, \code{weight} must have labels or names
+#' @param meta_feature a vector of one or more features representing known causes
+#' of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
+#' @param weights a vector of weights to perform a \code{weighted-KS} test.
+#' Default is \code{NULL}. If not NULL, \code{weights} must have labels or names
 #' that match labels of \code{input_score}.
 #' @param alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
@@ -39,7 +42,8 @@
 #' ks_rs <- ks_rowscore(
 #'    FS = mat,
 #'    input_score = input_score,
-#'    weight = NULL,
+#'    meta_feature = NULL,
+#'    weights = NULL,
 #'    alternative = "less",
 #'    metric = "pval"
 #' )
@@ -51,7 +55,8 @@ ks_rowscore <- function
 (
   FS,
   input_score,
-  weight = NULL,
+  meta_feature = NULL,
+  weights = NULL,
   alternative = c("less", "greater", "two.sided"),
   metric = c("stat", "pval")
 )
@@ -60,6 +65,35 @@ ks_rowscore <- function
   metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
+  # Check if meta_feature is provided
+  if(!is.null(meta_feature)){
+    # Getting the position of the known meta features
+    locs <- match(meta_feature, row.names(FS))
+    
+    # Taking the union across the known meta features
+    if(length(locs) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
+    }else{
+      meta_vector <- as.numeric(FS[locs, , drop=FALSE])
+    }
+    
+    # Remove the meta features from the binary feature matrix
+    # and taking logical OR btw the remaining features with the meta vector
+    FS <- base::sweep(FS[-locs, , drop=FALSE], 2, meta_vector, `|`)*1
+    
+    # Check if there are any features that are all 1s generated from
+    # taking the union between the matrix
+    # We cannot compute statistics for such features and thus they need
+    # to be filtered out
+    if(any(rowSums(FS) == ncol(FS))){
+      verbose("Features with all 1s generated from taking the matrix union ",
+              "will be removed before progressing...\n")
+      FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
+      # If no features remained after filtering, exist the function
+      if(nrow(FS) == 0) return(NULL)
+    }
+  }
+    
   # KS is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
@@ -67,23 +101,23 @@ ks_rowscore <- function
   # Re-order the matrix based on the order of input_score
   FS <- FS[, names(input_score), drop=FALSE]  
   
-  # Check if weight is provided
-  if(length(weight) > 0){
-    # Check if weight has any labels or names
-    if(is.null(names(weight)))
-      stop("The weight object must have names or labels that ",
+  # Check if weights is provided
+  if(length(weights) > 0){
+    # Check if weights has any labels or names
+    if(is.null(names(weights)))
+      stop("The weights object must have names or labels that ",
            "match the labels of input_score\n")
 
     # Make sure its labels or names match the
     # the labels of input_score 
-    weight <- as.numeric(weight[names(input_score)])
+    weights <- as.numeric(weights[names(input_score)])
   }
 
   # Get the alternative hypothesis testing method
   alt_int <- switch(alternative, two.sided=0L, less=1L, greater=-1L, 1L)
 
   # Compute the ks statistic and p-value per row in the matrix
-  ks <- .Call(ks_genescore_mat_, FS, weight, alt_int)
+  ks <- .Call(ks_genescore_mat_, FS, weights, alt_int)
 
   # Obtain score statistics from KS method
   # Change values of 0 to the machine lowest value to avoid taking -log(0)
@@ -111,7 +145,7 @@ ks_rowscore <- function
 #' @param alt an integer value specifying the alternative hypothesis
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
-#' @param weight a vector of weights to use if performing a weighted-KS test
+#' @param weights a vector of weights to use if performing a weighted-KS test
 #' 
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_mat_
@@ -119,9 +153,9 @@ ks_rowscore <- function
 #' @return Two lists: score and p-value
 ks_rowscore_calc <- function(
     mat,
-    alt=c("less", "greater", "two.sided"),
-    weight
-) {
+    alt = c("less", "greater", "two.sided"),
+    weights
+){
 
   if(!is.matrix(mat))
     stop("Input argument to ks_gene_score_mat function is not a matrix")
@@ -134,8 +168,8 @@ ks_rowscore_calc <- function(
 
   # Ensure the right type of input
   mat.num <- matrix(as.numeric(mat), ncol=ncol(mat), nrow=nrow(mat))
-  weight <- if( length(weight) > 1 ) as.numeric(weight)
-  res <- .Call(ks_genescore_mat_, mat.num, weight, alt_int)
+  weights <- if( length(weights) > 1 ) as.numeric(weights)
+  res <- .Call(ks_genescore_mat_, mat.num, weights, alt_int)
   res
 
 }
@@ -147,7 +181,7 @@ ks_rowscore_calc <- function(
 #' Compute directional Kolmogorov-Smirnov scores for each row of a given vector
 #' @param n_x length of ranked list
 #' @param y positions of geneset items in ranked list (ranks)
-#' @param weight a vector of weights
+#' @param weights a vector of weights
 #' @param alt alternative hypothesis for p-value calculation
 #' (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
@@ -155,9 +189,13 @@ ks_rowscore_calc <- function(
 #' @noRd
 #' @useDynLib CaDrA ks_genescore_wrap_
 #'
-#' @return a numeric vector of lenght 2 with 2 values: score and p-value
-ks_genescore_wrap <- function(n_x, y, weight,
-                              alt=c("less", "greater", "two.sided")) {
+#' @return a numeric vector of length 2 with 2 values: score and p-value
+ks_genescore_wrap <- function(
+    n_x, 
+    y, 
+    weights,
+    alt = c("less", "greater", "two.sided")
+){
   
   if(length(alt) > 0){
     alt_int<- switch(alt, two.sided=0L, less=1L, greater=-1L, 1L)
@@ -168,8 +206,8 @@ ks_genescore_wrap <- function(n_x, y, weight,
   # Ensure the right type of input
   y <- as.integer(y)
   n_x <- as.integer(n_x)
-  if(length(weight) > 1) weight <- as.numeric(weight)
-  res <- .Call(ks_genescore_wrap_, n_x, y, weight, alt_int)
+  if(length(weights) > 1) weights <- as.numeric(weights)
+  res <- .Call(ks_genescore_wrap_, n_x, y, weights, alt_int)
   res
   
 }

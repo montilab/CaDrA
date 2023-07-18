@@ -252,7 +252,7 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
 
 
 # ========================================================================= #
-test_that("CaDrA returns expected result for Revealer algorithm", {
+test_that("CaDrA returns expected result for knnmi algorithm", {
   
   # Load pre-computed feature set
   data(sim_FS)
@@ -263,11 +263,11 @@ test_that("CaDrA returns expected result for Revealer algorithm", {
   # Set seed
   set.seed(21)
   
-  # Revealer
+  # knnmi
   result <- CaDrA(
     FS = sim_FS, 
     input_score = sim_Scores, 
-    method = "revealer", 
+    method = "knnmi", 
     weights = NULL, 
     alternative = "less", 
     top_N = 1,

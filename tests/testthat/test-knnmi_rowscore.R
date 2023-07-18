@@ -1,5 +1,5 @@
 
-test_that("revealer_rowscore returns correct results", {
+test_that("knnmi_rowscore returns correct results", {
   
   mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 
                   0,0,1,0,1,0,1,0,0,0,
@@ -14,7 +14,7 @@ test_that("revealer_rowscore returns correct results", {
   input_score = rnorm(n = ncol(mat))
   names(input_score) <- colnames(mat)
   
-  result <- revealer_rowscore(
+  result <- knnmi_rowscore(
     FS = mat, 
     input_score = input_score, 
     meta_feature = NULL,
@@ -27,7 +27,7 @@ test_that("revealer_rowscore returns correct results", {
   testthat::expect_equal(round(result, 7), 
                          c(TP_1=0.4573207, TP_2=-0.4266714, TP_3=0.3867053))
   
-  result <- revealer_rowscore(
+  result <- knnmi_rowscore(
     FS = mat, 
     input_score = input_score, 
     meta_feature = NULL,
@@ -43,7 +43,7 @@ test_that("revealer_rowscore returns correct results", {
 })
 
 ## --------------------------------------------------- ##
-test_that("revealer_score returns correct results", {
+test_that("knnmi_score returns correct results", {
   
   # Set seed
   set.seed(42)
@@ -52,7 +52,7 @@ test_that("revealer_score returns correct results", {
   x <- c(1,0,1,0,0,0,0,0,1,0)
   meta_vector <- rep(0, 10)
     
-  result <- revealer_score(
+  result <- knnmi_score(
     x = input_score,
     y = x,
     z = meta_vector,

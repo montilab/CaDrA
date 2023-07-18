@@ -67,12 +67,12 @@ test_that("candidate_search returns expected result ",{
   testthat::expect_length(result[[1]][[3]], 1L)
   testthat::expect_equal(round(result[[1]][[3]],5), c("TP_9"=27.75113))
   
-  # Run candidate_search with revealer method
+  # Run candidate_search with knnmi method
   result <- suppressWarnings(
     candidate_search(
       FS = sim_FS, 
       input_score = sim_Scores, 
-      method = "revealer",
+      method = "knnmi",
       alternative = "less", 
       weights = NULL,
       search_start = NULL,

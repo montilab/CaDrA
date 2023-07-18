@@ -17,7 +17,7 @@ load_all()
 The **CaDrA** package currently provides four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
 
 1. Kolmogorov-Smirnov Method (`ks`)
-2. Conditional Mutual Information Method (`revealer`)
+2. Conditional Mutual Information Method (`knnmi`)
 3. Wilcoxon Rank-Sum Method (`wilcox`)
 4. Custom - An User's Provided Scoring Function (`custom`)
 
@@ -103,14 +103,14 @@ meta_plot(topn_best_list = wilcox_topn_best_meta)
 
 # Conditional Mutual Information scoring method 
 
-See `?revealer_rowscore` for more details
+See `?knnmi_rowscore` for more details
 
-```{r revealer.method}
+```{r knnmi.method}
 
-revealer_topn_l <- CaDrA::candidate_search(
+knnmi_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "revealer",         # Use REVEALER's CMI scoring function
+  method = "knnmi",            # Use knnmi CMI scoring function
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 7,                # Allow at most 7 features in meta-feature matrix
@@ -119,10 +119,10 @@ revealer_topn_l <- CaDrA::candidate_search(
 )
 
 # Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
-revealer_topn_best_meta <- topn_best(topn_list = revealer_topn_l)
+knnmi_topn_best_meta <- topn_best(topn_list = knnmi_topn_l)
 
 # Visualize best meta-feature result
-meta_plot(topn_best_list = revealer_topn_best_meta)
+meta_plot(topn_best_list = knnmi_topn_best_meta)
 
 ```
 

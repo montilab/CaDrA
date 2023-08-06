@@ -28,5 +28,5 @@ toy[1:10,1:5]
 
 if (do_save) {
   saveRDS(toy, file = file.path(PATH,"toy_dataset2.rds"))
-  write.csv(toy, file = file.path(PATH,"toy_dataset2.csv"))
+  write.csv(toy, file = file.path(PATH,"toy_dataset2.csv"), row.names = FALSE)
 }

@@ -11,7 +11,7 @@ CaDrA(
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  weight = NULL,
+  weights = NULL,
   top_N = 1,
   search_start = NULL,
   search_method = c("both", "forward"),
@@ -62,7 +62,7 @@ testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
 NOTE: this argument only apply to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_score}, specifies a vector of weights 
+\item{weights}{if method is \code{ks_score}, specifies a vector of weights 
 to perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the
@@ -111,12 +111,12 @@ diagnostic messages. Default is \code{FALSE}.}
 a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 \code{obs_best_score}, \code{perm_pval}
 \code{key}: a list of parameters that are used to cache the 
-result of the permutation-based testing. This is useful as the
+results of the permutation-based testing. This is useful as the
 permuted scores are recycled to save time for future loading.
 \code{perm_best_scores}: a vector of permuted best scores obtained 
-by performing \code{candidate_search} over (\code{n_perm}) iterations of 
-permuted input scores.
-\code{obs_best_score}: the observed best score is calculated by performing
+by performing \code{candidate_search} over \code{n_perm} iterations of 
+the permuted input scores.
+\code{obs_best_score}: the observed best score obtained by performing
 \code{candidate_search} on the given dataset and parameters. This value is 
 later used to compare against the permuted best scores 
 (\code{perm_best_scores}).
@@ -129,8 +129,6 @@ using \code{candidate_search} as the main iterative function for each run.
 }
 \examples{
 
-\donttest{
-
 # Load pre-computed feature set
 data(sim_FS)
 
@@ -141,15 +139,12 @@ data(sim_Scores)
 set.seed(21)
 
 # Define additional parameters and start the function
-# DONNOT RUN as this would take some time
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
-  weight = NULL, alternative = "less", top_N = 1,
+  weights = NULL, alternative = "less", top_N = 1,
   search_start = NULL, search_method = "both", max_size = 7, 
   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL
 )
-
-}
 
 }

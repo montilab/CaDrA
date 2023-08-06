@@ -10,9 +10,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param seed_names a vector of one or more features representing known causes
-#' of activation or features associated with a response of interest.
-#' Default is NULL.
+#' @param meta_feature a vector of one or more features representing known 
+#' causes of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
 #' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
 #' 
@@ -44,46 +44,35 @@ revealer_rowscore <- function
 (
   FS,
   input_score,
-  seed_names = NULL,
+  meta_feature = NULL,
   assoc_metric = c("IC", "COR")
 )
 {
 
   assoc_metric <- match.arg(assoc_metric)
   
-  # Check if seed_names is provided
-  if(length(seed_names) == 0){
-    seed_vector <- as.vector(rep(0, ncol(FS)))
+  # Check if meta_feature is provided
+  if(is.null(meta_feature)){
+    meta_vector <- as.vector(rep(0, ncol(FS)))
   }else{
-    
-    # Check if seed_names exit among the row names of the FS object 
-    if(any(!seed_names %in% rownames(FS)))
-      stop(paste0(
-        "The provided seed_names, ",
-        paste0(seed_names[which(!seed_names %in% rownames(FS))], 
-               collapse = ","), 
-        ", do not exist among the row names of the FS object")
-      )
-    
-    # Consolidate or summarize one or more seeds into one vector of values
-    if(length(seed_names) > 1) {
-      seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
+    # Getting the position of the known meta features
+    locs <- match(meta_feature, row.names(FS))
+    # Taking the union across the known meta features
+    if(length(locs) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
     }else{
-      seed_vector <- as.numeric(FS[seed_names,])
+      meta_vector <- as.numeric(FS[locs,])
     }
-    
     # Remove the seeds from the binary feature matrix
-    locs <- match(seed_names, row.names(FS))
-    FS <- FS[-locs,]
-    
+    FS <- FS[-locs, , drop=FALSE]
   }
   
-  # Compute CMI
+  # Compute CMI given known seed features
   cmi <- apply(X=FS, MARGIN=1, function(x){
     revealer_score(
       x = input_score,
       y = x,
-      z = seed_vector,
+      z = meta_vector,
       assoc_metric = assoc_metric
     )
   })

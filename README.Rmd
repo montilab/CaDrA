@@ -1,7 +1,6 @@
 
 ---
 output: rmarkdown::github_document
-title: CaDrA
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -10,12 +9,15 @@ title: CaDrA
 knitr::opts_chunk$set(fig.path="./man/figures/", message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
 library(devtools)
-load_all(".")
+load_all()
 ```
 
-<!-- badges: start -->
-<!-- [![R-CMD-check](https://github.com/montilab/CaDrA/workflows/R-CMD-check/badge.svg)](https://github.com/montilab/CaDrA/actions) -->
-<!-- badges: end -->
+# CaDrA
+
+![build](https://github.com/montilab/cadra/workflows/rcmdcheck/badge.svg)
+![Gitter](https://img.shields.io/gitter/room/montilab/cadra)
+![GitHub issues](https://img.shields.io/github/issues/montilab/cadra)
+![GitHub last commit](https://img.shields.io/github/last-commit/montilab/cadra)
   
 **Ca**ndidate **Dr**ivers **A**nalysis: Multi-Omic Search for Candidate Drivers of Functional Signatures
 
@@ -24,7 +26,7 @@ load_all(".")
 The main function takes two inputs:
 
 i) A binary multi-omics dataset, which can be represented as a matrix of binary features or a **SummarizedExperiment** class object where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features (e.g. somatic mutations, copy number alterations, epigenetic marks, etc.), and the columns are the samples.
-ii) A molecular phenotype of interest, which can be represented as a vector of continuous scores (e.g. protein expression, pathway activity, etc.)
+ii) A molecular phenotype of interest which can be represented as a vector of continuous scores (e.g. protein expression, pathway activity, etc.)
 
 Based on these two inputs, **CaDrA** implements a forward/backward search algorithm to find a set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
 
@@ -32,9 +34,23 @@ For more information, please see the associated manuscript [Kartha et al. (2019)
 
 ## (1) Installation
 
+- Using `devtools` package
+
 ```r
 library(devtools)
 devtools::install_github("montilab/CaDrA")
+```
+
+- Using `BiocManager` package
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("CaDrA")
 ```
 
 ## (2) Quickstart
@@ -79,7 +95,7 @@ eset_mut_scna_flt <- CaDrA::prefilter_data(
 
 Here, we repeat the candidate search starting from each of the top 'N' features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs). 
 
-IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the recommended `candidate_search()` function
+IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the new recommended `candidate_search()` function
 
 ```{r cadra}
 
@@ -87,7 +103,7 @@ topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weight = NULL,               # If weights is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for each search

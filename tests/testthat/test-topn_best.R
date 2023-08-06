@@ -3,7 +3,6 @@ test_that("topn_best returns expected results",{
   data(topn_list)
   result <- topn_best(topn_list = topn_list)
   
-  
   testthat::expect_length(result, 3L)
   testthat::expect_type(result, "list")
   testthat::expect_named(result, 
@@ -14,7 +13,6 @@ test_that("topn_best returns expected results",{
   testthat::expect_named(result$feature_set, 
                          c("TP_8", "TP_9", "TN_216", "TP_10", "TP_6",
                            "TN_182", "TN_12", "TN_105", "TN_275", "TN_472"))
-  
   
   testthat::expect_type(result$input_score, "double")
   testthat::expect_length(result$input_score, 100L)

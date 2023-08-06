@@ -11,7 +11,7 @@ candidate_search(
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  weight = NULL,
+  weights = NULL,
   search_start = NULL,
   top_N = 1,
   search_method = c("both", "forward"),
@@ -58,9 +58,9 @@ to be passed to the \code{custom_function}. Default is \code{NULL}.}
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
 
-NOTE: This argument is applied to KS and Wilcoxon method}
+NOTE: This argument is ONLY applied to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
+\item{weights}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
 vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)
@@ -130,7 +130,7 @@ data(sim_Scores)
 # Define additional parameters and run the function
 candidate_search_result <- candidate_search(
   FS = sim_FS, input_score = sim_Scores, 
-  method = "ks_pval", alternative = "less", weight = NULL, 
+  method = "ks_pval", alternative = "less", weights = NULL, 
   search_start = NULL, top_N = 3, search_method = "both",
   max_size = 7, best_score_only = FALSE
 )

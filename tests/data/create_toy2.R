@@ -20,8 +20,8 @@ toy <- data.frame(
 )
 ## show correlation between feature and each of the 50 scores
 COR <- cor(toy$feature, toy |> dplyr::select(-feature)) |> drop()
-stopifnot(all(diff(COR)<0)) # check that correlations are in descending order
 plot(COR, ylab = "correlation")
+stopifnot(all(diff(COR)<0)) # check that correlations are in descending order
 
 ## show few entries
 toy[1:10,1:5]

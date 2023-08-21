@@ -18,7 +18,7 @@
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
-#' \code{"knnmi"} (conditional mutual information) or
+#' \code{"revealer"} (conditional mutual information from REVEALER) or
 #' \code{"custom"} (a customized scoring method)). 
 #' Default is \code{ks_pval}.
 #' @param custom_function if method is \code{"custom"}, specifies
@@ -83,11 +83,11 @@
 #'   alternative = "less"
 #' )
 #'
-#' # Run the knnmi method
-#' knnmi_rowscore_result <- calc_rowscore(
+#' # Run the revealer method
+#' revealer_rowscore_result <- calc_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
-#'   method = "knnmi",
+#'   method = "revealer",
 #'   meta_feature = NULL
 #' )
 #' 
@@ -170,7 +170,7 @@ calc_rowscore <- function(
     input_score,
     meta_feature = NULL,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
-               "knnmi", "custom"),
+               "revealer", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,   
     alternative = c("less", "greater", "two.sided"),
@@ -233,6 +233,12 @@ calc_rowscore <- function(
       alternative = alternative,
       metric = metric
     ),
+    revealer = revealer_rowscore(
+      FS = FS_mat,
+      input_score = input_score,
+      meta_feature = meta_feature,
+      assoc_metric = "IC"
+   ),
     knnmi = knnmi_rowscore(
       FS = FS_mat,
       input_score = input_score,
@@ -264,6 +270,7 @@ calc_rowscore <- function(
   }
 
 }
+
 
 
 

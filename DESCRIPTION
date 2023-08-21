@@ -42,7 +42,8 @@ Imports:
     R.cache,
     reshape2,
     stats, 
-    SummarizedExperiment 
+    SummarizedExperiment,
+    knnmi
 Suggests: 
     BiocStyle,
     devtools,

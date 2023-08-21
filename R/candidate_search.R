@@ -20,7 +20,7 @@
 #' column names of \code{FS} object.
 #' @param method a character string specifies a scoring method that is
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
-#' or \code{"wilcox_pval"} or \code{wilcox_score} or 
+#' or \code{"wilcox_pval"} or \code{wilcox_score} or \code{revealer} or
 #' \code{"knnmi"} (conditional mutual information) or
 #' \code{"custom"} (a customized scoring method)). 
 #' Default is \code{ks_pval}.
@@ -100,7 +100,7 @@
 candidate_search <- function(
     FS,
     input_score,
-    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
+    method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
                "knnmi", "custom"),
     custom_function = NULL,
     custom_parameters = NULL,

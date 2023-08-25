@@ -85,6 +85,7 @@ using <code>candidate_search</code> as the main iterative function for each run.
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cache <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  cache_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -195,11 +196,17 @@ null distribution of the permuted best scores. Default is <code>TRUE</code>.</p>
 parallelization for permutation-based testing. Default is <code>1</code>.</p></dd>
 
 
+<dt>cache</dt>
+<dd><p>a logical value to determine whether or not to cache the 
+permuted best scores. This would help save time for future loading instead 
+of re-computing the permutation-based testing every time. 
+Default is <code>TRUE</code>.</p></dd>
+
+
 <dt>cache_path</dt>
-<dd><p>a full path uses to cache the permuted best scores.
-We recycle these scores instead of re-computing them to save time.
-Default is <code>NULL</code>. If NULL, the cache path is set to <code>~/.Rcache</code>
-for future loading.</p></dd>
+<dd><p>If cache = TRUE, a full path can be used to cache the 
+permuted best scores. Default is <code>NULL</code>. If NULL, the cache path is
+set to <code>~/.Rcache</code> for future loading.</p></dd>
 
 
 <dt>verbose</dt>
@@ -215,17 +222,24 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 <code>obs_best_score</code>, <code>perm_pval</code></p>
 
 
-<p><code>key</code>: a list of parameters that are used to cache the 
+
+<p>-<code>key</code>: a list of parameters that are used to cache the 
 results of the permutation-based testing. This is useful as the
-permuted scores are recycled to save time for future loading.
-<code>perm_best_scores</code>: a vector of permuted best scores obtained 
+permuted best scores can be recycled to save time for future loading.</p>
+
+
+<p>-<code>perm_best_scores</code>: a vector of permuted best scores obtained 
 by performing <code>candidate_search</code> over <code>n_perm</code> iterations of 
-the permuted input scores.
-<code>obs_best_score</code>: the observed best score obtained by performing
-<code>candidate_search</code> on the given dataset and parameters. This value is 
-later used to compare against the permuted best scores 
-(<code>perm_best_scores</code>).
-<code>perm_pval</code>: a permutation-based p-value obtained by calculating
+permuted input scores.</p>
+
+
+<p>-<code>obs_best_score</code>: the observed best score obtained by performing
+<code>candidate_search</code> on a given dataset and input parameters. This 
+value is later used to compare against the permuted best scores 
+(<code>perm_best_scores</code>).</p>
+
+
+<p><code>perm_pval</code>: a permutation-based p-value obtained by calculating
 sum(perm_best_scores &gt; obs_best_score)/n_perm</p>
     </div>
 

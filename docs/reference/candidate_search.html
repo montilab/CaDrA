@@ -86,7 +86,6 @@ the <code>CaDrA</code> package.</p>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  do_check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -155,7 +154,7 @@ parameter will be ignored. Default is <code>NULL</code>.</p></dd>
 <dd><p>an integer specifies the number of features to start the
 search over, starting from the top 'N' features in each case. If <code>top_N</code>
 is provided, then <code>search_start</code> parameter will be ignored. Default is
-<code>1</code>.</p></dd>
+<code>1</code>. NOTE: top_N &gt; 10 may result in a longer search time.</p></dd>
 
 
 <dt>search_method</dt>
@@ -181,12 +180,6 @@ overlapping features of the resulting meta-feature matrix.</p>
 <p>NOTE: plot can only be produced if the resulting meta-feature matrix contains 
 more than 1 feature (e.g. length(search_start) &gt; 1 or top_N &gt; 1). 
 Default is <code>FALSE</code>.</p></dd>
-
-
-<dt>do_check</dt>
-<dd><p>a logical value indicates whether or not to validate if the
-given parameters (FS and input_score) are valid inputs. 
-Default is <code>TRUE</code>.</p></dd>
 
 
 <dt>verbose</dt>

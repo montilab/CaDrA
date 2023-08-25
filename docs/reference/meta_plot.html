@@ -80,7 +80,7 @@ input scores sorted from largest to smallest at the top.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">meta_plot</span><span class="op">(</span><span class="va">topn_best_list</span>, input_score_label <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">meta_plot</span><span class="op">(</span><span class="va">topn_best_list</span>, input_score_label <span class="op">=</span> <span class="cn">NULL</span>, plot_title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -99,17 +99,20 @@ and observed input scores.</p></dd>
 variable that was used to compute the top N best features. 
 Default is <code>NULL</code>.</p></dd>
 
+
+<dt>plot_title</dt>
+<dd><p>a title to the plot. Default is <code>NULL</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>a density diagram of observed input scores 
-(sorted from largest to lowest), 
-a tile plot of the top features within the meta-feature set, 
-and a KS enrichment plot 
-of the meta-feature set for a given distribution (here, this will correspond 
-to the logical OR of the features)</p>
+<p>3 plots stacked together: 
+1. a density diagram of observed input scores sorted from highest to lowest 
+2. a tile plot of the top features within the meta-feature set 
+3. a KS enrichment plot of the meta-feature set 
+(here, this will correspond to the logical OR of the features)</p>
     </div>
 
     <div id="ref-examples">

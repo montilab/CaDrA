@@ -6,8 +6,8 @@
 \title{Top-N Results for Simulated Data (\code{sim_FS})}
 \format{
 A list of objects returned from \code{candidate_search} including 
-a set of meta-features in form of SummarizedExperiment objects, 
-its observed input_score, and corresponding best score pertaining to each 
+a set of meta-features in form of SummarizedExperiment object, 
+its observed input scores, and corresponding best score pertaining to each 
 top N feature searches.
 
 See \code{\link[CaDrA]{candidate_search}} for more information.
@@ -16,7 +16,7 @@ See \code{\link[CaDrA]{candidate_search}} for more information.
 data(topn_list)
 }
 \value{
-a list of objects returned from \code{candidate_search}function
+a list of objects returned from \code{candidate_search} function
 }
 \description{
 A list of objects returned from \code{candidate_search} 
@@ -31,9 +31,8 @@ in \code{sim_FS} dataset.
 }
 \details{
 Over top_N = 7 feature searches, a set of meta-features in form 
-of SummarizedExperiment 
-object, along with a vector of observed input scores and 
-its corresponding best score are returned from each search.
+of SummarizedExperiment object, along with a vector of observed input scores 
+and its corresponding best score are returned from each search.
 }
 \examples{
 

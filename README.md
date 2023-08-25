@@ -163,8 +163,8 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.7                testthat_3.1.8             
- [3] devtools_2.4.5              usethis_2.2.0              
+ [1] CaDrA_0.99.7                testthat_3.1.10            
+ [3] devtools_2.4.5              usethis_2.2.2              
  [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
  [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.9        
  [9] IRanges_2.32.0              S4Vectors_0.36.2           
@@ -172,35 +172,35 @@ other attached packages:
 [13] matrixStats_1.0.0          
 
 loaded via a namespace (and not attached):
- [1] bitops_1.0-7           fs_1.6.2               doParallel_1.0.17     
+ [1] bitops_1.0-7           fs_1.6.3               doParallel_1.0.17     
  [4] rprojroot_2.0.3        R.cache_0.16.0         tools_4.2.3           
  [7] profvis_0.3.8          utf8_1.2.3             R6_2.5.1              
-[10] KernSmooth_2.23-21     colorspace_2.1-0       urlchecker_1.0.1      
+[10] KernSmooth_2.23-20     colorspace_2.1-0       urlchecker_1.0.1      
 [13] withr_2.5.0            tidyselect_1.2.0       prettyunits_1.1.1     
-[16] processx_3.8.1         compiler_4.2.3         cli_3.6.1             
+[16] processx_3.8.2         compiler_4.2.3         cli_3.6.1             
 [19] desc_1.4.2             DelayedArray_0.24.0    labeling_0.4.2        
 [22] caTools_1.18.2         scales_1.2.1           callr_3.7.3           
-[25] stringr_1.5.0          digest_0.6.31          R.utils_2.12.2        
-[28] rmarkdown_2.22         XVector_0.38.0         pkgconfig_2.0.3       
-[31] htmltools_0.5.5        sessioninfo_1.2.2      highr_0.10            
+[25] stringr_1.5.0          digest_0.6.33          R.utils_2.12.2        
+[28] rmarkdown_2.24         XVector_0.38.0         pkgconfig_2.0.3       
+[31] htmltools_0.5.6        sessioninfo_1.2.2      highr_0.10            
 [34] fastmap_1.1.1          htmlwidgets_1.6.2      rlang_1.1.1           
-[37] rstudioapi_0.14        shiny_1.7.4            farver_2.1.1          
+[37] rstudioapi_0.15.0      shiny_1.7.5            farver_2.1.1          
 [40] generics_0.1.3         gtools_3.9.4           R.oo_1.25.0           
 [43] dplyr_1.1.2            RCurl_1.98-1.12        magrittr_2.0.3        
-[46] GenomeInfoDbData_1.2.9 Matrix_1.5-4.1         Rcpp_1.0.10           
+[46] GenomeInfoDbData_1.2.9 Matrix_1.5-3           Rcpp_1.0.11           
 [49] munsell_0.5.0          fansi_1.0.4            R.methodsS3_1.8.2     
 [52] lifecycle_1.0.3        stringi_1.7.12         yaml_2.3.7            
-[55] brio_1.1.3             MASS_7.3-60            zlibbioc_1.44.0       
-[58] plyr_1.8.8             pkgbuild_1.4.1         gplots_3.1.3          
+[55] brio_1.1.3             MASS_7.3-58.2          zlibbioc_1.44.0       
+[58] plyr_1.8.8             pkgbuild_1.4.2         gplots_3.1.3          
 [61] grid_4.2.3             misc3d_0.9-1           parallel_4.2.3        
-[64] promises_1.2.0.1       ppcor_1.1              crayon_1.5.2          
-[67] miniUI_0.1.1.1         lattice_0.21-8         knitr_1.43            
+[64] promises_1.2.1         ppcor_1.1              crayon_1.5.2          
+[67] miniUI_0.1.1.1         lattice_0.20-45        knitr_1.43            
 [70] ps_1.7.5               pillar_1.9.0           tcltk_4.2.3           
-[73] reshape2_1.4.4         codetools_0.2-19       pkgload_1.3.2         
-[76] glue_1.6.2             evaluate_0.21          remotes_2.4.2         
-[79] vctrs_0.6.2            httpuv_1.6.11          foreach_1.5.2         
-[82] gtable_0.3.3           purrr_1.0.1            cachem_1.0.8          
-[85] ggplot2_3.4.2          xfun_0.39              mime_0.12             
+[73] reshape2_1.4.4         codetools_0.2-19       pkgload_1.3.2.1       
+[76] glue_1.6.2             evaluate_0.21          remotes_2.4.2.1       
+[79] vctrs_0.6.3            httpuv_1.6.11          foreach_1.5.2         
+[82] gtable_0.3.4           purrr_1.0.2            cachem_1.0.8          
+[85] ggplot2_3.4.3          xfun_0.40              mime_0.12             
 [88] xtable_1.8-4           later_1.3.1            tibble_3.2.1          
 [91] iterators_1.0.14       memoise_2.0.1          ellipsis_0.3.2        
 ```

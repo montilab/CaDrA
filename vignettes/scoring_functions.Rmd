@@ -7,14 +7,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+```{r set.up, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
+
 library(SummarizedExperiment)
+library(pheatmap)
 library(devtools)
 load_all()
+
 ```
 
-The **CaDrA** package currently provides four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
+The **CaDrA** package currently supports four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
 
 1. Kolmogorov-Smirnov Method (`ks`)
 2. Conditional Mutual Information Method (`revealer`)
@@ -25,18 +29,19 @@ Below, we run `candidate_search()` over the top 3 starting features using each o
 
 **Important Note:**
 
-- The legacy function `topn_eval()` is equivalent to the recommended `candidate_search()` function
+- The legacy/deprecated function `topn_eval()` is equivalent to the new and recommended `candidate_search()` function
 
 # Load packages
 
 ```r
 library(CaDrA)
+library(pheatmap)
 ```
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 row vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **SummarizedExperiment** from **SummarizedExperiment** package) 
-2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 row vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` can be a matrix or an object of class **SummarizedExperiment** from **SummarizedExperiment** package) 
+2. A vector of continuous scores (or `Input Scores`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
@@ -48,7 +53,20 @@ data(sim_Scores)
 
 ```
 
-# Kolmogorov-Smirnov scoring method 
+# Heatmap of simulated feature set 
+
+The simulated dataset, `sim_FS`, comprises of 1000 genomic features and 100 sample profiles. There are 10 left-skewed (i.e. True Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN) features simulated in the dataset. Below is a heatmap of the first 100 features.
+
+```{r heatmap}
+
+mat <- SummarizedExperiment::assay(sim_FS)
+pheatmap::pheatmap(mat[1:100, ], color = c("white", "red"), cluster_rows = FALSE, cluster_cols = FALSE)
+
+```
+
+# Search for a subset of genomic features that are likely associated with a functional response of interest using four scoring methods
+
+## 1. Kolmogorov-Smirnov scoring method 
 
 See `?ks_rowscore` for more details
 
@@ -62,7 +80,7 @@ ks_topn_l <- CaDrA::candidate_search(
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
-  max_size = 7,                # Allow at most 7 features in meta-feature matrix
+  max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
 )
@@ -75,7 +93,7 @@ meta_plot(topn_best_list = ks_topn_best_meta)
 
 ```
 
-# Wilcoxon Rank-Sum scoring method 
+## 2. Wilcoxon Rank-Sum scoring method 
 
 See `?wilcox_rowscore` for more details
 
@@ -88,7 +106,7 @@ wilcox_topn_l <- CaDrA::candidate_search(
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
-  max_size = 7,                # Allow at most 7 features in meta-feature matrix
+  max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
 )
@@ -101,7 +119,7 @@ meta_plot(topn_best_list = wilcox_topn_best_meta)
 
 ```
 
-# Conditional Mutual Information scoring method 
+## 3. Conditional Mutual Information scoring method 
 
 See `?revealer_rowscore` for more details
 
@@ -113,7 +131,7 @@ revealer_topn_l <- CaDrA::candidate_search(
   method = "revealer",         # Use REVEALER's CMI scoring function
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
-  max_size = 7,                # Allow at most 7 features in meta-feature matrix
+  max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
   best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
 )
@@ -126,73 +144,80 @@ meta_plot(topn_best_list = revealer_topn_best_meta)
 
 ```
 
-# Custom - An user's provided scoring method
+## 4. Custom - An user's provided scoring method
 
 See `?custom_rowscore` for more details
 
 ```{r custom.method}
 
 # A customized function using ks-test function
-customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less"){
-   
-   # Check if meta_feature is provided
-   if(!is.null(meta_feature)){
-     # Getting the position of the known meta features
-     locs <- match(meta_feature, row.names(FS))
-     
-     # Taking the union across the known meta features
-     if(length(meta_feature) > 1) {
-       meta_vector <- as.numeric(ifelse(colSums(FS[meta_feature,]) == 0, 0, 1))
-     }else{
-       meta_vector <- as.numeric(FS[meta_feature,])
-     }
-      
-     # Remove the meta features from the binary feature matrix
-     # and taking logical OR btw the remaining features with the meta vector
-     locs <- match(meta_feature, row.names(FS))
-     FS <- base::sweep(FS[-locs, , drop=FALSE], 2, meta_vector, `|`)*1
-      
-     # Check if there are any features that are all 1s generated from
-     # taking the union between the matrix
-     # We cannot compute statistics for such features and thus they need
-     # to be filtered out
-     if(any(rowSums(FS) == ncol(FS))){
-       warning("Features with all 1s generated from taking the matrix union ",
-               "will be removed before progressing...\n")
-       FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
-     }
-   }
+customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less", metric="pval"){
+  
+  # Check if meta_feature is provided
+  if(!is.null(meta_feature)){
+    # Getting the position of the known meta features
+    locs <- match(meta_feature, row.names(FS))
     
-   # KS is a ranked-based method
-   # So we need to sort input_score from highest to lowest values
-   input_score <- sort(input_score, decreasing=TRUE)
+    # Taking the union across the known meta features
+    if(length(meta_feature) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[meta_feature,]) == 0, 0, 1))
+    }else{
+      meta_vector <- as.numeric(FS[meta_feature,])
+    }
     
-   # Re-order the matrix based on the order of input_score
-   FS <- FS[, names(input_score), drop=FALSE]  
-   
-   # Compute the scores using the KS method
-   ks <- apply(FS, 1, function(r){ 
-     x = input_score[which(r==1)]; 
-     y = input_score[which(r==0)];
-     res <- ks.test(x, y, alternative=alternative)
-     return(c(res$statistic, res$p.value))
-   })
-   
-   # Obtain score statistics
-   stat <- ks[1,]
-   
-   # Obtain p-values and change values of 0 to the machine lowest value 
-   # to avoid taking -log(0)
-   pval <- ks[2,]
-   pval[which(pval == 0)] <- .Machine$double.xmin
-   
-   # Compute the -log(pval)
-   # Make sure scores has names that match the row names of FS object
-   scores <- -log(pval)
-   names(scores) <- rownames(FS)
-   
-   return(scores)
-   
+    # Remove the meta features from the binary feature matrix
+    # and taking logical OR btw the remaining features with the meta vector
+    FS <- base::sweep(FS[-locs, , drop=FALSE], 2, meta_vector, `|`)*1
+    
+    # Check if there are any features that are all 1s generated from
+    # taking the union between the matrix
+    # We cannot compute statistics for such features and thus they need
+    # to be filtered out
+    if(any(rowSums(FS) == ncol(FS))){
+      warning("Features with all 1s generated from taking the matrix union ",
+              "will be removed before progressing...\n")
+      FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
+    }
+  }
+  
+  # KS is a ranked-based method
+  # So we need to sort input_score from highest to lowest values
+  input_score <- sort(input_score, decreasing=TRUE)
+  
+  # Re-order the matrix based on the order of input_score
+  FS <- FS[, names(input_score), drop=FALSE]  
+  
+  # Compute the scores using the KS method
+  ks <- apply(FS, 1, function(r){ 
+    x = input_score[which(r==1)]; 
+    y = input_score[which(r==0)];
+    res <- ks.test(x, y, alternative=alternative)
+    return(c(res$statistic, res$p.value))
+  })
+  
+  # Obtain score statistics
+  stat <- ks[1,]
+  
+  # Obtain p-values and change values of 0 to the machine lowest value 
+  # to avoid taking -log(0)
+  pval <- ks[2,]
+  pval[which(pval == 0)] <- .Machine$double.xmin
+  
+  # Compute the -log(pval)
+  # Make sure scores has names that match the row names of FS object
+  pval <- -log(pval)
+  
+  # Determine which metric to returned the scores
+  if(metric == "pval"){
+    scores <- pval
+  }else{
+    scores <- stat
+  }
+  
+  names(scores) <- rownames(FS)
+  
+  return(scores)
+  
 }
 
 # Search for best features using a custom-defined function
@@ -204,7 +229,7 @@ custom_topn_l <- CaDrA::candidate_search(
   custom_parameters = NULL,                         # Additional parameters to pass to custom_function
   search_method = "both",                           # Apply both forward and backward search
   top_N = 3,                                        # Evaluate top 3 starting points for the search
-  max_size = 7,                                     # Allow at most 7 features in meta-feature matrix
+  max_size = 10,                                    # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,                                  # We will plot it AFTER finding the best hits
   best_score_only = FALSE                           # Return meta-feature, its observed input scores and corresponding best score
 )

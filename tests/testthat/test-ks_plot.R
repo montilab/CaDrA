@@ -23,8 +23,7 @@ test_that("ks_plot works", {
   expect_s3_class(g$layers[[2]]$geom, "GeomHline")
   expect_s3_class(g$layers[[3]], "LayerInstance")
   expect_s3_class(g$layers[[3]]$geom, "GeomPoint")
-  
-  expect_identical(g$labels$y, "Enrichment Score (feature_set)")
+  expect_identical(g$labels$y, "Enrichment Score")
   
 })
 

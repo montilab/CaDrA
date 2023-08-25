@@ -23,13 +23,14 @@ test_that("candidate_search returns expected result ",{
     weights = NULL, 
     search_start = NULL, 
     search_method = "both", 
+    top_N = 1,
     max_size = 7, 
     best_score_only = FALSE
   )
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 3L)
+  testthat::expect_length(result[[1]], 6L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
@@ -38,7 +39,7 @@ test_that("candidate_search returns expected result ",{
                            "3"=2.050084686, "100"=-2.309168876))
   
   testthat::expect_length(result[[1]][[3]], 1L)
-  testthat::expect_equal(round(result[[1]][[3]],5), c("TN_716"=14.90173))
+  testthat::expect_equal(round(result[[1]][[3]],5), c("TP_8"=14.13128))
   
 
   # Run candidate_search with wilcox method
@@ -50,13 +51,14 @@ test_that("candidate_search returns expected result ",{
     weights = NULL, 
     search_start = NULL, 
     search_method = "both",
+    top_N = 1,
     max_size = 7, 
     best_score_only = FALSE
   )
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 3L)
+  testthat::expect_length(result[[1]], 6L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
@@ -65,7 +67,7 @@ test_that("candidate_search returns expected result ",{
                            "3"=2.050085, "100"=-2.309169))
   
   testthat::expect_length(result[[1]][[3]], 1L)
-  testthat::expect_equal(round(result[[1]][[3]],5), c("TP_9"=27.75113))
+  testthat::expect_equal(round(result[[1]][[3]],5), c("TN_129"=21.35299))
   
   # Run candidate_search with revealer method
   result <- suppressWarnings(
@@ -77,6 +79,7 @@ test_that("candidate_search returns expected result ",{
       weights = NULL,
       search_start = NULL,
       search_method = "both", 
+      top_N = 1,
       max_size = 7,
       best_score_only = FALSE
     )
@@ -84,7 +87,7 @@ test_that("candidate_search returns expected result ",{
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 3L)
+  testthat::expect_length(result[[1]], 6L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
@@ -93,7 +96,7 @@ test_that("candidate_search returns expected result ",{
                            "3"=2.050085, "100"=-2.309169))
   
   testthat::expect_length(result[[1]][[3]], 1L)
-  testthat::expect_equal(round(result[[1]][[3]], 5), c("TN_716"=0.30734))
+  testthat::expect_equal(round(result[[1]][[3]], 5), c("TN_985"=0.37856))
 
 })
 

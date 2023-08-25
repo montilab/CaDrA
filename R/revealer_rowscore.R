@@ -63,12 +63,20 @@ revealer_rowscore <- function
     }else{
       meta_vector <- as.numeric(FS[locs,])
     }
+    names(meta_vector) <- names(input_score)
     # Remove the seeds from the binary feature matrix
     FS <- FS[-locs, , drop=FALSE]
   }
   
+  # Assume the score direction is always positive
+  # So we need to sort input_score from highest to lowest values
+  input_score <- sort(input_score, decreasing=TRUE)
+  
+  # Re-order the matrix based on the order of input_score
+  FS <- FS[, names(input_score), drop=FALSE]    
+  
   # Compute CMI given known seed features
-  cmi <- apply(X=FS, MARGIN=1, function(x){
+  cmi_1 <- apply(X=FS, MARGIN=1, function(x){
     revealer_score(
       x = input_score,
       y = x,
@@ -77,15 +85,11 @@ revealer_rowscore <- function
     )
   })
 
-  names(cmi) <- rownames(FS)
+  names(cmi_1) <- rownames(FS)
   
-  return(cmi)
+  return(cmi_1)
 
 }
-
-
-
-
 
 #' Compute Conditional Mutual Information of x and y given z from 
 #' \code{REVEALER}

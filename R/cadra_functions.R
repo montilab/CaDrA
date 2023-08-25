@@ -185,7 +185,7 @@ check_data_input <- function(
          "names of the FS object.\n")
   
   # Check if the features have either all 0s or 1s values
-  if(any(rowSums(FS_mat) %in% c(0, ncol(FS_mat)) ))
+  if(any(rowSums(FS_mat) %in% c(0, ncol(FS_mat))))
     stop("The FS object has features that are either all 0s or 1s. ",
          "These features must be removed from the FS object as ",
          "they are uninformative.")
@@ -270,10 +270,6 @@ check_top_N <- function(
       stop("Please specify a top_N value that is less than the number of ",
            "features in the FS object.\n")
     
-    if(top_N > 10)
-      warning("top_N value specified is greater than 10. ",
-              "This may result in a longer search time.\n")
-    
     # Getting the top N features with the biggest scores
     top_features <- names(rowscore[seq_len(top_N)])
     
@@ -284,13 +280,9 @@ check_top_N <- function(
     }) |> unlist()
     
     verbose("Evaluating search over top ", length(search_feature_index), 
-            " features\n")
+            " feature(s)\n")
     
   }else{
-    
-    if(!is.na(top_N) && length(top_N) > 0)
-      warning("Since search_start variable is given, ",
-              "evaluating over top_N value will be ignored.\n")
     
     search_start <- strsplit(as.character(search_start), ",", fixed=TRUE) |>
       unlist() |>

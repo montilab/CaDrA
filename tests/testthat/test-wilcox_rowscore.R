@@ -15,6 +15,7 @@ test_that("wilcox_rowscore returns correct results", {
   result <- wilcox_rowscore(
     FS = mat, 
     input_score = input_score, 
+    meta_feature = NULL,
     alternative = "less"
   )
   
@@ -27,14 +28,17 @@ test_that("wilcox_rowscore returns correct results", {
 ## --------------------------------------------------- ##
 test_that("wilcox_rowscore issues error messages when needed", {
   
-  FS <-  data.frame(a = rnorm(10), b = rnorm (10) )
+  FS <-  data.frame(a = rnorm(10), b = rnorm(10))
   set.seed(42)
   input_score = rnorm(n = ncol(FS))
   names(input_score) <- colnames(FS)
   
-  expect_error( wilcox_rowscore(
-    FS = FS,  
-    input_score = input_score)
+  expect_error( 
+    wilcox_rowscore(
+      FS = FS,  
+      input_score = input_score,
+      meta_feature = NULL
+    )
   )
   
 })
@@ -49,11 +53,11 @@ test_that("wilcox_score issues correct errors", {
   y = ranks[which(row == 0)]
   
   mu = NA
-  expect_error( wilcox_score(x, y, mu) )
+  expect_error(wilcox_score(x, y, mu))
   
   mu = 0
-  expect_error( wilcox_score(x=c(), y, mu) )
-  expect_error( wilcox_score(x=x, y=c(), mu) )
+  expect_error(wilcox_score(x=c(), y, mu))
+  expect_error(wilcox_score(x=x, y=c(), mu))
   
 })
   
@@ -67,10 +71,10 @@ test_that("wilcox_score returns correct results", {
   mu = 0
   
   result <- wilcox_score(x=x, y=y, mu=mu)
-  expect_named(result, c("score.W", "p_value" ))
-  expect_equal( result[1], c("score.W"=7.0) )
+  expect_named(result, c("score.W", "p_value"))
+  expect_equal(result[1], c("score.W"=7.0))
   
-  expect_equal( result[2], 
-                c("p_value"= pnorm( (7 - 21/2 + 0.5)/sqrt(21 * 11/12)) ) )
+  expect_equal(result[2], 
+               c("p_value"= pnorm( (7 - 21/2 + 0.5)/sqrt(21 * 11/12))))
   
 })

@@ -91,7 +91,7 @@
 
     
     
-<p>The <strong>CaDrA</strong> package currently provides four scoring
+<p>The <strong>CaDrA</strong> package currently supports four scoring
 functions to search for subsets of genomic features that are likely
 associated with a specific outcome of interest (e.g., protein
 expression, pathway activity, etc.)</p>
@@ -106,14 +106,16 @@ expression, pathway activity, etc.)</p>
 features using each of the four scoring functions described above.</p>
 <p><strong>Important Note:</strong></p>
 <ul>
-<li>The legacy function <code>topn_eval()</code> is equivalent to the
-recommended <code><a href="../reference/candidate_search.html">candidate_search()</a></code> function</li>
+<li>The legacy/deprecated function <code>topn_eval()</code> is
+equivalent to the new and recommended <code><a href="../reference/candidate_search.html">candidate_search()</a></code>
+function</li>
 </ul>
 <div class="section level2">
 <h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/" class="external-link">CaDrA</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/" class="external-link">CaDrA</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-required-datasets">Load required datasets<a class="anchor" aria-label="anchor" href="#load-required-datasets"></a>
@@ -123,10 +125,10 @@ recommended <code><a href="../reference/candidate_search.html">candidate_search(
 <code>Feature Set</code> (such as somatic mutations, copy number
 alterations, chromosomal translocations, etc.) The 1/0 row vectors
 indicate the presence/absence of ‘omics’ features in the samples. The
-<code>Feature Set</code> must be an object of class
+<code>Feature Set</code> can be a matrix or an object of class
 <strong>SummarizedExperiment</strong> from
 <strong>SummarizedExperiment</strong> package)</li>
-<li>A vector of continuous scores (or <code>input_score</code>)
+<li>A vector of continuous scores (or <code>Input Scores</code>)
 representing a functional response of interest (such as protein
 expression, pathway activity, etc.)</li>
 </ol>
@@ -139,10 +141,28 @@ expression, pathway activity, etc.)</li>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_Scores</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="kolmogorov-smirnov-scoring-method">Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
+<h2 id="heatmap-of-simulated-feature-set">Heatmap of simulated feature set<a class="anchor" aria-label="anchor" href="#heatmap-of-simulated-feature-set"></a>
 </h2>
-<p>See <code>?ks_rowscore</code> for more details</p>
+<p>The simulated dataset, <code>sim_FS</code>, comprises of 1000 genomic
+features and 100 sample profiles. There are 10 left-skewed (i.e. True
+Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN)
+features simulated in the dataset. Below is a heatmap of the first 100
+features.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span>
+<span><span class="fu">pheatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="op">]</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"red"</span><span class="op">)</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>, cluster_cols <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scoring_functions_files/figure-html/heatmap-1.png" width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="search-for-a-subset-of-genomic-features-that-are-likely-associated-with-a-functional-response-of-interest-using-four-scoring-methods">Search for a subset of genomic features that are likely associated
+with a functional response of interest using four scoring methods<a class="anchor" aria-label="anchor" href="#search-for-a-subset-of-genomic-features-that-are-likely-associated-with-a-functional-response-of-interest-using-four-scoring-methods"></a>
+</h2>
+<div class="section level3">
+<h3 id="kolmogorov-smirnov-scoring-method">1. Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
+</h3>
+<p>See <code>?ks_rowscore</code> for more details</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ks_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
@@ -152,7 +172,7 @@ expression, pathway activity, etc.)</li>
 <span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Allow at most 7 features in meta-feature matrix</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span>
@@ -164,11 +184,11 @@ expression, pathway activity, etc.)</li>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">ks_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/ks.method-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="wilcoxon-rank-sum-scoring-method">Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
-</h2>
+<div class="section level3">
+<h3 id="wilcoxon-rank-sum-scoring-method">2. Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
+</h3>
 <p>See <code>?wilcox_rowscore</code> for more details</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">wilcox_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
@@ -177,7 +197,7 @@ expression, pathway activity, etc.)</li>
 <span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Allow at most 7 features in meta-feature matrix</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span>
@@ -189,11 +209,11 @@ expression, pathway activity, etc.)</li>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">wilcox_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/wilcox.method-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="conditional-mutual-information-scoring-method">Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
-</h2>
+<div class="section level3">
+<h3 id="conditional-mutual-information-scoring-method">3. Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
+</h3>
 <p>See <code>?revealer_rowscore</code> for more details</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
@@ -201,7 +221,7 @@ expression, pathway activity, etc.)</li>
 <span>  method <span class="op">=</span> <span class="st">"revealer"</span>,         <span class="co"># Use REVEALER's CMI scoring function</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Allow at most 7 features in meta-feature matrix</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span>
@@ -213,73 +233,80 @@ expression, pathway activity, etc.)</li>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">revealer_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/revealer.method-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="custom---an-users-provided-scoring-method">Custom - An user’s provided scoring method<a class="anchor" aria-label="anchor" href="#custom---an-users-provided-scoring-method"></a>
-</h2>
+<div class="section level3">
+<h3 id="custom---an-users-provided-scoring-method">4. Custom - An user’s provided scoring method<a class="anchor" aria-label="anchor" href="#custom---an-users-provided-scoring-method"></a>
+</h3>
 <p>See <code>?custom_rowscore</code> for more details</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># A customized function using ks-test function</span></span>
-<span><span class="va">customized_ks_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">meta_feature</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span><span class="op">)</span><span class="op">{</span></span>
-<span>   </span>
-<span>   <span class="co"># Check if meta_feature is provided</span></span>
-<span>   <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>     <span class="co"># Getting the position of the known meta features</span></span>
-<span>     <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">meta_feature</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
-<span>     </span>
-<span>     <span class="co"># Taking the union across the known meta features</span></span>
-<span>     <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>       <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span>     <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
-<span>       <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span></span>
-<span>     <span class="op">}</span></span>
-<span>      </span>
-<span>     <span class="co"># Remove the meta features from the binary feature matrix</span></span>
-<span>     <span class="co"># and taking logical OR btw the remaining features with the meta vector</span></span>
-<span>     <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">meta_feature</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
-<span>     <span class="va">FS</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="op">-</span><span class="va">locs</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>, <span class="fl">2</span>, <span class="va">meta_vector</span>, <span class="va">`|`</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
-<span>      </span>
-<span>     <span class="co"># Check if there are any features that are all 1s generated from</span></span>
-<span>     <span class="co"># taking the union between the matrix</span></span>
-<span>     <span class="co"># We cannot compute statistics for such features and thus they need</span></span>
-<span>     <span class="co"># to be filtered out</span></span>
-<span>     <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>       <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"Features with all 1s generated from taking the matrix union "</span>,</span>
-<span>               <span class="st">"will be removed before progressing...\n"</span><span class="op">)</span></span>
-<span>       <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">!=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></span>
-<span>     <span class="op">}</span></span>
-<span>   <span class="op">}</span></span>
+<span><span class="va">customized_ks_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">meta_feature</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span>, <span class="va">metric</span><span class="op">=</span><span class="st">"pval"</span><span class="op">)</span><span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="co"># Check if meta_feature is provided</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co"># Getting the position of the known meta features</span></span>
+<span>    <span class="va">locs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">meta_feature</span>, <span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span></span>
 <span>    </span>
-<span>   <span class="co"># KS is a ranked-based method</span></span>
-<span>   <span class="co"># So we need to sort input_score from highest to lowest values</span></span>
-<span>   <span class="va">input_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">input_score</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="co"># Taking the union across the known meta features</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">meta_feature</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>      <span class="va">meta_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="va">meta_feature</span>,<span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
 <span>    </span>
-<span>   <span class="co"># Re-order the matrix based on the order of input_score</span></span>
-<span>   <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>  </span>
-<span>   </span>
-<span>   <span class="co"># Compute the scores using the KS method</span></span>
-<span>   <span class="va">ks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">FS</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span>
-<span>     <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; </span>
-<span>     <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span>
-<span>     <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span>
-<span>     <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">statistic</span>, <span class="va">res</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></span>
-<span>   <span class="op">}</span><span class="op">)</span></span>
-<span>   </span>
-<span>   <span class="co"># Obtain score statistics</span></span>
-<span>   <span class="va">stat</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span>   </span>
-<span>   <span class="co"># Obtain p-values and change values of 0 to the machine lowest value </span></span>
-<span>   <span class="co"># to avoid taking -log(0)</span></span>
-<span>   <span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span>
-<span>   <span class="va">pval</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">pval</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmin</span></span>
-<span>   </span>
-<span>   <span class="co"># Compute the -log(pval)</span></span>
-<span>   <span class="co"># Make sure scores has names that match the row names of FS object</span></span>
-<span>   <span class="va">scores</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span>
-<span>   <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span></span>
-<span>   </span>
-<span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span></span>
-<span>   </span>
+<span>    <span class="co"># Remove the meta features from the binary feature matrix</span></span>
+<span>    <span class="co"># and taking logical OR btw the remaining features with the meta vector</span></span>
+<span>    <span class="va">FS</span> <span class="op">&lt;-</span> <span class="fu">base</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">FS</span><span class="op">[</span><span class="op">-</span><span class="va">locs</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>, <span class="fl">2</span>, <span class="va">meta_vector</span>, <span class="va">`|`</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
+<span>    </span>
+<span>    <span class="co"># Check if there are any features that are all 1s generated from</span></span>
+<span>    <span class="co"># taking the union between the matrix</span></span>
+<span>    <span class="co"># We cannot compute statistics for such features and thus they need</span></span>
+<span>    <span class="co"># to be filtered out</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"Features with all 1s generated from taking the matrix union "</span>,</span>
+<span>              <span class="st">"will be removed before progressing...\n"</span><span class="op">)</span></span>
+<span>      <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span> <span class="op">!=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span>, , drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co"># KS is a ranked-based method</span></span>
+<span>  <span class="co"># So we need to sort input_score from highest to lowest values</span></span>
+<span>  <span class="va">input_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">input_score</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Re-order the matrix based on the order of input_score</span></span>
+<span>  <span class="va">FS</span> <span class="op">&lt;-</span> <span class="va">FS</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">input_score</span><span class="op">)</span>, drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span>  </span>
+<span>  </span>
+<span>  <span class="co"># Compute the scores using the KS method</span></span>
+<span>  <span class="va">ks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">FS</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">{</span> </span>
+<span>    <span class="va">x</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span>; </span>
+<span>    <span class="va">y</span> <span class="op">=</span> <span class="va">input_score</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">r</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">]</span>;</span>
+<span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">ks.test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, alternative<span class="op">=</span><span class="va">alternative</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">statistic</span>, <span class="va">res</span><span class="op">$</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Obtain score statistics</span></span>
+<span>  <span class="va">stat</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
+<span>  </span>
+<span>  <span class="co"># Obtain p-values and change values of 0 to the machine lowest value </span></span>
+<span>  <span class="co"># to avoid taking -log(0)</span></span>
+<span>  <span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">ks</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span>
+<span>  <span class="va">pval</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">pval</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmin</span></span>
+<span>  </span>
+<span>  <span class="co"># Compute the -log(pval)</span></span>
+<span>  <span class="co"># Make sure scores has names that match the row names of FS object</span></span>
+<span>  <span class="va">pval</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Determine which metric to returned the scores</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">metric</span> <span class="op">==</span> <span class="st">"pval"</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">pval</span></span>
+<span>  <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>    <span class="va">scores</span> <span class="op">&lt;-</span> <span class="va">stat</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">FS</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">scores</span><span class="op">)</span></span>
+<span>  </span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Search for best features using a custom-defined function</span></span>
@@ -291,7 +318,7 @@ expression, pathway activity, etc.)</li>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,                         <span class="co"># Additional parameters to pass to custom_function</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,                           <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                                        <span class="co"># Evaluate top 3 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">7</span>,                                     <span class="co"># Allow at most 7 features in meta-feature matrix</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">10</span>,                                    <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,                                  <span class="co"># We will plot it AFTER finding the best hits</span></span>
 <span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>                           <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
 <span><span class="op">)</span></span>
@@ -303,75 +330,78 @@ expression, pathway activity, etc.)</li>
 <span><span class="fu"><a href="../reference/meta_plot.html">meta_plot</a></span><span class="op">(</span>topn_best_list <span class="op">=</span> <span class="va">custom_topn_best_meta</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/custom.method-1.png" width="700"></p>
 </div>
+</div>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">3.1</span> (<span class="dv">2023-06-16</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span><span class="fu">gnu</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> Ubuntu <span class="dv">22</span>.<span class="fl">04.2</span> LTS</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Matrix products<span class="sc">:</span> default</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libblas.so<span class="fl">.3</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libopenblasp<span class="sc">-</span>r0.<span class="dv">3</span>.<span class="fl">20.</span>so;  LAPACK version <span class="dv">3</span>.<span class="fl">10.0</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>locale<span class="sc">:</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] LC_CTYPE<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NUMERIC<span class="ot">=</span>C           LC_TIME<span class="ot">=</span>C.UTF<span class="dv">-8</span>       </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] LC_COLLATE<span class="ot">=</span>C.UTF<span class="dv">-8</span>     LC_MONETARY<span class="ot">=</span>C.UTF<span class="dv">-8</span>    LC_MESSAGES<span class="ot">=</span>C.UTF<span class="dv">-8</span>   </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] LC_PAPER<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NAME<span class="ot">=</span>C              LC_ADDRESS<span class="ot">=</span>C          </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] LC_TELEPHONE<span class="ot">=</span>C         LC_MEASUREMENT<span class="ot">=</span>C.UTF<span class="dv">-8</span> LC_IDENTIFICATION<span class="ot">=</span>C   </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>time zone<span class="sc">:</span> UTC</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>tzcode source<span class="sc">:</span> <span class="fu">system</span> (glibc)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_0.<span class="fl">99.7</span>                testthat_3.<span class="fl">1.10</span>            </span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">2.2</span>              </span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] SummarizedExperiment_1.<span class="fl">30.2</span> Biobase_2.<span class="fl">60.0</span>             </span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] GenomicRanges_1.<span class="fl">52.0</span>        GenomeInfoDb_1.<span class="fl">36.1</span>        </span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] IRanges_2.<span class="fl">34.1</span>              S4Vectors_0.<span class="fl">38.1</span>           </span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] BiocGenerics_0.<span class="fl">46.0</span>         MatrixGenerics_1.<span class="fl">12.2</span>      </span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] matrixStats_1.<span class="fl">0.0</span>           BiocStyle_2.<span class="fl">28.0</span>           </span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>] bitops_1<span class="fl">.0</span><span class="dv">-7</span>            tcltk_4.<span class="fl">3.1</span>             remotes_2.<span class="fl">4.2</span>          </span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">4</span>] rlang_1.<span class="fl">1.1</span>             magrittr_2.<span class="fl">0.3</span>          compiler_4.<span class="fl">3.1</span>         </span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">7</span>] reshape2_1.<span class="fl">4.4</span>          systemfonts_1.<span class="fl">0.4</span>       callr_3.<span class="fl">7.3</span>            </span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a> [<span class="dv">10</span>] vctrs_0.<span class="fl">6.3</span>             stringr_1.<span class="fl">5.0</span>           profvis_0.<span class="fl">3.8</span>          </span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a> [<span class="dv">13</span>] pkgconfig_2.<span class="fl">0.3</span>         crayon_1.<span class="fl">5.2</span>            fastmap_1.<span class="fl">1.1</span>          </span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a> [<span class="dv">16</span>] XVector_0.<span class="fl">40.0</span>          ellipsis_0.<span class="fl">3.2</span>          labeling_0.<span class="fl">4.2</span>         </span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a> [<span class="dv">19</span>] caTools_1.<span class="fl">18.2</span>          utf8_1.<span class="fl">2.3</span>              promises_1.<span class="dv">2</span>.<span class="fl">0.1</span>       </span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a> [<span class="dv">22</span>] rmarkdown_2<span class="fl">.23</span>          sessioninfo_1.<span class="fl">2.2</span>       ps_1.<span class="fl">7.5</span>               </span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a> [<span class="dv">25</span>] ragg_1.<span class="fl">2.5</span>              purrr_1.<span class="fl">0.1</span>             xfun_0<span class="fl">.39</span>              </span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a> [<span class="dv">28</span>] zlibbioc_1.<span class="fl">46.0</span>         cachem_1.<span class="fl">0.8</span>            jsonlite_1.<span class="fl">8.7</span>         </span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a> [<span class="dv">31</span>] highr_0<span class="fl">.10</span>              later_1.<span class="fl">3.1</span>             DelayedArray_0.<span class="fl">26.6</span>    </span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a> [<span class="dv">34</span>] parallel_4.<span class="fl">3.1</span>          prettyunits_1.<span class="fl">1.1</span>       R6_2.<span class="fl">5.1</span>               </span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a> [<span class="dv">37</span>] bslib_0.<span class="fl">5.0</span>             stringi_1.<span class="fl">7.12</span>          pkgload_1.<span class="dv">3</span>.<span class="fl">2.1</span>        </span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a> [<span class="dv">40</span>] brio_1.<span class="fl">1.3</span>              jquerylib_0.<span class="fl">1.4</span>         Rcpp_1.<span class="fl">0.11</span>            </span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a> [<span class="dv">43</span>] bookdown_0<span class="fl">.34</span>           iterators_1.<span class="fl">0.14</span>        knitr_1<span class="fl">.43</span>             </span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a> [<span class="dv">46</span>] R.utils_2.<span class="fl">12.2</span>          R.cache_0.<span class="fl">16.0</span>          httpuv_1.<span class="fl">6.11</span>          </span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a> [<span class="dv">49</span>] Matrix_1<span class="fl">.5-4.1</span>          rstudioapi_0.<span class="fl">15.0</span>       yaml_2.<span class="fl">3.7</span>             </span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a> [<span class="dv">52</span>] doParallel_1.<span class="fl">0.17</span>       gplots_3.<span class="fl">1.3</span>            codetools_0<span class="fl">.2</span><span class="dv">-19</span>       </span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a> [<span class="dv">55</span>] miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>          misc3d_0<span class="fl">.9</span><span class="dv">-1</span>            processx_3.<span class="fl">8.2</span>         </span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a> [<span class="dv">58</span>] pkgbuild_1.<span class="fl">4.2</span>          lattice_0<span class="fl">.21</span><span class="dv">-8</span>          tibble_3.<span class="fl">2.1</span>           </span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a> [<span class="dv">61</span>] plyr_1.<span class="fl">8.8</span>              shiny_1.<span class="dv">7</span>.<span class="fl">4.1</span>           withr_2.<span class="fl">5.0</span>            </span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a> [<span class="dv">64</span>] evaluate_0<span class="fl">.21</span>           desc_1.<span class="fl">4.2</span>              urlchecker_1.<span class="fl">0.1</span>       </span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a> [<span class="dv">67</span>] pillar_1.<span class="fl">9.0</span>            BiocManager_1.<span class="fl">30.21</span>     KernSmooth_2<span class="fl">.23</span><span class="dv">-21</span>     </span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a> [<span class="dv">70</span>] foreach_1.<span class="fl">5.2</span>           rprojroot_2.<span class="fl">0.3</span>         RCurl_1<span class="fl">.98-1.12</span>        </span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a> [<span class="dv">73</span>] ggplot2_3.<span class="fl">4.2</span>           munsell_0.<span class="fl">5.0</span>           scales_1.<span class="fl">2.1</span>           </span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a> [<span class="dv">76</span>] gtools_3.<span class="fl">9.4</span>            xtable_1<span class="fl">.8</span><span class="dv">-4</span>            glue_1.<span class="fl">6.2</span>             </span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a> [<span class="dv">79</span>] ppcor_1<span class="fl">.1</span>               tools_4.<span class="fl">3.1</span>             fs_1.<span class="fl">6.2</span>               </span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a> [<span class="dv">82</span>] grid_4.<span class="fl">3.1</span>              colorspace_2<span class="fl">.1</span><span class="dv">-0</span>        GenomeInfoDbData_1.<span class="fl">2.10</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a> [<span class="dv">85</span>] cli_3.<span class="fl">6.1</span>               textshaping_0.<span class="fl">3.6</span>       fansi_1.<span class="fl">0.4</span>            </span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a> [<span class="dv">88</span>] S4Arrays_1.<span class="fl">0.4</span>          gtable_0.<span class="fl">3.3</span>            R.methodsS3_1.<span class="fl">8.2</span>      </span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a> [<span class="dv">91</span>] sass_0.<span class="fl">4.6</span>              digest_0.<span class="fl">6.33</span>           farver_2.<span class="fl">1.1</span>           </span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a> [<span class="dv">94</span>] htmlwidgets_1.<span class="fl">6.2</span>       R.oo_1.<span class="fl">25.0</span>             memoise_2.<span class="fl">0.1</span>          </span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a> [<span class="dv">97</span>] htmltools_0.<span class="fl">5.5</span>         pkgdown_2.<span class="fl">0.7</span>           lifecycle_1.<span class="fl">0.3</span>        </span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>[<span class="dv">100</span>] mime_0<span class="fl">.12</span>               MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>R version <span class="dv">4</span>.<span class="fl">3.1</span> (<span class="dv">2023-06-16</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span><span class="fu">gnu</span> (<span class="dv">64</span><span class="sc">-</span>bit)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Running under<span class="sc">:</span> Ubuntu <span class="dv">22</span>.<span class="fl">04.3</span> LTS</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Matrix products<span class="sc">:</span> default</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>BLAS<span class="sc">:</span>   <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libblas.so<span class="fl">.3</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>LAPACK<span class="sc">:</span> <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libopenblasp<span class="sc">-</span>r0.<span class="dv">3</span>.<span class="fl">20.</span>so;  LAPACK version <span class="dv">3</span>.<span class="fl">10.0</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>locale<span class="sc">:</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] LC_CTYPE<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NUMERIC<span class="ot">=</span>C           LC_TIME<span class="ot">=</span>C.UTF<span class="dv">-8</span>       </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] LC_COLLATE<span class="ot">=</span>C.UTF<span class="dv">-8</span>     LC_MONETARY<span class="ot">=</span>C.UTF<span class="dv">-8</span>    LC_MESSAGES<span class="ot">=</span>C.UTF<span class="dv">-8</span>   </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] LC_PAPER<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NAME<span class="ot">=</span>C              LC_ADDRESS<span class="ot">=</span>C          </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] LC_TELEPHONE<span class="ot">=</span>C         LC_MEASUREMENT<span class="ot">=</span>C.UTF<span class="dv">-8</span> LC_IDENTIFICATION<span class="ot">=</span>C   </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>time zone<span class="sc">:</span> UTC</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>tzcode source<span class="sc">:</span> <span class="fu">system</span> (glibc)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>attached base packages<span class="sc">:</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_0.<span class="fl">99.7</span>                testthat_3.<span class="fl">1.10</span>            </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">2.2</span>              </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] pheatmap_1.<span class="fl">0.12</span>             SummarizedExperiment_1.<span class="fl">30.2</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] Biobase_2.<span class="fl">60.0</span>              GenomicRanges_1.<span class="fl">52.0</span>       </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] GenomeInfoDb_1.<span class="fl">36.1</span>         IRanges_2.<span class="fl">34.1</span>             </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] S4Vectors_0.<span class="fl">38.1</span>            BiocGenerics_0.<span class="fl">46.0</span>        </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] MatrixGenerics_1.<span class="fl">12.3</span>       matrixStats_1.<span class="fl">0.0</span>          </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">15</span>] BiocStyle_2.<span class="fl">28.0</span>           </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>] bitops_1<span class="fl">.0</span><span class="dv">-7</span>            tcltk_4.<span class="fl">3.1</span>             remotes_2.<span class="dv">4</span>.<span class="fl">2.1</span>        </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">4</span>] rlang_1.<span class="fl">1.1</span>             magrittr_2.<span class="fl">0.3</span>          compiler_4.<span class="fl">3.1</span>         </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">7</span>] reshape2_1.<span class="fl">4.4</span>          systemfonts_1.<span class="fl">0.4</span>       callr_3.<span class="fl">7.3</span>            </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a> [<span class="dv">10</span>] vctrs_0.<span class="fl">6.3</span>             stringr_1.<span class="fl">5.0</span>           profvis_0.<span class="fl">3.8</span>          </span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a> [<span class="dv">13</span>] pkgconfig_2.<span class="fl">0.3</span>         crayon_1.<span class="fl">5.2</span>            fastmap_1.<span class="fl">1.1</span>          </span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a> [<span class="dv">16</span>] XVector_0.<span class="fl">40.0</span>          ellipsis_0.<span class="fl">3.2</span>          labeling_0.<span class="fl">4.2</span>         </span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a> [<span class="dv">19</span>] caTools_1.<span class="fl">18.2</span>          utf8_1.<span class="fl">2.3</span>              promises_1.<span class="fl">2.1</span>         </span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a> [<span class="dv">22</span>] rmarkdown_2<span class="fl">.24</span>          sessioninfo_1.<span class="fl">2.2</span>       ps_1.<span class="fl">7.5</span>               </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a> [<span class="dv">25</span>] ragg_1.<span class="fl">2.5</span>              purrr_1.<span class="fl">0.2</span>             xfun_0<span class="fl">.40</span>              </span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a> [<span class="dv">28</span>] zlibbioc_1.<span class="fl">46.0</span>         cachem_1.<span class="fl">0.8</span>            jsonlite_1.<span class="fl">8.7</span>         </span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a> [<span class="dv">31</span>] highr_0<span class="fl">.10</span>              later_1.<span class="fl">3.1</span>             DelayedArray_0.<span class="fl">26.7</span>    </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a> [<span class="dv">34</span>] parallel_4.<span class="fl">3.1</span>          prettyunits_1.<span class="fl">1.1</span>       R6_2.<span class="fl">5.1</span>               </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a> [<span class="dv">37</span>] bslib_0.<span class="fl">5.1</span>             stringi_1.<span class="fl">7.12</span>          RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>     </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a> [<span class="dv">40</span>] pkgload_1.<span class="dv">3</span>.<span class="fl">2.1</span>         brio_1.<span class="fl">1.3</span>              jquerylib_0.<span class="fl">1.4</span>        </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a> [<span class="dv">43</span>] Rcpp_1.<span class="fl">0.11</span>             bookdown_0<span class="fl">.35</span>           iterators_1.<span class="fl">0.14</span>       </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a> [<span class="dv">46</span>] knitr_1<span class="fl">.43</span>              R.utils_2.<span class="fl">12.2</span>          R.cache_0.<span class="fl">16.0</span>         </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a> [<span class="dv">49</span>] httpuv_1.<span class="fl">6.11</span>           Matrix_1<span class="fl">.5-4.1</span>          rstudioapi_0.<span class="fl">15.0</span>      </span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a> [<span class="dv">52</span>] abind_1<span class="fl">.4</span><span class="dv">-5</span>             yaml_2.<span class="fl">3.7</span>              doParallel_1.<span class="fl">0.17</span>      </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a> [<span class="dv">55</span>] gplots_3.<span class="fl">1.3</span>            codetools_0<span class="fl">.2</span><span class="dv">-19</span>        miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>         </span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a> [<span class="dv">58</span>] misc3d_0<span class="fl">.9</span><span class="dv">-1</span>            processx_3.<span class="fl">8.2</span>          pkgbuild_1.<span class="fl">4.2</span>         </span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a> [<span class="dv">61</span>] plyr_1.<span class="fl">8.8</span>              lattice_0<span class="fl">.21</span><span class="dv">-8</span>          tibble_3.<span class="fl">2.1</span>           </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a> [<span class="dv">64</span>] shiny_1.<span class="fl">7.5</span>             withr_2.<span class="fl">5.0</span>             evaluate_0<span class="fl">.21</span>          </span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a> [<span class="dv">67</span>] desc_1.<span class="fl">4.2</span>              urlchecker_1.<span class="fl">0.1</span>        pillar_1.<span class="fl">9.0</span>           </span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a> [<span class="dv">70</span>] BiocManager_1.<span class="fl">30.22</span>     KernSmooth_2<span class="fl">.23</span><span class="dv">-21</span>      foreach_1.<span class="fl">5.2</span>          </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a> [<span class="dv">73</span>] rprojroot_2.<span class="fl">0.3</span>         RCurl_1<span class="fl">.98-1.12</span>         ggplot2_3.<span class="fl">4.3</span>          </span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a> [<span class="dv">76</span>] munsell_0.<span class="fl">5.0</span>           scales_1.<span class="fl">2.1</span>            gtools_3.<span class="fl">9.4</span>           </span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a> [<span class="dv">79</span>] xtable_1<span class="fl">.8</span><span class="dv">-4</span>            glue_1.<span class="fl">6.2</span>              ppcor_1<span class="fl">.1</span>              </span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a> [<span class="dv">82</span>] tools_4.<span class="fl">3.1</span>             fs_1.<span class="fl">6.3</span>                grid_4.<span class="fl">3.1</span>             </span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a> [<span class="dv">85</span>] colorspace_2<span class="fl">.1</span><span class="dv">-0</span>        GenomeInfoDbData_1.<span class="fl">2.10</span> cli_3.<span class="fl">6.1</span>              </span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a> [<span class="dv">88</span>] textshaping_0.<span class="fl">3.6</span>       fansi_1.<span class="fl">0.4</span>             S4Arrays_1.<span class="fl">0.5</span>         </span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a> [<span class="dv">91</span>] gtable_0.<span class="fl">3.4</span>            R.methodsS3_1.<span class="fl">8.2</span>       sass_0.<span class="fl">4.7</span>             </span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a> [<span class="dv">94</span>] digest_0.<span class="fl">6.33</span>           farver_2.<span class="fl">1.1</span>            htmlwidgets_1.<span class="fl">6.2</span>      </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a> [<span class="dv">97</span>] R.oo_1.<span class="fl">25.0</span>             memoise_2.<span class="fl">0.1</span>           htmltools_0.<span class="fl">5.6</span>        </span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>[<span class="dv">100</span>] pkgdown_2.<span class="fl">0.7</span>           lifecycle_1.<span class="fl">0.3</span>         mime_0<span class="fl">.12</span>              </span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>[<span class="dv">103</span>] MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
 </div>
   </div>
 

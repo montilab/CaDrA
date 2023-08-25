@@ -67,7 +67,7 @@ test_that("custom_rowscore issues error messages when needed", {
   )
   
   # error if function does not have "input_score" and "meta_feature" arguments
-  err_function <- function(FS){ return(0)}
+  err_function <- function(FS){ return(0) }
   expect_error( 
     custom_rowscore(
       FS = mat, 
@@ -79,7 +79,7 @@ test_that("custom_rowscore issues error messages when needed", {
   )
   
   # error if function does not have "FS" and "meta_feature" arguments
-  err_function <- function(input_score){ return(0)}
+  err_function <- function(input_score){ return(0) }
   expect_error( 
     custom_rowscore(
       FS = mat, 

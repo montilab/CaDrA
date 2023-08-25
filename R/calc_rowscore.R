@@ -211,7 +211,7 @@ calc_rowscore <- function(
     metric <- "pval"   
   }
   
-  # Extract only the method value (no metric info)
+  # Extract only the method value (e.g. ks/wilcox/revealer/custom)
   # based on a given method string
   method <- gsub("_score|_pval", "", method)
   
@@ -254,14 +254,7 @@ calc_rowscore <- function(
     )
   )
   
-  # If there is a returned row score
-  # Re-order FS in a decreasing order (from most to least significant)
-  # This comes in handy when doing the top-N evaluation of
-  # the top N 'best' features
-  if(length(rscores) > 0){
-    rscores <- rscores[order(rscores, decreasing=TRUE)]
-    return(rscores)
-  }
+  return(rscores)
 
 }
 

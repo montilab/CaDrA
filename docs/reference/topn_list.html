@@ -88,8 +88,8 @@ in <code>sim_FS</code> dataset.</p>
     <div id="format">
     <h2>Format</h2>
     <p>A list of objects returned from <code>candidate_search</code> including 
-a set of meta-features in form of SummarizedExperiment objects, 
-its observed input_score, and corresponding best score pertaining to each 
+a set of meta-features in form of SummarizedExperiment object, 
+its observed input scores, and corresponding best score pertaining to each 
 top N feature searches.</p>
 <p>See <code><a href="candidate_search.html">candidate_search</a></code> for more information.</p>
     </div>
@@ -97,14 +97,13 @@ top N feature searches.</p>
     <h2>Value</h2>
     
 
-<p>a list of objects returned from <code>candidate_search</code>function</p>
+<p>a list of objects returned from <code>candidate_search</code> function</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>Over top_N = 7 feature searches, a set of meta-features in form 
-of SummarizedExperiment 
-object, along with a vector of observed input scores and 
-its corresponding best score are returned from each search.</p>
+of SummarizedExperiment object, along with a vector of observed input scores 
+and its corresponding best score are returned from each search.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -123,22 +122,22 @@ candidate driver analyses using binary genomic features.
 <span class="r-in"><span><span class="co"># Fetch the first meta-feature</span></span></span>
 <span class="r-in"><span><span class="va">topn_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">feature_set</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 10 100 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(3): experimentData annotation protocolData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): exprs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(10): TN_716 TN_108 ... TN_620 TN_542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(2): Feature Type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 100 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): ''</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): TP_8 TP_9 ... TP_3 TP_7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(100): 1 2 ... 99 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fetch the second meta-feature</span></span></span>
 <span class="r-in"><span><span class="va">topn_list</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">feature_set</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SummarizedExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 10 100 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(3): experimentData annotation protocolData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): exprs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(10): TP_8 TP_9 ... TN_275 TN_472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(2): Feature Type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 6 100 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): ''</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(6): TP_9 TP_8 ... TP_3 TP_7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(100): 1 2 ... 99 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-in"><span></span></span>

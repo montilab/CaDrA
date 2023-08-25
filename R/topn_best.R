@@ -41,7 +41,7 @@ topn_best <- function(topn_list){
   n <- which.max(scores)
   
   # Obtain the best score
-  top_score <- max(scores)
+  top_score <- scores[n]
   
   # Corresponding FS object
   best_meta <- topn_list[[n]]$feature_set

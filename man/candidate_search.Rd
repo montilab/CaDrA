@@ -18,7 +18,6 @@ candidate_search(
   max_size = 7,
   best_score_only = FALSE,
   do_plot = FALSE,
-  do_check = TRUE,
   verbose = FALSE
 )
 }
@@ -71,7 +70,7 @@ parameter will be ignored. Default is \code{NULL}.}
 \item{top_N}{an integer specifies the number of features to start the
 search over, starting from the top 'N' features in each case. If \code{top_N}
 is provided, then \code{search_start} parameter will be ignored. Default is
-\code{1}.}
+\code{1}. NOTE: top_N > 10 may result in a longer search time.}
 
 \item{search_method}{a character string specifies an algorithm to filter
 out the best features (\code{"forward"} or \code{"both"}). Default is
@@ -90,10 +89,6 @@ overlapping features of the resulting meta-feature matrix.
 NOTE: plot can only be produced if the resulting meta-feature matrix contains 
 more than 1 feature (e.g. length(search_start) > 1 or top_N > 1). 
 Default is \code{FALSE}.}
-
-\item{do_check}{a logical value indicates whether or not to validate if the
-given parameters (FS and input_score) are valid inputs. 
-Default is \code{TRUE}.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}

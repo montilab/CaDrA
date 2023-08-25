@@ -18,13 +18,14 @@
 #' @param input_score_label a label that references to the \code{input_score}
 #' variable that was used to compute the top N best features. 
 #' Default is \code{NULL}.
-#'
-#' @return a density diagram of observed input scores 
-#' (sorted from largest to lowest), 
-#' a tile plot of the top features within the meta-feature set, 
-#' and a KS enrichment plot 
-#' of the meta-feature set for a given distribution (here, this will correspond 
-#' to the logical OR of the features)
+#' @param plot_title a title to the plot. Default is \code{NULL}.
+#' 
+#' @return 3 plots stacked together: 
+#' 1. a density diagram of observed input scores sorted from highest to lowest 
+#' 2. a tile plot of the top features within the meta-feature set 
+#' 3. a KS enrichment plot of the meta-feature set 
+#' (here, this will correspond to the logical OR of the features)
+#' 
 #' @examples
 #'
 #' # Load pre-computed Top-N list generated for sim_FS dataset
@@ -41,7 +42,7 @@
 #' @export
 #' @import SummarizedExperiment ggplot2 reshape2
 #' @importFrom grid unit.pmax grid.draw
-meta_plot <- function(topn_best_list, input_score_label=NULL){
+meta_plot <- function(topn_best_list, input_score_label=NULL, plot_title=NULL){
 
   # Get best meta-feature set and observed input score from top N best results
   best_feature_set <- topn_best_list[["feature_set"]]
@@ -51,15 +52,12 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   input_score <- obs_input_score[order(obs_input_score, decreasing = TRUE)]
   
   # Re-order the matrix based on the order of input_score
+  # Retrieve the binary feature matrix
   feature_set <- best_feature_set[, names(input_score), drop=FALSE]
-    
-  # Plot for continuous metric used to rank samples (Ex: ASSIGN scores)
-  # Get the input score label
-  var_name <- ifelse(is.null(input_score_label), "input_score",
-                     input_score_label)
-  
+
   # Plot y axis label
-  y_lab <- var_name
+  y_lab <- ifelse(is.null(input_score_label), "input_score",
+                  input_score_label)
   
   # Plot x axis label
   x_lab <- paste("Samples (n = ", ncol(feature_set),")", sep="")
@@ -77,8 +75,7 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # called 'sample' and 'measure'
   # The 'sample' variable has to be a factor with ordered levels
   # for displaying in the correct sample order
-  
-  # Katia: adding ".data" to avoid a warning during check:
+  # adding ".data" to avoid a warning during check:
   # no visible binding for global variable
   m_plot <- ggplot(data=var_d,
                    aes(x=.data$sample, y=.data$measure, group=1)) +
@@ -87,8 +84,9 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
     scale_y_continuous(expand = c(0,0)) +
     scale_x_discrete(expand = c(0,0)) +
     theme_classic() +
-    labs(x=x_lab, y=y_lab) +
+    labs(title = plot_title, x=x_lab, y=y_lab) +
     theme(
+      plot.title = element_text(hjust = 0.5),
       axis.text.x=element_blank(),
       axis.ticks.x=element_blank(),
       axis.line.x=element_line(color="black"),
@@ -105,25 +103,14 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
   # Add on the OR function of all the returned entries
   or <- ifelse(colSums(mat)==0, 0, 1)
   
-  # combine mat with the OR function
+  # Combine meta-feature with OR function
   mat <- rbind(mat, or)
   
-  # Get x and y axis data for ks enrichment plot of 
-  # cumulative function of individual features (i.e. the OR function)
-  enrichment_dat <- ks_plot_coordinates(
-    n_x = length(or),
-    y = which(or==1),
-    weights = NULL,
-    alt = "less"
-  )
-  
-  # Plot for feature_set scores
-  enrichment_plot <- ks_plot(df = enrichment_dat)
-  
-  # Give the last row no row name (this is just for the purpose of the plot)
+  # Give the last row no row name (this is just for the purpose of plotting)
   rownames(mat)[nrow(mat)] <- ""
   
-  # Make the OR function have higher values for a different color (red)
+  # Make the OR function have a higher value of 2 rather than 0 and 1
+  # This is just for the purpose of plotting
   mat[nrow(mat),] <- 2*(mat[nrow(mat),])
   
   # create the meta plot
@@ -137,9 +124,10 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
                      levels=rev(unique(as.character(x_m$Var1))))
   
   # Plot for mutation/CNA feature profile (with summary OR)
-  feature_plot <- ggplot(data=x_m, aes(x=factor(.data$Var2),
-                                       y=.data$Var1, fill=.data$value)) +
-    geom_tile(colour=NA)+
+  feature_plot <- ggplot(data=x_m, 
+                         aes(x=factor(.data$Var2),
+                             y=.data$Var1, fill=.data$value)) +
+    geom_tile(colour=NA) +
     scale_fill_gradient2(
       high="red",
       mid="black",
@@ -153,6 +141,18 @@ meta_plot <- function(topn_best_list, input_score_label=NULL){
       panel.border=element_rect(colour="black",fill=NA)
     ) +
     labs(x="", y="Feature")
+  
+  # Get x and y axis data for ks enrichment plot of 
+  # cumulative function of individual features (i.e. the OR function)
+  enrichment_dat <- ks_plot_coordinates(
+    n_x = length(or),
+    y = which(or==1),
+    weights = NULL,
+    alt = "less"
+  )
+  
+  # Plot for feature_set scores
+  enrichment_plot <- ks_plot(df = enrichment_dat)
   
   # Align the three plots, adjusting the widths to match
   plot_tab <- stacked_gtable_max(ggplotGrob(m_plot),
@@ -297,7 +297,7 @@ ks_plot <- function(df){
     scale_y_reverse() + # This inverts the feature_set score statistic line
     theme_classic() +
     theme(panel.border=element_rect(colour="black", fill=NA)) +
-    labs(x="", y="Enrichment Score (feature_set)")
+    labs(x="", y="Enrichment Score")
 
   g
 

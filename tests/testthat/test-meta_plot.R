@@ -9,6 +9,6 @@ test_that("meta_plot works", {
   topn_best_meta <- topn_best(topn_list = topn_list)
 
   # Now we can plot this set of best meta-feature
-  expect_silent(  meta_plot(topn_best_list = topn_best_meta))
+  expect_silent(meta_plot(topn_best_list = topn_best_meta))
 
 })

@@ -21,6 +21,7 @@ CaDrA(
   smooth = TRUE,
   plot = TRUE,
   ncores = 1,
+  cache = TRUE,
   cache_path = NULL,
   verbose = FALSE
 )
@@ -99,10 +100,14 @@ null distribution of the permuted best scores. Default is \code{TRUE}.}
 \item{ncores}{an integer specifies the number of cores to perform
 parallelization for permutation-based testing. Default is \code{1}.}
 
-\item{cache_path}{a full path uses to cache the permuted best scores.
-We recycle these scores instead of re-computing them to save time.
-Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
-for future loading.}
+\item{cache}{a logical value to determine whether or not to cache the 
+permuted best scores. This would help save time for future loading instead 
+of re-computing the permutation-based testing every time. 
+Default is \code{TRUE}.}
+
+\item{cache_path}{If cache = TRUE, a full path can be used to cache the 
+permuted best scores. Default is \code{NULL}. If NULL, the cache path is
+set to \code{~/.Rcache} for future loading.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
@@ -110,16 +115,20 @@ diagnostic messages. Default is \code{FALSE}.}
 \value{
 a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 \code{obs_best_score}, \code{perm_pval}
-\code{key}: a list of parameters that are used to cache the 
+
+-\code{key}: a list of parameters that are used to cache the 
 results of the permutation-based testing. This is useful as the
-permuted scores are recycled to save time for future loading.
-\code{perm_best_scores}: a vector of permuted best scores obtained 
+permuted best scores can be recycled to save time for future loading.
+
+-\code{perm_best_scores}: a vector of permuted best scores obtained 
 by performing \code{candidate_search} over \code{n_perm} iterations of 
-the permuted input scores.
-\code{obs_best_score}: the observed best score obtained by performing
-\code{candidate_search} on the given dataset and parameters. This value is 
-later used to compare against the permuted best scores 
+permuted input scores.
+
+-\code{obs_best_score}: the observed best score obtained by performing
+\code{candidate_search} on a given dataset and input parameters. This 
+value is later used to compare against the permuted best scores 
 (\code{perm_best_scores}).
+
 \code{perm_pval}: a permutation-based p-value obtained by calculating
 sum(perm_best_scores > obs_best_score)/n_perm
 }

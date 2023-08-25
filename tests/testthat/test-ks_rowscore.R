@@ -16,6 +16,7 @@ test_that("ks_rowscore returns correct results", {
     FS = mat, 
     input_score = input_score, 
     meta_feature = NULL,
+    weights = NULL,
     alternative = "less"
   )
   
@@ -43,7 +44,7 @@ test_that("ks_rowscore returns correct results", {
 ## --------------------------------------------------- ##
 test_that("ks_rowscore issues error messages when needed", {
   
-  FS <-  data.frame(a = rnorm(10), b = rnorm (10) )
+  FS <-  data.frame(a = rnorm(10), b = rnorm (10))
   set.seed(42)
   input_score <- rnorm(n = ncol(FS))
   names(input_score) <- colnames(FS)
@@ -53,6 +54,7 @@ test_that("ks_rowscore issues error messages when needed", {
       FS = FS,  
       input_score = input_score,
       meta_feature = NULL,
+      weights = NULL
     )
   )
   

@@ -50,7 +50,6 @@
 #'
 #' @return return a vector of row-wise scores where its labels or names 
 #' must match the row names of \code{FS} object
-#' 
 ks_rowscore <- function
 (
   FS,

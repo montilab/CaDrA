@@ -16,7 +16,7 @@
 #' its corresponding  best score for each top 'N' search.
 #' 
 #' @return A list of objects containing the best meta-feature, 
-#' its corresponding best score,  and observed input scores
+#' its corresponding best score, and observed input scores
 #' 
 #' @examples
 #'
@@ -32,7 +32,7 @@ topn_best <- function(topn_list){
   # get best score list
   scores_l <- lapply(seq_along(topn_list),
                      function(l){ topn_list[[l]][['score']] })
-
+  
   # Working with scores for each top N run
   scores <- unlist(scores_l)
   
@@ -48,12 +48,20 @@ topn_best <- function(topn_list){
 
   # Correspoding input_score
   best_input_score <- topn_list[[n]]$input_score
+  
+  # get scores of best features
+  best_meta_scores <- topn_list[[n]]$best_scores
+  
+  # get indices of best features
+  best_meta_indices <- topn_list[[n]]$best_indices
 
   return(
     list(
       "feature_set" = best_meta,
       "input_score" = best_input_score,
-      "score" = top_score
+      "score" = top_score,
+      "best_scores" = best_meta_scores,
+      "best_indices" = best_meta_indices
     )
   )
 

@@ -20,7 +20,7 @@ its corresponding  best score for each top 'N' search.}
 }
 \value{
 A list of objects containing the best meta-feature, 
-its corresponding best score,  and observed input scores
+its corresponding best score, and observed input scores
 }
 \description{
 Take the resulting list of meta-features returned from 

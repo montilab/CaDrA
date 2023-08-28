@@ -186,8 +186,7 @@ candidate_search <- function(
     start_feature <- rownames(FS)[feature_best_index]
     best_feature <- start_feature
     best_score <- rowscore[best_feature]
-    best_index <- which(rowscore == best_score, arr.ind = TRUE)
-    
+
     verbose("***Top Feature ", x, ": ", best_feature, "***\n")
     verbose("Score: ", best_score, "\n")
     
@@ -197,7 +196,6 @@ candidate_search <- function(
     
     # Initiate list of global features, indices, and scores
     global_best_s_features <- c()
-    global_best_s_indices <- c()
     global_best_s_scores <- c()
     
     # Counter variable for number of iterations
@@ -221,7 +219,6 @@ candidate_search <- function(
       
       # Update meta-feature set, its indices, and best scores
       global_best_s_features <- c(global_best_s_features, best_feature)
-      global_best_s_indices <- c(global_best_s_indices, best_index)
       global_best_s_scores <- c(global_best_s_scores, best_score)
       
       verbose("Current meta-feature set:\n ", global_best_s_features, "\n")
@@ -248,13 +245,11 @@ candidate_search <- function(
           verbose = verbose,  
           glob_f = global_best_s_features,     
           glob_s = global_best_s,
-          glob_f_scores = global_best_s_scores,
-          glob_f_indices = global_best_s_indices
+          glob_f_scores = global_best_s_scores
         )
         
         # Update global features, scores
         global_best_s_features <- backward_search_results[["best_features"]]
-        global_best_s_indices <- backward_search_results[["best_indices"]]
         global_best_s_scores <- backward_search_results[["best_scores"]]
         global_best_s <- backward_search_results[["score"]]
         
@@ -333,7 +328,11 @@ candidate_search <- function(
     # Assign the name of the best meta-feature score to be the
     # starting feature that gave that score
     names(global_best_s) <- start_feature
-
+    
+    # Get indices of best features
+    global_best_s_indices <- which(names(rowscore) %in% global_best_s_features)
+    names(global_best_s_indices) <- global_best_s_features
+    
     return(list("feature_set" = FS_best,
                 "input_score" = input_score,
                 "score" = global_best_s,
@@ -420,7 +419,6 @@ forward_backward_check <- function
   glob_f,
   glob_s,
   glob_f_scores,
-  glob_f_indices,
   verbose = FALSE,
   ...
 ){
@@ -453,7 +451,6 @@ forward_backward_check <- function
     #n=1;
     # Store features to list
     f_names[[n]] <- glob_f[-n]
-    f_indices[[n]] <- glob_f_indices[-n]
     f_scores[[n]] <- glob_f_scores[-n]
     
     # Take the leave-one-out union of features will result in a single 
@@ -512,7 +509,6 @@ forward_backward_check <- function
     # Return a set of features that gave a better score than
     # the existing best score and its new best score as well
     return(list(best_features = f_names[[f_best_index]], 
-                best_indices = f_indices[[f_best_index]],
                 best_scores = f_scores[[f_best_index]],
                 score = f_best_score))
 
@@ -521,7 +517,6 @@ forward_backward_check <- function
     # Don't change anything. Return the existing
     # best set of features and its corresponding score
     return(list(best_features = glob_f, 
-                best_indices = glob_f_indices,
                 best_scores = glob_f_scores,
                 score = glob_s))
 

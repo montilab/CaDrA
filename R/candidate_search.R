@@ -333,12 +333,20 @@ candidate_search <- function(
     global_best_s_indices <- which(names(rowscore) %in% global_best_s_features)
     names(global_best_s_indices) <- global_best_s_features
     
-    return(list("feature_set" = FS_best,
-                "input_score" = input_score,
-                "score" = global_best_s,
-                "best_features" = global_best_s_features,
-                "best_scores" = global_best_s_scores,
-                "best_indices" = global_best_s_indices))
+    # Get marginal scores of best features
+    marginal_best_scores <- rowscore[which(names(rowscore) %in% global_best_s_features)]
+    names(marginal_best_scores) <- global_best_s_features
+    
+    return(
+      list("feature_set" = FS_best,
+           "input_score" = input_score,
+           "score" = global_best_s,
+           "best_features" = global_best_s_features,
+           "best_indices" = global_best_s_indices,
+           "marginal_best_scores" = marginal_best_scores,
+           "cumulative_best_scores" = global_best_s_scores
+      )
+    )
     
   })
 

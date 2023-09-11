@@ -3,9 +3,9 @@ test_that("topn_best returns expected results",{
   data(topn_list)
   result <- topn_best(topn_list = topn_list)
   
-  testthat::expect_length(result, 3L)
+  testthat::expect_length(result, 6L)
   testthat::expect_type(result, "list")
-  testthat::expect_named(result, c("feature_set", "input_score", "score"))
+  testthat::expect_named(result, c("feature_set", "input_score", "score", "best_indices", "marginal_best_scores", "cumulative_best_scores"))
 
   testthat::expect_s4_class(result$feature_set, "SummarizedExperiment")
   testthat::expect_identical(dim(result$feature_set), c(10L, 100L))

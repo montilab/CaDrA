@@ -206,7 +206,7 @@ Default is <code>TRUE</code>.</p></dd>
 <dt>cache_path</dt>
 <dd><p>If cache = TRUE, a full path can be used to cache the 
 permuted best scores. Default is <code>NULL</code>. If NULL, the cache path is
-set to <code>~/.Rcache</code> for future loading.</p></dd>
+set to system home directory (e.g. <code>$HOME/.Rcache</code>) for future loading.</p></dd>
 
 
 <dt>verbose</dt>
@@ -263,7 +263,7 @@ sum(perm_best_scores &gt; obs_best_score)/n_perm</p>
 <span class="r-in"><span>  n_perm <span class="op">=</span> <span class="fl">10</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, smooth <span class="op">=</span> <span class="cn">TRUE</span>, obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  ncores <span class="op">=</span> <span class="fl">1</span>, cache_path <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Setting cache root path as: /home/runner/.cache/R/R.cache</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Setting cache root path as: /home/runner/.Rcache</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |=======                                                               |  10%  |                                                                              |==============                                                        |  20%  |                                                                              |=====================                                                 |  30%  |                                                                              |============================                                          |  40%  |                                                                              |===================================                                   |  50%  |                                                                              |==========================================                            |  60%  |                                                                              |=================================================                     |  70%  |                                                                              |========================================================              |  80%  |                                                                              |===============================================================       |  90%  |                                                                              |======================================================================| 100%</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

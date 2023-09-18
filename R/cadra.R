@@ -68,7 +68,7 @@
 #' Default is \code{TRUE}.
 #' @param cache_path If cache = TRUE, a full path can be used to cache the 
 #' permuted best scores. Default is \code{NULL}. If NULL, the cache path is
-#' set to \code{~/.Rcache} for future loading.
+#' set to system home directory (e.g. \code{$HOME/.Rcache}) for future loading.
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
@@ -178,13 +178,13 @@ CaDrA <- function(
   ####### CACHE CHECKING #######
   if(cache == TRUE){
     
-    if(!is.null(cache_path)){
-      R.cache::setCacheRootPath(cache_path)
-      message("Using provided cache root path: ", cache_path, "")
-    } else{
-      R.cache::setCacheRootPath()
-      message("Setting cache root path as: ", getCacheRootPath(), "\n")
+    if(is.null(cache_path)){
+      cache_path <- file.path(Sys.getenv("HOME"), ".Rcache")
+      dir.create(cache_path, showWarnings = FALSE)
     }
+      
+    R.cache::setCacheRootPath(cache_path)
+    message("Setting cache root path as: ", cache_path, "\n")
     
     # Load perm_best_scores with the given key parameters
     perm_best_scores <- R.cache::loadCache(key)

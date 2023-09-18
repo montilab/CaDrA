@@ -46,22 +46,26 @@ topn_best <- function(topn_list){
   # Corresponding FS object
   best_meta <- topn_list[[n]]$feature_set
 
-  # Correspoding input_score
+  # Corresponding input_score
   best_input_score <- topn_list[[n]]$input_score
-  
-  # get scores of best features
-  best_meta_scores <- topn_list[[n]]$best_scores
   
   # get indices of best features
   best_meta_indices <- topn_list[[n]]$best_indices
+  
+  # Get scores of best features
+  marginal_best_scores <- topn_list[[n]]$marginal_best_scores
 
+  # Get scores of best features
+  cumulative_best_scores <- topn_list[[n]]$cumulative_best_scores  
+  
   return(
     list(
       "feature_set" = best_meta,
       "input_score" = best_input_score,
       "score" = top_score,
-      "best_scores" = best_meta_scores,
-      "best_indices" = best_meta_indices
+      "best_indices" = best_meta_indices,
+      "marginal_best_scores" = marginal_best_scores,
+      "cumulative_best_scores" = cumulative_best_scores
     )
   )
 

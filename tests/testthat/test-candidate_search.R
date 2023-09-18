@@ -30,7 +30,7 @@ test_that("candidate_search returns expected result ",{
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 6L)
+  testthat::expect_length(result[[1]], 7L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
@@ -58,7 +58,7 @@ test_that("candidate_search returns expected result ",{
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 6L)
+  testthat::expect_length(result[[1]], 7L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)
@@ -87,7 +87,7 @@ test_that("candidate_search returns expected result ",{
   
   testthat::expect_length(result, 1L)
   testthat::expect_type(result, "list")
-  testthat::expect_length(result[[1]], 6L)
+  testthat::expect_length(result[[1]], 7L)
   testthat::expect_s4_class(result[[1]][[1]], "SummarizedExperiment")
   
   testthat::expect_length(result[[1]][[2]], 100L)

@@ -107,7 +107,7 @@ Default is \code{TRUE}.}
 
 \item{cache_path}{If cache = TRUE, a full path can be used to cache the 
 permuted best scores. Default is \code{NULL}. If NULL, the cache path is
-set to \code{~/.Rcache} for future loading.}
+set to system home directory (e.g. \code{$HOME/.Rcache}) for future loading.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}

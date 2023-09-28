@@ -4,7 +4,7 @@
 \alias{meta_plot}
 \title{Candidate Drivers Search Plot}
 \usage{
-meta_plot(topn_best_list, input_score_label = NULL)
+meta_plot(topn_best_list, input_score_label = NULL, plot_title = NULL)
 }
 \arguments{
 \item{topn_best_list}{a list of objects returned from 
@@ -17,14 +17,15 @@ and observed input scores.}
 \item{input_score_label}{a label that references to the \code{input_score}
 variable that was used to compute the top N best features. 
 Default is \code{NULL}.}
+
+\item{plot_title}{a title to the plot. Default is \code{NULL}.}
 }
 \value{
-a density diagram of observed input scores 
-(sorted from largest to lowest), 
-a tile plot of the top features within the meta-feature set, 
-and a KS enrichment plot 
-of the meta-feature set for a given distribution (here, this will correspond 
-to the logical OR of the features)
+3 plots stacked together: 
+1. a density diagram of observed input scores sorted from highest to lowest 
+2. a tile plot of the top features within the meta-feature set 
+3. a KS enrichment plot of the meta-feature set 
+(here, this will correspond to the logical OR of the features)
 }
 \description{
 By utilizing the top N results obtained from \code{candidate_search},

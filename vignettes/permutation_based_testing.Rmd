@@ -7,13 +7,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include=FALSE, messages=FALSE, warnings=FALSE}
+```{r set.up, include=FALSE, messages=FALSE, warnings=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 library(SummarizedExperiment)
-library(CaDrA)
+library(devtools)
+load_all()
 ```
 
-**CaDrA** implements a forward/backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on (currently) one of four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To test whether the strength of the association between the set of features and the observed input scores (e.g., pathway activity, drug sensitivity, etc.) is greater than it would be expected by chance, **CaDrA** supports permutation-based significance testing. Importantly, the permutation test iterates over the entire search procedure (e.g., if `top_N = 7`, each permutation iteration will consist of running the search over the top 7 features).
+By default, **CaDrA** performs both forward and backward search algorithm to look for a subset of features whose union is maximally associated with an outcome of interest, based on (currently) one of four scoring functions (**Kolmogorov-Smirnov**, **Conditional Mutual Information**, **Wilcoxon**, and **custom-defined**). To test whether the strength of the association between the set of features and the observed input scores (e.g., pathway activity, drug sensitivity, etc.) is greater than it would be expected by chance, **CaDrA** supports permutation-based significance testing. Importantly, the permutation test iterates over the entire search procedure (e.g., if `top_N = 7`, each permutation iteration will consist of running the search over the top 7 features).
 
 # Load packages
 
@@ -23,8 +24,8 @@ library(CaDrA)
 
 # Load required datasets
 
-1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 row vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` must be an object of class **SummarizedExperiment** from **SummarizedExperiment** package) 
-2. A vector of continuous scores (or `input_score`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
+1. A `binary features matrix` also known as `Feature Set` (such as somatic mutations, copy number alterations, chromosomal translocations, etc.) The 1/0 row vectors indicate the presence/absence of ‘omics’ features in the samples. The `Feature Set` can be a matrix or an object of class **SummarizedExperiment** from **SummarizedExperiment** package) 
+2. A vector of continuous scores (or `Input Scores`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
 
@@ -44,12 +45,12 @@ Here we are using **Kolmogorow-Smirnow** (KS) scoring method to search for best 
 
 ```{r ks.method}
 
-ks_candidate <- CaDrA::candidate_search(
+candidate_search_res <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
   alternative = "less",        # Use one-sided hypothesis testing
-  weight = NULL,               # If weight is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Number of top features to kick start the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
@@ -63,43 +64,50 @@ ks_candidate <- CaDrA::candidate_search(
 ```{r ks.meta.plot}
 
 # Extract the best meta-feature result
-topn_best_meta <- CaDrA::topn_best(topn_list = ks_candidate)
+topn_best_meta <- CaDrA::topn_best(topn_list = candidate_search_res)
 
 # Visualize meta-feature result
 CaDrA::meta_plot(topn_best_list = topn_best_meta)
 
 ```
 
-# Permutation-based testing
+# Perform permutation-based testing
 
+```{r ks.perm.res, include=FALSE}
+
+# Load pre-computed permutation-based testings
+# See ?perm_res for more information
+data("perm_res")
+
+```
 
 ```r
 # Set seed for permutation
 set.seed(123)
 
-ks_perm_res <- CaDrA::CaDrA(
+perm_res <- CaDrA::CaDrA(
   FS = sim_FS, 
   input_score = sim_Scores, 
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weight = NULL,               # If weight is provided, perform a weighted-KS test
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
   alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Repeat the search with the top N features
   max_size = 10,               # Allow at most 10 features in the meta-feature matrix
-  n_perm = 10,               # Number of permutations to perform
+  n_perm = 1000,               # Number of permutations to perform
   plot = FALSE,                # We will plot later
-  ncores = 4                  # Number of cores to perform parallelization
+  ncores = 4                   # Number of cores to perform parallelization
 )
 ```
 
 # Visualize permutation result
 
-```r
-# Visualize permutation results
-permutation_plot(perm_res = ks_perm_res)
-```
+```{r ks.permutation.plot}
 
-![](ks_permutation_plot.png)
+# Visualize permutation results
+permutation_plot(perm_res = perm_res)
+
+```
 
 # SessionInfo
 

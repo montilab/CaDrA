@@ -11,7 +11,7 @@ CaDrA(
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  weight = NULL,
+  weights = NULL,
   top_N = 1,
   search_start = NULL,
   search_method = c("both", "forward"),
@@ -21,6 +21,7 @@ CaDrA(
   smooth = TRUE,
   plot = TRUE,
   ncores = 1,
+  cache = TRUE,
   cache_path = NULL,
   verbose = FALSE
 )
@@ -62,7 +63,7 @@ testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
 NOTE: this argument only apply to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_score}, specifies a vector of weights 
+\item{weights}{if method is \code{ks_score}, specifies a vector of weights 
 to perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the
@@ -99,10 +100,14 @@ null distribution of the permuted best scores. Default is \code{TRUE}.}
 \item{ncores}{an integer specifies the number of cores to perform
 parallelization for permutation-based testing. Default is \code{1}.}
 
-\item{cache_path}{a full path uses to cache the permuted best scores.
-We recycle these scores instead of re-computing them to save time.
-Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
-for future loading.}
+\item{cache}{a logical value to determine whether or not to cache the 
+permuted best scores. This would help save time for future loading instead 
+of re-computing the permutation-based testing every time. 
+Default is \code{TRUE}.}
+
+\item{cache_path}{If cache = TRUE, a full path can be used to cache the 
+permuted best scores. Default is \code{NULL}. If NULL, the cache path is
+set to system home directory (e.g. \code{$HOME/.Rcache}) for future loading.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
@@ -110,16 +115,20 @@ diagnostic messages. Default is \code{FALSE}.}
 \value{
 a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 \code{obs_best_score}, \code{perm_pval}
-\code{key}: a list of parameters that are used to cache the 
-result of the permutation-based testing. This is useful as the
-permuted scores are recycled to save time for future loading.
-\code{perm_best_scores}: a vector of permuted best scores obtained 
-by performing \code{candidate_search} over (\code{n_perm}) iterations of 
+
+-\code{key}: a list of parameters that are used to cache the 
+results of the permutation-based testing. This is useful as the
+permuted best scores can be recycled to save time for future loading.
+
+-\code{perm_best_scores}: a vector of permuted best scores obtained 
+by performing \code{candidate_search} over \code{n_perm} iterations of 
 permuted input scores.
-\code{obs_best_score}: the observed best score is calculated by performing
-\code{candidate_search} on the given dataset and parameters. This value is 
-later used to compare against the permuted best scores 
+
+-\code{obs_best_score}: the observed best score obtained by performing
+\code{candidate_search} on a given dataset and input parameters. This 
+value is later used to compare against the permuted best scores 
 (\code{perm_best_scores}).
+
 \code{perm_pval}: a permutation-based p-value obtained by calculating
 sum(perm_best_scores > obs_best_score)/n_perm
 }
@@ -141,7 +150,7 @@ set.seed(21)
 # Define additional parameters and start the function
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
-  weight = NULL, alternative = "less", top_N = 1,
+  weights = NULL, alternative = "less", top_N = 1,
   search_start = NULL, search_method = "both", max_size = 7, 
   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache_path = NULL

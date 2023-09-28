@@ -33,7 +33,7 @@
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' NOTE: this argument only apply to KS and Wilcoxon method
-#' @param weight if method is \code{ks_score}, specifies a vector of weights 
+#' @param weights if method is \code{ks_score}, specifies a vector of weights 
 #' to perform a weighted-KS testing. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
 #' search over. By default, it starts from the top best feature (top_N = 1).
@@ -62,25 +62,32 @@
 #' null distribution of the permuted best scores. Default is \code{TRUE}.
 #' @param ncores an integer specifies the number of cores to perform
 #' parallelization for permutation-based testing. Default is \code{1}.
-#' @param cache_path a full path uses to cache the permuted best scores.
-#' We recycle these scores instead of re-computing them to save time.
-#' Default is \code{NULL}. If NULL, the cache path is set to \code{~/.Rcache}
-#' for future loading.
+#' @param cache a logical value to determine whether or not to cache the 
+#' permuted best scores. This would help save time for future loading instead 
+#' of re-computing the permutation-based testing every time. 
+#' Default is \code{TRUE}.
+#' @param cache_path If cache = TRUE, a full path can be used to cache the 
+#' permuted best scores. Default is \code{NULL}. If NULL, the cache path is
+#' set to system home directory (e.g. \code{$HOME/.Rcache}) for future loading.
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
 #'
 #' @return a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 #' \code{obs_best_score}, \code{perm_pval}
-#' \code{key}: a list of parameters that are used to cache the 
-#' result of the permutation-based testing. This is useful as the
-#' permuted scores are recycled to save time for future loading.
-#' \code{perm_best_scores}: a vector of permuted best scores obtained 
-#' by performing \code{candidate_search} over (\code{n_perm}) iterations of 
+#' 
+#' -\code{key}: a list of parameters that are used to cache the 
+#' results of the permutation-based testing. This is useful as the
+#' permuted best scores can be recycled to save time for future loading.
+#' 
+#' -\code{perm_best_scores}: a vector of permuted best scores obtained 
+#' by performing \code{candidate_search} over \code{n_perm} iterations of 
 #' permuted input scores.
-#' \code{obs_best_score}: the observed best score is calculated by performing
-#' \code{candidate_search} on the given dataset and parameters. This value is 
-#' later used to compare against the permuted best scores 
+#' 
+#' -\code{obs_best_score}: the observed best score obtained by performing
+#' \code{candidate_search} on a given dataset and input parameters. This 
+#' value is later used to compare against the permuted best scores 
 #' (\code{perm_best_scores}).
+#' 
 #' \code{perm_pval}: a permutation-based p-value obtained by calculating
 #' sum(perm_best_scores > obs_best_score)/n_perm
 #'
@@ -98,7 +105,7 @@
 #' # Define additional parameters and start the function
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
-#'   weight = NULL, alternative = "less", top_N = 1,
+#'   weights = NULL, alternative = "less", top_N = 1,
 #'   search_start = NULL, search_method = "both", max_size = 7, 
 #'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
 #'   ncores = 1, cache_path = NULL
@@ -115,7 +122,7 @@ CaDrA <- function(
     custom_function = NULL,
     custom_parameters = NULL,
     alternative = c("less", "greater", "two.sided"),
-    weight = NULL,
+    weights = NULL,
     top_N = 1,
     search_start = NULL,
     search_method = c("both", "forward"),
@@ -125,6 +132,7 @@ CaDrA <- function(
     smooth = TRUE,
     plot = TRUE,
     ncores = 1,
+    cache = TRUE,
     cache_path = NULL,
     verbose = FALSE
 ){
@@ -147,15 +155,6 @@ CaDrA <- function(
               (length(ncores)==1 && !is.na(ncores) &&
                  is.numeric(ncores) && ncores > 0) )
   
-  ####### CACHE CHECKING #######
-  if(!is.null(cache_path)){
-    R.cache::setCacheRootPath(cache_path)
-    message("Using provided cache root path: ", cache_path, "")
-  } else{
-    R.cache::setCacheRootPath()
-    message("Setting cache root path as: ", getCacheRootPath(), "\n")
-  }
-  
   # Retrieve the original class object of feature set 
   # If FS is a SummarizedExperiment, convert it to a matrix object
   # used its matrix form as a default caching key
@@ -170,14 +169,31 @@ CaDrA <- function(
               custom_function = custom_function,
               custom_parameters = custom_parameters,
               alternative = alternative,
-              weight = weight,
+              weights = weights,
               top_N = top_N,
               search_start = search_start,
               search_method = search_method,
               max_size = max_size)
   
-  # Load perm_best_scores with the given key parameters
-  perm_best_scores <- R.cache::loadCache(key)
+  ####### CACHE CHECKING #######
+  if(cache == TRUE){
+    
+    if(is.null(cache_path)){
+      cache_path <- file.path(Sys.getenv("HOME"), ".Rcache")
+      dir.create(cache_path, showWarnings = FALSE)
+    }
+      
+    R.cache::setCacheRootPath(cache_path)
+    message("Setting cache root path as: ", cache_path, "\n")
+    
+    # Load perm_best_scores with the given key parameters
+    perm_best_scores <- R.cache::loadCache(key)
+    
+  }else{
+    
+    perm_best_scores <- NULL
+    
+  }
   
   # Start the 'clock' to see how long the process takes
   ptm <- proc.time()
@@ -254,14 +270,13 @@ CaDrA <- function(
           custom_function = custom_function,
           custom_parameters = custom_parameters,
           alternative = alternative,
-          weight = weight,
+          weights = weights,
           top_N = top_N,
           search_start = search_start,
           search_method = search_method,
           max_size = max_size,
           best_score_only = TRUE,
           do_plot = FALSE,
-          do_check = FALSE,
           verbose = FALSE
         ) 
         
@@ -271,15 +286,20 @@ CaDrA <- function(
       .parallel = parallel,
       .progress = progress)
     
+    # Set up verbose option
+    options(verbose = verbose)
+    
     # Extract the permuted best scores
     perm_best_scores <- lapply(
       seq_along(perm_best_scores_l), 
       function(l){ perm_best_scores_l[[l]] }) |> unlist()
     
-    # Save computed scores to cache
-    verbose("Saving to cache...\n")
-    R.cache::saveCache(perm_best_scores, key=key, comment="null_scores()")
-    
+    if(cache == TRUE){
+      # Save computed scores to cache
+      verbose("Saving to cache...\n")
+      R.cache::saveCache(perm_best_scores, key=key)
+    }
+      
   } # end caching else statement block
   
   # Return to using just a single core
@@ -301,28 +321,31 @@ CaDrA <- function(
       custom_function = custom_function,
       custom_parameters = custom_parameters,
       alternative = alternative,
-      weight = weight,
+      weights = weights,
       top_N = top_N,
       search_start = search_start,
       search_method = search_method,
       max_size = max_size,
       best_score_only = TRUE,
       do_plot = FALSE,
-      do_check = FALSE,
       verbose = FALSE
     ) |> unlist()
     
   }else{
     
     # Check obs_best_score
-    stopifnot("invalid observed best score (obs_best_score)"=
+    stopifnot("Invalid observed best score (obs_best_score)"=
                 (length(obs_best_score)==1 && !is.na(obs_best_score) &&
                    is.numeric(obs_best_score)))
     
-    verbose("Using provided value of observed best score...\n\n")
+    verbose("Using provided value of observed best score...\n")
+    
     obs_best_score <- as.numeric(obs_best_score)
     
   }
+  
+  # Set up verbose option
+  options(verbose = verbose)
   
   verbose("Observed score: ", obs_best_score, "\n")
   

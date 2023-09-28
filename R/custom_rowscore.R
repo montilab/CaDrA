@@ -13,6 +13,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of \code{FS} object.
+#' @param meta_feature a vector of one or more features representing known 
+#' causes of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param custom_function a customized function which computes a row-wise 
 #' score for each row of a given binary feature set (FS).
 #' 
@@ -23,17 +26,50 @@
 #' @param custom_parameters a list of additional arguments to be passed to  
 #' \code{custom_function()} (excluding \code{FS} and \code{input_score}).
 #' Default is NULL.
-#' @param known_parameters a list of known parameters that existed in the 
-#' previous function that can be passed to \code{custom_function()} if and only 
-#' if they were not provided by \code{custom_parameters}. Default is NULL.
+#' @param ... additional parameters to be passed to \code{custom_function}
 #' 
 #' @noRd
 #' 
 #' @examples 
 #' 
 #' # A customized function using ks-test function
-#' customized_rowscore <- function(FS, input_score, alternative="less"){
+#' customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less"){
 #'   
+#'   # Check if meta_feature is provided
+#'   if(!is.null(meta_feature)){
+#'     # Getting the position of the known meta features
+#'     locs <- match(meta_feature, row.names(FS))
+#'
+#'     # Taking the union across the known meta features
+#'     if(length(locs) > 1) {
+#'       meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
+#'     }else{
+#'       meta_vector <- as.numeric(FS[locs,])
+#'     }
+#'      
+#'     # Remove the meta features from the binary feature matrix
+#'     # and taking logical OR btw the remaining features with the meta vector
+#'     FS <- base::sweep(FS[-locs,], 2, meta_vector, `|`)*1
+#'      
+#'     # Check if there are any features that are all 1s generated from
+#'     # taking the union between the matrix
+#'     # We cannot compute statistics for such features and thus they need
+#'     # to be filtered out
+#'     if(any(rowSums(FS) == ncol(FS))){
+#'       warning("Features with all 1s generated from taking the matrix union ",
+#'               "will be removed before progressing...\n")
+#'       FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
+#'     }
+#'   }
+#'    
+#'   # KS is a ranked-based method
+#'   # So we need to sort input_score from highest to lowest values
+#'   input_score <- sort(input_score, decreasing=TRUE)
+#'    
+#'   # Re-order the matrix based on the order of input_score
+#'   FS <- FS[, names(input_score), drop=FALSE]  
+#'   
+#'   # Compute the scores using the KS method
 #'   ks <- apply(FS, 1, function(r){ 
 #'     x = input_score[which(r==1)]; 
 #'     y = input_score[which(r==0)];
@@ -41,14 +77,15 @@
 #'     return(c(res$statistic, res$p.value))
 #'   })
 #'   
-#'   # Obtain score statistics and p-values from KS method
+#'   # Obtain score statistics
 #'   stat <- ks[1,]
 #'   
-#'   # Change values of 0 to the machine lowest value to avoid taking -log(0)
+#'   # Obtain p-values and change values of 0 to the machine lowest value 
+#'   # to avoid taking -log(0)
 #'   pval <- ks[2,]
 #'   pval[which(pval == 0)] <- .Machine$double.xmin
 #'   
-#'   # Compute the -log scores for pval
+#'   # Compute the -log(pval)
 #'   # Make sure scores has names that match the row names of FS object
 #'   scores <- -log(pval)
 #'   names(scores) <- rownames(FS)
@@ -72,20 +109,22 @@
 #' custom_rs <- custom_rowscore(
 #'   FS = mat,
 #'   input_score = input_score,
-#'   custom_function = customized_rowscore,            
+#'   meta_feature = NULL,
+#'   custom_function = customized_ks_rowscore,            
 #'   custom_parameters = NULL  
 #' )
 #' 
-#' @return return a vector of row-wise scores where its labels or names 
+#' @return return a vector of row-wise positive scores where its labels or names 
 #' must match the row names of \code{FS} object
 #' 
 custom_rowscore <- function
 (
   FS,
   input_score,
+  meta_feature = NULL,
   custom_function,
   custom_parameters = NULL,
-  known_parameters = NULL
+  ...
 )
 {
   
@@ -116,20 +155,28 @@ custom_rowscore <- function
     stop("custom_function() must take 'input_score' ",
          "as one of its arguments (required).")
   
+  # Check if custom_function() requires 'meta_feature' as its argument
+  if(!"meta_feature" %in% names(custom_args))
+    stop("custom_function() must take 'meta_feature' ",
+         "as one of its arguments (required).")
+  
   ## Create a list with only the required variables 
-  req_args <- list(FS=FS, input_score=input_score)
+  req_parameters <- list(FS=FS, input_score=input_score, meta_feature=meta_feature)
+  
+  # Obtain additional parameters
+  additional_parameters <- list(...)
   
   # Combine custom_parameters, required variables, and a list of 
   # known parameters together 
-  # However, we must exclude FS, input_score from custom_parameters and 
+  # However, we must exclude FS, input_score from custom_parameters 
   # excluding FS, input_score, and custom_parameters from known parameters 
   # as they would be redundant
   combined_parameters <- c(
-    req_args, 
+    req_parameters, 
     custom_parameters[
-      which(!names(custom_parameters) %in% names(req_args))],
-    known_parameters[
-      which(!names(known_parameters) %in% c(names(req_args), 
+      which(!names(custom_parameters) %in% names(req_parameters))],
+    additional_parameters[
+      which(!names(additional_parameters) %in% c(names(req_parameters), 
                                             names(custom_parameters)))]
   )
   

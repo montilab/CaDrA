@@ -11,14 +11,13 @@ candidate_search(
   custom_function = NULL,
   custom_parameters = NULL,
   alternative = c("less", "greater", "two.sided"),
-  weight = NULL,
+  weights = NULL,
   search_start = NULL,
   top_N = 1,
   search_method = c("both", "forward"),
   max_size = 7,
   best_score_only = FALSE,
   do_plot = FALSE,
-  do_check = TRUE,
   verbose = FALSE
 )
 }
@@ -58,9 +57,9 @@ to be passed to the \code{custom_function}. Default is \code{NULL}.}
 testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 Default is \code{less} for left-skewed significance testing.
 
-NOTE: This argument is applied to KS and Wilcoxon method}
+NOTE: This argument is ONLY applied to KS and Wilcoxon method}
 
-\item{weight}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
+\item{weights}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
 vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
 
 \item{search_start}{a list of character strings (separated by commas)
@@ -71,7 +70,7 @@ parameter will be ignored. Default is \code{NULL}.}
 \item{top_N}{an integer specifies the number of features to start the
 search over, starting from the top 'N' features in each case. If \code{top_N}
 is provided, then \code{search_start} parameter will be ignored. Default is
-\code{1}.}
+\code{1}. NOTE: top_N > 10 may result in a longer search time.}
 
 \item{search_method}{a character string specifies an algorithm to filter
 out the best features (\code{"forward"} or \code{"both"}). Default is
@@ -90,10 +89,6 @@ overlapping features of the resulting meta-feature matrix.
 NOTE: plot can only be produced if the resulting meta-feature matrix contains 
 more than 1 feature (e.g. length(search_start) > 1 or top_N > 1). 
 Default is \code{FALSE}.}
-
-\item{do_check}{a logical value indicates whether or not to validate if the
-given parameters (FS and input_score) are valid inputs. 
-Default is \code{TRUE}.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
@@ -130,7 +125,7 @@ data(sim_Scores)
 # Define additional parameters and run the function
 candidate_search_result <- candidate_search(
   FS = sim_FS, input_score = sim_Scores, 
-  method = "ks_pval", alternative = "less", weight = NULL, 
+  method = "ks_pval", alternative = "less", weights = NULL, 
   search_start = NULL, top_N = 3, search_method = "both",
   max_size = 7, best_score_only = FALSE
 )

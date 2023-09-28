@@ -10,9 +10,9 @@
 #' readout of interest such as protein expression, pathway activity, etc.
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
-#' @param seed_names a vector of one or more features representing known causes
-#' of activation or features associated with a response of interest.
-#' Default is NULL.
+#' @param meta_feature a vector of one or more features representing known 
+#' causes of activation or features associated with a response of interest, 
+#' \code{e.g. input_score}. Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
 #' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
 #' 
@@ -40,63 +40,50 @@
 #' @return return a vector of row-wise scores where its labels or names 
 #' must match the row names of \code{FS} object
 #' 
-revealer_rowscore <- function
-(
-  FS,
-  input_score,
-  seed_names = NULL,
-  assoc_metric = c("IC", "COR")
-)
-{
-
+revealer_rowscore <- function(
+    FS,
+    input_score,
+    meta_feature = NULL,
+    assoc_metric = c("IC", "COR")
+) {
   assoc_metric <- match.arg(assoc_metric)
-  
-  # Check if seed_names is provided
-  if(length(seed_names) == 0){
-    seed_vector <- as.vector(rep(0, ncol(FS)))
-  }else{
-    
-    # Check if seed_names exit among the row names of the FS object 
-    if(any(!seed_names %in% rownames(FS)))
-      stop(paste0(
-        "The provided seed_names, ",
-        paste0(seed_names[which(!seed_names %in% rownames(FS))], 
-               collapse = ","), 
-        ", do not exist among the row names of the FS object")
-      )
-    
-    # Consolidate or summarize one or more seeds into one vector of values
-    if(length(seed_names) > 1) {
-      seed_vector <- as.numeric(ifelse(colSums(FS[seed_names,]) == 0, 0, 1))
-    }else{
-      seed_vector <- as.numeric(FS[seed_names,])
+
+  # Check if meta_feature is provided
+  if (is.null(meta_feature)) {
+    meta_vector <- as.vector(rep(0, ncol(FS)))
+  } else {
+    # Getting the position of the known meta features
+    locs <- match(meta_feature, row.names(FS))
+    # Taking the union across the known meta features
+    if (length(locs) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[locs, ]) == 0, 0, 1))
+    } else {
+      meta_vector <- as.numeric(FS[locs, ])
     }
-    
+    names(meta_vector) <- names(input_score)
     # Remove the seeds from the binary feature matrix
-    locs <- match(seed_names, row.names(FS))
-    FS <- FS[-locs,]
-    
+    FS <- FS[-locs, , drop = FALSE]
   }
-  
-  # Compute CMI
-  cmi <- apply(X=FS, MARGIN=1, function(x){
+  # Assume the score direction is always positive
+  # So we need to sort input_score from highest to lowest values
+  input_score <- sort(input_score, decreasing = TRUE)
+
+  # Re-order the matrix based on the order of input_score
+  FS <- FS[, names(input_score), drop = FALSE]
+
+  # Compute CMI given known seed features
+  cmi_1 <- apply(X = FS, MARGIN = 1, function(x) {
     revealer_score(
       x = input_score,
       y = x,
-      z = seed_vector,
+      z = meta_vector,
       assoc_metric = assoc_metric
     )
   })
+  names(cmi_1) <- rownames(FS)
 
-  names(cmi) <- rownames(FS)
-  
-  return(cmi)
-
+  return(cmi_1)
 }
-
-
-
-
 
 #' Compute Conditional Mutual Information of x and y given z from 
 #' \code{REVEALER}
@@ -119,39 +106,30 @@ revealer_rowscore <- function
 #' @importFrom misc3d kde3d
 #' @importFrom stats cor median sd
 #' @importFrom ppcor pcor.test
-revealer_score <- function
-(
-  x,
-  y,
-  z,
-  assoc_metric = c("IC", "COR")
-)
-{
-
+revealer_score <- function(
+    x, y, z,
+    assoc_metric = c("IC", "COR")
+) {
   assoc_metric <- match.arg(assoc_metric)
 
   # Compute CMI
   cmi <- suppressWarnings(
-    cond_assoc(x=x, y=y, z=z, metric=assoc_metric)
+    cond_assoc(x = x, y = y, z = z, metric = assoc_metric)
   )
-
   # Revealer only returns score statistics value
-  return(c(score=cmi))
-
+  return(c(score = cmi))
 }
 
-
-
 # Compute the conditional mutual information of x and y given z
-cond_assoc <-  function(x, y, z, metric) {
-
+cond_assoc <- function(x, y, z, metric) {
   # Association of x and y given z
   #
   # Conditional mutual information I(x, y | z)
 
-  if (length(unique(x)) == 1 || length(unique(y)) == 1) return(0)
-
-  if (length(unique(z)) == 1) {  # e.g. for NULLSEED
+  if (length(unique(x)) == 1 || length(unique(y)) == 1) {
+    return(0)
+  }
+  if (length(unique(z)) == 1) { # e.g. for NULLSEED
     if (metric == "IC") {
       return(mutual_inf_v2(x = x, y = y, n.grid = 25)$IC)
     } else if (metric == "COR") {
@@ -164,15 +142,16 @@ cond_assoc <-  function(x, y, z, metric) {
       return(pcor.test(x, y, z)$estimate)
     }
   }
-
 }
 
 # Computes the conditional mutual information x, y | z
-cond_mutual_inf <- function(x, y, z,
-                            n.grid=25,
-                            delta = 0.25*c(MASS::bcv(x), MASS::bcv(y), 
-                                           MASS::bcv(z))) {
-
+cond_mutual_inf <- function(
+    x, y, z,
+    n.grid = 25,
+    delta = 0.25 * c(
+      MASS::bcv(x), MASS::bcv(y),
+      MASS::bcv(z))
+) {
   # Computes the Conditional mutual information:
   # I(X, Y | X) = H(X, Z) + H(Y, Z) - H(X, Y, Z) - H(Z)
   # The 0.25 in front of the bandwidth is because different conventions
@@ -182,11 +161,11 @@ cond_mutual_inf <- function(x, y, z,
 
   rho <- cor(x, y)
   rho2 <- ifelse(rho < 0, 0, rho)
-  delta <- delta*(1 + (-0.75)*rho2)
+  delta <- delta * (1 + (-0.75) * rho2)
 
   # Kernel-based prob. density
 
-  kde3d.xyz <- misc3d::kde3d(x=x, y=y, z=z, h=delta, n = n.grid)
+  kde3d.xyz <- misc3d::kde3d(x = x, y = y, z = z, h = delta, n = n.grid)
   X <- kde3d.xyz$x
   Y <- kde3d.xyz$y
   Z <- kde3d.xyz$z
@@ -197,21 +176,21 @@ cond_mutual_inf <- function(x, y, z,
 
   # Normalize density and calculate marginal densities and entropies
 
-  PXYZ <- PXYZ/(sum(PXYZ)*dx*dy*dz)
-  PXZ <- colSums(aperm(PXYZ, c(2,1,3)))*dy
-  PYZ <- colSums(PXYZ)*dx
-  PZ <- rowSums(aperm(PXYZ, c(3,1,2)))*dx*dy
-  PXY <- colSums(aperm(PXYZ, c(3,1,2)))*dz
-  PX <- rowSums(PXYZ)*dy*dz
-  PY <- rowSums(aperm(PXYZ, c(2,1,3)))*dx*dz
+  PXYZ <- PXYZ / (sum(PXYZ) * dx * dy * dz)
+  PXZ <- colSums(aperm(PXYZ, c(2, 1, 3))) * dy
+  PYZ <- colSums(PXYZ) * dx
+  PZ <- rowSums(aperm(PXYZ, c(3, 1, 2))) * dx * dy
+  PXY <- colSums(aperm(PXYZ, c(3, 1, 2))) * dz
+  PX <- rowSums(PXYZ) * dy * dz
+  PY <- rowSums(aperm(PXYZ, c(2, 1, 3))) * dx * dz
 
-  HXYZ <- - sum(PXYZ * log(PXYZ))*dx*dy*dz
-  HXZ <- - sum(PXZ * log(PXZ))*dx*dz
-  HYZ <- - sum(PYZ * log(PYZ))*dy*dz
-  HZ <-  - sum(PZ * log(PZ))*dz
-  HXY <- - sum(PXY * log(PXY))*dx*dy
-  HX <-  - sum(PX * log(PX))*dx
-  HY <-  - sum(PY * log(PY))*dy
+  HXYZ <- -sum(PXYZ * log(PXYZ)) * dx * dy * dz
+  HXZ <- -sum(PXZ * log(PXZ)) * dx * dz
+  HYZ <- -sum(PYZ * log(PYZ)) * dy * dz
+  HZ <- -sum(PZ * log(PZ)) * dz
+  HXY <- -sum(PXY * log(PXY)) * dx * dy
+  HX <- -sum(PX * log(PX)) * dx
+  HY <- -sum(PY * log(PY)) * dy
 
   MI <- HX + HY - HXY
   CMI <- HXZ + HYZ - HXYZ - HZ
@@ -219,27 +198,29 @@ cond_mutual_inf <- function(x, y, z,
   SMI <- sign(rho) * MI
   SCMI <- sign(rho) * CMI
 
-  IC <- sign(rho) * sqrt(1 - exp(- 2 * MI))
-  CIC <- sign(rho) * sqrt(1 - exp(- 2 * CMI))
+  IC <- sign(rho) * sqrt(1 - exp(-2 * MI))
+  CIC <- sign(rho) * sqrt(1 - exp(-2 * CMI))
 
-  return(list(CMI=CMI, MI=MI,
-              SCMI=SCMI, SMI=SMI,
-              HXY=HXY, HXYZ=HXYZ,
-              IC=IC, CIC=CIC))
-
+  return(list(
+    CMI = CMI, MI = MI,
+    SCMI = SCMI, SMI = SMI,
+    HXY = HXY, HXYZ = HXYZ,
+    IC = IC, CIC = CIC
+  ))
 }
 
 # Computes the Mutual Information/Information Coefficient IC(x, y)
-mutual_inf_v2 <- function(x, y, n.grid=25, 
-                          delta = c(MASS::bcv(x), MASS::bcv(y))) {
-
+mutual_inf_v2 <- function(
+    x, y, n.grid = 25,
+    delta = c(MASS::bcv(x), MASS::bcv(y))
+) {
   # Computes the Mutual Information/Information Coefficient IC(x, y)
   #
   # Compute correlation-dependent bandwidth
 
   rho <- cor(x, y)
   rho2 <- abs(rho)
-  delta <- delta*(1 + (-0.75)*rho2)
+  delta <- delta * (1 + (-0.75) * rho2)
 
   # Kernel-based prob. density
 
@@ -248,28 +229,27 @@ mutual_inf_v2 <- function(x, y, n.grid=25,
   FXY <- kde2d.xy$z + .Machine$double.eps
   dx <- kde2d.xy$x[2] - kde2d.xy$x[1]
   dy <- kde2d.xy$y[2] - kde2d.xy$y[1]
-  PXY <- FXY/(sum(FXY)*dx*dy)
-  PX <- rowSums(PXY)*dy
-  PY <- colSums(PXY)*dx
-  HXY <- -sum(PXY * log(PXY))*dx*dy
-  HX <- -sum(PX * log(PX))*dx
-  HY <- -sum(PY * log(PY))*dy
+  PXY <- FXY / (sum(FXY) * dx * dy)
+  PX <- rowSums(PXY) * dy
+  PY <- colSums(PXY) * dx
+  HXY <- -sum(PXY * log(PXY)) * dx * dy
+  HX <- -sum(PX * log(PX)) * dx
+  HY <- -sum(PY * log(PY)) * dy
 
-  PX <- matrix(PX, nrow=n.grid, ncol=n.grid)
-  PY <- matrix(PY, byrow = TRUE, nrow=n.grid, ncol=n.grid)
+  PX <- matrix(PX, nrow = n.grid, ncol = n.grid)
+  PY <- matrix(PY, byrow = TRUE, nrow = n.grid, ncol = n.grid)
 
-  MI <- sum(PXY * log(PXY/(PX*PY)))*dx*dy
+  MI <- sum(PXY * log(PXY / (PX * PY))) * dx * dy
   rho <- cor(x, y)
   SMI <- sign(rho) * MI
 
   # Use pearson correlation the get the sign (directionality)
 
-  IC <- sign(rho) * sqrt(1 - exp(- 2 * MI))
+  IC <- sign(rho) * sqrt(1 - exp(-2 * MI))
 
-  NMI <- sign(rho) * ((HX + HY)/HXY - 1)
+  NMI <- sign(rho) * ((HX + HY) / HXY - 1)
 
-  return(list(MI=MI, SMI=SMI, HXY=HXY, HX=HX, HY=HY, NMI=NMI, IC=IC))
-
+  return(list(MI = MI, SMI = SMI, HXY = HXY, HX = HX, HY = HY, NMI = NMI, IC = IC))
 }
 
 

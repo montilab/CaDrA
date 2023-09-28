@@ -7,7 +7,7 @@
 \format{
 An object of class \code{SummarizedExperiment} from 
 \code{SummarizedExperiment} package
-containing a matrix of 17,723 rows (features) and 82 columns (samples).
+containing a matrix of 17,724 rows (features) and 82 columns (samples).
 See \code{SummarizedExperiment} for more details.
 }
 \usage{
@@ -17,7 +17,7 @@ data(CCLE_MUT_SCNA)
 a SummarizedExperiment object
 }
 \description{
-A SummarizedExperiment object consists of 17,723 genomic features across 
+A SummarizedExperiment object consists of 17,724 genomic features across 
 82 samples.
 }
 \references{

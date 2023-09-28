@@ -1,7 +1,7 @@
 Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
-Version: 0.99.6
+Version: 0.99.7
 Date: 2022-11-20
 Authors@R: 
     c(person(given="Reina", family="Chau", role=c("aut","cre"), 
@@ -46,8 +46,9 @@ Imports:
 Suggests: 
     BiocStyle,
     devtools,
-    rmarkdown,
     knitr,
+    pheatmap,
+    rmarkdown,
     testthat (>= 3.1.6)
 Config/testthat/edition: 3
 biocViews: Microarray, RNASeq, GeneExpression, Software, FeatureExtraction

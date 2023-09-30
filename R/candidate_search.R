@@ -319,7 +319,7 @@ candidate_search <- function(
     # This can be obtained using the list of indices that were progressively
     # excluded (if at all) in the step-wise procedure
     # If returning only those features that led to the best global score
-    FS_best <- FS[global_best_s_features,]
+    FS_best <- FS[global_best_s_features, , drop=FALSE]
 
     # Make a list containing two elements.
     #The first will be the FS with the features that gave the best meta-feature

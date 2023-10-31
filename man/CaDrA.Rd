@@ -21,7 +21,7 @@ CaDrA(
   smooth = TRUE,
   plot = TRUE,
   ncores = 1,
-  cache = TRUE,
+  cache = FALSE,
   cache_path = NULL,
   verbose = FALSE
 )
@@ -103,7 +103,7 @@ parallelization for permutation-based testing. Default is \code{1}.}
 \item{cache}{a logical value to determine whether or not to cache the 
 permuted best scores. This would help save time for future loading instead 
 of re-computing the permutation-based testing every time. 
-Default is \code{TRUE}.}
+Default is \code{FALSE}.}
 
 \item{cache_path}{If cache = TRUE, a full path can be used to cache the 
 permuted best scores. Default is \code{NULL}. If NULL, the cache path is
@@ -153,7 +153,7 @@ cadra_result <- CaDrA(
   weights = NULL, alternative = "less", top_N = 1,
   search_start = NULL, search_method = "both", max_size = 7, 
   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
-  ncores = 1, cache_path = NULL
+  ncores = 1, cache = FALSE, cache_path = NULL
 )
 
 }

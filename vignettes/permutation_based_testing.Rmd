@@ -9,6 +9,8 @@ vignette: >
 
 ```{r set.up, include=FALSE, messages=FALSE, warnings=FALSE}
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
+
+# R packages
 library(SummarizedExperiment)
 library(devtools)
 load_all()

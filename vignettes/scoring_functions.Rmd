@@ -8,14 +8,13 @@ vignette: >
 ---
 
 ```{r set.up, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
-
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 
+# R packages
 library(SummarizedExperiment)
 library(pheatmap)
 library(devtools)
 load_all()
-
 ```
 
 The **CaDrA** package currently supports four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)

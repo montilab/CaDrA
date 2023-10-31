@@ -7,9 +7,17 @@ output: rmarkdown::github_document
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(fig.path="./man/figures/", message=FALSE, collapse = TRUE, comment="")
-library(SummarizedExperiment)
+
+# Load CaDrA
 library(devtools)
 load_all()
+
+# Install BiocManager
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# Install SummarizedExperiment
+BiocManager::install("SummarizedExperiment")
 ```
 
 # CaDrA
@@ -44,13 +52,18 @@ devtools::install_github("montilab/CaDrA")
 - Using `BiocManager` package
 
 ```r
+# Install BiocManager
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 # The following initializes usage of Bioc devel
 BiocManager::install(version='devel')
 
+# Install CaDrA
 BiocManager::install("CaDrA")
+
+# Install SummarizedExperiment
+BiocManager::install("SummarizedExperiment")
 ```
 
 ## (2) Quickstart

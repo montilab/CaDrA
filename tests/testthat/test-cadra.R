@@ -66,42 +66,42 @@ test_that("CaDrA returns expected result for ks algorithm",{
     c(0.0909091)
   )
   
-  # # Set seed 
-  # set.seed(21) 
+  # # Set seed
+  # set.seed(21)
   # 
   # # ks_score
   # result <- CaDrA(
-  #   FS = sim_FS, 
-  #   input_score = sim_Scores, 
-  #   method = "ks_score", 
-  #   weights = NULL, 
-  #   alternative = "less", 
+  #   FS = sim_FS,
+  #   input_score = sim_Scores,
+  #   method = "ks_score",
+  #   weights = NULL,
+  #   alternative = "less",
   #   top_N = 1,
-  #   search_start = NULL, 
-  #   search_method = "both", 
-  #   max_size = 7, 
-  #   n_perm = 10, 
-  #   plot = FALSE, 
-  #   smooth = TRUE, 
+  #   search_start = NULL,
+  #   search_method = "both",
+  #   max_size = 7,
+  #   n_perm = 10,
+  #   plot = FALSE,
+  #   smooth = TRUE,
   #   obs_best_score = NULL,
-  #   ncores = 1, 
+  #   ncores = 1,
   #   cache = FALSE,
   #   cache_path = NULL
   # )
   # 
   # testthat::expect_length(result, 4L)
   # testthat::expect_type(result, "list")
-  # testthat::expect_named(result, 
+  # testthat::expect_named(result,
   #                            c("key","perm_best_scores","obs_best_score","perm_pval"))
   # testthat::expect_type(result$key, "list")
   # testthat::expect_length(result$key, 11L)
-  # testthat::expect_named(result$key, 
-  #                            c("FS", "input_score", "method", "custom_function", 
+  # testthat::expect_named(result$key,
+  #                            c("FS", "input_score", "method", "custom_function",
   #                              "custom_parameters", "alternative", "weights", "top_N",
   #                              "search_start", "search_method", "max_size"))
   # testthat::expect_type(result$key$FS, "double")
   # 
-  # testthat::expect_equal(round(result$perm_best_scores[1:10], 5), 
+  # testthat::expect_equal(round(result$perm_best_scores[1:10], 5),
   #                        c('TP_8'=0.34,
   #                          'TP_10'=0.54,
   #                          'TP_9'=0.37,
@@ -118,10 +118,10 @@ test_that("CaDrA returns expected result for ks algorithm",{
   # # A smooth factor of 1
   # c <- 1
   # 
-  # # Add a smoothing factor of 1 
+  # # Add a smoothing factor of 1
   # # This is just to not return a p-value of 0
   # testthat::expect_equal(
-  #   round((sum(result$perm_best_scores[1:10] > result$obs_best_score)+c)/(10+c), 6), 
+  #   round((sum(result$perm_best_scores[1:10] > result$obs_best_score)+c)/(10+c), 6),
   #   c(0.090909)
   # )
   

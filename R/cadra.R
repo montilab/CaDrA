@@ -176,14 +176,17 @@ CaDrA <- function(
               max_size = max_size)
   
   ####### CACHE CHECKING #######
-  if(cache == TRUE){
+  
+  # Set cache root path
+  if(is.null(cache_path)){
+    cache_path <- file.path(Sys.getenv("HOME"), ".Rcache")
+    dir.create(cache_path, showWarnings = FALSE)
+  }
     
-    if(is.null(cache_path)){
-      cache_path <- file.path(Sys.getenv("HOME"), ".Rcache")
-      dir.create(cache_path, showWarnings = FALSE)
-    }
+  R.cache::setCacheRootPath(cache_path)
+  
+  if(cache == TRUE){
       
-    R.cache::setCacheRootPath(cache_path)
     message("Setting cache root path as: ", cache_path, "\n")
     
     # Load perm_best_scores with the given key parameters
@@ -294,12 +297,10 @@ CaDrA <- function(
       seq_along(perm_best_scores_l), 
       function(l){ perm_best_scores_l[[l]] }) |> unlist()
     
-    if(cache == TRUE){
-      # Save computed scores to cache
-      verbose("Saving to cache...\n")
-      R.cache::saveCache(perm_best_scores, key=key)
-    }
-      
+    # Save computed scores to cache
+    verbose("Saving to cache...\n")
+    R.cache::saveCache(perm_best_scores, key=key)
+    
   } # end caching else statement block
   
   # Return to using just a single core

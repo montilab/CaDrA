@@ -108,7 +108,7 @@
 #'   weights = NULL, alternative = "less", top_N = 1,
 #'   search_start = NULL, search_method = "both", max_size = 7, 
 #'   n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
-#'   ncores = 1, cache_path = NULL
+#'   ncores = 1, cache = FALSE, cache_path = NULL
 #' )
 #' 
 #' @export

@@ -9,22 +9,22 @@
 #' the KS enrichment plot of the meta-features, 
 #' and lastly, a density diagram of the distribution of the observed
 #' input scores sorted from largest to smallest at the top.
-#' @param topn_best_list a list of objects returned from 
-#' \code{candidate_search} 
-#' corresponding to the search of a set of top N features given by top_N value.
-#' The topn_best_list contains a list of returned meta-feature set, 
-#' its corresponding best score, 
-#' and observed input scores.
+#' @param topn_best_list a list of objects returned from \code{candidate_search} 
+#' corresponding to the search of top N features given by top_N value.
+#' The topn_best_list contains the best meta-feature matrix, its 
+#' corresponding best score, its observed input scores, rank of the best 
+#' features based on their scores, marginal best scores, and cumulative 
+#' best scores.
 #' @param input_score_label a label that references to the \code{input_score}
 #' variable that was used to compute the top N best features. 
 #' Default is \code{NULL}.
 #' @param plot_title a title to the plot. Default is \code{NULL}.
 #' 
-#' @return 3 plots stacked together: 
+#' @return 3 plots stacked on top of each other: 
 #' 1. a density diagram of observed input scores sorted from highest to lowest 
 #' 2. a tile plot of the top features within the meta-feature set 
-#' 3. a KS enrichment plot of the meta-feature set 
-#' (here, this will correspond to the logical OR of the features)
+#' 3. a KS enrichment plot of the meta-feature set (this correspond to the 
+#' logical OR of the features)
 #' 
 #' @examples
 #'

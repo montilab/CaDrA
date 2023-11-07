@@ -7,12 +7,12 @@
 meta_plot(topn_best_list, input_score_label = NULL, plot_title = NULL)
 }
 \arguments{
-\item{topn_best_list}{a list of objects returned from 
-\code{candidate_search} 
-corresponding to the search of a set of top N features given by top_N value.
-The topn_best_list contains a list of returned meta-feature set, 
-its corresponding best score, 
-and observed input scores.}
+\item{topn_best_list}{a list of objects returned from \code{candidate_search} 
+corresponding to the search of top N features given by top_N value.
+The topn_best_list contains the best meta-feature matrix, its 
+corresponding best score, its observed input scores, rank of the best 
+features based on their scores, marginal best scores, and cumulative 
+best scores.}
 
 \item{input_score_label}{a label that references to the \code{input_score}
 variable that was used to compute the top N best features. 
@@ -21,11 +21,11 @@ Default is \code{NULL}.}
 \item{plot_title}{a title to the plot. Default is \code{NULL}.}
 }
 \value{
-3 plots stacked together: 
+3 plots stacked on top of each other: 
 1. a density diagram of observed input scores sorted from highest to lowest 
 2. a tile plot of the top features within the meta-feature set 
-3. a KS enrichment plot of the meta-feature set 
-(here, this will correspond to the logical OR of the features)
+3. a KS enrichment plot of the meta-feature set (this correspond to the 
+logical OR of the features)
 }
 \description{
 By utilizing the top N results obtained from \code{candidate_search},

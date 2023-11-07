@@ -6,8 +6,9 @@
 \title{Top-N Results for Simulated Data (\code{sim_FS})}
 \format{
 A list of objects returned from \code{candidate_search} including 
-a set of meta-features in form of SummarizedExperiment object, 
-its observed input scores, and corresponding best score pertaining to each 
+a set of best meta-feature matrix, its corresponding best score, its 
+observed input scores, rank of the best features based on their scores, 
+marginal best scores, and cumulative best scores. pertaining to each 
 top N feature searches.
 
 See \code{\link[CaDrA]{candidate_search}} for more information.
@@ -20,19 +21,15 @@ a list of objects returned from \code{candidate_search} function
 }
 \description{
 A list of objects returned from \code{candidate_search} 
-using simulated dataset
-\code{FS = sim_FS}, \code{input_score = sim_Scores}, \code{top_N = 7},
-\code{method = "ks_pval"}, \code{alternative = "less"}, 
-\code{search_method = "both"}, \code{max_size = 10},
-and \code{best_score_only = FALSE} as inputs to the function.
-\code{NOTE:} \code{max_size} is set to 10 as we would like to account
-for the presence of 10 left-skewed (i.e. true positive or TP) features 
-in \code{sim_FS} dataset.
+using simulated dataset \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
+\code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
+\code{search_method = "both"}, \code{max_size = 10}, and 
+\code{best_score_only = FALSE}.
 }
 \details{
-Over top_N = 7 feature searches, a set of meta-features in form 
-of SummarizedExperiment object, along with a vector of observed input scores 
-and its corresponding best score are returned from each search.
+NOTE: \code{max_size} is set to 10 as we would like to account
+for the presence of 10 left-skewed (i.e. true positive or TP) features 
+in \code{sim_FS} dataset.
 }
 \examples{
 

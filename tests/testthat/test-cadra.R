@@ -14,8 +14,8 @@ test_that("CaDrA returns expected result for ks algorithm",{
     FS = sim_FS, 
     input_score = sim_Scores, 
     method = "ks_pval", 
+    method_alternative = "less", 
     weights = NULL, 
-    alternative = "less", 
     top_N = 1,
     search_start = NULL, 
     search_method = "both", 
@@ -37,8 +37,8 @@ test_that("CaDrA returns expected result for ks algorithm",{
   testthat::expect_type(result$key, "list")
   testthat::expect_length(result$key, 11L)
   testthat::expect_named(result$key, 
-             c("FS", "input_score", "method", "custom_function", 
-               "custom_parameters", "alternative", "weights", "top_N",
+             c("FS", "input_score", "method", "method_alternative", 
+               "custom_function", "custom_parameters", "weights", "top_N",
                "search_start", "search_method", "max_size"))
   testthat::expect_type(result$key$FS, "double")
   
@@ -66,16 +66,16 @@ test_that("CaDrA returns expected result for ks algorithm",{
     c(0.0909091)
   )
   
-  # # Set seed
-  # set.seed(21)
-  # 
-  # # ks_score
+  # Set seed
+  set.seed(21)
+
+  # ks_score
   # result <- CaDrA(
   #   FS = sim_FS,
   #   input_score = sim_Scores,
   #   method = "ks_score",
+  #   method_alternative = "less",
   #   weights = NULL,
-  #   alternative = "less",
   #   top_N = 1,
   #   search_start = NULL,
   #   search_method = "both",
@@ -96,9 +96,9 @@ test_that("CaDrA returns expected result for ks algorithm",{
   # testthat::expect_type(result$key, "list")
   # testthat::expect_length(result$key, 11L)
   # testthat::expect_named(result$key,
-  #                            c("FS", "input_score", "method", "custom_function",
-  #                              "custom_parameters", "alternative", "weights", "top_N",
-  #                              "search_start", "search_method", "max_size"))
+  #                            c("FS", "input_score", "method", "method_alternative", 
+  #                              "custom_function", "custom_parameters", "weights", 
+  #                              "top_N", "search_start", "search_method", "max_size"))
   # testthat::expect_type(result$key$FS, "double")
   # 
   # testthat::expect_equal(round(result$perm_best_scores[1:10], 5),
@@ -144,8 +144,8 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
     FS = sim_FS, 
     input_score = sim_Scores, 
     method = "wilcox_pval", 
+    method_alternative = "less", 
     weights = NULL, 
-    alternative = "less", 
     top_N = 1,
     search_start = NULL, 
     search_method = "both", 
@@ -166,8 +166,8 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
   testthat::expect_type(result$key, "list")
   testthat::expect_length(result$key, 11L)
   testthat::expect_named(result$key, 
-            c("FS", "input_score", "method", "custom_function", 
-              "custom_parameters", "alternative", "weights", "top_N",
+            c("FS", "input_score", "method", "method_alternative", 
+              "custom_function", "custom_parameters", "weights", "top_N",
               "search_start", "search_method", "max_size"))
   testthat::expect_type(result$key$FS, "double")
   
@@ -202,8 +202,8 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
     FS = sim_FS, 
     input_score = sim_Scores, 
     method = "wilcox_score", 
+    method_alternative = "less", 
     weights = NULL, 
-    alternative = "less", 
     top_N = 1,
     search_start = NULL, 
     search_method = "both", 
@@ -224,8 +224,8 @@ test_that("CaDrA returns expected result for Wilcoxon algorithm",{
   testthat::expect_type(result$key, "list")
   testthat::expect_length(result$key, 11L)
   testthat::expect_named(result$key, 
-            c("FS", "input_score", "method", "custom_function", 
-              "custom_parameters", "alternative", "weights", "top_N",
+            c("FS", "input_score", "method", "method_alternative", 
+              "custom_function", "custom_parameters", "weights", "top_N",
               "search_start", "search_method", "max_size"))
   testthat::expect_type(result$key$FS, "double")
   
@@ -272,8 +272,8 @@ test_that("CaDrA returns expected result for Revealer algorithm", {
     FS = sim_FS, 
     input_score = sim_Scores, 
     method = "revealer", 
+    method_alternative = "less", 
     weights = NULL, 
-    alternative = "less", 
     top_N = 1,
     search_start = NULL, 
     search_method = "both", 
@@ -294,8 +294,8 @@ test_that("CaDrA returns expected result for Revealer algorithm", {
   testthat::expect_type(result$key, "list")
   testthat::expect_length(result$key, 11L)
   testthat::expect_named(result$key, 
-            c("FS", "input_score", "method", "custom_function", 
-              "custom_parameters", "alternative", "weights", "top_N",
+            c("FS", "input_score", "method", "method_alternative", 
+              "custom_function", "custom_parameters", "weights", "top_N",
               "search_start", "search_method", "max_size"))
   testthat::expect_type(result$key$FS, "double")
   

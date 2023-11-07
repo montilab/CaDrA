@@ -1,22 +1,18 @@
-
 #' Top 'N' Best Meta-Features
 #'
 #' Take the resulting list of meta-features returned from 
-#' \code{candidate_search}
-#' and fetch the meta-feature with the best score
-#' @param topn_list A nested list of objects that is returned 
-#' from \code{candidate_search}
-#' by setting \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
-#' \code{top_N = 7},
-#' \code{method = "ks_pval"}, \code{alternative = "less"}, 
-#' \code{search_method = "both"}, 
-#' \code{max_size = 10}, and \code{best_score_only = FALSE}. 
-#' The nested list contains 
-#' the meta-feature sets as well as the observed input scores and 
-#' its corresponding  best score for each top 'N' search.
+#' \code{candidate_search} over top N feature searches and 
+#' fetch the meta-feature with the best score.
+#' @param topn_list A nested list of objects that are returned 
+#' from \code{candidate_search} using the following parameters:
+#' \code{FS = sim_FS}, \code{input_score = sim_Scores}, 
+#' \code{top_N = 7}, \code{method = "ks_pval"}, \code{alternative = "less"}, 
+#' \code{search_method = "both"}, \code{max_size = 10}, and 
+#' \code{best_score_only = FALSE}. 
 #' 
-#' @return A list of objects containing the best meta-feature, 
-#' its corresponding best score, and observed input scores
+#' @return A list of objects containing the best meta-feature matrix, its 
+#' corresponding best score, its observed input scores, rank of best 
+#' meta-features based on their scores, its marginal and cumulative best scores.
 #' 
 #' @examples
 #'

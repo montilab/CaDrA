@@ -14,8 +14,8 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of \code{FS} object.
 #' @param meta_feature a vector of one or more features representing known 
-#' causes of activation or features associated with a response of interest, 
-#' \code{e.g. input_score}. Default is NULL.
+#' causes of activation or features associated with a response of interest 
+#' (\code{e.g. input_score}). Default is NULL.
 #' @param custom_function a customized function which computes a row-wise 
 #' score for each row of a given binary feature set (FS).
 #' 

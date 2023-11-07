@@ -11,7 +11,6 @@ vignette: >
 knitr::opts_chunk$set(message=FALSE, collapse = TRUE, comment="")
 
 # R packages
-library(SummarizedExperiment)
 library(devtools)
 load_all()
 ```
@@ -51,12 +50,12 @@ candidate_search_res <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  alternative = "less",        # Use one-sided hypothesis testing
+  method_alternative = "less", # Use one-sided hypothesis testing
   weights = NULL,              # If weights is provided, perform a weighted-KS test
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Number of top features to kick start the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
-  best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
+  best_score_only = FALSE      # Return all results from the search
 )
 
 ```
@@ -75,30 +74,23 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta)
 
 # Perform permutation-based testing
 
-```{r ks.perm.res, include=FALSE}
-
-# Load pre-computed permutation-based testings
-# See ?perm_res for more information
-data("perm_res")
-
-```
-
-```r
-# Set seed for permutation
+```{r}
+# Set seed for permutation-based testing
 set.seed(123)
 
 perm_res <- CaDrA::CaDrA(
   FS = sim_FS, 
   input_score = sim_Scores, 
-  method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
-  weights = NULL,              # If weights is provided, perform a weighted-KS test
-  alternative = "less",        # Use one-sided hypothesis testing
-  search_method = "both",      # Apply both forward and backward search
-  top_N = 7,                   # Repeat the search with the top N features
-  max_size = 10,               # Allow at most 10 features in the meta-feature matrix
-  n_perm = 1000,               # Number of permutations to perform
-  plot = FALSE,                # We will plot later
-  ncores = 4                   # Number of cores to perform parallelization
+  method = "ks_pval",             # Use Kolmogorow-Smirnow scoring function 
+  method_alternative = "less",    # Use one-sided hypothesis testing
+  weights = NULL,                 # If weights is provided, perform a weighted-KS test
+  search_method = "both",         # Apply both forward and backward search
+  top_N = 7,                      # Repeat the search with the top N features
+  max_size = 10,                  # Allow at most 10 features in the meta-feature matrix
+  n_perm = 100,                   # Number of permutations to perform
+  perm_alternative = "one.sided", # One-sided permutation-based p-value alternative type
+  plot = FALSE,                   # We will plot later
+  ncores = 2                      # Number of cores to perform parallelization
 )
 ```
 

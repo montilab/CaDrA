@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -102,14 +102,13 @@ expression, pathway activity, etc.)</p>
 <li>Kolmogorov-Smirnov Method (<code>ks</code>)</li>
 <li>Conditional Mutual Information Method (<code>revealer</code>)</li>
 <li>Wilcoxon Rank-Sum Method (<code>wilcox</code>)</li>
-<li>Custom - An User’s Provided Scoring Function
-(<code>custom</code>)</li>
+<li>Custom - An User Defined Scoring Method (<code>custom</code>)</li>
 </ol>
 <p>Below, we run <code><a href="../reference/candidate_search.html">candidate_search()</a></code> over the top 3 starting
 features using each of the four scoring functions described above.</p>
 <p><strong>Important Note:</strong></p>
 <ul>
-<li>The legacy/deprecated function <code>topn_eval()</code> is
+<li>The legacy or deprecated function <code>topn_eval()</code> is
 equivalent to the new and recommended <code><a href="../reference/candidate_search.html">candidate_search()</a></code>
 function</li>
 </ul>
@@ -118,7 +117,8 @@ function</li>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/montilab/CaDrA/">CaDrA</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="load-required-datasets">Load required datasets<a class="anchor" aria-label="anchor" href="#load-required-datasets"></a>
@@ -162,7 +162,7 @@ features.</p>
 with a functional response of interest using four scoring methods<a class="anchor" aria-label="anchor" href="#search-for-a-subset-of-genomic-features-that-are-likely-associated-with-a-functional-response-of-interest-using-four-scoring-methods"></a>
 </h2>
 <div class="section level3">
-<h3 id="kolmogorov-smirnov-scoring-method">1. Kolmogorov-Smirnov scoring method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
+<h3 id="kolmogorov-smirnov-scoring-method">1. Kolmogorov-Smirnov Scoring Method<a class="anchor" aria-label="anchor" href="#kolmogorov-smirnov-scoring-method"></a>
 </h3>
 <p>See <code>?ks_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -171,13 +171,13 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
+<span>  method_alternative <span class="op">=</span> <span class="st">"less"</span>, <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
-<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the feature set of top N features that corresponded to the best scores over the top N search</span></span>
@@ -188,7 +188,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 <p><img src="scoring_functions_files/figure-html/ks.method-1.png" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="wilcoxon-rank-sum-scoring-method">2. Wilcoxon Rank-Sum scoring method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
+<h3 id="wilcoxon-rank-sum-scoring-method">2. Wilcoxon Rank-Sum Scoring Method<a class="anchor" aria-label="anchor" href="#wilcoxon-rank-sum-scoring-method"></a>
 </h3>
 <p>See <code>?wilcox_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -197,12 +197,12 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"wilcox_pval"</span>,      <span class="co"># Use Wilcoxon Rank-Sum scoring function</span></span>
-<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
+<span>  method_alternative <span class="op">=</span> <span class="st">"less"</span>, <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the feature set of top N feature that corresponded to the best scores over the top N search</span></span>
@@ -213,7 +213,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 <p><img src="scoring_functions_files/figure-html/wilcox.method-1.png" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="conditional-mutual-information-scoring-method">3. Conditional Mutual Information scoring method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
+<h3 id="conditional-mutual-information-scoring-method">3. Conditional Mutual Information Scoring Method<a class="anchor" aria-label="anchor" href="#conditional-mutual-information-scoring-method"></a>
 </h3>
 <p>See <code>?revealer_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -226,7 +226,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span>  top_N <span class="op">=</span> <span class="fl">3</span>,                   <span class="co"># Evaluate top 3 starting points for the search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,               <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search</span></span>
@@ -237,12 +237,12 @@ with a functional response of interest using four scoring methods<a class="ancho
 <p><img src="scoring_functions_files/figure-html/revealer.method-1.png" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="custom---an-users-provided-scoring-method">4. Custom - An user’s provided scoring method<a class="anchor" aria-label="anchor" href="#custom---an-users-provided-scoring-method"></a>
+<h3 id="custom---an-user-defined-scoring-method">4. Custom - An User Defined Scoring Method<a class="anchor" aria-label="anchor" href="#custom---an-user-defined-scoring-method"></a>
 </h3>
 <p>See <code>?custom_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co"># A customized function using ks-test function</span></span>
+<span><span class="co"># A customized function using ks-test</span></span>
 <span><span class="va">customized_ks_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">meta_feature</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span>, <span class="va">metric</span><span class="op">=</span><span class="st">"pval"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="co"># Check if meta_feature is provided</span></span>
@@ -316,14 +316,14 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span><span class="va">custom_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"custom"</span>,                                <span class="co"># Use custom scoring function</span></span>
-<span>  custom_function <span class="op">=</span> <span class="va">customized_ks_rowscore</span>,         <span class="co"># Use a customized scoring function</span></span>
-<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,                         <span class="co"># Additional parameters to pass to custom_function</span></span>
-<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,                           <span class="co"># Apply both forward and backward search</span></span>
-<span>  top_N <span class="op">=</span> <span class="fl">3</span>,                                        <span class="co"># Evaluate top 3 starting points for the search</span></span>
-<span>  max_size <span class="op">=</span> <span class="fl">10</span>,                                    <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
-<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,                                  <span class="co"># We will plot it AFTER finding the best hits</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>                           <span class="co"># Return meta-feature, its observed input scores and corresponding best score</span></span>
+<span>  method <span class="op">=</span> <span class="st">"custom"</span>,                        <span class="co"># Use custom scoring function</span></span>
+<span>  custom_function <span class="op">=</span> <span class="va">customized_ks_rowscore</span>, <span class="co"># Use a customized scoring function</span></span>
+<span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,                 <span class="co"># Additional parameters to pass to custom_function</span></span>
+<span>  search_method <span class="op">=</span> <span class="st">"both"</span>,                   <span class="co"># Apply both forward and backward search</span></span>
+<span>  top_N <span class="op">=</span> <span class="fl">3</span>,                                <span class="co"># Evaluate top 3 starting points for the search</span></span>
+<span>  max_size <span class="op">=</span> <span class="fl">10</span>,                            <span class="co"># Allow at most 10 features in meta-feature matrix</span></span>
+<span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,                          <span class="co"># We will plot it AFTER finding the best hits</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>                   <span class="co"># Return all results from the search</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Now we can fetch the feature set of top N feature that corresponded to the best scores over the top N search</span></span>
@@ -360,7 +360,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_1.<span class="fl">1.0</span>                 testthat_3.<span class="fl">2.0</span>             </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_1.<span class="fl">1.1</span>                 testthat_3.<span class="fl">2.0</span>             </span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">2.2</span>              </span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] pheatmap_1.<span class="fl">0.12</span>             SummarizedExperiment_1.<span class="fl">30.2</span></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] Biobase_2.<span class="fl">60.0</span>              GenomicRanges_1.<span class="fl">52.1</span>       </span>
@@ -378,32 +378,33 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a> [<span class="dv">16</span>] XVector_0.<span class="fl">40.0</span>          ellipsis_0.<span class="fl">3.2</span>          labeling_0.<span class="fl">4.3</span>         </span>
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a> [<span class="dv">19</span>] caTools_1.<span class="fl">18.2</span>          utf8_1.<span class="fl">2.4</span>              promises_1.<span class="fl">2.1</span>         </span>
 <span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a> [<span class="dv">22</span>] rmarkdown_2<span class="fl">.25</span>          sessioninfo_1.<span class="fl">2.2</span>       ps_1.<span class="fl">7.5</span>               </span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a> [<span class="dv">25</span>] ragg_1.<span class="fl">2.6</span>              purrr_1.<span class="fl">0.2</span>             xfun_0<span class="fl">.40</span>              </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a> [<span class="dv">25</span>] ragg_1.<span class="fl">2.6</span>              purrr_1.<span class="fl">0.2</span>             xfun_0<span class="fl">.41</span>              </span>
 <span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a> [<span class="dv">28</span>] zlibbioc_1.<span class="fl">46.0</span>         cachem_1.<span class="fl">0.8</span>            jsonlite_1.<span class="fl">8.7</span>         </span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a> [<span class="dv">31</span>] later_1.<span class="fl">3.1</span>             DelayedArray_0.<span class="fl">26.7</span>     parallel_4.<span class="fl">3.2</span>         </span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a> [<span class="dv">34</span>] prettyunits_1.<span class="fl">2.0</span>       R6_2.<span class="fl">5.1</span>                bslib_0.<span class="fl">5.1</span>            </span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a> [<span class="dv">37</span>] stringi_1.<span class="fl">7.12</span>          RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>      pkgload_1.<span class="fl">3.3</span>          </span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a> [<span class="dv">40</span>] brio_1.<span class="fl">1.3</span>              jquerylib_0.<span class="fl">1.4</span>         Rcpp_1.<span class="fl">0.11</span>            </span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a> [<span class="dv">43</span>] bookdown_0<span class="fl">.36</span>           iterators_1.<span class="fl">0.14</span>        knitr_1<span class="fl">.44</span>             </span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a> [<span class="dv">46</span>] R.utils_2.<span class="fl">12.2</span>          R.cache_0.<span class="fl">16.0</span>          httpuv_1.<span class="fl">6.12</span>          </span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a> [<span class="dv">49</span>] Matrix_1<span class="fl">.6-1.1</span>          rstudioapi_0.<span class="fl">15.0</span>       abind_1<span class="fl">.4</span><span class="dv">-5</span>            </span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a> [<span class="dv">52</span>] yaml_2.<span class="fl">3.7</span>              doParallel_1.<span class="fl">0.17</span>       gplots_3.<span class="fl">1.3</span>           </span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a> [<span class="dv">55</span>] codetools_0<span class="fl">.2</span><span class="dv">-19</span>        miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>          misc3d_0<span class="fl">.9</span><span class="dv">-1</span>           </span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a> [<span class="dv">58</span>] processx_3.<span class="fl">8.2</span>          pkgbuild_1.<span class="fl">4.2</span>          plyr_1.<span class="fl">8.9</span>             </span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a> [<span class="dv">61</span>] lattice_0<span class="fl">.21</span><span class="dv">-9</span>          tibble_3.<span class="fl">2.1</span>            shiny_1.<span class="dv">7</span>.<span class="fl">5.1</span>          </span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a> [<span class="dv">64</span>] withr_2.<span class="fl">5.1</span>             evaluate_0<span class="fl">.22</span>           desc_1.<span class="fl">4.2</span>             </span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a> [<span class="dv">67</span>] urlchecker_1.<span class="fl">0.1</span>        pillar_1.<span class="fl">9.0</span>            BiocManager_1.<span class="fl">30.22</span>    </span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a> [<span class="dv">70</span>] KernSmooth_2<span class="fl">.23</span><span class="dv">-22</span>      foreach_1.<span class="fl">5.2</span>           rprojroot_2.<span class="fl">0.3</span>        </span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a> [<span class="dv">73</span>] RCurl_1<span class="fl">.98-1.12</span>         ggplot2_3.<span class="fl">4.4</span>           munsell_0.<span class="fl">5.0</span>          </span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a> [<span class="dv">76</span>] scales_1.<span class="fl">2.1</span>            gtools_3.<span class="fl">9.4</span>            xtable_1<span class="fl">.8</span><span class="dv">-4</span>           </span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a> [<span class="dv">79</span>] glue_1.<span class="fl">6.2</span>              ppcor_1<span class="fl">.1</span>               tools_4.<span class="fl">3.2</span>            </span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a> [<span class="dv">82</span>] fs_1.<span class="fl">6.3</span>                grid_4.<span class="fl">3.2</span>              colorspace_2<span class="fl">.1</span><span class="dv">-0</span>       </span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a> [<span class="dv">85</span>] GenomeInfoDbData_1.<span class="fl">2.10</span> cli_3.<span class="fl">6.1</span>               textshaping_0.<span class="fl">3.7</span>      </span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a> [<span class="dv">88</span>] fansi_1.<span class="fl">0.5</span>             S4Arrays_1.<span class="fl">0.6</span>          gtable_0.<span class="fl">3.4</span>           </span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a> [<span class="dv">91</span>] R.methodsS3_1.<span class="fl">8.2</span>       sass_0.<span class="fl">4.7</span>              digest_0.<span class="fl">6.33</span>          </span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a> [<span class="dv">94</span>] farver_2.<span class="fl">1.1</span>            htmlwidgets_1.<span class="fl">6.2</span>       R.oo_1.<span class="fl">25.0</span>            </span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a> [<span class="dv">97</span>] memoise_2.<span class="fl">0.1</span>           htmltools_0.<span class="dv">5</span>.<span class="fl">6.1</span>       pkgdown_2.<span class="fl">0.7</span>          </span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>[<span class="dv">100</span>] lifecycle_1.<span class="fl">0.3</span>         mime_0<span class="fl">.12</span>               MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a> [<span class="dv">31</span>] highr_0<span class="fl">.10</span>              later_1.<span class="fl">3.1</span>             DelayedArray_0.<span class="fl">26.7</span>    </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a> [<span class="dv">34</span>] parallel_4.<span class="fl">3.2</span>          prettyunits_1.<span class="fl">2.0</span>       R6_2.<span class="fl">5.1</span>               </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a> [<span class="dv">37</span>] bslib_0.<span class="fl">5.1</span>             stringi_1.<span class="fl">7.12</span>          RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>     </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a> [<span class="dv">40</span>] pkgload_1.<span class="fl">3.3</span>           brio_1.<span class="fl">1.3</span>              jquerylib_0.<span class="fl">1.4</span>        </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a> [<span class="dv">43</span>] Rcpp_1.<span class="fl">0.11</span>             bookdown_0<span class="fl">.36</span>           iterators_1.<span class="fl">0.14</span>       </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a> [<span class="dv">46</span>] knitr_1<span class="fl">.45</span>              R.utils_2.<span class="fl">12.2</span>          R.cache_0.<span class="fl">16.0</span>         </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a> [<span class="dv">49</span>] httpuv_1.<span class="fl">6.12</span>           Matrix_1<span class="fl">.6-1.1</span>          rstudioapi_0.<span class="fl">15.0</span>      </span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a> [<span class="dv">52</span>] abind_1<span class="fl">.4</span><span class="dv">-5</span>             yaml_2.<span class="fl">3.7</span>              doParallel_1.<span class="fl">0.17</span>      </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a> [<span class="dv">55</span>] gplots_3.<span class="fl">1.3</span>            codetools_0<span class="fl">.2</span><span class="dv">-19</span>        miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>         </span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a> [<span class="dv">58</span>] misc3d_0<span class="fl">.9</span><span class="dv">-1</span>            processx_3.<span class="fl">8.2</span>          pkgbuild_1.<span class="fl">4.2</span>         </span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a> [<span class="dv">61</span>] plyr_1.<span class="fl">8.9</span>              lattice_0<span class="fl">.21</span><span class="dv">-9</span>          tibble_3.<span class="fl">2.1</span>           </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a> [<span class="dv">64</span>] shiny_1.<span class="dv">7</span>.<span class="fl">5.1</span>           withr_2.<span class="fl">5.2</span>             evaluate_0<span class="fl">.23</span>          </span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a> [<span class="dv">67</span>] desc_1.<span class="fl">4.2</span>              urlchecker_1.<span class="fl">0.1</span>        pillar_1.<span class="fl">9.0</span>           </span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a> [<span class="dv">70</span>] BiocManager_1.<span class="fl">30.22</span>     KernSmooth_2<span class="fl">.23</span><span class="dv">-22</span>      foreach_1.<span class="fl">5.2</span>          </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a> [<span class="dv">73</span>] rprojroot_2.<span class="fl">0.3</span>         RCurl_1<span class="fl">.98-1.13</span>         ggplot2_3.<span class="fl">4.4</span>          </span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a> [<span class="dv">76</span>] munsell_0.<span class="fl">5.0</span>           scales_1.<span class="fl">2.1</span>            gtools_3.<span class="fl">9.4</span>           </span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a> [<span class="dv">79</span>] xtable_1<span class="fl">.8</span><span class="dv">-4</span>            glue_1.<span class="fl">6.2</span>              ppcor_1<span class="fl">.1</span>              </span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a> [<span class="dv">82</span>] tools_4.<span class="fl">3.2</span>             fs_1.<span class="fl">6.3</span>                grid_4.<span class="fl">3.2</span>             </span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a> [<span class="dv">85</span>] colorspace_2<span class="fl">.1</span><span class="dv">-0</span>        GenomeInfoDbData_1.<span class="fl">2.10</span> cli_3.<span class="fl">6.1</span>              </span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a> [<span class="dv">88</span>] textshaping_0.<span class="fl">3.7</span>       fansi_1.<span class="fl">0.5</span>             S4Arrays_1.<span class="fl">0.6</span>         </span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a> [<span class="dv">91</span>] gtable_0.<span class="fl">3.4</span>            R.methodsS3_1.<span class="fl">8.2</span>       sass_0.<span class="fl">4.7</span>             </span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a> [<span class="dv">94</span>] digest_0.<span class="fl">6.33</span>           farver_2.<span class="fl">1.1</span>            htmlwidgets_1.<span class="fl">6.2</span>      </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a> [<span class="dv">97</span>] R.oo_1.<span class="fl">25.0</span>             memoise_2.<span class="fl">0.1</span>           htmltools_0.<span class="dv">5</span>.<span class="fl">6.1</span>      </span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>[<span class="dv">100</span>] pkgdown_2.<span class="fl">0.7</span>           lifecycle_1.<span class="fl">0.3</span>         mime_0<span class="fl">.12</span>              </span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>[<span class="dv">103</span>] MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
 </div>
   </div>
 

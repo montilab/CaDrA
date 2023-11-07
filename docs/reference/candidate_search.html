@@ -20,7 +20,7 @@ the CaDrA package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -79,9 +79,9 @@ the <code>CaDrA</code> package.</p>
 <span>  <span class="va">FS</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
+<span>  method_alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  search_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -115,49 +115,54 @@ column names of <code>FS</code> object.</p></dd>
 used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
 or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-<code>"custom"</code> (a customized scoring method)). 
+<code>"custom"</code> (a user-defined scoring method)). 
 Default is <code>ks_pval</code>.</p></dd>
+
+
+<dt>method_alternative</dt>
+<dd><p>a character string specifies an alternative 
+hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
+Default is <code>less</code> for left-skewed significance testing.</p>
+<p>NOTE: This argument only applies to <code>ks_pval</code> and 
+<code>wilcox_pval</code> method</p></dd>
 
 
 <dt>custom_function</dt>
 <dd><p>if method is <code>"custom"</code>, specifies
-the name of the customized function here. Default is <code>NULL</code>.</p>
-<p>NOTE: <code>custom_function</code> must take FS_mat (or FS) and input_score as its
-input arguments, and its final result must return a vector of row-wise scores 
-ordered from most significant to least significant where its labels or names 
-matched the row names of FS_mat (or FS) object.</p></dd>
+a user-defined function here. Default is <code>NULL</code>.</p>
+<p>NOTE: <code>custom_function</code> must take FS and input_score as its
+input arguments and its final result must return a vector of row-wise scores 
+where its labels or names match the row names of <code>FS</code> object.</p></dd>
 
 
 <dt>custom_parameters</dt>
 <dd><p>if method is <code>"custom"</code>, specifies a list of
-additional arguments (excluding <code>FS_mat</code> (or FS) and <code>input_score</code>) 
-to be passed to the <code>custom_function</code>. Default is <code>NULL</code>.</p></dd>
-
-
-<dt>alternative</dt>
-<dd><p>a character string specifies an alternative hypothesis
-testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.</p>
-<p>NOTE: This argument is ONLY applied to KS and Wilcoxon method</p></dd>
+additional arguments (excluding <code>FS</code> and <code>input_score</code>) 
+to be passed to the <code>custom_function</code>. For example:
+custom_parameters = list(alternative = "less"). Default is <code>NULL</code>.</p></dd>
 
 
 <dt>weights</dt>
 <dd><p>if method is <code>ks_score</code> or <code>ks_pval</code>, specifying a 
-vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p>
+<p>NOTE: <code>weights</code> must have names or labels that match the labels of 
+<code>input_score</code>.</p></dd>
 
 
 <dt>search_start</dt>
-<dd><p>a list of character strings (separated by commas)
-which specifies feature names within the FS object to start
-the search with. If <code>search_start</code> is provided, then <code>top_N</code>
-parameter will be ignored. Default is <code>NULL</code>.</p></dd>
+<dd><p>a vector of character strings (separated by commas)
+specifies feature names in the <code>FS</code> object to start the search with. 
+If <code>search_start</code> is provided, then <code>top_N</code> parameter will be 
+ignored and vice versa. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>top_N</dt>
 <dd><p>an integer specifies the number of features to start the
-search over, starting from the top 'N' features in each case. If <code>top_N</code>
-is provided, then <code>search_start</code> parameter will be ignored. Default is
-<code>1</code>. NOTE: top_N &gt; 10 may result in a longer search time.</p></dd>
+search over. By default, it starts with the feature that has the highest 
+best score (top_N = 1).</p>
+<p>NOTE: If <code>top_N</code> is provided, then <code>search_start</code> parameter
+will be ignored and vice versa. If top_N &gt; 10, it may result in a longer 
+search time.</p></dd>
 
 
 <dt>search_method</dt>
@@ -173,7 +178,7 @@ can extend to do for a given search. Default is <code>7</code>.</p></dd>
 
 <dt>best_score_only</dt>
 <dd><p>a logical value indicates whether or not to return 
-the best score corresponding to each top N searches ONLY.
+the best score corresponding to each top N searches only.
 Default is <code>FALSE</code>.</p></dd>
 
 
@@ -198,11 +203,14 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 the best feature whose its union meta-feature matrix has the highest score 
 among the <code>top_N</code> feature searches.
 If <code>best_score_only = FALSE</code>, a list of objects pertaining to 
-<code>top_N</code> feature searches are returned. For each top_N feature search,
-the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+<code>top_N</code> feature searches will be returned. For each top_N feature search,
+the candidate search will contain 7 objects: (1) its best meta-feature matrix 
 (<code>feature_set</code>), (2) its observed input scores (<code>input_score</code>), 
-and lastly, its corresponding best score pertaining to the union meta-feature
-matrix (<code>score</code>).</p>
+(3) its corresponding best score pertaining to the union meta-feature
+matrix (<code>score</code>), (4) names of the best meta-features (<code>best_features</code>), 
+(5) rank of the best meta-features in term of their best scores (<code>best indices</code>), 
+(6) marginal scores of the best meta-features (<code>marginal_best_scores</code>), 
+(7) cumulative scores of the best meta-features (<code>cumulative_best_scores</code>).</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -222,7 +230,7 @@ matrix (<code>score</code>).</p>
 <span class="r-in"><span><span class="co"># Define additional parameters and run the function</span></span></span>
 <span class="r-in"><span><span class="va">candidate_search_result</span> <span class="op">&lt;-</span> <span class="fu">candidate_search</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  FS <span class="op">=</span> <span class="va">sim_FS</span>, input_score <span class="op">=</span> <span class="va">sim_Scores</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>, alternative <span class="op">=</span> <span class="st">"less"</span>, weights <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>, method_alternative <span class="op">=</span> <span class="st">"less"</span>, weights <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
 <span class="r-in"><span>  search_start <span class="op">=</span> <span class="cn">NULL</span>, top_N <span class="op">=</span> <span class="fl">3</span>, search_method <span class="op">=</span> <span class="st">"both"</span>,</span></span>
 <span class="r-in"><span>  max_size <span class="op">=</span> <span class="fl">7</span>, best_score_only <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

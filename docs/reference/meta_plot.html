@@ -24,7 +24,7 @@ input scores sorted from largest to smallest at the top."><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -89,12 +89,12 @@ input scores sorted from largest to smallest at the top.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_best_list</dt>
-<dd><p>a list of objects returned from 
-<code>candidate_search</code> 
-corresponding to the search of a set of top N features given by top_N value.
-The topn_best_list contains a list of returned meta-feature set, 
-its corresponding best score, 
-and observed input scores.</p></dd>
+<dd><p>a list of objects returned from <code>candidate_search</code> 
+corresponding to the search of top N features given by top_N value.
+The topn_best_list contains the best meta-feature matrix, its 
+corresponding best score, its observed input scores, rank of the best 
+features based on their scores, marginal best scores, and cumulative 
+best scores.</p></dd>
 
 
 <dt>input_score_label</dt>
@@ -111,11 +111,11 @@ Default is <code>NULL</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>3 plots stacked together: 
+<p>3 plots stacked on top of each other: 
 1. a density diagram of observed input scores sorted from highest to lowest 
 2. a tile plot of the top features within the meta-feature set 
-3. a KS enrichment plot of the meta-feature set 
-(here, this will correspond to the logical OR of the features)</p>
+3. a KS enrichment plot of the meta-feature set (this correspond to the 
+logical OR of the features)</p>
     </div>
 
     <div id="ref-examples">

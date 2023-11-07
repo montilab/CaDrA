@@ -8,18 +8,19 @@ CaDrA(
   FS,
   input_score,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+  method_alternative = c("less", "greater", "two.sided"),
   custom_function = NULL,
   custom_parameters = NULL,
-  alternative = c("less", "greater", "two.sided"),
   weights = NULL,
-  top_N = 1,
   search_start = NULL,
+  top_N = 1,
   search_method = c("both", "forward"),
   max_size = 7,
   n_perm = 1000,
+  perm_alternative = c("one.sided", "two.sided"),
   obs_best_score = NULL,
   smooth = TRUE,
-  plot = TRUE,
+  plot = FALSE,
   ncores = 1,
   cache = FALSE,
   cache_path = NULL,
@@ -43,38 +44,46 @@ the column names of \code{FS} object.}
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a customized scoring method)). 
+\code{"custom"} (a user-defined scoring method)). 
 Default is \code{ks_pval}.}
 
-\item{custom_function}{if method is \code{"custom"}, specifies
-the name of the customized function here. Default is \code{NULL}.
+\item{method_alternative}{a character string specifies an alternative 
+hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+Default is \code{less} for left-skewed significance testing.
+
+NOTE: This argument only applies to \code{ks_pval} and \code{wilcox_pval} 
+method}
+
+\item{custom_function}{If method is \code{"custom"}, specifies
+a user-defined function here. Default is \code{NULL}.
 
 NOTE: \code{custom_function} must take \code{FS} and \code{input_score} 
-as its input arguments, and its final result must return a vector of row-wise 
-scores ordered from most significant to least significant where its labels or 
-names matched the row names of \code{FS} object.}
+as its input arguments and its final result must return a vector of row-wise 
+scores where its labels or names match the row names of \code{FS} object.}
 
-\item{custom_parameters}{if method is \code{"custom"}, specifies a list of
+\item{custom_parameters}{If method is \code{"custom"}, specifies a list of
 additional arguments (excluding \code{FS} and \code{input_score}) to be 
-passed to \code{custom_function}. Default is \code{NULL}.}
+passed to \code{custom_function}. For example:
+custom_parameters = list(alternative = "less"). Default is \code{NULL}.}
 
-\item{alternative}{a character string specifies an alternative hypothesis
-testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.
-NOTE: this argument only apply to KS and Wilcoxon method}
+\item{weights}{If method is \code{ks_score} or \code{ks_pval}, specifying a 
+vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
 
-\item{weights}{if method is \code{ks_score}, specifies a vector of weights 
-to perform a weighted-KS testing. Default is \code{NULL}.}
+NOTE: \code{weights} must have names or labels that match the labels of 
+\code{input_score}.}
+
+\item{search_start}{a vector of character strings (separated by commas)
+specifies feature names in the FS object to start the search with. 
+If \code{search_start} is provided, then \code{top_N} parameter will be 
+ignored and vice versa. Default is \code{NULL}.}
 
 \item{top_N}{an integer specifies the number of features to start the
-search over. By default, it starts from the top best feature (top_N = 1).
-NOTE: If \code{top_N} is provided, then \code{search_start} parameter
-will be ignored.}
+search over. By default, it starts with the feature that has the highest 
+best score (top_N = 1).
 
-\item{search_start}{a list of character strings (separated by commas)
-which specifies feature names within the FS object to start
-the search with. If \code{search_start} is provided, then \code{top_N}
-parameter will be ignored. Default is \code{NULL}.}
+NOTE: If \code{top_N} is provided, then \code{search_start} parameter
+will be ignored and vice versa. If top_N > 10, it may result in a longer 
+search time.}
 
 \item{search_method}{a character string specifies an algorithm to filter out
 the best candidates (\code{"forward"} or \code{"both"}). Default is
@@ -86,28 +95,33 @@ extend to do for a given search. Default is \code{7}.}
 \item{n_perm}{an integer specifies the number of permutations to perform.
 Default is \code{1000}.}
 
+\item{perm_alternative}{an alternative hypothesis type for calculating 
+permutation-based p-value. Options: one.sided, two.sided. Default is 
+\code{one.sided}.}
+
 \item{obs_best_score}{a numeric value corresponding to the best observed
-score. This value is used to compare against the permuted best scores.
-Default is \code{NULL}. If set to NULL, we will compute the observed
+score. This value is used to compare against the \code{n_perm} calculated best 
+scores. Default is \code{NULL}. If set to NULL, we will compute the observed
 best score based on the given parameters.}
 
-\item{smooth}{a logical value indicates whether or not to smooth the p-value
-calculation to avoid p-value of 0. Default is \code{TRUE}.}
+\item{smooth}{a logical value indicates whether or not to add a smoothing 
+factor of 1 to the calculation of permutation-based p-value. This option is 
+used to avoid a returned p-value of 0. Default is \code{TRUE}.}
 
 \item{plot}{a logical value indicates whether or not to plot the empirical
-null distribution of the permuted best scores. Default is \code{TRUE}.}
+null distribution of the permuted best scores. Default is \code{FALSE}.}
 
 \item{ncores}{an integer specifies the number of cores to perform
 parallelization for permutation-based testing. Default is \code{1}.}
 
-\item{cache}{a logical value to determine whether or not to cache the 
-permuted best scores. This would help save time for future loading instead 
+\item{cache}{a logical value determines whether or not to cache the 
+permuted best scores. This helps to save time for future loading instead 
 of re-computing the permutation-based testing every time. 
 Default is \code{FALSE}.}
 
-\item{cache_path}{If cache = TRUE, a full path can be used to cache the 
-permuted best scores. Default is \code{NULL}. If NULL, the cache path is
-set to system home directory (e.g. \code{$HOME/.Rcache}) for future loading.}
+\item{cache_path}{a path to cache permuted best scores. Default is \code{NULL}. 
+If NULL, the cache path is set to system home directory 
+(e.g. \code{$HOME/.Rcache}) for future loading.}
 
 \item{verbose}{a logical value indicates whether or not to print the
 diagnostic messages. Default is \code{FALSE}.}
@@ -116,7 +130,7 @@ diagnostic messages. Default is \code{FALSE}.}
 a list of 4 objects: \code{key}, \code{perm_best_scores}, 
 \code{obs_best_score}, \code{perm_pval}
 
--\code{key}: a list of parameters that are used to cache the 
+-\code{key}: a list of parameters that was used to cache the 
 results of the permutation-based testing. This is useful as the
 permuted best scores can be recycled to save time for future loading.
 
@@ -124,13 +138,20 @@ permuted best scores can be recycled to save time for future loading.
 by performing \code{candidate_search} over \code{n_perm} iterations of 
 permuted input scores.
 
--\code{obs_best_score}: the observed best score obtained by performing
-\code{candidate_search} on a given dataset and input parameters. This 
-value is later used to compare against the permuted best scores 
-(\code{perm_best_scores}).
+-\code{obs_best_score}: a user-provided best score or an observed best score 
+obtained by performing \code{candidate_search} on a given dataset and input 
+parameters. This value is later used to compare against the permuted best 
+scores (\code{perm_best_scores}).
 
 \code{perm_pval}: a permutation-based p-value obtained by calculating
-sum(perm_best_scores > obs_best_score)/n_perm
+sum(perm_best_scores > obs_best_score)/n_perm 
+
+NOTE: If smooth = TRUE, a smoothing factor of 1 will be added to the 
+calculation of \code{perm_pval}. 
+
+e.g. (sum(perm_best_scores > obs_best_score) + 1) / (n_perm + c)
+
+This is just to not return a p-value of 0
 }
 \description{
 Perform permutation-based testings on a sample of permuted input scores 
@@ -150,9 +171,10 @@ set.seed(21)
 # Define additional parameters and start the function
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval", 
-  weights = NULL, alternative = "less", top_N = 1,
+  weights = NULL, method_alternative = "less", top_N = 1,
   search_start = NULL, search_method = "both", max_size = 7, 
-  n_perm = 10, plot = FALSE, smooth = TRUE, obs_best_score = NULL,
+  n_perm = 10, perm_alternative = "one.sided", plot = FALSE, 
+  smooth = TRUE, obs_best_score = NULL,
   ncores = 1, cache = FALSE, cache_path = NULL
 )
 

@@ -22,40 +22,47 @@
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or 
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"custom"} (a customized scoring method)). 
+#' \code{"custom"} (a user-defined scoring method)). 
 #' Default is \code{ks_pval}.
-#' @param custom_function if method is \code{"custom"}, specifies
-#' the name of the customized function here. Default is \code{NULL}.
-#' 
-#' NOTE: \code{custom_function} must take FS_mat (or FS) and input_score as its
-#' input arguments, and its final result must return a vector of row-wise scores 
-#' ordered from most significant to least significant where its labels or names 
-#' matched the row names of FS_mat (or FS) object.
-#' @param custom_parameters if method is \code{"custom"}, specifies a list of
-#' additional arguments (excluding \code{FS_mat} (or FS) and \code{input_score}) 
-#' to be passed to the \code{custom_function}. Default is \code{NULL}.
-#' @param alternative a character string specifies an alternative hypothesis
-#' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+#' @param method_alternative a character string specifies an alternative 
+#' hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' 
-#' NOTE: This argument is ONLY applied to KS and Wilcoxon method
+#' NOTE: This argument only applies to \code{ks_pval} and 
+#' \code{wilcox_pval} method
+#' @param custom_function if method is \code{"custom"}, specifies
+#' a user-defined function here. Default is \code{NULL}.
+#' 
+#' NOTE: \code{custom_function} must take FS and input_score as its
+#' input arguments and its final result must return a vector of row-wise scores 
+#' where its labels or names match the row names of \code{FS} object.
+#' @param custom_parameters if method is \code{"custom"}, specifies a list of
+#' additional arguments (excluding \code{FS} and \code{input_score}) 
+#' to be passed to the \code{custom_function}. For example:
+#' custom_parameters = list(alternative = "less"). Default is \code{NULL}.
 #' @param weights if method is \code{ks_score} or \code{ks_pval}, specifying a 
 #' vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
-#' @param search_start a list of character strings (separated by commas)
-#' which specifies feature names within the FS object to start
-#' the search with. If \code{search_start} is provided, then \code{top_N}
-#' parameter will be ignored. Default is \code{NULL}.
+#' 
+#' NOTE: \code{weights} must have names or labels that match the labels of 
+#' \code{input_score}. 
+#' @param search_start a vector of character strings (separated by commas)
+#' specifies feature names in the \code{FS} object to start the search with. 
+#' If \code{search_start} is provided, then \code{top_N} parameter will be 
+#' ignored and vice versa. Default is \code{NULL}.
 #' @param top_N an integer specifies the number of features to start the
-#' search over, starting from the top 'N' features in each case. If \code{top_N}
-#' is provided, then \code{search_start} parameter will be ignored. Default is
-#' \code{1}. NOTE: top_N > 10 may result in a longer search time.
+#' search over. By default, it starts with the feature that has the highest 
+#' best score (top_N = 1).
+#' 
+#' NOTE: If \code{top_N} is provided, then \code{search_start} parameter
+#' will be ignored and vice versa. If top_N > 10, it may result in a longer 
+#' search time.
 #' @param search_method a character string specifies an algorithm to filter
 #' out the best features (\code{"forward"} or \code{"both"}). Default is
 #' \code{both} (i.e. backward and forward).
 #' @param max_size an integer specifies a maximum size that a meta-feature
 #' can extend to do for a given search. Default is \code{7}.
 #' @param best_score_only a logical value indicates whether or not to return 
-#' the best score corresponding to each top N searches ONLY.
+#' the best score corresponding to each top N searches only.
 #' Default is \code{FALSE}.
 #' @param do_plot a logical value indicates whether or not to plot the
 #' overlapping features of the resulting meta-feature matrix. 
@@ -70,11 +77,14 @@
 #' the best feature whose its union meta-feature matrix has the highest score 
 #' among the \code{top_N} feature searches.
 #' If \code{best_score_only = FALSE}, a list of objects pertaining to 
-#' \code{top_N} feature searches are returned. For each top_N feature search,
-#' the candidate search will contain 3 objects: (1) its best meta-feature matrix 
+#' \code{top_N} feature searches will be returned. For each top_N feature search,
+#' the candidate search will contain 7 objects: (1) its best meta-feature matrix 
 #' (\code{feature_set}), (2) its observed input scores (\code{input_score}), 
-#' and lastly, its corresponding best score pertaining to the union meta-feature
-#' matrix (\code{score}).
+#' (3) its corresponding best score pertaining to the union meta-feature
+#' matrix (\code{score}), (4) names of the best meta-features (\code{best_features}), 
+#' (5) rank of the best meta-features in term of their best scores (\code{best indices}), 
+#' (6) marginal scores of the best meta-features (\code{marginal_best_scores}), 
+#' (7) cumulative scores of the best meta-features (\code{cumulative_best_scores}).
 #' 
 #' @examples
 #'
@@ -87,7 +97,7 @@
 #' # Define additional parameters and run the function
 #' candidate_search_result <- candidate_search(
 #'   FS = sim_FS, input_score = sim_Scores, 
-#'   method = "ks_pval", alternative = "less", weights = NULL, 
+#'   method = "ks_pval", method_alternative = "less", weights = NULL, 
 #'   search_start = NULL, top_N = 3, search_method = "both",
 #'   max_size = 7, best_score_only = FALSE
 #' )
@@ -99,9 +109,9 @@ candidate_search <- function(
     input_score,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", 
                "revealer", "custom"),
+    method_alternative = c("less", "greater", "two.sided"),
     custom_function = NULL,
     custom_parameters = NULL,
-    alternative = c("less", "greater", "two.sided"),
     weights = NULL,
     search_start = NULL,
     top_N = 1,
@@ -117,7 +127,7 @@ candidate_search <- function(
 
   # Match arguments
   method <- match.arg(method)
-  alternative <- match.arg(alternative)
+  method_alternative <- match.arg(method_alternative)
   search_method <- match.arg(search_method)
   
   # Select the appropriate method to compute scores based on
@@ -131,9 +141,9 @@ candidate_search <- function(
     input_score = input_score,
     meta_feature = NULL,
     method = method,
+    method_alternative = method_alternative,
     custom_function = custom_function,
     custom_parameters = custom_parameters,   
-    alternative = alternative,
     weights = weights,
     search_start = search_start,
     top_N = top_N,
@@ -231,9 +241,9 @@ candidate_search <- function(
           FS = FS,
           input_score = input_score,
           method = method,
+          method_alternative = method_alternative,
           custom_function = custom_function,
           custom_parameters = custom_parameters,   
-          alternative = alternative,
           weights = weights,
           search_start = search_start,
           top_N = top_N,
@@ -264,9 +274,9 @@ candidate_search <- function(
         input_score = input_score,
         meta_feature = global_best_s_features,
         method = method,
+        method_alternative = method_alternative,
         custom_function = custom_function,
         custom_parameters = custom_parameters,   
-        alternative = alternative,
         weights = weights,
         search_start = search_start,
         top_N = top_N,
@@ -394,7 +404,7 @@ candidate_search <- function(
 #' the customized function here. Default is \code{NULL}.
 #' @param custom_parameters if method is \code{"custom"}, specifies a list of
 #' arguments to be passed to the \code{custom_function}. Default is \code{NULL}.
-#' @param alternative a character string specifies an alternative hypothesis
+#' @param method_alternative a character string specifies an alternative hypothesis
 #' testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #' @param weights if method is \code{ks_pval} or \code{ks_score}, specifying  
@@ -420,9 +430,9 @@ forward_backward_check <- function
   FS,
   input_score,
   method,
+  method_alternative,
   custom_function,
-  custom_parameters,  
-  alternative,
+  custom_parameters,
   weights,
   glob_f,
   glob_s,
@@ -484,9 +494,9 @@ forward_backward_check <- function
       input_score = input_score,
       meta_feature = NULL,
       method = method,
+      method_alternative = method_alternative,
       custom_function = custom_function,
       custom_parameters = custom_parameters,     
-      alternative = alternative,
       weights = weights, 
       verbose = FALSE,
       ...

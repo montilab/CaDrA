@@ -18,7 +18,7 @@ top N feature searches using candidate_search function"><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -77,23 +77,20 @@ top N feature searches using <code>candidate_search</code> function</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>topn_list</dt>
-<dd><p>a list of objects returned from <code>candidate_search</code> 
-using simulated dataset <code>FS = sim_FS</code>, <code>input_score = sim_Scores</code>, 
-<code>top_N = 7</code>, <code>method = "ks_pval"</code>, <code>alternative = "less"</code>, 
+<dd><p>a list of objects obtained from <code>candidate_search</code> 
+using the following parameters: <code>FS = sim_FS</code>, 
+<code>input_score = sim_Scores</code>, <code>top_N = 7</code>, 
+<code>method = "ks_pval"</code>, <code>alternative = "less"</code>, 
 <code>search_method = "both"</code>, <code>max_size = 10</code>,
-and <code>best_score_only = FALSE</code> as inputs to the function.</p>
-<p>The resulting list contains a set of meta-features in form of 
-SummarizedExperiment  object, a vector of observed input scores, 
-and its corresponding best score 
-over top N feature searches</p></dd>
+and <code>best_score_only = FALSE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>a heatmap of overlapping meta-features for 
-a given top N feature searches</p>
+<p>a heatmap of overlapping meta-features across top N 
+feature searches</p>
     </div>
 
     <div id="ref-examples">

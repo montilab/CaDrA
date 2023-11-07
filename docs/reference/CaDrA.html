@@ -18,7 +18,7 @@ using candidate_search as the main iterative function for each run."><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -75,18 +75,19 @@ using <code>candidate_search</code> as the main iterative function for each run.
 <span>  <span class="va">FS</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
+<span>  method_alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  search_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_N <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  search_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"forward"</span><span class="op">)</span>,</span>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  perm_alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"one.sided"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
 <span>  obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  cache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cache_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -116,49 +117,54 @@ the column names of <code>FS</code> object.</p></dd>
 used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
 or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or 
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-<code>"custom"</code> (a customized scoring method)). 
+<code>"custom"</code> (a user-defined scoring method)). 
 Default is <code>ks_pval</code>.</p></dd>
 
 
+<dt>method_alternative</dt>
+<dd><p>a character string specifies an alternative 
+hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
+Default is <code>less</code> for left-skewed significance testing.</p>
+<p>NOTE: This argument only applies to <code>ks_pval</code> and <code>wilcox_pval</code> 
+method</p></dd>
+
+
 <dt>custom_function</dt>
-<dd><p>if method is <code>"custom"</code>, specifies
-the name of the customized function here. Default is <code>NULL</code>.</p>
+<dd><p>If method is <code>"custom"</code>, specifies
+a user-defined function here. Default is <code>NULL</code>.</p>
 <p>NOTE: <code>custom_function</code> must take <code>FS</code> and <code>input_score</code> 
-as its input arguments, and its final result must return a vector of row-wise 
-scores ordered from most significant to least significant where its labels or 
-names matched the row names of <code>FS</code> object.</p></dd>
+as its input arguments and its final result must return a vector of row-wise 
+scores where its labels or names match the row names of <code>FS</code> object.</p></dd>
 
 
 <dt>custom_parameters</dt>
-<dd><p>if method is <code>"custom"</code>, specifies a list of
+<dd><p>If method is <code>"custom"</code>, specifies a list of
 additional arguments (excluding <code>FS</code> and <code>input_score</code>) to be 
-passed to <code>custom_function</code>. Default is <code>NULL</code>.</p></dd>
-
-
-<dt>alternative</dt>
-<dd><p>a character string specifies an alternative hypothesis
-testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>"less"</code>).
-Default is <code>less</code> for left-skewed significance testing.
-NOTE: this argument only apply to KS and Wilcoxon method</p></dd>
+passed to <code>custom_function</code>. For example:
+custom_parameters = list(alternative = "less"). Default is <code>NULL</code>.</p></dd>
 
 
 <dt>weights</dt>
-<dd><p>if method is <code>ks_score</code>, specifies a vector of weights 
-to perform a weighted-KS testing. Default is <code>NULL</code>.</p></dd>
+<dd><p>If method is <code>ks_score</code> or <code>ks_pval</code>, specifying a 
+vector of weights will perform a weighted-KS testing. Default is <code>NULL</code>.</p>
+<p>NOTE: <code>weights</code> must have names or labels that match the labels of 
+<code>input_score</code>.</p></dd>
+
+
+<dt>search_start</dt>
+<dd><p>a vector of character strings (separated by commas)
+specifies feature names in the FS object to start the search with. 
+If <code>search_start</code> is provided, then <code>top_N</code> parameter will be 
+ignored and vice versa. Default is <code>NULL</code>.</p></dd>
 
 
 <dt>top_N</dt>
 <dd><p>an integer specifies the number of features to start the
-search over. By default, it starts from the top best feature (top_N = 1).
-NOTE: If <code>top_N</code> is provided, then <code>search_start</code> parameter
-will be ignored.</p></dd>
-
-
-<dt>search_start</dt>
-<dd><p>a list of character strings (separated by commas)
-which specifies feature names within the FS object to start
-the search with. If <code>search_start</code> is provided, then <code>top_N</code>
-parameter will be ignored. Default is <code>NULL</code>.</p></dd>
+search over. By default, it starts with the feature that has the highest 
+best score (top_N = 1).</p>
+<p>NOTE: If <code>top_N</code> is provided, then <code>search_start</code> parameter
+will be ignored and vice versa. If top_N &gt; 10, it may result in a longer 
+search time.</p></dd>
 
 
 <dt>search_method</dt>
@@ -177,21 +183,28 @@ extend to do for a given search. Default is <code>7</code>.</p></dd>
 Default is <code>1000</code>.</p></dd>
 
 
+<dt>perm_alternative</dt>
+<dd><p>an alternative hypothesis type for calculating 
+permutation-based p-value. Options: one.sided, two.sided. Default is 
+<code>one.sided</code>.</p></dd>
+
+
 <dt>obs_best_score</dt>
 <dd><p>a numeric value corresponding to the best observed
-score. This value is used to compare against the permuted best scores.
-Default is <code>NULL</code>. If set to NULL, we will compute the observed
+score. This value is used to compare against the <code>n_perm</code> calculated best 
+scores. Default is <code>NULL</code>. If set to NULL, we will compute the observed
 best score based on the given parameters.</p></dd>
 
 
 <dt>smooth</dt>
-<dd><p>a logical value indicates whether or not to smooth the p-value
-calculation to avoid p-value of 0. Default is <code>TRUE</code>.</p></dd>
+<dd><p>a logical value indicates whether or not to add a smoothing 
+factor of 1 to the calculation of permutation-based p-value. This option is 
+used to avoid a returned p-value of 0. Default is <code>TRUE</code>.</p></dd>
 
 
 <dt>plot</dt>
 <dd><p>a logical value indicates whether or not to plot the empirical
-null distribution of the permuted best scores. Default is <code>TRUE</code>.</p></dd>
+null distribution of the permuted best scores. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt>ncores</dt>
@@ -200,16 +213,16 @@ parallelization for permutation-based testing. Default is <code>1</code>.</p></d
 
 
 <dt>cache</dt>
-<dd><p>a logical value to determine whether or not to cache the 
-permuted best scores. This would help save time for future loading instead 
+<dd><p>a logical value determines whether or not to cache the 
+permuted best scores. This helps to save time for future loading instead 
 of re-computing the permutation-based testing every time. 
 Default is <code>FALSE</code>.</p></dd>
 
 
 <dt>cache_path</dt>
-<dd><p>If cache = TRUE, a full path can be used to cache the 
-permuted best scores. Default is <code>NULL</code>. If NULL, the cache path is
-set to system home directory (e.g. <code>$HOME/.Rcache</code>) for future loading.</p></dd>
+<dd><p>a path to cache permuted best scores. Default is <code>NULL</code>. 
+If NULL, the cache path is set to system home directory 
+(e.g. <code>$HOME/.Rcache</code>) for future loading.</p></dd>
 
 
 <dt>verbose</dt>
@@ -226,7 +239,7 @@ diagnostic messages. Default is <code>FALSE</code>.</p></dd>
 
 
 
-<p>-<code>key</code>: a list of parameters that are used to cache the 
+<p>-<code>key</code>: a list of parameters that was used to cache the 
 results of the permutation-based testing. This is useful as the
 permuted best scores can be recycled to save time for future loading.</p>
 
@@ -236,14 +249,24 @@ by performing <code>candidate_search</code> over <code>n_perm</code> iterations 
 permuted input scores.</p>
 
 
-<p>-<code>obs_best_score</code>: the observed best score obtained by performing
-<code>candidate_search</code> on a given dataset and input parameters. This 
-value is later used to compare against the permuted best scores 
-(<code>perm_best_scores</code>).</p>
+<p>-<code>obs_best_score</code>: a user-provided best score or an observed best score 
+obtained by performing <code>candidate_search</code> on a given dataset and input 
+parameters. This value is later used to compare against the permuted best 
+scores (<code>perm_best_scores</code>).</p>
 
 
 <p><code>perm_pval</code>: a permutation-based p-value obtained by calculating
 sum(perm_best_scores &gt; obs_best_score)/n_perm</p>
+
+
+<p>NOTE: If smooth = TRUE, a smoothing factor of 1 will be added to the 
+calculation of <code>perm_pval</code>.</p>
+
+
+<p>e.g. (sum(perm_best_scores &gt; obs_best_score) + 1) / (n_perm + c)</p>
+
+
+<p>This is just to not return a p-value of 0</p>
     </div>
 
     <div id="ref-examples">
@@ -261,9 +284,10 @@ sum(perm_best_scores &gt; obs_best_score)/n_perm</p>
 <span class="r-in"><span><span class="co"># Define additional parameters and start the function</span></span></span>
 <span class="r-in"><span><span class="va">cadra_result</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  FS <span class="op">=</span> <span class="va">sim_FS</span>, input_score <span class="op">=</span> <span class="va">sim_Scores</span>, method <span class="op">=</span> <span class="st">"ks_pval"</span>, </span></span>
-<span class="r-in"><span>  weights <span class="op">=</span> <span class="cn">NULL</span>, alternative <span class="op">=</span> <span class="st">"less"</span>, top_N <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  weights <span class="op">=</span> <span class="cn">NULL</span>, method_alternative <span class="op">=</span> <span class="st">"less"</span>, top_N <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  search_start <span class="op">=</span> <span class="cn">NULL</span>, search_method <span class="op">=</span> <span class="st">"both"</span>, max_size <span class="op">=</span> <span class="fl">7</span>, </span></span>
-<span class="r-in"><span>  n_perm <span class="op">=</span> <span class="fl">10</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, smooth <span class="op">=</span> <span class="cn">TRUE</span>, obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  n_perm <span class="op">=</span> <span class="fl">10</span>, perm_alternative <span class="op">=</span> <span class="st">"one.sided"</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, </span></span>
+<span class="r-in"><span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>, obs_best_score <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>  ncores <span class="op">=</span> <span class="fl">1</span>, cache <span class="op">=</span> <span class="cn">FALSE</span>, cache_path <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                                              |                                                                      |   0%  |                                                                              |=======                                                               |  10%  |                                                                              |==============                                                        |  20%  |                                                                              |=====================                                                 |  30%  |                                                                              |============================                                          |  40%  |                                                                              |===================================                                   |  50%  |                                                                              |==========================================                            |  60%  |                                                                              |=================================================                     |  70%  |                                                                              |========================================================              |  80%  |                                                                              |===============================================================       |  90%  |                                                                              |======================================================================| 100%</span>

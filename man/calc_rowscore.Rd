@@ -10,9 +10,9 @@ calc_rowscore(
   input_score,
   meta_feature = NULL,
   method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "custom"),
+  method_alternative = c("less", "greater", "two.sided"),
   custom_function = NULL,
   custom_parameters = NULL,
-  alternative = c("less", "greater", "two.sided"),
   weights = NULL,
   do_check = TRUE,
   verbose = FALSE,
@@ -33,36 +33,40 @@ NOTE: \code{input_score} object must have names or labels that match the
 column names of \code{FS} object.}
 
 \item{meta_feature}{a vector of one or more features representing known 
-causes of activation or features associated with a response of interest, 
-\code{e.g. input_score}. Default is NULL.}
+causes of activation or features associated with a response of interest 
+(\code{e.g. input_score}). Default is NULL.}
 
 \item{method}{a character string specifies a scoring method that is
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or 
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"custom"} (a customized scoring method)). 
+\code{"custom"} (a user-defined scoring method)). 
 Default is \code{ks_pval}.}
 
+\item{method_alternative}{a character string specifies an alternative 
+hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
+Default is \code{less} for left-skewed significance testing.
+
+NOTE: This argument only applies to \code{ks_pval} and \code{wilcox_pval} 
+method}
+
 \item{custom_function}{if method is \code{"custom"}, specifies
-the name of the customized function here. Default is \code{NULL}.
+a user-defined function here. Default is \code{NULL}.
 
 NOTE: \code{custom_function} must take \code{FS} and \code{input_score} 
 as its input arguments, and its final result must return a vector of row-wise 
-scores ordered from most significant to least significant where its labels or 
-names matched the row names of \code{FS} object.}
+scores where its labels or names matched the row names of \code{FS} object.}
 
 \item{custom_parameters}{if method is \code{"custom"}, specifies a list of
 additional arguments (excluding \code{FS} and \code{input_score}) to be 
-passed to \code{custom_function}. Default is \code{NULL}.}
+passed to \code{custom_function}. For example:
+custom_parameters = list(alternative = "less"). Default is \code{NULL}.}
 
-\item{alternative}{a character string specifies an alternative hypothesis
-testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
-Default is \code{less} for left-skewed significance testing.
+\item{weights}{If method is \code{ks_score} or \code{ks_pval}, specifying a 
+vector of weights will perform a weighted-KS testing. Default is \code{NULL}.
 
-NOTE: This argument is applied to KS and Wilcoxon method}
-
-\item{weights}{if method is \code{ks_score} or \code{ks_pval}, specifying a 
-vector of weights will perform a weighted-KS testing. Default is \code{NULL}.}
+NOTE: \code{weights} must have names or labels that match the names or labels
+of \code{input_score}.}
 
 \item{do_check}{a logical value indicates whether or not to validate if the
 given parameters (\code{FS} and \code{input_score}) are valid inputs. 
@@ -103,8 +107,8 @@ ks_rowscore_result <- calc_rowscore(
   input_score = input_score,
   meta_feature = NULL,
   method = "ks_pval",
-  weights = NULL,
-  alternative = "less"
+  method_alternative = "less",
+  weights = NULL
 )
 
 # Run the wilcoxon method
@@ -113,15 +117,15 @@ wilcox_rowscore_result <- calc_rowscore(
   input_score = input_score,
   meta_feature = NULL,
   method = "wilcox_pval",
-  alternative = "less"
+  method_alternative = "less"
 )
 
 # Run the revealer method
 revealer_rowscore_result <- calc_rowscore(
   FS = mat,
   input_score = input_score,
-  method = "revealer",
-  meta_feature = NULL
+  meta_feature = NULL,
+  method = "revealer"
 )
 
 # A customized function using ks-test function

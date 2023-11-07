@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -174,13 +174,13 @@
 <span>  FS <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">input_score</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
+<span>  method_alternative <span class="op">=</span> <span class="st">"less"</span>, <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
-<span>  alternative <span class="op">=</span> <span class="st">"less"</span>,        <span class="co"># Use one-sided hypothesis testing</span></span>
 <span>  search_method <span class="op">=</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
 <span>  top_N <span class="op">=</span> <span class="fl">7</span>,                   <span class="co"># Evaluate top 7 starting points for each search</span></span>
 <span>  max_size <span class="op">=</span> <span class="fl">7</span>,                <span class="co"># Maximum size a meta-feature matrix can extend to</span></span>
 <span>  do_plot <span class="op">=</span> <span class="cn">FALSE</span>,             <span class="co"># Plot after finding the best features</span></span>
-<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return meta-feature set, observed input scores and calculated best score</span></span>
+<span>  best_score_only <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -225,7 +225,7 @@
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_0.<span class="fl">99.9</span>                testthat_3.<span class="fl">2.0</span>             </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_1.<span class="fl">1.1</span>                 testthat_3.<span class="fl">2.0</span>             </span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">2.2</span>              </span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] SummarizedExperiment_1.<span class="fl">28.0</span> Biobase_2.<span class="fl">58.0</span>             </span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] GenomicRanges_1.<span class="fl">50.2</span>        GenomeInfoDb_1.<span class="fl">34.9</span>        </span>

@@ -22,19 +22,20 @@ The **CaDrA** package currently supports four scoring functions to search for su
 1. Kolmogorov-Smirnov Method (`ks`)
 2. Conditional Mutual Information Method (`revealer`)
 3. Wilcoxon Rank-Sum Method (`wilcox`)
-4. Custom - An User's Provided Scoring Function (`custom`)
+4. Custom - An User Defined Scoring Method (`custom`)
 
 Below, we run `candidate_search()` over the top 3 starting features using each of the four scoring functions described above.
 
 **Important Note:**
 
-- The legacy/deprecated function `topn_eval()` is equivalent to the new and recommended `candidate_search()` function
+- The legacy or deprecated function `topn_eval()` is equivalent to the new and recommended `candidate_search()` function
 
 # Load packages
 
 ```r
 library(CaDrA)
 library(pheatmap)
+library(SummarizedExperiment)
 ```
 
 # Load required datasets
@@ -65,7 +66,7 @@ pheatmap::pheatmap(mat[1:100, ], color = c("white", "red"), cluster_rows = FALSE
 
 # Search for a subset of genomic features that are likely associated with a functional response of interest using four scoring methods
 
-## 1. Kolmogorov-Smirnov scoring method 
+## 1. Kolmogorov-Smirnov Scoring Method 
 
 See `?ks_rowscore` for more details
 
@@ -75,13 +76,13 @@ ks_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
+  method_alternative = "less", # Use one-sided hypothesis testing
   weights = NULL,              # If weights is provided, perform a weighted-KS test
-  alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
+  best_score_only = FALSE      # Return all results from the search
 )
 
 # Now we can fetch the feature set of top N features that corresponded to the best scores over the top N search
@@ -92,7 +93,7 @@ meta_plot(topn_best_list = ks_topn_best_meta)
 
 ```
 
-## 2. Wilcoxon Rank-Sum scoring method 
+## 2. Wilcoxon Rank-Sum Scoring Method 
 
 See `?wilcox_rowscore` for more details
 
@@ -102,12 +103,12 @@ wilcox_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
   method = "wilcox_pval",      # Use Wilcoxon Rank-Sum scoring function
-  alternative = "less",        # Use one-sided hypothesis testing
+  method_alternative = "less", # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
+  best_score_only = FALSE      # Return all results from the search
 )
 
 # Now we can fetch the feature set of top N feature that corresponded to the best scores over the top N search
@@ -118,7 +119,7 @@ meta_plot(topn_best_list = wilcox_topn_best_meta)
 
 ```
 
-## 3. Conditional Mutual Information scoring method 
+## 3. Conditional Mutual Information Scoring Method 
 
 See `?revealer_rowscore` for more details
 
@@ -132,7 +133,7 @@ revealer_topn_l <- CaDrA::candidate_search(
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
-  best_score_only = FALSE      # Return meta-feature, its observed input scores and corresponding best score
+  best_score_only = FALSE      # Return all results from the search
 )
 
 # Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
@@ -143,13 +144,13 @@ meta_plot(topn_best_list = revealer_topn_best_meta)
 
 ```
 
-## 4. Custom - An user's provided scoring method
+## 4. Custom - An User Defined Scoring Method
 
 See `?custom_rowscore` for more details
 
 ```{r custom.method}
 
-# A customized function using ks-test function
+# A customized function using ks-test
 customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less", metric="pval"){
   
   # Check if meta_feature is provided
@@ -223,14 +224,14 @@ customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternati
 custom_topn_l <- CaDrA::candidate_search(
   FS = SummarizedExperiment::assay(sim_FS),
   input_score = sim_Scores,
-  method = "custom",                                # Use custom scoring function
-  custom_function = customized_ks_rowscore,         # Use a customized scoring function
-  custom_parameters = NULL,                         # Additional parameters to pass to custom_function
-  search_method = "both",                           # Apply both forward and backward search
-  top_N = 3,                                        # Evaluate top 3 starting points for the search
-  max_size = 10,                                    # Allow at most 10 features in meta-feature matrix
-  do_plot = FALSE,                                  # We will plot it AFTER finding the best hits
-  best_score_only = FALSE                           # Return meta-feature, its observed input scores and corresponding best score
+  method = "custom",                        # Use custom scoring function
+  custom_function = customized_ks_rowscore, # Use a customized scoring function
+  custom_parameters = NULL,                 # Additional parameters to pass to custom_function
+  search_method = "both",                   # Apply both forward and backward search
+  top_N = 3,                                # Evaluate top 3 starting points for the search
+  max_size = 10,                            # Allow at most 10 features in meta-feature matrix
+  do_plot = FALSE,                          # We will plot it AFTER finding the best hits
+  best_score_only = FALSE                   # Return all results from the search
 )
 
 # Now we can fetch the feature set of top N feature that corresponded to the best scores over the top N search

@@ -11,8 +11,8 @@
 #' The \code{input_score} object must have names or labels that match the column
 #' names of FS object.
 #' @param meta_feature a vector of one or more features representing known 
-#' causes of activation or features associated with a response of interest, 
-#' \code{e.g. input_score}. Default is NULL.
+#' causes of activation or features associated with a response of interest 
+#' (\code{e.g. input_score}). Default is NULL.
 #' @param assoc_metric an association metric: \code{"IC"} for information
 #' coefficient or \code{"COR"} for correlation. Default is \code{IC}.
 #' 

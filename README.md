@@ -112,13 +112,13 @@ topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,
   method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
+  method_alternative = "less", # Use one-sided hypothesis testing
   weights = NULL,              # If weights is provided, perform a weighted-KS test
-  alternative = "less",        # Use one-sided hypothesis testing
   search_method = "both",      # Apply both forward and backward search
   top_N = 7,                   # Evaluate top 7 starting points for each search
   max_size = 7,                # Maximum size a meta-feature matrix can extend to
   do_plot = FALSE,             # Plot after finding the best features
-  best_score_only = FALSE      # Return meta-feature set, observed input scores and calculated best score
+  best_score_only = FALSE      # Return all results from the search
 )
 ```
 
@@ -165,7 +165,7 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] CaDrA_0.99.9                testthat_3.2.0             
+ [1] CaDrA_1.1.1                 testthat_3.2.0             
  [3] devtools_2.4.5              usethis_2.2.2              
  [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
  [7] GenomicRanges_1.50.2        GenomeInfoDb_1.34.9        

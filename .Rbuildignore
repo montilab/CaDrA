@@ -21,3 +21,4 @@
 ^input_score$
 ^datalist.csv$
 ^\.Rhistory$
+^install_r_packages.R$

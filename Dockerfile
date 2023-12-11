@@ -13,6 +13,8 @@ RUN apt-get update --allow-releaseinfo-change --fix-missing \
   tk \
   libxtst6 \
   libxt6 \
+  ca-certificates \
+  git \
   && apt clean autoclean \
   && apt autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/

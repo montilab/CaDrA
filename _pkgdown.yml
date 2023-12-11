@@ -53,14 +53,16 @@ reference:
 navbar:
   title: "CaDrA"
   left:
-    - text: "Home"
+    - icon: fa-home
       href: index.html
-    - text: "Docs"
+    - text: "Documentation"
       menu:
       - text: "Scoring Functions"
         href: articles/scoring_functions.html
       - text: "Permutation-Based Testing"
         href: articles/permutation_based_testing.html
+      - text: "Run CaDrA within a Docker Environment"
+        href: articles/docker.html
     - text: "Reference"
       href: reference/index.html
   right:

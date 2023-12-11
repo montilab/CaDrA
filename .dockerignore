@@ -1,0 +1,19 @@
+# ** ignore all levels of subfolders
+# /main/* Ignore main folder and its files
+# !/main/*.yaml !/main/**/*.yaml Ignore main folder and its files except yaml files inside the subfolders are not ignored
+# *.scss Ignore files with scss extensions
+# **/*.class Ignore generated all class files
+# logs/ log folder to ignore
+
+**/.git
+**/.github
+**/.aws
+**/.Rproj.user
+**docs
+*.gitignore
+*.Rbuildignore
+*.Rhistory
+*.yml
+*.DS_Store
+*.Renviron
+*.Rproj

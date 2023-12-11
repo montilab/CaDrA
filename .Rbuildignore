@@ -16,8 +16,12 @@
 ^\.DS_Store$
 ^Dockerfile$
 ^docker-compose\.cadra\.yml$
+^docker-compose\.yml$
 ^extdata$
 ^eset$
 ^input_score$
 ^datalist.csv$
 ^\.Rhistory$
+^install_r_packages.R$
+^\.dockerignore
+^\.DS_Store

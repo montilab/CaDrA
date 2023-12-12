@@ -13,7 +13,7 @@ library(SummarizedExperiment)
 
 # Load CaDrA
 library(devtools)
-load_all("~/Github/CaDrA")
+load_all()
 ```
 
 # CaDrA

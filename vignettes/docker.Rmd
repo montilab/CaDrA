@@ -1,14 +1,13 @@
-
 ---
-title: "Run CaDrA within a Docker Environment"
+title: "How to run CaDrA within a Docker Environment"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Run CaDrA within a Docker Environment}
+  %\VignetteIndexEntry{How to run CaDrA within a Docker Environment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-## Software requirements
+# Software requirements
 
 - Git version >= 2.21
 - Docker version >= 20.10
@@ -16,6 +15,8 @@ vignette: >
 Don't have Git installed, see [Git Guides](https://github.com/git-guides/install-git)
 
 Don't have Docker installed, see [Docker Engine](https://docs.docker.com/engine/install/)
+
+# Build Docker image of `CaDrA`
 
 ## (1) Clone this repository
 
@@ -27,9 +28,10 @@ git clone https://github.com/montilab/CaDrA
 
 ```bash
 cd CaDrA
-docker build --tag montilab/cadra:latest .
+docker build -t montilab/cadra:latest .
 ```
-**`-t`**: add a tag to an image such as the version of the application, e.g. *montilab/cadra:1.0.0* or *montilab/cadra:latest*. <br>
+
+**`-t`**: add a tag to an image such as the version of the application, e.g. *montilab/cadra:1.0.0* or *montilab/cadra:latest* <br>
 
 ### (3) After the build is completed, check if the image is built successfully
 
@@ -40,7 +42,7 @@ REPOSITORY      TAG        IMAGE ID        CREATED        SIZE
 montilab/cadra  latest     2c22887402d3    2 hours ago    2.46GB
 ```
 
-## (4) Run `CaDrA` container with its built image
+# Run `CaDrA` container with its built image
 
 ```bash
 docker run --name cadra -d -p 8787:8787 -e PASSWORD=CaDrA montilab/cadra:latest
@@ -53,24 +55,23 @@ docker run --name cadra -d -p 8787:8787 -e PASSWORD=CaDrA montilab/cadra:latest
 
 For more information about the Docker syntax, see [Docker run reference](https://docs.docker.com/engine/reference/run/)
 
-## (5) Check if the container is built successfully
+Check if the container is built successfully
 
 ```bash
 docker ps
-
 
 CONTAINER ID   IMAGE                    COMMAND       CREATED        STATUS        PORTS                    NAMES
 b37b6b19c4e8   montilab/cadra:latest    "/init"       5 hours ago    Up 5 hours    0.0.0.0:8787->8787/tcp   cadra
 ```
 
-## (6) Run `CaDrA` on RStudio Server hosted within a Docker environment
+# Run `CaDrA` on RStudio Server hosted within a Docker environment
 
-Using your preferred web browser, go to http://localhost:8787. You will be prompted to log into Rstudio Server. Enter the following credentials to log in:
+Using your preferred web browser, go to http://localhost:8787. You will be prompted to log into Rstudio Server. Enter the following credentials:
 
-username: rstudio
+username: rstudio <br>
 password: CaDrA
 
-When an Rstudio Server is opened, copy the following commands and run them in the R console. The scripts is used to search for candidate drivers that associated with the YAP/TAZ Activity in the BrCA dataset that we provided with the package.
+When the Rstudio Server is opened, copy the following commands and run them in the R console. The script is used to search for candidate drivers that associated with the YAP/TAZ Activity in the BrCA dataset that provided with the package.
 
 ```bash
 # Load R packages
@@ -98,8 +99,9 @@ eset_mut_scna_flt <- CaDrA::prefilter_data(
   FS = eset_mut_scna,
   max_cutoff = 0.6,  # max event frequency (60%)
   min_cutoff = 0.03  # min event frequency (3%)
-)  
+) 
 
+# Run candidate search
 topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,
@@ -122,3 +124,7 @@ CaDrA::meta_plot(topn_best_list = topn_best_meta, input_score_label = "YAP/TAZ A
 # Evaluate results across top N features you started from
 CaDrA::topn_plot(topn_res) 
 ```
+
+<br>
+
+Any questions or issues? Please report them on our [github issues](https://github.com/montilab/CaDrA/issues).

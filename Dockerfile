@@ -10,33 +10,22 @@ FROM rocker/tidyverse:${R_VERSION} as base
 # Install system libraries of general use
 RUN apt-get update --allow-releaseinfo-change --fix-missing \
   && apt-get -y --no-install-recommends install \
-  tk \
+  apt-utils \
   libxtst6 \
   libxt6 \
-  ca-certificates \
-  git \
+  tk \
   && apt clean autoclean \
   && apt autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/
  
-# Build according to a specified release of CaDrA
-ARG CADRA_BRANCH
-ENV CADRA_BRANCH=${CADRA_BRANCH:-devel}
+# Create package directory 
+ENV PACKAGE_DIR=/CaDrA 
 
-# Set working directory to install CaDrA
-WORKDIR / 
+# Make package as working directory
+WORKDIR ${PACKAGE_DIR}
 
-# Clone CaDrA repo
-RUN git clone https://github.com/montilab/CaDrA.git
-
-# Set working directory to CaDrA
-WORKDIR /CaDrA 
-
-# Checkout the desired branch for the build
-RUN git checkout ${CADRA_BRANCH} && git pull
-
-# Install CaDrA denpendencies
-RUN Rscript "/CaDrA/install_r_packages.R"
+# Copy package code to Docker image
+COPY . ${PACKAGE_DIR}
 
 # Install all package dependencies
 RUN Rscript "${PACKAGE_DIR}/install_r_packages.R"

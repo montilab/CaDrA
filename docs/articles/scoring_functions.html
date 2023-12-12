@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -59,7 +59,7 @@
       <a href="../articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="../articles/docker.html">Run CaDrA within a Docker Environment</a>
+      <a href="../articles/docker.html">How to run CaDrA within a Docker Environment</a>
     </li>
   </ul>
 </li>
@@ -142,8 +142,7 @@ representing a functional response of interest (such as protein
 expression, pathway activity, etc.)</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Load pre-computed feature set</span></span>
+<code class="sourceCode R"><span><span class="co"># Load pre-computed feature set</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span>
 <span> </span>
 <span><span class="co"># Load pre-computed input scores</span></span>
@@ -158,8 +157,7 @@ Positive or TP) and 990 uniformly-distributed (i.e. True Null or TN)
 features simulated in the dataset. Below is a heatmap of the first 100
 features.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sim_FS</span><span class="op">)</span></span>
 <span><span class="fu">pheatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="va">mat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="op">]</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"red"</span><span class="op">)</span>, cluster_rows <span class="op">=</span> <span class="cn">FALSE</span>, cluster_cols <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scoring_functions_files/figure-html/heatmap-1.png" width="700"></p>
 </div>
@@ -172,8 +170,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 </h3>
 <p>See <code>?ks_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">ks_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">ks_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
@@ -198,8 +195,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 </h3>
 <p>See <code>?wilcox_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">wilcox_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">wilcox_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"wilcox_pval"</span>,      <span class="co"># Use Wilcoxon Rank-Sum scoring function</span></span>
@@ -223,8 +219,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 </h3>
 <p>See <code>?revealer_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">revealer_topn_l</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="../reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">sim_FS</span>,</span>
 <span>  input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"revealer"</span>,         <span class="co"># Use REVEALER's CMI scoring function</span></span>
@@ -247,8 +242,7 @@ with a functional response of interest using four scoring methods<a class="ancho
 </h3>
 <p>See <code>?custom_rowscore</code> for more details</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># A customized function using ks-test</span></span>
+<code class="sourceCode R"><span><span class="co"># A customized function using ks-test</span></span>
 <span><span class="va">customized_ks_rowscore</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">FS</span>, <span class="va">input_score</span>, <span class="va">meta_feature</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">alternative</span><span class="op">=</span><span class="st">"less"</span>, <span class="va">metric</span><span class="op">=</span><span class="st">"pval"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="co"># Check if meta_feature is provided</span></span>
@@ -366,49 +360,50 @@ with a functional response of interest using four scoring methods<a class="ancho
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">8</span>] base     </span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>other attached packages<span class="sc">:</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_1.<span class="fl">1.2</span>                 testthat_3.<span class="fl">2.1</span>             </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] CaDrA_1.<span class="fl">0.2</span>                 testthat_3.<span class="fl">2.1</span>             </span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a> [<span class="dv">3</span>] devtools_2.<span class="fl">4.5</span>              usethis_2.<span class="fl">2.2</span>              </span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] pheatmap_1.<span class="fl">0.12</span>             SummarizedExperiment_1.<span class="fl">30.2</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] Biobase_2.<span class="fl">60.0</span>              GenomicRanges_1.<span class="fl">52.1</span>       </span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] GenomeInfoDb_1.<span class="fl">36.4</span>         IRanges_2.<span class="fl">34.1</span>             </span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] S4Vectors_0.<span class="fl">38.2</span>            BiocGenerics_0.<span class="fl">46.0</span>        </span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] MatrixGenerics_1.<span class="fl">12.3</span>       matrixStats_1.<span class="fl">1.0</span>          </span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">15</span>] BiocStyle_2.<span class="fl">28.1</span>           </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a> [<span class="dv">5</span>] pheatmap_1.<span class="fl">0.12</span>             SummarizedExperiment_1.<span class="fl">32.0</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] Biobase_2.<span class="fl">62.0</span>              GenomicRanges_1.<span class="fl">54.1</span>       </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a> [<span class="dv">9</span>] GenomeInfoDb_1.<span class="fl">38.1</span>         IRanges_2.<span class="fl">36.0</span>             </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span>] S4Vectors_0.<span class="fl">40.2</span>            BiocGenerics_0.<span class="fl">48.1</span>        </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] MatrixGenerics_1.<span class="fl">14.0</span>       matrixStats_1.<span class="fl">2.0</span>          </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>[<span class="dv">15</span>] BiocStyle_2.<span class="fl">30.0</span>           </span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a> [<span class="dv">1</span>] bitops_1<span class="fl">.0</span><span class="dv">-7</span>            tcltk_4.<span class="fl">3.2</span>             remotes_2.<span class="dv">4</span>.<span class="fl">2.1</span>        </span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a> [<span class="dv">4</span>] rlang_1.<span class="fl">1.2</span>             magrittr_2.<span class="fl">0.3</span>          compiler_4.<span class="fl">3.2</span>         </span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a> [<span class="dv">7</span>] reshape2_1.<span class="fl">4.4</span>          systemfonts_1.<span class="fl">0.5</span>       vctrs_0.<span class="fl">6.5</span>            </span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>[<span class="dv">10</span>] stringr_1.<span class="fl">5.1</span>           profvis_0.<span class="fl">3.8</span>           pkgconfig_2.<span class="fl">0.3</span>        </span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>[<span class="dv">13</span>] crayon_1.<span class="fl">5.2</span>            fastmap_1.<span class="fl">1.1</span>           XVector_0.<span class="fl">40.0</span>         </span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>[<span class="dv">16</span>] ellipsis_0.<span class="fl">3.2</span>          labeling_0.<span class="fl">4.3</span>          caTools_1.<span class="fl">18.2</span>         </span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>[<span class="dv">19</span>] utf8_1.<span class="fl">2.4</span>              promises_1.<span class="fl">2.1</span>          rmarkdown_2<span class="fl">.25</span>         </span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>[<span class="dv">22</span>] sessioninfo_1.<span class="fl">2.2</span>       ragg_1.<span class="fl">2.6</span>              purrr_1.<span class="fl">0.2</span>            </span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>[<span class="dv">25</span>] xfun_0<span class="fl">.41</span>               zlibbioc_1.<span class="fl">46.0</span>         cachem_1.<span class="fl">0.8</span>           </span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>[<span class="dv">28</span>] jsonlite_1.<span class="fl">8.8</span>          highr_0<span class="fl">.10</span>              later_1.<span class="fl">3.2</span>            </span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>[<span class="dv">31</span>] DelayedArray_0.<span class="fl">26.7</span>     parallel_4.<span class="fl">3.2</span>          R6_2.<span class="fl">5.1</span>               </span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>[<span class="dv">34</span>] bslib_0.<span class="fl">6.1</span>             stringi_1.<span class="fl">8.2</span>           RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>     </span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>[<span class="dv">37</span>] pkgload_1.<span class="fl">3.3</span>           brio_1.<span class="fl">1.4</span>              jquerylib_0.<span class="fl">1.4</span>        </span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>[<span class="dv">40</span>] Rcpp_1.<span class="fl">0.11</span>             bookdown_0<span class="fl">.37</span>           iterators_1.<span class="fl">0.14</span>       </span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>[<span class="dv">43</span>] knitr_1<span class="fl">.45</span>              R.utils_2.<span class="fl">12.3</span>          R.cache_0.<span class="fl">16.0</span>         </span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>[<span class="dv">46</span>] httpuv_1.<span class="fl">6.13</span>           Matrix_1<span class="fl">.6-1.1</span>          rstudioapi_0.<span class="fl">15.0</span>      </span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>[<span class="dv">49</span>] abind_1<span class="fl">.4</span><span class="dv">-5</span>             yaml_2.<span class="fl">3.7</span>              doParallel_1.<span class="fl">0.17</span>      </span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>[<span class="dv">52</span>] gplots_3.<span class="fl">1.3</span>            codetools_0<span class="fl">.2</span><span class="dv">-19</span>        miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>         </span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>[<span class="dv">55</span>] misc3d_0<span class="fl">.9</span><span class="dv">-1</span>            pkgbuild_1.<span class="fl">4.3</span>          lattice_0<span class="fl">.21</span><span class="dv">-9</span>         </span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>[<span class="dv">58</span>] tibble_3.<span class="fl">2.1</span>            plyr_1.<span class="fl">8.9</span>              shiny_1.<span class="fl">8.0</span>            </span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>[<span class="dv">61</span>] withr_2.<span class="fl">5.2</span>             evaluate_0<span class="fl">.23</span>           desc_1.<span class="fl">4.3</span>             </span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>[<span class="dv">64</span>] urlchecker_1.<span class="fl">0.1</span>        pillar_1.<span class="fl">9.0</span>            BiocManager_1.<span class="fl">30.22</span>    </span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>[<span class="dv">67</span>] KernSmooth_2<span class="fl">.23</span><span class="dv">-22</span>      foreach_1.<span class="fl">5.2</span>           rprojroot_2.<span class="fl">0.4</span>        </span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>[<span class="dv">70</span>] RCurl_1<span class="fl">.98-1.13</span>         ggplot2_3.<span class="fl">4.4</span>           munsell_0.<span class="fl">5.0</span>          </span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>[<span class="dv">73</span>] scales_1.<span class="fl">3.0</span>            gtools_3.<span class="fl">9.5</span>            xtable_1<span class="fl">.8</span><span class="dv">-4</span>           </span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>[<span class="dv">76</span>] glue_1.<span class="fl">6.2</span>              ppcor_1<span class="fl">.1</span>               tools_4.<span class="fl">3.2</span>            </span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>[<span class="dv">79</span>] fs_1.<span class="fl">6.3</span>                grid_4.<span class="fl">3.2</span>              colorspace_2<span class="fl">.1</span><span class="dv">-0</span>       </span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>[<span class="dv">82</span>] GenomeInfoDbData_1.<span class="fl">2.10</span> cli_3.<span class="fl">6.1</span>               textshaping_0.<span class="fl">3.7</span>      </span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>[<span class="dv">85</span>] fansi_1.<span class="fl">0.6</span>             S4Arrays_1.<span class="fl">0.6</span>          gtable_0.<span class="fl">3.4</span>           </span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>[<span class="dv">88</span>] R.methodsS3_1.<span class="fl">8.2</span>       sass_0.<span class="fl">4.8</span>              digest_0.<span class="fl">6.33</span>          </span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>[<span class="dv">91</span>] farver_2.<span class="fl">1.1</span>            htmlwidgets_1.<span class="fl">6.4</span>       R.oo_1.<span class="fl">25.0</span>            </span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>[<span class="dv">94</span>] memoise_2.<span class="fl">0.1</span>           htmltools_0.<span class="fl">5.7</span>         pkgdown_2.<span class="fl">0.7</span>          </span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>[<span class="dv">97</span>] lifecycle_1.<span class="fl">0.4</span>         mime_0<span class="fl">.12</span>               MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">1</span>] bitops_1<span class="fl">.0</span><span class="dv">-7</span>            tcltk_4.<span class="fl">3.2</span>             remotes_2.<span class="dv">4</span>.<span class="fl">2.1</span>        </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">4</span>] rlang_1.<span class="fl">1.2</span>             magrittr_2.<span class="fl">0.3</span>          compiler_4.<span class="fl">3.2</span>         </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  [<span class="dv">7</span>] reshape2_1.<span class="fl">4.4</span>          systemfonts_1.<span class="fl">0.5</span>       vctrs_0.<span class="fl">6.5</span>            </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a> [<span class="dv">10</span>] stringr_1.<span class="fl">5.1</span>           profvis_0.<span class="fl">3.8</span>           pkgconfig_2.<span class="fl">0.3</span>        </span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a> [<span class="dv">13</span>] crayon_1.<span class="fl">5.2</span>            fastmap_1.<span class="fl">1.1</span>           XVector_0.<span class="fl">42.0</span>         </span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a> [<span class="dv">16</span>] ellipsis_0.<span class="fl">3.2</span>          labeling_0.<span class="fl">4.3</span>          caTools_1.<span class="fl">18.2</span>         </span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a> [<span class="dv">19</span>] utf8_1.<span class="fl">2.4</span>              promises_1.<span class="fl">2.1</span>          rmarkdown_2<span class="fl">.25</span>         </span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a> [<span class="dv">22</span>] sessioninfo_1.<span class="fl">2.2</span>       ragg_1.<span class="fl">2.7</span>              purrr_1.<span class="fl">0.2</span>            </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a> [<span class="dv">25</span>] xfun_0<span class="fl">.41</span>               zlibbioc_1.<span class="fl">48.0</span>         cachem_1.<span class="fl">0.8</span>           </span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a> [<span class="dv">28</span>] jsonlite_1.<span class="fl">8.8</span>          highr_0<span class="fl">.10</span>              later_1.<span class="fl">3.2</span>            </span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a> [<span class="dv">31</span>] DelayedArray_0.<span class="fl">28.0</span>     parallel_4.<span class="fl">3.2</span>          R6_2.<span class="fl">5.1</span>               </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a> [<span class="dv">34</span>] bslib_0.<span class="fl">6.1</span>             stringi_1.<span class="fl">8.3</span>           RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>     </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a> [<span class="dv">37</span>] pkgload_1.<span class="fl">3.3</span>           brio_1.<span class="fl">1.4</span>              jquerylib_0.<span class="fl">1.4</span>        </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a> [<span class="dv">40</span>] Rcpp_1.<span class="fl">0.11</span>             bookdown_0<span class="fl">.37</span>           iterators_1.<span class="fl">0.14</span>       </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a> [<span class="dv">43</span>] knitr_1<span class="fl">.45</span>              R.utils_2.<span class="fl">12.3</span>          R.cache_0.<span class="fl">16.0</span>         </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a> [<span class="dv">46</span>] httpuv_1.<span class="fl">6.13</span>           Matrix_1<span class="fl">.6-1.1</span>          rstudioapi_0.<span class="fl">15.0</span>      </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a> [<span class="dv">49</span>] abind_1<span class="fl">.4</span><span class="dv">-5</span>             yaml_2.<span class="fl">3.8</span>              doParallel_1.<span class="fl">0.17</span>      </span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a> [<span class="dv">52</span>] gplots_3.<span class="fl">1.3</span>            codetools_0<span class="fl">.2</span><span class="dv">-19</span>        miniUI_0.<span class="dv">1</span>.<span class="fl">1.1</span>         </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a> [<span class="dv">55</span>] misc3d_0<span class="fl">.9</span><span class="dv">-1</span>            pkgbuild_1.<span class="fl">4.3</span>          lattice_0<span class="fl">.21</span><span class="dv">-9</span>         </span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a> [<span class="dv">58</span>] tibble_3.<span class="fl">2.1</span>            plyr_1.<span class="fl">8.9</span>              shiny_1.<span class="fl">8.0</span>            </span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a> [<span class="dv">61</span>] withr_2.<span class="fl">5.2</span>             evaluate_0<span class="fl">.23</span>           desc_1.<span class="fl">4.3</span>             </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a> [<span class="dv">64</span>] urlchecker_1.<span class="fl">0.1</span>        pillar_1.<span class="fl">9.0</span>            BiocManager_1.<span class="fl">30.22</span>    </span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a> [<span class="dv">67</span>] KernSmooth_2<span class="fl">.23</span><span class="dv">-22</span>      foreach_1.<span class="fl">5.2</span>           rprojroot_2.<span class="fl">0.4</span>        </span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a> [<span class="dv">70</span>] RCurl_1<span class="fl">.98-1.13</span>         ggplot2_3.<span class="fl">4.4</span>           munsell_0.<span class="fl">5.0</span>          </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a> [<span class="dv">73</span>] scales_1.<span class="fl">3.0</span>            gtools_3.<span class="fl">9.5</span>            xtable_1<span class="fl">.8</span><span class="dv">-4</span>           </span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a> [<span class="dv">76</span>] glue_1.<span class="fl">6.2</span>              ppcor_1<span class="fl">.1</span>               tools_4.<span class="fl">3.2</span>            </span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a> [<span class="dv">79</span>] fs_1.<span class="fl">6.3</span>                grid_4.<span class="fl">3.2</span>              colorspace_2<span class="fl">.1</span><span class="dv">-0</span>       </span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a> [<span class="dv">82</span>] GenomeInfoDbData_1.<span class="fl">2.11</span> cli_3.<span class="fl">6.2</span>               textshaping_0.<span class="fl">3.7</span>      </span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a> [<span class="dv">85</span>] fansi_1.<span class="fl">0.6</span>             S4Arrays_1.<span class="fl">2.0</span>          gtable_0.<span class="fl">3.4</span>           </span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a> [<span class="dv">88</span>] R.methodsS3_1.<span class="fl">8.2</span>       sass_0.<span class="fl">4.8</span>              digest_0.<span class="fl">6.33</span>          </span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a> [<span class="dv">91</span>] SparseArray_1.<span class="fl">2.2</span>       farver_2.<span class="fl">1.1</span>            htmlwidgets_1.<span class="fl">6.4</span>      </span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a> [<span class="dv">94</span>] R.oo_1.<span class="fl">25.0</span>             memoise_2.<span class="fl">0.1</span>           htmltools_0.<span class="fl">5.7</span>        </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a> [<span class="dv">97</span>] pkgdown_2.<span class="fl">0.7</span>           lifecycle_1.<span class="fl">0.4</span>         mime_0<span class="fl">.12</span>              </span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>[<span class="dv">100</span>] MASS_7<span class="fl">.3</span><span class="dv">-60</span>            </span></code></pre></div>
 </div>
   </div>
 

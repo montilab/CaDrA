@@ -76,8 +76,8 @@ based on an Input Score that measures the per-sample activity of YAP/TAZ
 (two important regulators of the hippo pathway). This score represents
 the projection on the TCGA BrCa dataset of a gene expression signature
 of YAP/TAZ knockdown derived in breast cancer cell lines. Our question
-of interest: what is the combination of genetic features \[mutations and
-copy number alterations\] that best “explain” the YAP/TAZ activity?
+of interest: what is the combination of genetic features (mutations and
+copy number alterations) that best “explain” the YAP/TAZ activity?
 
 ## (i) Load R packages
 
@@ -119,8 +119,8 @@ Here, we repeat the candidate search starting from each of the top ‘N’
 features and report the combined results as a heatmap (to summarize the
 number of times each feature is selected across repeated runs).
 
-IMPORTANT NOTE: The legacy function `topn_eval()` is equivalent to the
-new recommended `candidate_search()` function
+**IMPORTANT NOTE**: The legacy function `topn_eval()` is equivalent to
+the new recommended `candidate_search()` function.
 
 ``` r
 topn_res <- CaDrA::candidate_search(
@@ -137,7 +137,7 @@ topn_res <- CaDrA::candidate_search(
 )
 ```
 
-## (iv) Visualize results
+## (iv) Visualize the results
 
 ### Meta-feature plot
 
@@ -172,9 +172,9 @@ CaDrA::topn_plot(topn_res)
 
 ![](./man/figures/summarize-1.png)<!-- -->
 
-# Additional guides
+# Additional Guides
 
-- [Run CaDrA within a Docker
+- [How to run CaDrA within a Docker
   environment](https://montilab.github.io/CaDrA/articles/docker.html)
 
 # Acknowledgements

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CaDrA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -65,7 +65,7 @@
       <a href="articles/permutation_based_testing.html">Permutation-Based Testing</a>
     </li>
     <li>
-      <a href="articles/docker.html">Run CaDrA within a Docker Environment</a>
+      <a href="articles/docker.html">How to run CaDrA within a Docker Environment</a>
     </li>
   </ul>
 </li>
@@ -142,7 +142,7 @@
 <div class="section level1">
 <h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h1>
-<p>Here, we are using a dataset of somatic mutations and CNAs extracted from the TCGA Breast Cancer Dataset. We will query this Feature Set based on an Input Score that measures the per-sample activity of YAP/TAZ (two important regulators of the hippo pathway). This score represents the projection on the TCGA BrCa dataset of a gene expression signature of YAP/TAZ knockdown derived in breast cancer cell lines. Our question of interest: what is the combination of genetic features [mutations and copy number alterations] that best “explain” the YAP/TAZ activity?</p>
+<p>Here, we are using a dataset of somatic mutations and CNAs extracted from the TCGA Breast Cancer Dataset. We will query this Feature Set based on an Input Score that measures the per-sample activity of YAP/TAZ (two important regulators of the hippo pathway). This score represents the projection on the TCGA BrCa dataset of a gene expression signature of YAP/TAZ knockdown derived in breast cancer cell lines. Our question of interest: what is the combination of genetic features (mutations and copy number alterations) that best “explain” the YAP/TAZ activity?</p>
 <div class="section level2">
 <h2 id="i-load-r-packages">(i) Load R packages<a class="anchor" aria-label="anchor" href="#i-load-r-packages"></a>
 </h2>
@@ -181,7 +181,7 @@
 <h2 id="iii-run-cadra">(iii) Run CaDrA<a class="anchor" aria-label="anchor" href="#iii-run-cadra"></a>
 </h2>
 <p>Here, we repeat the candidate search starting from each of the top ‘N’ features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs).</p>
-<p>IMPORTANT NOTE: The legacy function <code>topn_eval()</code> is equivalent to the new recommended <code><a href="reference/candidate_search.html">candidate_search()</a></code> function</p>
+<p><strong>IMPORTANT NOTE</strong>: The legacy function <code>topn_eval()</code> is equivalent to the new recommended <code><a href="reference/candidate_search.html">candidate_search()</a></code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">topn_res</span> <span class="op">&lt;-</span> <span class="fu">CaDrA</span><span class="fu">::</span><span class="fu"><a href="reference/candidate_search.html">candidate_search</a></span><span class="op">(</span></span>
 <span>  FS <span class="op">=</span> <span class="va">eset_mut_scna_flt</span>,</span>
@@ -197,7 +197,7 @@
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="iv-visualize-results">(iv) Visualize results<a class="anchor" aria-label="anchor" href="#iv-visualize-results"></a>
+<h2 id="iv-visualize-the-results">(iv) Visualize the results<a class="anchor" aria-label="anchor" href="#iv-visualize-the-results"></a>
 </h2>
 <div class="section level3">
 <h3 id="meta-feature-plot">Meta-feature plot<a class="anchor" aria-label="anchor" href="#meta-feature-plot"></a>
@@ -228,10 +228,10 @@
 </div>
 </div>
 <div class="section level1">
-<h1 id="additional-guides">Additional guides<a class="anchor" aria-label="anchor" href="#additional-guides"></a>
+<h1 id="additional-guides">Additional Guides<a class="anchor" aria-label="anchor" href="#additional-guides"></a>
 </h1>
 <ul>
-<li><a href="https://montilab.github.io/CaDrA/articles/docker.html" class="external-link">Run CaDrA within a Docker environment</a></li>
+<li><a href="https://montilab.github.io/CaDrA/articles/docker.html" class="external-link">How to run CaDrA within a Docker environment</a></li>
 </ul>
 </div>
 <div class="section level1">

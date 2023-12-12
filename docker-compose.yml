@@ -4,20 +4,19 @@ x-r-version:
   &r-version
   R_VERSION=4.3.0
 
-x-cadra-branch:
-  &cadra-branch
-  CADRA_BRANCH=devel
-  
+x-cadra-git-repo:
+  &cadra-git-repo
+  https://github.com/montilab/CaDrA.git
+
 services:
   cadra:
     container_name: cadra
     image: montilab/cadra:latest
     build: 
-      context: https://github.com/montilab/CaDrA.git
+      context: *cadra-git-repo
       dockerfile: Dockerfile
       args:
         - *r-version
-        - *cadra-branch
     restart: always
     ports:
       - 8787:8787

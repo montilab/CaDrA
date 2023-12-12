@@ -61,7 +61,7 @@ navbar:
         href: articles/scoring_functions.html
       - text: "Permutation-Based Testing"
         href: articles/permutation_based_testing.html
-      - text: "Run CaDrA within a Docker Environment"
+      - text: "How to run CaDrA within a Docker Environment"
         href: articles/docker.html
     - text: "Reference"
       href: reference/index.html

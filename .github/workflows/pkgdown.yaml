@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [master, devel]
+    branches: [master]
     paths: 
       - '.github/workflows/pkgdown.yaml'
       - 'vignettes/**'
@@ -13,7 +13,7 @@ on:
       - 'NEWS.md'
       - '_pkgdown.yml'
   pull_request:
-    branches: [master, devel]
+    branches: [master]
   release:
     types: [published]
   workflow_dispatch:

@@ -29,7 +29,6 @@ library(CaDrA)
 2. A vector of continuous scores (or `Input Scores`) representing a functional response of interest (such as protein expression, pathway activity, etc.)
 
 ```{r load.data}
-
 # Load pre-simulated feature set 
 # See ?sim_FS for more information
 data(sim_FS)
@@ -37,7 +36,6 @@ data(sim_FS)
 # Load pre-computed input-score
 # See ?sim_Scores for more information
 data(sim_Scores)
-
 ```
 
 # Find a subset of features that maximally associated with a given outcome of interest
@@ -45,7 +43,6 @@ data(sim_Scores)
 Here we are using **Kolmogorow-Smirnow** (KS) scoring method to search for best features
 
 ```{r ks.method}
-
 candidate_search_res <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
@@ -57,19 +54,16 @@ candidate_search_res <- CaDrA::candidate_search(
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
   best_score_only = FALSE      # Return all results from the search
 )
-
 ```
 
 # Visualize best meta-features result
 
 ```{r ks.meta.plot}
-
 # Extract the best meta-feature result
 topn_best_meta <- CaDrA::topn_best(topn_list = candidate_search_res)
 
 # Visualize meta-feature result
 CaDrA::meta_plot(topn_best_list = topn_best_meta)
-
 ```
 
 # Perform permutation-based testing
@@ -97,10 +91,8 @@ perm_res <- CaDrA::CaDrA(
 # Visualize permutation result
 
 ```{r ks.permutation.plot}
-
 # Visualize permutation results
 permutation_plot(perm_res = perm_res)
-
 ```
 
 # SessionInfo

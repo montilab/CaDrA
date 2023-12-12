@@ -99,8 +99,9 @@ eset_mut_scna_flt <- CaDrA::prefilter_data(
   FS = eset_mut_scna,
   max_cutoff = 0.6,  # max event frequency (60%)
   min_cutoff = 0.03  # min event frequency (3%)
-)  
+) 
 
+# Run candidate search
 topn_res <- CaDrA::candidate_search(
   FS = eset_mut_scna_flt,
   input_score = input_score,

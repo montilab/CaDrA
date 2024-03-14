@@ -20,38 +20,36 @@ Description: Performs both stepwise and backward heuristic search for
     continuous scores (e.g. sample-specific scores representing a phenotypic 
     readout of interest, such as protein expression, pathway activity, etc.), 
     based on the union occurence (i.e. logical OR) of the events.
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.3.0)
 LazyData: false
 License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
 Packaged: 2022-11-20 18:35:45 UTC; 
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
-    doParallel, 
-    ggplot2,
-    gplots,
-    graphics, 
-    grid, 
-    gtable,
-    MASS, 
-    methods,
-    misc3d,
-    plyr,
-    ppcor, 
-    R.cache,
-    reshape2,
-    stats, 
-    SummarizedExperiment 
+  doParallel, 
+  ggplot2,
+  gplots,
+  graphics, 
+  grid, 
+  gtable,
+  MASS, 
+  methods,
+  misc3d,
+  plyr,
+  ppcor, 
+  R.cache,
+  reshape2,
+  stats, 
+  SummarizedExperiment 
 Suggests: 
-    BiocManager,
-    BiocStyle,
-    devtools,
-    knitr,
-    magick,
-    pheatmap,
-    rmarkdown,
-    testthat (>= 3.1.6)
+  BiocManager,
+  devtools,
+  knitr,
+  pheatmap,
+  rmarkdown,
+  testthat (>= 3.1.6)
 Config/testthat/edition: 3
 biocViews: Microarray, RNASeq, GeneExpression, Software, FeatureExtraction
 VignetteBuilder: knitr

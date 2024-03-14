@@ -1,6 +1,6 @@
 ---
 title: "How to run CaDrA within a Docker Environment"
-output: BiocStyle::html_document
+output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{How to run CaDrA within a Docker Environment}
   %\VignetteEngine{knitr::rmarkdown}

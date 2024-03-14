@@ -122,20 +122,20 @@
 <ul>
 <li>Using <code>devtools</code> package</li>
 </ul>
-<!-- --><div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"montilab/CaDrA"</span>)</span></code></pre></div>
+<!-- --><div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"montilab/CaDrA"</span>)</span></code></pre></div>
 <ul>
 <li>Using <code>BiocManager</code> package</li>
 </ul>
-<!-- --><div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install BiocManager</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install CaDrA</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"CaDrA"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Install SummarizedExperiment</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"SummarizedExperiment"</span>)</span></code></pre></div>
+<!-- --><div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Install BiocManager</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># Install CaDrA</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"CaDrA"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># Install SummarizedExperiment</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"SummarizedExperiment"</span>)</span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -144,52 +144,52 @@
 <div class="section level2">
 <h2 id="i-load-r-packages">(i) Load R packages<a class="anchor" aria-label="anchor" href="#i-load-r-packages"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(CaDrA)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="ii-format-and-filter-data-inputs">(ii) Format and filter data inputs<a class="anchor" aria-label="anchor" href="#ii-format-and-filter-data-inputs"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Read in BRCA GISTIC+Mutation object</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(BRCA_GISTIC_MUT_SIG)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> BRCA_GISTIC_MUT_SIG</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Read in input score</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(TAZYAP_BRCA_ACTIVITY)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> TAZYAP_BRCA_ACTIVITY</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Samples to keep based on the overlap between the two inputs</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">intersect</span>(base<span class="sc">::</span><span class="fu">names</span>(input_score), base<span class="sc">::</span><span class="fu">colnames</span>(eset_mut_scna))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> eset_mut_scna[, overlap]</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> input_score[overlap]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Binarize FS to only have 0's and 1's</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(eset_mut_scna)[SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(eset_mut_scna) <span class="sc">&gt;</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Pre-filter FS based on occurrence frequency</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>eset_mut_scna_flt <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">prefilter_data</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_cutoff =</span> <span class="fl">0.6</span>,  <span class="co"># max event frequency (60%)</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_cutoff =</span> <span class="fl">0.03</span>  <span class="co"># min event frequency (3%)</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)  </span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="do">## Read in BRCA GISTIC+Mutation object</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(BRCA_GISTIC_MUT_SIG)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> BRCA_GISTIC_MUT_SIG</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="do">## Read in input score</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">data</span>(TAZYAP_BRCA_ACTIVITY)</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> TAZYAP_BRCA_ACTIVITY</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="do">## Samples to keep based on the overlap between the two inputs</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">intersect</span>(base<span class="sc">::</span><span class="fu">names</span>(input_score), base<span class="sc">::</span><span class="fu">colnames</span>(eset_mut_scna))</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>eset_mut_scna <span class="ot">&lt;-</span> eset_mut_scna[, overlap]</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>input_score <span class="ot">&lt;-</span> input_score[overlap]</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="do">## Binarize FS to only have 0's and 1's</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(eset_mut_scna)[SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(eset_mut_scna) <span class="sc">&gt;</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="do">## Pre-filter FS based on occurrence frequency</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>eset_mut_scna_flt <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">prefilter_data</span>(</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna,</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  <span class="at">max_cutoff =</span> <span class="fl">0.6</span>,  <span class="co"># max event frequency (60%)</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  <span class="at">min_cutoff =</span> <span class="fl">0.03</span>  <span class="co"># min event frequency (3%)</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>)  </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="iii-run-cadra">(iii) Run CaDrA<a class="anchor" aria-label="anchor" href="#iii-run-cadra"></a>
 </h2>
 <p>Here, we repeat the candidate search starting from each of the top ‘N’ features and report the combined results as a heatmap (to summarize the number of times each feature is selected across repeated runs).</p>
 <p><strong>IMPORTANT NOTE</strong>: The legacy function <code>topn_eval()</code> is equivalent to the new recommended <code><a href="reference/candidate_search.html">candidate_search()</a></code> function.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>topn_res <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">candidate_search</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna_flt,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">input_score =</span> input_score,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method_alternative =</span> <span class="st">"less"</span>, <span class="co"># Use one-sided hypothesis testing</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">search_method =</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">top_N =</span> <span class="dv">7</span>,                   <span class="co"># Evaluate top 7 starting points for each search</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_size =</span> <span class="dv">7</span>,                <span class="co"># Maximum size a meta-feature matrix can extend to</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">do_plot =</span> <span class="cn">FALSE</span>,             <span class="co"># Plot after finding the best features</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">best_score_only =</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>topn_res <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">candidate_search</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">FS =</span> eset_mut_scna_flt,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">input_score =</span> input_score,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"ks_pval"</span>,          <span class="co"># Use Kolmogorow-Smirnow scoring function </span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">method_alternative =</span> <span class="st">"less"</span>, <span class="co"># Use one-sided hypothesis testing</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">weights =</span> <span class="cn">NULL</span>,              <span class="co"># If weights is provided, perform a weighted-KS test</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">search_method =</span> <span class="st">"both"</span>,      <span class="co"># Apply both forward and backward search</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">top_N =</span> <span class="dv">7</span>,                   <span class="co"># Evaluate top 7 starting points for each search</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">max_size =</span> <span class="dv">7</span>,                <span class="co"># Maximum size a meta-feature matrix can extend to</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">do_plot =</span> <span class="cn">FALSE</span>,             <span class="co"># Plot after finding the best features</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">best_score_only =</span> <span class="cn">FALSE</span>      <span class="co"># Return all results from the search</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="iv-visualize-the-results">(iv) Visualize the results<a class="anchor" aria-label="anchor" href="#iv-visualize-the-results"></a>
@@ -203,19 +203,19 @@
 <li>A tile plot for the top meta-features that associated with a molecular phenotype of interest (e.g. input_score)</li>
 <li>A KS enrichment plot of the meta-feature set (this correspond to the logical OR of the features)</li>
 </ol>
-<!-- --><div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fetch the meta-feature set corresponding to its best scores over top N features searches</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>topn_best_meta <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">topn_best</span>(topn_res)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the best results with the meta-feature plot</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">meta_plot</span>(<span class="at">topn_best_list =</span> topn_best_meta, <span class="at">input_score_label =</span> <span class="st">"YAP/TAZ Activity"</span>)</span></code></pre></div>
+<!-- --><div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">## Fetch the meta-feature set corresponding to its best scores over top N features searches</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>topn_best_meta <span class="ot">&lt;-</span> CaDrA<span class="sc">::</span><span class="fu">topn_best</span>(topn_res)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># Visualize the best results with the meta-feature plot</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">meta_plot</span>(<span class="at">topn_best_list =</span> topn_best_meta, <span class="at">input_score_label =</span> <span class="st">"YAP/TAZ Activity"</span>)</span></code></pre></div>
 <p><img src="./reference/figures/visualize.best-1.png"></p>
 </div>
 <div class="section level3">
 <h3 id="top-n-plot">Top-N plot<a class="anchor" aria-label="anchor" href="#top-n-plot"></a>
 </h3>
 <p>This plot is a heatmap of overlapping meta-features by repeating <code>candidate_search</code> over top N feature searches.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate results across top N features you started from</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">topn_plot</span>(topn_res) </span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Evaluate results across top N features you started from</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>CaDrA<span class="sc">::</span><span class="fu">topn_plot</span>(topn_res) </span></code></pre></div>
 <p><img src="./reference/figures/summarize-1.png"></p>
 </div>
 </div>

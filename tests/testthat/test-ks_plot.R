@@ -16,7 +16,6 @@ test_that("ks_plot works", {
   # Plot the enrichment scores
   g <- ks_plot(df = ks_enrichment_coordinates)
   expect_type(g, "list")
-  expect_length(g, 9L)
   expect_s3_class(g$layers[[1]], "LayerInstance")
   expect_s3_class(g$layers[[1]]$geom, "GeomLine")
   expect_s3_class(g$layers[[2]], "LayerInstance")

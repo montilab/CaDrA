@@ -1,7 +1,7 @@
 Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
-Version: 1.2.0
+Version: 1.3.0
 Date: 2022-11-20
 Authors@R: 
     c(person(given="Reina", family="Chau", role=c("aut","cre"), 

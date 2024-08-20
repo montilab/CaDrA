@@ -84,10 +84,8 @@ the <code>CaDrA</code> package.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">candidate_search</span><span class="op">(</span></span>
 <span>  <span class="va">FS</span>,</span>
 <span>  <span class="va">input_score</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>,</span>
-<span>    <span class="st">"correlation"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ks_pval"</span>, <span class="st">"ks_score"</span>, <span class="st">"wilcox_pval"</span>, <span class="st">"wilcox_score"</span>, <span class="st">"revealer"</span>, <span class="st">"custom"</span><span class="op">)</span>,</span>
 <span>  method_alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"less"</span>, <span class="st">"greater"</span>, <span class="st">"two.sided"</span><span class="op">)</span>,</span>
-<span>  cmethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spearman"</span>, <span class="st">"pearson"</span><span class="op">)</span>,</span>
 <span>  custom_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -122,10 +120,9 @@ column names of <code>FS</code> object.</p></dd>
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>a character string specifies a scoring method that is
-used in the search. There are 7 options: (<code>"ks_pval"</code> or <code>ks_score</code>
+used in the search. There are 6 options: (<code>"ks_pval"</code> or <code>ks_score</code>
 or <code>"wilcox_pval"</code> or <code>wilcox_score</code> or
 <code>"revealer"</code> (conditional mutual information from REVEALER) or
-<code>"correlation"</code> (based on simple correlation - pearson or spearman) or
 <code>"custom"</code> (a user-defined scoring method)).
 Default is <code>ks_pval</code>.</p></dd>
 
@@ -136,11 +133,6 @@ hypothesis testing (<code>"two.sided"</code> or <code>"greater"</code> or <code>
 Default is <code>less</code> for left-skewed significance testing.</p>
 <p>NOTE: This argument only applies to <code>ks_pval</code> and
 <code>wilcox_pval</code> method</p></dd>
-
-
-<dt id="arg-cmethod">cmethod<a class="anchor" aria-label="anchor" href="#arg-cmethod"></a></dt>
-<dd><p>correlation method to use - spearman or pearson. Default is "spearman"
-#' NOTE: This argument only applies to <code>correlation</code> method only</p></dd>
 
 
 <dt id="arg-custom-function">custom_function<a class="anchor" aria-label="anchor" href="#arg-custom-function"></a></dt>
@@ -243,8 +235,8 @@ matrix (<code>score</code>), (4) names of the best meta-features (<code>best_fea
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Define additional parameters and run the function</span></span></span>
 <span class="r-in"><span><span class="va">candidate_search_result</span> <span class="op">&lt;-</span> <span class="fu">candidate_search</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">sim_FS</span>, input_score <span class="op">=</span> <span class="va">sim_Scores</span>,</span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>, method_alternative <span class="op">=</span> <span class="st">"less"</span>, weights <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  FS <span class="op">=</span> <span class="va">sim_FS</span>, input_score <span class="op">=</span> <span class="va">sim_Scores</span>, </span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"ks_pval"</span>, method_alternative <span class="op">=</span> <span class="st">"less"</span>, weights <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
 <span class="r-in"><span>  search_start <span class="op">=</span> <span class="cn">NULL</span>, top_N <span class="op">=</span> <span class="fl">3</span>, search_method <span class="op">=</span> <span class="st">"both"</span>,</span></span>
 <span class="r-in"><span>  max_size <span class="op">=</span> <span class="fl">7</span>, best_score_only <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

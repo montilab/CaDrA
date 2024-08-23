@@ -22,7 +22,8 @@ The **CaDrA** package currently supports four scoring functions to search for su
 1. Kolmogorov-Smirnov Method (`ks`)
 2. Conditional Mutual Information Method (`revealer`)
 3. Wilcoxon Rank-Sum Method (`wilcox`)
-4. Custom - An User Defined Scoring Method (`custom`)
+4. Correlation Method (`correlation`)
+5. Custom - An User Defined Scoring Method (`custom`)
 
 Below, we run `candidate_search()` over the top 3 starting features using each of the four scoring functions described above.
 
@@ -70,7 +71,7 @@ See `?ks_rowscore` for more details
 ks_topn_l <- CaDrA::candidate_search(
   FS = sim_FS,
   input_score = sim_Scores,
-  method = "ks_pval",          # Use Kolmogorow-Smirnow scoring function 
+  method = "ks_pval",          # Use Kolmogorov-Smirnov scoring function 
   method_alternative = "less", # Use one-sided hypothesis testing
   weights = NULL,              # If weights is provided, perform a weighted-KS test
   search_method = "both",      # Apply both forward and backward search
@@ -134,13 +135,40 @@ revealer_topn_best_meta <- topn_best(topn_list = revealer_topn_l)
 meta_plot(topn_best_list = revealer_topn_best_meta)
 ```
 
-## 4. Custom - An User Defined Scoring Method
+## 4. Correlation Scoring Method
+
+See `?custom_rowscore` for more details
+
+```{r correlation.method}
+corr_topn_l <- CaDrA::candidate_search(
+  FS = SummarizedExperiment::assay(sim_FS),
+  input_score = sim_Scores,
+  method = "correlation",      # Use correlation scoring function
+  cmethod = "spearman",       # Use spearman correlation scoring function
+  top_N = 3,                   # Evaluate top 3 starting points for the search
+  max_size = 10,               # Allow at most 10 features in meta-feature matrix
+  do_plot = FALSE,             # We will plot it AFTER finding the best hits
+  best_score_only = FALSE      # Return all results from the search
+)
+
+# Now we can fetch the feature set of top N feature that corresponded to the best scores over the top N search
+corr_topn_best_meta <- topn_best(topn_list = corr_topn_l)
+
+# Visualize best meta-feature result
+meta_plot(topn_best_list = corr_topn_best_meta)
+
+```
+
+## 5. Custom - An User Defined Scoring Method
 
 See `?custom_rowscore` for more details
 
 ```{r custom.method}
 # A customized function using ks-test
-customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternative="less", metric="pval"){
+customized_ks_rowscore <- function(FS, input_score, weights=NULL, meta_feature=NULL, alternative="less", metric="pval"){
+  
+ metric <- match.arg(metric)
+  alternative <- match.arg(alternative)
   
   # Check if meta_feature is provided
   if(!is.null(meta_feature)){
@@ -148,10 +176,10 @@ customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternati
     locs <- match(meta_feature, row.names(FS))
     
     # Taking the union across the known meta features
-    if(length(meta_feature) > 1) {
-      meta_vector <- as.numeric(ifelse(colSums(FS[meta_feature,]) == 0, 0, 1))
+    if(length(locs) > 1) {
+      meta_vector <- as.numeric(ifelse(colSums(FS[locs,]) == 0, 0, 1))
     }else{
-      meta_vector <- as.numeric(FS[meta_feature,])
+      meta_vector <- as.numeric(FS[locs, , drop=FALSE])
     }
     
     # Remove the meta features from the binary feature matrix
@@ -163,12 +191,14 @@ customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternati
     # We cannot compute statistics for such features and thus they need
     # to be filtered out
     if(any(rowSums(FS) == ncol(FS))){
-      warning("Features with all 1s generated from taking the matrix union ",
+      verbose("Features with all 1s generated from taking the matrix union ",
               "will be removed before progressing...\n")
       FS <- FS[rowSums(FS) != ncol(FS), , drop=FALSE]
+      # If no features remained after filtering, exist the function
+      if(nrow(FS) == 0) return(NULL)
     }
   }
-  
+    
   # KS is a ranked-based method
   # So we need to sort input_score from highest to lowest values
   input_score <- sort(input_score, decreasing=TRUE)
@@ -176,35 +206,37 @@ customized_ks_rowscore <- function(FS, input_score, meta_feature=NULL, alternati
   # Re-order the matrix based on the order of input_score
   FS <- FS[, names(input_score), drop=FALSE]  
   
-  # Compute the scores using the KS method
-  ks <- apply(FS, 1, function(r){ 
-    x = input_score[which(r==1)]; 
-    y = input_score[which(r==0)];
-    res <- ks.test(x, y, alternative=alternative)
-    return(c(res$statistic, res$p.value))
-  })
-  
-  # Obtain score statistics
+  # Check if weights is provided
+  if(length(weights) > 0){
+    # Check if weights has any labels or names
+    if(is.null(names(weights)))
+      stop("The weights object must have names or labels that ",
+           "match the labels of input_score\n")
+
+    # Make sure its labels or names match the
+    # the labels of input_score 
+    weights <- as.numeric(weights[names(input_score)])
+  }
+
+  # Get the alternative hypothesis testing method
+  alt_int <- switch(alternative, two.sided=0L, less=1L, greater=-1L, 1L)
+
+  # Compute the ks statistic and p-value per row in the matrix
+  ks <- .Call(ks_genescore_mat_, FS, weights, alt_int)
+
+  # Obtain score statistics from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   stat <- ks[1,]
-  
-  # Obtain p-values and change values of 0 to the machine lowest value 
-  # to avoid taking -log(0)
+
+  # Obtain p-values from KS method
+  # Change values of 0 to the machine lowest value to avoid taking -log(0)
   pval <- ks[2,]
   pval[which(pval == 0)] <- .Machine$double.xmin
   
-  # Compute the -log(pval)
-  # Make sure scores has names that match the row names of FS object
-  pval <- -log(pval)
-  
-  # Determine which metric to returned the scores
-  if(metric == "pval"){
-    scores <- pval
-  }else{
-    scores <- stat
-  }
-  
+  # Compute the scores according to the provided metric
+  scores <- ifelse(rep(metric, nrow(FS)) %in% "pval", -log(pval), stat)
   names(scores) <- rownames(FS)
-  
+
   return(scores)
   
 }
@@ -216,6 +248,7 @@ custom_topn_l <- CaDrA::candidate_search(
   method = "custom",                        # Use custom scoring function
   custom_function = customized_ks_rowscore, # Use a customized scoring function
   custom_parameters = NULL,                 # Additional parameters to pass to custom_function
+  weights = NULL,                           # If weights is provided, perform a weighted test
   search_method = "both",                   # Apply both forward and backward search
   top_N = 3,                                # Evaluate top 3 starting points for the search
   max_size = 10,                            # Allow at most 10 features in meta-feature matrix
@@ -227,7 +260,36 @@ custom_topn_l <- CaDrA::candidate_search(
 custom_topn_best_meta <- topn_best(topn_list = custom_topn_l)
 
 # Visualize best meta-feature result
-meta_plot(topn_best_list = custom_topn_best_meta)
+CaDrA::meta_plot(topn_best_list = custom_topn_best_meta)
+
+# Evaluate results across top N features you started from
+CaDrA::topn_plot(custom_topn_l) 
+```
+
+For validation purposes, compare the custom and built-in function.
+
+```{r}
+topn_res <- CaDrA::candidate_search(
+  FS = sim_FS,
+  input_score = sim_Scores,
+  method = "ks_pval",          # Use Kolmogorov-Smirnov scoring function 
+  method_alternative = "less", # Use one-sided hypothesis testing
+  weights = NULL,              # If weights is provided, perform a weighted-KS test
+  search_method = "both",      # Apply both forward and backward search
+  top_N = 3,                   # Evaluate top 7 starting points for each search
+  max_size = 10,               # Maximum size a meta-feature matrix can extend to
+  do_plot = FALSE,             # Plot after finding the best features
+  best_score_only = FALSE      # Return all results from the search
+)
+
+## Fetch the meta-feature set corresponding to its best scores over top N features searches
+topn_best_meta <- topn_best(topn_res)
+
+# Visualize the best results with the meta-feature plot
+meta_plot(topn_best_list = topn_best_meta)
+
+# Evaluate results across top N features you started from
+topn_plot(topn_res) 
 ```
 
 # SessionInfo

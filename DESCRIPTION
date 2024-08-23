@@ -2,7 +2,7 @@ Package: CaDrA
 Type: Package
 Title: Candidate Driver Analysis
 Version: 1.0.2
-Date: 2022-11-20
+Date: 2024-08-21
 Authors@R: 
     c(person(given="Reina", family="Chau", role=c("aut","cre"), 
              email="rchau88@bu.edu", comment=c(ORCID="0000-0003-3012-1404")), 
@@ -26,7 +26,7 @@ License: GPL-3 + file LICENSE
 URL: https://github.com/montilab/CaDrA/
 Packaged: 2022-11-20 18:35:45 UTC; 
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
   doParallel, 
   ggplot2,

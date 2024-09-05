@@ -20,10 +20,11 @@ load_all()
 The **CaDrA** package currently supports four scoring functions to search for subsets of genomic features that are likely associated with a specific outcome of interest (e.g., protein expression, pathway activity, etc.)
 
 1. Kolmogorov-Smirnov Method (`ks`)
-2. Conditional Mutual Information Method (`revealer`)
-3. Wilcoxon Rank-Sum Method (`wilcox`)
-4. Correlation Method (`correlation`)
-5. Custom - An User Defined Scoring Method (`custom`)
+2. Wilcoxon Rank-Sum Method (`wilcox`)
+3. Conditional Mutual Information Method (`revealer`)
+4. K-Nearest Neighbor Mutual Information Estimator (`knnmi`)
+5. Correlation Method (`correlation`)
+6. Custom - An User Defined Scoring Method (`custom`)
 
 Below, we run `candidate_search()` over the top 3 starting features using each of the four scoring functions described above.
 
@@ -112,7 +113,7 @@ wilcox_topn_best_meta <- topn_best(topn_list = wilcox_topn_l)
 meta_plot(topn_best_list = wilcox_topn_best_meta)
 ```
 
-## 3. Conditional Mutual Information Scoring Method 
+## 3. Conditional Mutual Information Scoring Method from REVEALER
 
 See `?revealer_rowscore` for more details
 
@@ -135,16 +136,39 @@ revealer_topn_best_meta <- topn_best(topn_list = revealer_topn_l)
 meta_plot(topn_best_list = revealer_topn_best_meta)
 ```
 
-## 4. Correlation Scoring Method
+## 4. k-Nearest Neighbor Mutual Information Estimator from knnmi package
 
-See `?custom_rowscore` for more details
+See `?knnmi_rowscore` for more details
+
+```{r knnmi.method}
+knnmi_topn_l <- CaDrA::candidate_search(
+  FS = sim_FS,
+  input_score = sim_Scores,
+  method = "knnmi",            # Use knnmi scoring function
+  search_method = "both",      # Apply both forward and backward search
+  top_N = 3,                   # Evaluate top 3 starting points for the search
+  max_size = 10,               # Allow at most 10 features in meta-feature matrix
+  do_plot = FALSE,             # We will plot it AFTER finding the best hits
+  best_score_only = FALSE      # Return all results from the search
+)
+
+# Now we can fetch the ESet of top feature that corresponded to the best scores over the top N search
+knnmi_topn_best_meta <- topn_best(topn_list = knnmi_topn_l)
+
+# Visualize best meta-feature result
+meta_plot(topn_best_list = knnmi_topn_best_meta)
+```
+
+## 5. Correlation Scoring Method
+
+See `?corr_rowscore` for more details
 
 ```{r correlation.method}
 corr_topn_l <- CaDrA::candidate_search(
   FS = SummarizedExperiment::assay(sim_FS),
   input_score = sim_Scores,
   method = "correlation",      # Use correlation scoring function
-  cmethod = "spearman",       # Use spearman correlation scoring function
+  cmethod = "spearman",        # Use spearman correlation scoring function
   top_N = 3,                   # Evaluate top 3 starting points for the search
   max_size = 10,               # Allow at most 10 features in meta-feature matrix
   do_plot = FALSE,             # We will plot it AFTER finding the best hits
@@ -156,10 +180,9 @@ corr_topn_best_meta <- topn_best(topn_list = corr_topn_l)
 
 # Visualize best meta-feature result
 meta_plot(topn_best_list = corr_topn_best_meta)
-
 ```
 
-## 5. Custom - An User Defined Scoring Method
+## 6. Custom - An User Defined Scoring Method
 
 See `?custom_rowscore` for more details
 

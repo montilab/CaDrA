@@ -34,6 +34,7 @@ Imports:
   graphics, 
   grid, 
   gtable,
+  knnmi,
   MASS, 
   methods,
   misc3d,

@@ -19,6 +19,7 @@
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
 #' \code{"correlation"} (based on simple correlation - pearson or spearman) or
 #' \code{"custom"} (a user-defined scoring method)).
 #' Default is \code{ks_pval}.
@@ -97,7 +98,15 @@
 #'   meta_feature = NULL,
 #'   method = "revealer"
 #' )
-#'
+#' 
+#' # Run the revealer method
+#' knnmi_rowscore_result <- calc_rowscore(
+#'   FS = mat,
+#'   input_score = input_score,
+#'   meta_feature = NULL,
+#'   method = "knnmi"
+#' )
+#' 
 #' # Run the correlation method
 #'  corr_result <- calc_rowscore(
 #'    FS = mat,
@@ -186,7 +195,7 @@ calc_rowscore <- function(
     input_score,
     meta_feature = NULL,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score",
-               "revealer", "correlation", "custom"),
+               "revealer", "knnmi", "correlation", "custom"),
     method_alternative = c("less", "greater", "two.sided"),
     cmethod = c("spearman", "pearson"),
     custom_function = NULL,
@@ -259,6 +268,11 @@ calc_rowscore <- function(
       input_score = input_score,
       meta_feature = meta_feature,
       assoc_metric = "IC"
+    ),
+    knnmi = knnmi_rowscore(
+      FS = FS_mat,
+      input_score = input_score,
+      meta_feature = meta_feature
     ),
     correlation = corr_rowscore(
       FS = FS,

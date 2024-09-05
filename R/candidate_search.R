@@ -23,6 +23,7 @@
 #' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
 #' \code{"correlation"} (based on simple correlation - pearson or spearman) or
 #' \code{"custom"} (a user-defined scoring method)).
 #' Default is \code{ks_pval}.
@@ -74,8 +75,8 @@
 #' Default is \code{FALSE}.
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
-#' @param cmethod correlation method to use - spearman or pearson. Default is "spearman"
-#' #' NOTE: This argument only applies to \code{correlation} method only
+#' @param cmethod correlation method to use - spearman or pearson. Default is "spearman".
+#' NOTE: This argument only applies to \code{correlation} method only
 #'
 #' @return If \code{best_score_only = TRUE}, the heuristic search will return
 #' the best feature whose its union meta-feature matrix has the highest score
@@ -112,7 +113,7 @@ candidate_search <- function(
     FS,
     input_score,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score",
-               "revealer", "correlation", "custom"),
+               "revealer", "knnmi", "correlation", "custom"),
     method_alternative = c("less", "greater", "two.sided"),
     cmethod = c("spearman", "pearson"),
     custom_function = NULL,

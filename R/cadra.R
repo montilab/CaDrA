@@ -17,6 +17,7 @@
 #' used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
+#' \code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
 #' \code{"correlation"} or
 #' \code{"custom"} (a user-defined scoring method)).
 #' Default is \code{ks_pval}.
@@ -120,7 +121,7 @@
 #' # Set seed for permutation
 #' set.seed(21)
 #'
-#' # Define additional parameters and start the function
+#' # Define additional parameters and start the search function
 #' cadra_result <- CaDrA(
 #'   FS = sim_FS, input_score = sim_Scores, method = "ks_pval",
 #'   weights = NULL, method_alternative = "less", top_N = 1,
@@ -137,8 +138,9 @@ CaDrA <- function(
     FS,
     input_score,
     method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score",
-               "revealer", "correlation", "custom"),
+               "revealer", "knnmi", "correlation", "custom"),
     method_alternative = c("less", "greater", "two.sided"),
+    cmethod = c("spearman", "pearson"),
     custom_function = NULL,
     custom_parameters = NULL,
     weights = NULL,
@@ -166,6 +168,10 @@ CaDrA <- function(
   search_method <- match.arg(search_method)
   perm_alternative <- match.arg(perm_alternative)
 
+  if (method == "correlation") {
+    cmethod <- match.arg(cmethod)
+  }
+  
   # Check n_perm
   stopifnot("invalid number of permutations (nperm)"=
               (length(n_perm)==1 && !is.na(n_perm) &&
@@ -188,6 +194,8 @@ CaDrA <- function(
               { input_score } else { NULL },
               method = method,
               method_alternative = method_alternative,
+              cmethod = if(method %in% c("correlation"))
+              { cmethod } else { NULL },
               custom_function = custom_function,
               custom_parameters = custom_parameters,
               weights = weights,
@@ -290,13 +298,14 @@ CaDrA <- function(
         best_score <- candidate_search(
           FS = FS,
           input_score = perm_input_score,
+          method_alternative = method_alternative,
           method = method,
+          cmethod = cmethod,
           custom_function = custom_function,
           custom_parameters = custom_parameters,
-          method_alternative = method_alternative,
           weights = weights,
-          top_N = top_N,
           search_start = search_start,
+          top_N = top_N,
           search_method = search_method,
           max_size = max_size,
           best_score_only = TRUE,
@@ -340,12 +349,13 @@ CaDrA <- function(
       FS = FS,
       input_score = input_score,
       method = method,
+      method_alternative = method_alternative,
+      cmethod = cmethod,
       custom_function = custom_function,
       custom_parameters = custom_parameters,
-      method_alternative = method_alternative,
       weights = weights,
-      top_N = top_N,
       search_start = search_start,
+      top_N = top_N,
       search_method = search_method,
       max_size = max_size,
       best_score_only = TRUE,

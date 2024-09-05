@@ -9,7 +9,7 @@ calc_rowscore(
   FS,
   input_score,
   meta_feature = NULL,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "knnmi",
     "correlation", "custom"),
   method_alternative = c("less", "greater", "two.sided"),
   cmethod = c("spearman", "pearson"),
@@ -42,6 +42,7 @@ causes of activation or features associated with a response of interest
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or
 \code{"revealer"} (conditional mutual information from REVEALER) or
+\code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
 \code{"correlation"} (based on simple correlation - pearson or spearman) or
 \code{"custom"} (a user-defined scoring method)).
 Default is \code{ks_pval}.}
@@ -132,6 +133,14 @@ revealer_rowscore_result <- calc_rowscore(
   input_score = input_score,
   meta_feature = NULL,
   method = "revealer"
+)
+
+# Run the revealer method
+knnmi_rowscore_result <- calc_rowscore(
+  FS = mat,
+  input_score = input_score,
+  meta_feature = NULL,
+  method = "knnmi"
 )
 
 # Run the correlation method

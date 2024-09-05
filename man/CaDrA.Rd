@@ -7,9 +7,10 @@
 CaDrA(
   FS,
   input_score,
-  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer",
+  method = c("ks_pval", "ks_score", "wilcox_pval", "wilcox_score", "revealer", "knnmi",
     "correlation", "custom"),
   method_alternative = c("less", "greater", "two.sided"),
+  cmethod = c("spearman", "pearson"),
   custom_function = NULL,
   custom_parameters = NULL,
   weights = NULL,
@@ -45,6 +46,7 @@ the column names of \code{FS} object.}
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or
 \code{"revealer"} (conditional mutual information from REVEALER) or
+\code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
 \code{"correlation"} or
 \code{"custom"} (a user-defined scoring method)).
 Default is \code{ks_pval}.}
@@ -170,7 +172,7 @@ data(sim_Scores)
 # Set seed for permutation
 set.seed(21)
 
-# Define additional parameters and start the function
+# Define additional parameters and start the search function
 cadra_result <- CaDrA(
   FS = sim_FS, input_score = sim_Scores, method = "ks_pval",
   weights = NULL, method_alternative = "less", top_N = 1,

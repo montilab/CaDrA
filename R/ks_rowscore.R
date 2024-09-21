@@ -24,6 +24,7 @@
 #' corresponding to p-value or score statistic. Default is \code{pval}. 
 #' 
 #' @noRd
+#' 
 #' @useDynLib CaDrA ks_genescore_mat_
 #' 
 #' @examples 

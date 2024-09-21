@@ -14,6 +14,8 @@
 #' causes of activation or features associated with a response of interest, 
 #' \code{e.g. input_score}. Default is NULL.
 #'
+#' @noRd
+#'
 #' @examples 
 #'  
 #' mat <- matrix(c(1,0,1,0,0,0,0,0,1,0, 

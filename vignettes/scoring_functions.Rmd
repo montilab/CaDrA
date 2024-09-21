@@ -26,9 +26,9 @@ The **CaDrA** package currently supports four scoring functions to search for su
 5. Correlation Method (`correlation`)
 6. Custom - An User Defined Scoring Method (`custom`)
 
-Below, we run `candidate_search()` over the top 3 starting features using each of the four scoring functions described above.
+Below, we run `candidate_search()` over the top 3 starting features using each of the scoring functions described above.
 
-**Important Note:**
+**Important Notes:**
 
 - The legacy or deprecated function `topn_eval()` is equivalent to the new and recommended `candidate_search()` function
 
@@ -62,7 +62,7 @@ mat <- SummarizedExperiment::assay(sim_FS)
 pheatmap::pheatmap(mat[1:100, ], color = c("white", "red"), cluster_rows = FALSE, cluster_cols = FALSE)
 ```
 
-# Search for a subset of genomic features that are likely associated with a functional response of interest using four scoring methods
+# Search for a subset of genomic features that are likely associated with a functional response of interest using each of the scoring methods
 
 ## 1. Kolmogorov-Smirnov Scoring Method 
 
@@ -136,7 +136,7 @@ revealer_topn_best_meta <- topn_best(topn_list = revealer_topn_l)
 meta_plot(topn_best_list = revealer_topn_best_meta)
 ```
 
-## 4. k-Nearest Neighbor Mutual Information Estimator from knnmi package
+## 4. K-Nearest Neighbor Mutual Information Estimator from knnmi package
 
 See `?knnmi_rowscore` for more details
 
@@ -190,7 +190,7 @@ See `?custom_rowscore` for more details
 # A customized function using ks-test
 customized_ks_rowscore <- function(FS, input_score, weights=NULL, meta_feature=NULL, alternative="less", metric="pval"){
   
- metric <- match.arg(metric)
+  metric <- match.arg(metric)
   alternative <- match.arg(alternative)
   
   # Check if meta_feature is provided

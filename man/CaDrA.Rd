@@ -46,7 +46,7 @@ the column names of \code{FS} object.}
 used in the search. There are 6 options: (\code{"ks_pval"} or \code{ks_score}
 or \code{"wilcox_pval"} or \code{wilcox_score} or
 \code{"revealer"} (conditional mutual information from REVEALER) or
-\code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
+\code{"knnmi"} (K-Nearest Neighbor Mutual Information Estimator from knnmi) or
 \code{"correlation"} or
 \code{"custom"} (a user-defined scoring method)).
 Default is \code{ks_pval}.}
@@ -57,6 +57,11 @@ Default is \code{less} for left-skewed significance testing.
 
 NOTE: This argument only applies to \code{ks_pval} and \code{wilcox_pval}
 method}
+
+\item{cmethod}{correlation method to use - spearman or pearson. 
+Default is "spearman".
+
+NOTE: This argument only applies to \code{correlation} method}
 
 \item{custom_function}{If method is \code{"custom"}, specifies
 a user-defined function here. Default is \code{NULL}.

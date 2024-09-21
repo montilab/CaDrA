@@ -23,7 +23,7 @@
 #' used in the search. There are 7 options: (\code{"ks_pval"} or \code{ks_score}
 #' or \code{"wilcox_pval"} or \code{wilcox_score} or
 #' \code{"revealer"} (conditional mutual information from REVEALER) or
-#' \code{"knnmi"} (k-Nearest Neighbor Mutual Information Estimator from knnmi) or
+#' \code{"knnmi"} (K-Nearest Neighbor Mutual Information Estimator from knnmi) or
 #' \code{"correlation"} (based on simple correlation - pearson or spearman) or
 #' \code{"custom"} (a user-defined scoring method)).
 #' Default is \code{ks_pval}.
@@ -31,8 +31,11 @@
 #' hypothesis testing (\code{"two.sided"} or \code{"greater"} or \code{"less"}).
 #' Default is \code{less} for left-skewed significance testing.
 #'
-#' NOTE: This argument only applies to \code{ks_pval} and
-#' \code{wilcox_pval} method
+#' NOTE: This argument only applies to \code{ks_pval} and \code{wilcox_pval} method
+#' @param cmethod correlation method to use - spearman or pearson. 
+#' Default is "spearman".
+#' 
+#' NOTE: This argument only applies to \code{correlation} method only
 #' @param custom_function if method is \code{"custom"}, specifies
 #' a user-defined function here. Default is \code{NULL}.
 #'
@@ -75,8 +78,6 @@
 #' Default is \code{FALSE}.
 #' @param verbose a logical value indicates whether or not to print the
 #' diagnostic messages. Default is \code{FALSE}.
-#' @param cmethod correlation method to use - spearman or pearson. Default is "spearman".
-#' NOTE: This argument only applies to \code{correlation} method only
 #'
 #' @return If \code{best_score_only = TRUE}, the heuristic search will return
 #' the best feature whose its union meta-feature matrix has the highest score

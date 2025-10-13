@@ -28,8 +28,9 @@ The main function takes two inputs:
 Based on these two inputs, **CaDrA** implements a forward and/or
 backward search algorithm to find a set of features that together is
 maximally associated with the observed input scores, based on one of
-several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual
-Information*, *Wilcoxon*, or *custom-defined scoring function*), making
+several scoring functions (*Kolmogorov-Smirnov*, *Wilcoxon*,
+*Conditional Mutual Information*, *K-Nearest Neighbor Mutual Information
+Estimator*, *correlation*, or *custom-defined scoring function*), making
 it useful to find complementary omics features likely driving the input
 molecular phenotype.
 

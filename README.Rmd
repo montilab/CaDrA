@@ -32,7 +32,7 @@ The main function takes two inputs:
 i) A binary multi-omics dataset, which can be represented as a matrix of binary features or a **SummarizedExperiment** class object where the rows are 1/0 vectors indicating the presence/absence of ‘omics’ features (e.g. somatic mutations, copy number alterations, epigenetic marks, etc.), and the columns are the samples.
 ii) A molecular phenotype of interest which can be represented as a vector of continuous scores (e.g. protein expression, pathway activity, etc.)
 
-Based on these two inputs, **CaDrA** implements a forward and/or backward search algorithm to find a set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Conditional Mutual Information*, *Wilcoxon*, or *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
+Based on these two inputs, **CaDrA** implements a forward and/or backward search algorithm to find a set of features that together is maximally associated with the observed input scores, based on one of several scoring functions (*Kolmogorov-Smirnov*, *Wilcoxon*, *Conditional Mutual Information*, *K-Nearest Neighbor Mutual Information Estimator*, *correlation*, or *custom-defined scoring function*), making it useful to find complementary omics features likely driving the input molecular phenotype.
 
 Please see our [documentation](https://montilab.github.io/CaDrA/) for additional examples.
 

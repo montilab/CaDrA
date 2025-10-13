@@ -5,7 +5,7 @@ test_that("permutation_plot works", {
   # Plot the permutation results
   g <- permutation_plot(perm_res)
   
-  expect_type(g, "list")
+  expect_type(g, "object")
   expect_s3_class(g$layers[[1]], "LayerInstance")
   expect_s3_class(g$layers[[1]]$geom, "GeomBar")
   expect_s3_class(g$layers[[2]], "LayerInstance")
